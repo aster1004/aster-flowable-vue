@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-01 17:58:15
- * @FilePath: \aster-admin\src\views\home.vue
+ * @FilePath: \aster-flowable-vue\src\views\home.vue
  * @Description: 首页
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
@@ -22,21 +22,21 @@
           <p>
             后端地址：
             <a
-              href="https://gitee.com/lp1791803611/aster-boot"
+              href="https://gitee.com/lp1791803611/aster-flowable"
               target="_blank"
               class="text-blue-500"
             >
-              https://gitee.com/lp1791803611/aster-boot
+              https://gitee.com/lp1791803611/aster-flowable
             </a>
           </p>
           <p>
             前端地址：
             <a
-              href="https://gitee.com/lp1791803611/aster-admin"
+              href="https://gitee.com/lp1791803611/aster-flowable-vue"
               target="_blank"
               class="text-blue-500"
             >
-              https://gitee.com/lp1791803611/aster-admin
+              https://gitee.com/lp1791803611/aster-flowable-vue
             </a>
           </p>
           <p class="pt-10px">

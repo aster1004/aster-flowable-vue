@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-17 17:48:48
- * @FilePath: \aster-admin\src\components\header\message.vue
+ * @FilePath: \aster-flowable-vue\src\components\header\message.vue
  * @Description: 消息提醒
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

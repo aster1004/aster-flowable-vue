@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-19 16:58:33
- * @FilePath: \aster-admin\src\types\result.d.ts
+ * @FilePath: \aster-flowable-vue\src\types\result.d.ts
  * @Description: 请求响应接口
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

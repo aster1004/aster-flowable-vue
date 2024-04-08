@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-03 17:43:40
- * @FilePath: \aster-admin\src\utils\styles\theme\header.ts
+ * @FilePath: \aster-flowable-vue\src\utils\styles\theme\header.ts
  * @Description: 头部样式
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

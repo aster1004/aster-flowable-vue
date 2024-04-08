@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-04 09:40:55
- * @FilePath: \aster-admin\src\config\piniaPersist.ts
+ * @FilePath: \aster-flowable-vue\src\config\piniaPersist.ts
  * @Description: pinia持久化配置
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

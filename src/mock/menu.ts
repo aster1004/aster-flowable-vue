@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-19 16:04:35
- * @FilePath: \aster-admin\src\mock\menu.ts
+ * @FilePath: \aster-flowable-vue\src\mock\menu.ts
  * @Description: 菜单mock
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

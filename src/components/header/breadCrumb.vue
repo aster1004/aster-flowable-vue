@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-13 14:29:05
- * @FilePath: \aster-admin\src\components\header\breadCrumb.vue
+ * @FilePath: \aster-flowable-vue\src\components\header\breadCrumb.vue
  * @Description: 面包屑
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

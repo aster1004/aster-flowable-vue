@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-08 14:26:40
- * @FilePath: \aster-admin\src\config\serviceLoading.ts
+ * @FilePath: \aster-flowable-vue\src\config\serviceLoading.ts
  * @Description: 全局loading
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-28 17:20:47
- * @FilePath: \aster-admin\src\stores\modules\tenant.ts
+ * @FilePath: \aster-flowable-vue\src\stores\modules\tenant.ts
  * @Description: 租户状态
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

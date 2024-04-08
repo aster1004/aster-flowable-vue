@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-16 14:10:46
- * @FilePath: \aster-admin\src\components\maximize\index.vue
+ * @FilePath: \aster-flowable-vue\src\components\maximize\index.vue
  * @Description: 最大化
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

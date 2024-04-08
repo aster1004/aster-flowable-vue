@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-23 10:47:52
- * @FilePath: \aster-admin\src\config\fileConfig.ts
+ * @FilePath: \aster-flowable-vue\src\config\fileConfig.ts
  * @Description: 文件配置
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
@@ -16,7 +16,8 @@ const userStore = useUserStore();
  */
 export const ImageUpload = {
   // 上传url
-  url: import.meta.env.VITE_API_URL + 'aster-boot/sys/file/upload?access_token=' + userStore.token,
+  url:
+    import.meta.env.VITE_API_URL + 'aster-flowable/sys/file/upload?access_token=' + userStore.token,
   // 最大尺寸,单位Mb
   maxSize: 10,
   // 图片格式

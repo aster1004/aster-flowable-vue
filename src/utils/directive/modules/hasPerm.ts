@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-20 10:32:40
- * @FilePath: \aster-admin\src\utils\directive\modules\hasPerm.ts
+ * @FilePath: \aster-flowable-vue\src\utils\directive\modules\hasPerm.ts
  * @Description: 按钮权限
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

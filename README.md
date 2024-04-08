@@ -1,14 +1,14 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-11-07 10:15:55
- * @FilePath: \aster-admin\README.md
+ * @FilePath: \aster-flowable-vue\README.md
  * @Description: README.md
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 
 ### 项目介绍
 
-  aster-flowable-vue工作流前端设计器，仿钉钉/氚云设计，包含在线表单设计，审批流程设计、流程管理和基础功能等。流程设计方面在wflow-web的基础上使用vue3+ts做了重构，并结合实际需求修改组件、增加高级组件等。
+  aster-flowable-vue工作流前端设计器，仿钉钉/氚云设计，包含在线表单设计，审批流程设计、流程管理和基础功能等。基础框架基于[aster-admin](https://gitee.com/lp1791803611/aster-admin)开发，流程设计方面在workflow、wflow-web的基础上使用vue3 + ts重构了代码，并结合实际业务需求在表单组件、审批流程等方面仿氚云做了相应设计更改。
   <br />
 
   - 后端工程: [https://gitee.com/lp1791803611/aster-flowable](https://gitee.com/lp1791803611/aster-flowable)

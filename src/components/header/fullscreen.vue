@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-15 18:05:42
- * @FilePath: \aster-admin\src\components\header\fullscreen.vue
+ * @FilePath: \aster-flowable-vue\src\components\header\fullscreen.vue
  * @Description: 全屏
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

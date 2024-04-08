@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-02-04 09:55:36
- * @FilePath: \aster-admin\src\views\monitor\server\server-echarts.vue
+ * @FilePath: \aster-flowable-vue\src\views\monitor\server\server-echarts.vue
  * @Description: 服务监控图表
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-11-08 10:21:42
- * @FilePath: \aster-admin\src\views\assembly\print\index.vue
+ * @FilePath: \aster-flowable-vue\src\views\assembly\print\index.vue
  * @Description: 页面打印
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

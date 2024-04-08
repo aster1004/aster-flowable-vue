@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-04 11:02:35
- * @FilePath: \aster-admin\src\views\generator\database\add-or-edit.vue
+ * @FilePath: \aster-flowable-vue\src\views\generator\database\add-or-edit.vue
  * @Description: 数据源新增/编辑
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-28 17:16:27
- * @FilePath: \aster-admin\src\components\header\tenant-switch.vue
+ * @FilePath: \aster-flowable-vue\src\components\header\tenant-switch.vue
  * @Description: 切换租户
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

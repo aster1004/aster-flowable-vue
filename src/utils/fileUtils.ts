@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-11-01 09:55:16
- * @FilePath: \aster-admin\src\utils\fileUtils.ts
+ * @FilePath: \aster-flowable-vue\src\utils\fileUtils.ts
  * @Description: 文件工具类
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

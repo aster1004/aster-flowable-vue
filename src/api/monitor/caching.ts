@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-02-06 10:30:14
- * @FilePath: \aster-admin\src\api\monitor\caching.ts
+ * @FilePath: \aster-flowable-vue\src\api\monitor\caching.ts
  * @Description: 缓存API
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

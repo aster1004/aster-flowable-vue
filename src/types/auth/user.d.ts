@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-12 13:07:59
- * @FilePath: \aster-admin\src\types\auth\user.d.ts
+ * @FilePath: \aster-flowable-vue\src\types\auth\user.d.ts
  * @Description: 用户接口
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

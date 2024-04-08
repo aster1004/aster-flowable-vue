@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-23 17:21:09
- * @FilePath: \aster-admin\src\components\icon\icon-select.vue
+ * @FilePath: \aster-flowable-vue\src\components\icon\icon-select.vue
  * @Description: 图标下拉选择器
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

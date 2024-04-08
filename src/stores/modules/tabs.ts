@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-13 17:56:24
- * @FilePath: \aster-admin\src\stores\modules\tabs.ts
+ * @FilePath: \aster-flowable-vue\src\stores\modules\tabs.ts
  * @Description: 标签
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

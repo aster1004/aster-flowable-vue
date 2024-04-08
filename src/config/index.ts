@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-03 17:46:32
- * @FilePath: \aster-admin\src\config\index.ts
+ * @FilePath: \aster-flowable-vue\src\config\index.ts
  * @Description: 默认配置
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-16 10:25:49
- * @FilePath: \aster-admin\src\types\login.d.ts
+ * @FilePath: \aster-flowable-vue\src\types\login.d.ts
  * @Description: 登录接口
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

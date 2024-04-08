@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-07 14:05:38
- * @FilePath: \aster-admin\src\views\quartz\job\index.vue
+ * @FilePath: \aster-flowable-vue\src\views\quartz\job\index.vue
  * @Description: 任务调度页面
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

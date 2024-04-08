@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-02-28 15:03:27
- * @FilePath: \aster-admin\src\api\gen\index.ts
+ * @FilePath: \aster-flowable-vue\src\api\gen\index.ts
  * @Description: 代码生成器API
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
@@ -183,7 +183,7 @@ export const previewApi = (tableId: string) => {
 export const downloadApi = (tableIds: string[]) => {
   location.href =
     import.meta.env.VITE_API_URL +
-    'aster-boot/gen/download?tableIds=' +
+    'aster-flowable/gen/download?tableIds=' +
     tableIds.join(',') +
     '&access_token=' +
     userStore.token;

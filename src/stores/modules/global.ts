@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-04 09:36:56
- * @FilePath: \aster-admin\src\stores\modules\global.ts
+ * @FilePath: \aster-flowable-vue\src\stores\modules\global.ts
  * @Description: 全局样式配置
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

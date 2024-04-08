@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-04-03 10:44:12
- * @FilePath: \aster-admin\commitlint.config.cjs
+ * @FilePath: \aster-flowable-vue\commitlint.config.cjs
  * @Description: git commit 格式校验
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-26 11:30:09
- * @FilePath: \aster-admin\src\mock\post.ts
+ * @FilePath: \aster-flowable-vue\src\mock\post.ts
  * @Description: 岗位mock
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

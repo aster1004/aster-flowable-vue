@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-30 17:50:58
- * @FilePath: \aster-admin\src\api\sys\user.ts
+ * @FilePath: \aster-flowable-vue\src\api\sys\user.ts
  * @Description: 用户API
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-27 16:22:50
- * @FilePath: \aster-admin\src\views\auth\role\data-scope.vue
+ * @FilePath: \aster-flowable-vue\src\views\auth\role\data-scope.vue
  * @Description: 数据范围
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

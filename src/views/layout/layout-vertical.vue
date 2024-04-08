@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-11-08 17:10:55
- * @FilePath: \aster-admin\src\views\layout\layout-vertical.vue
+ * @FilePath: \aster-flowable-vue\src\views\layout\layout-vertical.vue
  * @Description: 纵向布局
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

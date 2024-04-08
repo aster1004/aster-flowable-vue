@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-04 09:44:55
- * @FilePath: \aster-admin\src\stores\interface\index.ts
+ * @FilePath: \aster-flowable-vue\src\stores\interface\index.ts
  * @Description: 接口定义
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

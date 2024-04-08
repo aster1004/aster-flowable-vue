@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-12 13:05:32
- * @FilePath: \aster-admin\src\types\sys\dict.d.ts
+ * @FilePath: \aster-flowable-vue\src\types\sys\dict.d.ts
  * @Description: 字典接口
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

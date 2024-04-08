@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-15 17:39:19
- * @FilePath: \aster-admin\src\components\header\language.vue
+ * @FilePath: \aster-flowable-vue\src\components\header\language.vue
  * @Description: 语言
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

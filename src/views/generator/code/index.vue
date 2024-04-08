@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-02-18 17:04:28
- * @FilePath: \aster-admin\src\views\generator\code\index.vue
+ * @FilePath: \aster-flowable-vue\src\views\generator\code\index.vue
  * @Description: 代码生成
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

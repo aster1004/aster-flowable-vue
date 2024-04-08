@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-02-02 10:13:01
- * @FilePath: \aster-admin\src\types\monitor.d.ts
+ * @FilePath: \aster-flowable-vue\src\types\monitor.d.ts
  * @Description: 系统监控接口
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

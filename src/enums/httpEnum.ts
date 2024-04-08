@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-08 14:20:58
- * @FilePath: \aster-admin\src\enums\httpEnum.ts
+ * @FilePath: \aster-flowable-vue\src\enums\httpEnum.ts
  * @Description: 请求配置
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

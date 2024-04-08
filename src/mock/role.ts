@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-26 17:23:06
- * @FilePath: \aster-admin\src\mock\role.ts
+ * @FilePath: \aster-flowable-vue\src\mock\role.ts
  * @Description: 角色mock
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

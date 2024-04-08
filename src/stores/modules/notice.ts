@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-13 17:17:33
- * @FilePath: \aster-admin\src\stores\modules\notice.ts
+ * @FilePath: \aster-flowable-vue\src\stores\modules\notice.ts
  * @Description: 通知公告
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

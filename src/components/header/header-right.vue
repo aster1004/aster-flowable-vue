@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-16 14:18:55
- * @FilePath: \aster-admin\src\components\header\header-right.vue
+ * @FilePath: \aster-flowable-vue\src\components\header\header-right.vue
  * @Description: 右头部
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
@@ -10,7 +10,7 @@
     <div class="header-icon">
       <tenant-switch />
       <search-menu />
-      <a href="https://gitee.com/lp1791803611/aster-boot" target="_blank">
+      <a href="https://gitee.com/lp1791803611/aster-flowable" target="_blank">
         <i class="iconfont icon-gitee"></i>
       </a>
       <assembly-size />

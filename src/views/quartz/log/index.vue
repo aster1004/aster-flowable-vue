@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-07 15:50:25
- * @FilePath: \aster-admin\src\views\quartz\log\index.vue
+ * @FilePath: \aster-flowable-vue\src\views\quartz\log\index.vue
  * @Description: 日志列表
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

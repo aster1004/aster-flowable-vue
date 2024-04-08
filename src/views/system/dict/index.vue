@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-24 18:11:43
- * @FilePath: \aster-admin\src\views\system\dict\index.vue
+ * @FilePath: \aster-flowable-vue\src\views\system\dict\index.vue
  * @Description: 数据字典
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

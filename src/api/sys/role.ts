@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-26 17:17:30
- * @FilePath: \aster-admin\src\api\sys\role.ts
+ * @FilePath: \aster-flowable-vue\src\api\sys\role.ts
  * @Description: 角色API
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

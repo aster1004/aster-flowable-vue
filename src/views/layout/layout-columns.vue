@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-11-08 17:11:18
- * @FilePath: \aster-admin\src\views\layout\layout-columns.vue
+ * @FilePath: \aster-flowable-vue\src\views\layout\layout-columns.vue
  * @Description: 分栏布局
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

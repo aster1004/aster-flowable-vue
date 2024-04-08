@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-20 10:29:12
- * @FilePath: \aster-admin\src\utils\directive\index.ts
+ * @FilePath: \aster-flowable-vue\src\utils\directive\index.ts
  * @Description: 全局注册自定义指令
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

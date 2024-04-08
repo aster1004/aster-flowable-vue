@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-13 16:16:07
- * @FilePath: \aster-admin\src\config\nprogress.ts
+ * @FilePath: \aster-flowable-vue\src\config\nprogress.ts
  * @Description: 进度条
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

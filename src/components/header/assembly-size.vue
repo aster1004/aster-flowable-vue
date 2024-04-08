@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-11-02 10:02:01
- * @FilePath: \aster-admin\src\components\header\assembly-size.vue
+ * @FilePath: \aster-flowable-vue\src\components\header\assembly-size.vue
  * @Description: 全局字体大小
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

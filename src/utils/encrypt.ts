@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-01-26 17:02:03
- * @FilePath: \aster-admin\src\utils\encrypt.ts
+ * @FilePath: \aster-flowable-vue\src\utils\encrypt.ts
  * @Description: 加解密
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

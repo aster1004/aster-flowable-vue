@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-15 14:47:59
- * @FilePath: \aster-admin\src\utils\errorHandler.ts
+ * @FilePath: \aster-flowable-vue\src\utils\errorHandler.ts
  * @Description: error配置
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

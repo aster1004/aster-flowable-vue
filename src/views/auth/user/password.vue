@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-31 17:36:56
- * @FilePath: \aster-admin\src\views\auth\user\password.vue
+ * @FilePath: \aster-flowable-vue\src\views\auth\user\password.vue
  * @Description: 修改密码
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-17 11:20:49
- * @FilePath: \aster-admin\src\components\dict\dict-radio.vue
+ * @FilePath: \aster-flowable-vue\src\components\dict\dict-radio.vue
  * @Description: 字典radio
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

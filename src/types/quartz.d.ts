@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-07 14:08:30
- * @FilePath: \aster-admin\src\types\quartz.d.ts
+ * @FilePath: \aster-flowable-vue\src\types\quartz.d.ts
  * @Description: 任务调度接口
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-19 16:05:59
- * @FilePath: \aster-admin\src\mock\dict.ts
+ * @FilePath: \aster-flowable-vue\src\mock\dict.ts
  * @Description: 字典mock
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

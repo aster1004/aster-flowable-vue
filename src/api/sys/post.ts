@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-26 11:20:23
- * @FilePath: \aster-admin\src\api\sys\post.ts
+ * @FilePath: \aster-flowable-vue\src\api\sys\post.ts
  * @Description: 岗位API
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

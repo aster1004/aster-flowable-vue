@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-13 15:28:05
- * @FilePath: \aster-admin\src\router\modules\staticRouter.ts
+ * @FilePath: \aster-flowable-vue\src\router\modules\staticRouter.ts
  * @Description: 静态路由
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

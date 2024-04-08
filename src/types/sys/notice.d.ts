@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-03-12 12:07:10
- * @FilePath: \aster-admin\src\types\sys\notice.d.ts
+ * @FilePath: \aster-flowable-vue\src\types\sys\notice.d.ts
  * @Description: 通知公告 接口
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

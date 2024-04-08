@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-11-08 17:11:11
- * @FilePath: \aster-admin\src\views\layout\layout-transverse.vue
+ * @FilePath: \aster-flowable-vue\src\views\layout\layout-transverse.vue
  * @Description: 横向布局
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-04 15:01:23
- * @FilePath: \aster-admin\src\utils\color.ts
+ * @FilePath: \aster-flowable-vue\src\utils\color.ts
  * @Description: 颜色转换工具类
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

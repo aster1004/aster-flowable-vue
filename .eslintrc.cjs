@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-01 17:58:15
- * @FilePath: \aster-admin\.eslintrc.cjs
+ * @FilePath: \aster-flowable-vue\.eslintrc.cjs
  * @Description: eslint配置
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

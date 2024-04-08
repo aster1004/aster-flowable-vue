@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-04-01 15:13:30
- * @FilePath: \aster-admin\src\types\other\weather.d.ts
+ * @FilePath: \aster-flowable-vue\src\types\other\weather.d.ts
  * @Description: 天气
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

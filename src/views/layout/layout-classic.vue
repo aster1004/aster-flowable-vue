@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-16 17:45:48
- * @FilePath: \aster-admin\src\views\layout\layout-classic.vue
+ * @FilePath: \aster-flowable-vue\src\views\layout\layout-classic.vue
  * @Description: 经典布局
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

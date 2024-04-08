@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-02-28 09:54:10
- * @FilePath: \aster-admin\src\types\generator.d.ts
+ * @FilePath: \aster-flowable-vue\src\types\generator.d.ts
  * @Description: 代码生成接口
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

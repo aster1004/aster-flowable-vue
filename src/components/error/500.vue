@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-13 16:27:49
- * @FilePath: \aster-admin\src\components\error\500.vue
+ * @FilePath: \aster-flowable-vue\src\components\error\500.vue
  * @Description: 500
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

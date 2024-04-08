@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-13 17:14:12
- * @FilePath: \aster-admin\src\components\tabs\components\MoreButton.vue
+ * @FilePath: \aster-flowable-vue\src\components\tabs\components\MoreButton.vue
  * @Description: 标签栏按钮
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

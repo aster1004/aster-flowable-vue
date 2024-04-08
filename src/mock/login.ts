@@ -1,7 +1,7 @@
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-08 11:37:38
- * @FilePath: \aster-admin\src\mock\login.ts
+ * @FilePath: \aster-flowable-vue\src\mock\login.ts
  * @Description: 登录mock
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */

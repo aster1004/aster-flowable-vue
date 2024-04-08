@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-02-29 10:55:18
- * @FilePath: \aster-admin\src\components\codemirror\index.vue
+ * @FilePath: \aster-flowable-vue\src\components\codemirror\index.vue
  * @Description: 在线代码编辑器
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->

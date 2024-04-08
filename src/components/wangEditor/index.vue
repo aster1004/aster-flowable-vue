@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-11-07 14:43:24
- * @FilePath: \aster-admin\src\components\wangEditor\index.vue
+ * @FilePath: \aster-flowable-vue\src\components\wangEditor\index.vue
  * @Description: 富文本编辑器
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
