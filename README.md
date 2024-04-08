@@ -8,11 +8,10 @@
 
 ### 项目介绍
 
-  aster-admin一款基于 Vue3、TypeScript、Vite4、Pinia、Element-Plus 开源的后台管理框架, 基础功能已全部实现, 可快速搭建. 基础框架基于<a href="https://gitee.com/HalseySpicy/Geeker-Admin" target="_blank" class="text-blue-500">Geeker-Admin</a>、<a href="https://gitee.com/y_project/RuoYi-Vue" target="_blank" class="text-blue-500">ruoyi-vue</a>开发，请为他们点赞支持。
+  aster-flowable-vue工作流前端设计器，仿钉钉/氚云设计，包含在线表单设计，审批流程设计、流程管理和基础功能等。流程设计方面在wflow-web的基础上使用vue3+ts做了重构，并结合实际需求修改组件、增加高级组件等。
   <br />
 
-  - 后端工程: https://gitee.com/lp1791803611/aster-boot
-  - 在线体验：http://admin.aster.vip/#/  admin/123456
+  - 后端工程: [https://gitee.com/lp1791803611/aster-flowable](https://gitee.com/lp1791803611/aster-flowable)
 
 ### 项目功能
 
@@ -30,10 +29,10 @@
 ### 使用步骤
 ```
 # 克隆项目
-git clone https://gitee.com/lp1791803611/aster-admin.git
+git clone https://gitee.com/lp1791803611/aster-flowable-vue.git
 
 # 进入项目
-cd aster-admin
+cd aster-flowable-vue
 
 # 安装依赖
 yarn
