@@ -1,0 +1,60 @@
+<!--
+ * @Author: Aster lipian1004@163.com
+ * @Date: 2023-10-17 14:53:30
+ * @FilePath: \aster-admin\src\components\dict\dict-tag.vue
+ * @Description: 字典标签
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
+-->
+<template>
+  <div class="dictTag">
+    <template v-for="(item, index) in dataList">
+      <template v-if="values.includes(item.dictValue)">
+        <el-tag
+          v-if="tagValues.includes(item.labelClass)"
+          :disable-transitions="true"
+          :key="item.dictValue"
+          :index="index"
+          :type="item.labelClass == 'primary' ? '' : item.labelClass"
+        >
+          {{ item.dictLabel }}
+        </el-tag>
+        <span v-else :key="item.value" :index="index">
+          {{ item.dictLabel }}
+        </span>
+      </template>
+    </template>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import { computed, ref } from 'vue';
+  import { useAppStore } from '@/stores/modules/app';
+  import { getDictDataList } from '@/utils';
+
+  const appStore = useAppStore();
+
+  const props = defineProps({
+    dictType: {
+      type: String,
+      required: true,
+    },
+    value: [Number, String],
+  });
+
+  const tagValues = ref<string[]>(['primary', 'success', 'info', 'warning', 'danger', '']);
+
+  const values = computed(() => {
+    if (props.value !== null && typeof props.value !== 'undefined') {
+      return [String(props.value)];
+    } else {
+      return [];
+    }
+  });
+
+  const dataList = getDictDataList(appStore.dictList, props.dictType);
+</script>
+<style lang="scss" scoped>
+  .el-tag + .el-tag {
+    margin-left: 10px;
+  }
+</style>

@@ -1,0 +1,184 @@
+<!--
+ * @Author: Aster lipian1004@163.com
+ * @Date: 2023-10-23 17:21:09
+ * @FilePath: \aster-admin\src\components\icon\icon-select.vue
+ * @Description: 图标下拉选择器
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
+-->
+<template>
+  <el-popover
+    ref="iconListPopover"
+    :visible="visible"
+    placement="top-start"
+    trigger="click"
+    width="40%"
+    popper-class="mod__menu-icon-popover"
+  >
+    <template #reference>
+      <el-input
+        v-model="iconValue"
+        :readonly="true"
+        :placeholder="placeholder"
+        @click="visible = !visible"
+      >
+        <template #append>
+          <i :class="iconValue"></i>
+        </template>
+      </el-input>
+    </template>
+    <div class="mod__menu-icon-inner">
+      <div class="mod__menu-icon-list">
+        <el-button
+          v-for="(item, index) in iconList"
+          :key="index"
+          :class="{ 'is-active': iconValue === item }"
+          @click="iconHandle(item)"
+        >
+          <div class="svg-icon">
+            <svg :style="svgStyles" aria-hidden="true">
+              <use :xlink:href="svgHref(item)" />
+            </svg>
+          </div>
+        </el-button>
+      </div>
+    </div>
+  </el-popover>
+</template>
+<script setup lang="ts">
+  import '@/assets/iconfont/iconfont.js';
+  import { reactive, ref, watch } from 'vue';
+
+  const props = defineProps({
+    icon: {
+      type: String,
+      default: '',
+    },
+    color: {
+      type: String,
+      default: '',
+    },
+    size: {
+      type: String,
+      default: () => '30px',
+    },
+    placeholder: {
+      type: String,
+      default: () => '请选择图标',
+    },
+  });
+
+  const emits = defineEmits<{
+    'update:icon': [value: string];
+  }>();
+
+  const iconValue = ref('');
+  const visible = ref(false);
+
+  watch(
+    () => props.icon,
+    () => {
+      iconValue.value = props.icon;
+    },
+  );
+
+  // 解析iconfont.js
+  const iconList: string[] = [];
+  const list = document.querySelectorAll('svg symbol[id^="icon-"]');
+  for (let i = 0; i < list.length; i++) {
+    iconList.push('iconfont ' + list[i].id);
+  }
+
+  const iconListPopover = ref();
+
+  // 图标样式
+  const svgStyles = reactive({
+    color: props.color,
+    width: props.size,
+    height: props.size,
+  });
+
+  const svgHref = (icon: string) => {
+    return '#icon-' + icon.replace('iconfont icon-', '');
+  };
+
+  // 图标点击事件
+  const iconHandle = (iconName: string) => {
+    hide();
+    iconValue.value = iconName;
+    emits('update:icon', iconName);
+  };
+
+  // 手动隐藏popover
+  const hide = () => {
+    visible.value = false;
+  };
+
+  defineExpose({
+    hide,
+  });
+</script>
+<style lang="scss" scoped>
+  .mod__menu {
+    ::v-deep(.el-popover.el-popper) {
+      overflow-x: hidden;
+    }
+
+    .popover-list {
+      ::v-deep(.el-input__inner) {
+        cursor: pointer;
+      }
+      ::v-deep(.el-input__suffix) {
+        cursor: pointer;
+      }
+    }
+
+    &-icon-inner {
+      width: 100%;
+      max-height: 260px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      // 滚动条的宽度
+      &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background: transparent;
+      }
+      // 滚动条的设置
+      &::-webkit-scrollbar-thumb {
+        background-color: #dddddd;
+        background-clip: padding-box;
+        min-height: 28px;
+        border-radius: 4px;
+      }
+      &::-webkit-scrollbar-thumb:hover {
+        background-color: #bbb;
+      }
+    }
+    &-icon-list {
+      width: 100% !important;
+      padding: 0;
+      margin: -8px 0 0 -8px;
+      > .el-button {
+        padding: 8px;
+        margin: 18px 0 0 8px;
+        height: 50px;
+        width: 50px;
+        > span {
+          display: inline-block;
+          vertical-align: middle;
+          width: 18px;
+          height: 18px;
+          font-size: 18px;
+        }
+      }
+    }
+  }
+  .svg-icon svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+</style>
