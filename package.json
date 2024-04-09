@@ -1,7 +1,8 @@
 {
-  "name": "vue3-element",
+  "name": "aster-flowable",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite --mode development",
     "prod": "vite --mode production",
