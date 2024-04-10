@@ -35,10 +35,7 @@
         align="center"
       >
         <template #default="scope">
-          <el-tag
-            v-if="scope.row.labelClass"
-            :type="scope.row.labelClass === 'primary' ? '' : scope.row.labelClass"
-          >
+          <el-tag v-if="scope.row.labelClass" :type="scope.row.labelClass">
             {{ scope.row.dictLabel }}
           </el-tag>
           <span v-else>
