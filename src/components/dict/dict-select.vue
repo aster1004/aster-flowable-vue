@@ -7,8 +7,9 @@
 -->
 <template>
   <el-select
-    :model-value="modelValue + ''"
+    :model-value="modelValue"
     :placeholder="placeholder"
+    :multiple="multiple"
     :clearable="clearable"
     @change="$emit('update:modelValue', $event)"
   >
@@ -30,12 +31,17 @@
 
   const props = defineProps({
     modelValue: {
-      type: String,
+      type: [String, Array],
       required: true,
     },
     dictType: {
       type: String,
       required: true,
+    },
+    multiple: {
+      type: Boolean,
+      required: false,
+      default: () => false,
     },
     clearable: {
       type: Boolean,
