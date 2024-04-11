@@ -17,7 +17,7 @@
         class="dark"
       />
       <div class="login-left">
-        <img class="login-left-img" src="@/assets/images/login_left1.png" alt="login" />
+        <img class="login-left-img" src="@/assets/images/login_left2.png" alt="login" />
       </div>
       <div class="login-form">
         <div class="login-logo">
@@ -296,16 +296,9 @@
 </script>
 <style lang="scss" scoped>
   .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
     height: 100%;
     min-height: 550px;
-    background-color: #eeeeee;
-    background-image: url('@/assets/images/login_bg.svg');
-    background-size: 100% 100%;
-    background-size: cover;
+
     .login-box {
       position: relative;
       box-sizing: border-box;
