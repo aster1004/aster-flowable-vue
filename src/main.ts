@@ -15,6 +15,7 @@ import { setupElementPlus } from '@/plugins/elementPlus';
 import '@/assets/styles/element.scss';
 // iconfont css
 import '@/assets/iconfont/iconfont.css';
+import '@/assets/iconfont/iconfont.js';
 // element css
 import 'element-plus/dist/index.css';
 // element dark css

@@ -119,8 +119,8 @@
       <el-switch
         v-model="globalStore.isDark"
         inline-prompt
-        :active-icon="Sunny"
-        :inactive-icon="Moon"
+        :active-icon="Moon"
+        :inactive-icon="Sunny"
         @change="switchDark"
       />
     </div>

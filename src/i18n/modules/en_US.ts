@@ -85,6 +85,9 @@ export default {
     changePassword: 'Change Password',
     logout: 'Logout',
     logoutTip: 'Are you sure you want to logout?',
+    // 表单
+    deleteComp:
+      'Deleting components will also delete related configurations. If there are any sub components, they will be deleted together. Do you want to continue?',
   },
   login: {
     placeholder: {
@@ -136,6 +139,7 @@ export default {
     suspend: 'Suspend',
     restore: 'Restore',
     publish: 'Publish',
+    save: 'Save',
     showSearch: 'Show Search',
     hideSearch: 'Hide Search',
     configDict: 'Config Dict',

@@ -8,23 +8,27 @@
 <template>
   <el-popover
     ref="iconListPopover"
-    :visible="visible"
-    placement="top-start"
+    placement="bottom-start"
     trigger="click"
     width="40%"
     popper-class="mod__menu-icon-popover"
   >
     <template #reference>
       <el-input
+        v-if="type == 'input'"
         v-model="iconValue"
         :readonly="true"
         :placeholder="placeholder"
-        @click="visible = !visible"
       >
         <template #append>
-          <i :class="iconValue"></i>
+          <span :style="spanStyle">
+            <i :class="iconValue" :style="iconStyle"></i>
+          </span>
         </template>
       </el-input>
+      <span v-else :style="spanStyle">
+        <i :class="iconValue" :style="[iconStyle, fixedStyle]"></i>
+      </span>
     </template>
     <div class="mod__menu-icon-inner">
       <div class="mod__menu-icon-list">
@@ -45,25 +49,37 @@
   </el-popover>
 </template>
 <script setup lang="ts">
-  import '@/assets/iconfont/iconfont.js';
-  import { reactive, ref, watch } from 'vue';
+  import { PropType, reactive, ref, watchEffect } from 'vue';
 
   const props = defineProps({
     icon: {
       type: String,
       default: '',
     },
+    // svg颜色
     color: {
       type: String,
       default: '',
     },
+    // svg大小
     size: {
       type: String,
       default: () => '30px',
     },
+    // 展示类型
+    type: {
+      type: String as PropType<'input' | 'icon'>,
+      default: () => 'input',
+    },
+    // input 提示语
     placeholder: {
       type: String,
       default: () => '请选择图标',
+    },
+    // 图标展示样式
+    iconStyle: {
+      type: Object as PropType<{ color: string; backgroundColor: string }>,
+      default: () => {},
     },
   });
 
@@ -71,50 +87,53 @@
     'update:icon': [value: string];
   }>();
 
+  // 选中的图标
   const iconValue = ref('');
-  const visible = ref(false);
-
-  watch(
-    () => props.icon,
-    () => {
-      iconValue.value = props.icon;
-    },
-  );
-
-  // 解析iconfont.js
-  const iconList: string[] = [];
-  const list = document.querySelectorAll('svg symbol[id^="icon-"]');
-  for (let i = 0; i < list.length; i++) {
-    iconList.push('iconfont ' + list[i].id);
-  }
-
   const iconListPopover = ref();
 
-  // 图标样式
+  // 解析iconfont.js
+  const iconList = ref<string[]>([]);
+
+  const list = document.querySelectorAll('svg symbol[id^="icon-"]');
+  for (let i = 0; i < list.length; i++) {
+    iconList.value.push('iconfont ' + list[i].id);
+  }
+
+  // 图标svg样式
   const svgStyles = reactive({
     color: props.color,
     width: props.size,
     height: props.size,
   });
 
+  // span样式
+  const spanStyle = reactive({
+    width: props.size,
+    height: props.size,
+  });
+
+  // 图标样式
+  const fixedStyle = reactive({
+    padding: '6px',
+    borderRadius: '5px',
+  });
+
+  // svg图标
   const svgHref = (icon: string) => {
     return '#icon-' + icon.replace('iconfont icon-', '');
   };
 
   // 图标点击事件
   const iconHandle = (iconName: string) => {
-    hide();
     iconValue.value = iconName;
     emits('update:icon', iconName);
   };
 
-  // 手动隐藏popover
-  const hide = () => {
-    visible.value = false;
-  };
-
-  defineExpose({
-    hide,
+  /**
+   * @description: 监听icon值变化
+   */
+  watchEffect(() => {
+    iconValue.value = props.icon;
   });
 </script>
 <style lang="scss" scoped>
@@ -173,6 +192,7 @@
       }
     }
   }
+
   .svg-icon svg {
     width: 1em;
     height: 1em;
