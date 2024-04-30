@@ -48,7 +48,11 @@
         </div>
         <div :style="mainContentClass" @click="release">
           <el-scrollbar style="height: 100%">
-            <el-form ref="formDesignRef" :label-position="formInfo.labelPosition">
+            <el-form
+              ref="formDesignRef"
+              label-width="80px"
+              :label-position="formInfo.labelPosition"
+            >
               <draggable
                 class="main-content"
                 item-key="id"

@@ -26,7 +26,7 @@
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 
-  // 组件配置
+  // 选中的组件
   const formItem = computed(() => {
     return workFlowStore.selectFormItem;
   });

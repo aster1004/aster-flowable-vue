@@ -20,7 +20,7 @@
           <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
         </el-tooltip>
       </template>
-      隐藏条件
+      <el-input type="button" model-value="请设置隐藏条件" @click="showFormula" />
     </el-form-item>
     <el-form-item label="默认值">
       <el-input v-model="formItem.value" />
@@ -31,18 +31,28 @@
     <el-form-item label="必填项">
       <el-switch v-model="formItem.props.required" />
     </el-form-item>
+
+    <formula ref="formulaRef" title="隐藏条件" :formula="formItem.props.formula" />
   </div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
+  import Formula from '../common/formula.vue';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
+  // 注册组件
+  const formulaRef = ref();
+  /**
+   * @description: 显示公式
+   */
+  const showFormula = () => {
+    formulaRef.value.init();
+  };
 
-  // 组件配置
+  // 选中的组件
   const formItem = computed(() => {
-    console.log(workFlowStore.selectFormItem?.props);
     return workFlowStore.selectFormItem;
   });
 </script>

@@ -24,7 +24,10 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@codemirror/commands": "^6.5.0",
     "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.26.3",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.6.8",

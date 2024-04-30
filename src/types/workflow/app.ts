@@ -14,3 +14,28 @@ declare namespace WorkApp {
     forms?: Array<WorkForm.BaseInfo>;
   }
 }
+
+import { WidgetType } from '@codemirror/view';
+import { DEFAULT_PRIMARY } from '@/config';
+export class PlaceholderWidget extends WidgetType {
+  name: string;
+  constructor(name) {
+    super();
+    this.name = name;
+  }
+  eq(other) {
+    return this.name == other.name;
+  }
+  toDOM() {
+    let elt = document.createElement('span');
+    elt.style.cssText = `
+      border: 1px solid ${DEFAULT_PRIMARY};
+      border-radius: 4px;
+      padding: 5px;`;
+    elt.textContent = this.name;
+    return elt;
+  }
+  ignoreEvent() {
+    return false;
+  }
+}

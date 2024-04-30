@@ -39,4 +39,20 @@ declare namespace WorkComponent {
     // 组件
     components: ComponentConfig[];
   }
+
+  /**
+   * @description: 公式节点
+   */
+  export interface formulaNode {
+    // 组件id
+    fieldId?: string;
+    // 组件名称
+    label?: string;
+    // 组件值(用于公式计算)
+    value?: string;
+    // 是否禁用
+    disabled?: boolean;
+    // 子集
+    children?: formulaNode[];
+  }
 }
