@@ -6,6 +6,8 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 
+import { evaluate } from './formula';
+
 /**
  * @description: 生成字段id
  * @return {*} 字段id
@@ -62,7 +64,6 @@ export const formulaItemTree = (
   items: WorkForm.FormItem[],
   tree: WorkComponent.formulaNode[],
   isTableList: boolean = false,
-  variableName: string = 'formData',
 ) => {
   items.forEach((item) => {
     // 若是一行多列则取子组件
@@ -73,7 +74,7 @@ export const formulaItemTree = (
       tree.push({
         fieldId: item.id,
         label: item.title,
-        value: variableName + '.' + item.id,
+        value: item.id,
       });
     } else if (item.name === 'TableList' && isTableList) {
       // 明细表
@@ -82,16 +83,95 @@ export const formulaItemTree = (
         children.push({
           fieldId: col.id,
           label: `${item.title}.${col.title}`,
-          value: variableName + `.${item.id}[?].${col.id}`,
+          value: `${item.id}[?].${col.id}`,
         });
       });
       tree.push({
         fieldId: item.id,
         label: '明细表.' + item.title,
-        value: variableName + '.' + item.id,
+        value: item.id,
         disabled: true,
         children: children,
       });
     }
+  });
+};
+
+/**
+ * @description: 获取公式中的字段
+ * @param {string} formula 公式
+ * @return {*}
+ */
+const getFieldTexts = (formula: string) => {
+  if (!formula) {
+    return [];
+  }
+  const regexp = /\[\[(.+?)\]\]/g;
+  const texts = formula.match(regexp);
+  let result: string[] = [];
+  if (texts) {
+    result = texts.map((text) => {
+      return text.replace(/\[\[|]]/g, '');
+    });
+  }
+  return result;
+};
+
+/**
+ * @description: 解析公式
+ * @param {string} formula 公式
+ * @param {WorkComponent.formulaNode[]} formulaNodes 节点数据集
+ * @return {*}
+ */
+export const analysisFormula = (formula: string, formulaNodes: WorkComponent.formulaNode[]) => {
+  if (!formula) {
+    return formula;
+  }
+  const fieldTexts = getFieldTexts(formula);
+  let result = formula;
+  formulaNodes.forEach((node) => {
+    fieldTexts.forEach((text) => {
+      if (node.label && text == node.label && node.value) {
+        const label = '[[' + text + ']]';
+        result = result.replace(label, node.value);
+      }
+    });
+  });
+  return result;
+};
+
+/**
+ * @description: 还原公式
+ * @param {string} formula 公式
+ * @param {WorkComponent.formulaNode[]} formulaNodes 节点数据集
+ * @return {*}
+ */
+export const restoration = (formula: string, formulaNodes: WorkComponent.formulaNode[]) => {
+  if (!formula) {
+    return formula;
+  }
+  let result = formula;
+  formulaNodes.forEach((node) => {
+    if (
+      node.value &&
+      node.label &&
+      node.label.indexOf('明细表') == -1 &&
+      formula.indexOf(node.value) != -1
+    ) {
+      result = result.replace(node.value, '[[' + node.label + ']]');
+    }
+  });
+  return result;
+};
+
+/**
+ * @description: 计算公式
+ * @param {*} expression 表达式
+ * @param {*} data 数据
+ * @return {*}
+ */
+export const evaluateFormula = (expression, data) => {
+  return evaluate(expression, data, {
+    evalMode: true,
   });
 };

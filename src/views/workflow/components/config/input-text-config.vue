@@ -32,7 +32,7 @@
       <el-switch v-model="formItem.props.required" />
     </el-form-item>
 
-    <formula ref="formulaRef" title="隐藏条件" :formula="formItem.props.formula" />
+    <formula ref="formulaRef" title="隐藏条件" v-model:formula="formItem.props.hidden" />
   </div>
 </template>
 <script setup lang="ts">

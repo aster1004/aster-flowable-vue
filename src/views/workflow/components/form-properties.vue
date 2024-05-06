@@ -38,7 +38,7 @@
           </div>
           <div class="form-icon__color">
             <span>颜色</span>
-            <color-picker v-model="formInfo.iconColor" />
+            <color-picker v-if="showIconSelect" v-model="formInfo.iconColor" />
           </div>
         </div>
       </el-form-item>

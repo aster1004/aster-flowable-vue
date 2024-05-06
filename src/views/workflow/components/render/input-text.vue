@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item :label="formItem.title" :prop="formItem.id">
+  <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
     <el-input
       v-if="mode === 'design'"
       :model-value="_value"
@@ -21,15 +21,17 @@
       :readonly="formItem.props.readonly"
     />
     <el-input
-      v-else
+      v-else-if="mode === 'search'"
       v-model="_value"
       size="small"
       clearable
       :placeholder="formItem.props.placeholder"
     />
+    <span v-else>{{ _value }}</span>
   </el-form-item>
 </template>
 <script setup lang="ts">
+  import { evaluateFormula } from '@/utils/workflow';
   import { computed, PropType } from 'vue';
 
   const emit = defineEmits(['update:value']);
@@ -46,6 +48,12 @@
       type: Object as PropType<WorkComponent.ComponentConfig>,
       default: {},
     },
+    formData: {
+      type: Object as PropType<WorkForm.FormDataModel>,
+      default: () => {
+        return {};
+      },
+    },
   });
 
   /**
@@ -58,6 +66,17 @@
     set(val) {
       emit('update:value', val);
     },
+  });
+
+  /**
+   * @description: 是否隐藏, true-隐藏
+   */
+  const _hidden = computed(() => {
+    if (props.formItem.props.hidden) {
+      const h = evaluateFormula(props.formItem.props.hidden, props.formData);
+      return h;
+    }
+    return false;
   });
 </script>
 <style scoped lang="scss"></style>

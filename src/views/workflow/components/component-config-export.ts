@@ -59,10 +59,8 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
         summaryColumns: [],
         maxSize: 0, //最大条数，为0则不限制
         columns: [], //列设置
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -74,10 +72,8 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       props: {
         required: false,
         color: '#818181',
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
   ],
@@ -99,7 +95,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 必填
         required: false,
         // 隐藏
-        hidden: false,
+        hidden: '',
         // 只读
         readonly: false,
         // 提示语
@@ -114,10 +110,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       valueType: ValueType.string,
       props: {
         required: false,
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -129,10 +123,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       props: {
         required: false,
         precision: 0,
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -145,10 +137,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         required: false,
         showChinese: true,
         precision: 0,
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -161,10 +151,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         required: false,
         expanding: false,
         options: ['选项1', '选项2'],
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -177,10 +165,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         required: false,
         expanding: false,
         options: ['选项1', '选项2'],
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -192,10 +178,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       props: {
         required: false,
         format: 'yyyy-MM-dd',
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -209,10 +193,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         placeholder: ['开始时间', '结束时间'],
         format: 'yyyy-MM-dd',
         showLength: false,
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -226,10 +208,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         maxSize: 10, //图片最大大小MB
         maxNumber: 5, //最大上传数量
         enableZip: true, //图片压缩后再上传
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -244,10 +224,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         maxSize: 100, //文件最大大小MB
         maxNumber: 10, //最大上传数量
         fileTypes: [], //限制文件上传类型
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -261,10 +239,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         multiple: false,
         expansion: false,
         options: [],
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -278,10 +254,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         multiple: false,
         expansion: false,
         options: [],
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -297,10 +271,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         showScore: true,
         enableHalf: false,
         type: 'star',
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
   ],
@@ -321,10 +293,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       props: {
         required: false,
         rules: [],
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -343,10 +313,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
           showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
           calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
         },
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -357,10 +325,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       valueType: ValueType.object,
       props: {
         required: false,
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -372,10 +338,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       props: {
         required: false,
         level: 3,
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -388,10 +352,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         required: false,
         thickness: 2,
         color: '#000000',
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -403,10 +365,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       props: {
         required: false,
         processCode: null,
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -421,10 +381,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         isPlus: false,
         jsCode: '',
         explain: [],
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
     {
@@ -439,10 +397,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         isPlus: false,
         jsCode: '',
         explain: [],
-        formula: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
-        },
+        // 隐藏
+        hidden: '',
       },
     },
   ],

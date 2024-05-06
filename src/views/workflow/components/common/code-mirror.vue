@@ -16,12 +16,6 @@
     EditorView,
   } from '@codemirror/view';
 
-  const props = defineProps({
-    modelValue: {
-      type: String,
-    },
-  });
-
   const editorRef = ref();
   const editorView = ref();
 

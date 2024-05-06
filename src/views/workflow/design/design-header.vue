@@ -76,19 +76,23 @@
 
   // 注册组件
   const formNameRef = ref();
-  // 图标样式
-  const iconStyle = ref({});
 
   /**
    * @description: 表单数据
    */
   const formInfo = computed(() => {
-    if (isNotEmpty(workFlowStore.design.iconColor)) {
-      iconStyle.value = { color: '#fff', backgroundColor: formInfo.value.iconColor };
-    } else {
-      iconStyle.value = {};
-    }
     return workFlowStore.design;
+  });
+
+  /**
+   * @description: 图标样式
+   */
+  const iconStyle = computed(() => {
+    if (isNotEmpty(formInfo.value.iconColor)) {
+      return { color: '#fff', backgroundColor: formInfo.value.iconColor };
+    } else {
+      return {};
+    }
   });
 
   /**

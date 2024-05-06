@@ -60,7 +60,7 @@
         </el-collapse>
       </div>
       <div class="formula-main">
-        <code-mirror ref="codeMirrorRef" v-model="formulaText"></code-mirror>
+        <code-mirror ref="codeMirrorRef"></code-mirror>
         <div class="formula-fun" v-if="currentFunction">
           <div class="fun-title">{{ currentFunction.name }}</div>
           <div class="fun-content">
@@ -77,12 +77,16 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { computed, PropType, ref, watchEffect } from 'vue';
+  import { computed, ref, watchEffect } from 'vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { isDef } from '@/utils';
-  import { formulaItemTree } from '@/utils/workflow';
+  import { isDef, isNotEmpty } from '@/utils';
+  import { analysisFormula, formulaItemTree, restoration } from '@/utils/workflow';
   import { doc as functionList } from '@/utils/formula/doc';
   import CodeMirror from './code-mirror.vue';
+
+  const emits = defineEmits<{
+    'update:formula': [value: string];
+  }>();
 
   const props = defineProps({
     title: {
@@ -90,13 +94,8 @@
       default: '计算公式',
     },
     formula: {
-      type: Object as PropType<{ text: string; value: string }>,
-      default: () => {
-        return {
-          text: '',
-          value: '',
-        };
-      },
+      type: String,
+      default: '',
     },
   });
 
@@ -109,12 +108,12 @@
   const visible = ref(false);
   // 激活折叠
   const activeCollapse = ref('currentForm');
-  // 公式内容
-  const formulaText = ref('');
   // 当前函数
   const currentFunction: any = ref();
   // 过滤条件
   const filterText = ref('');
+  // 扁平化表单组件
+  const flatFormData = ref<WorkComponent.formulaNode[]>([]);
 
   /**
    * @description: 过滤函数
@@ -212,9 +211,11 @@
    * @return {*}
    */
   const onSubmit = () => {
-    // visible.value = false;
+    visible.value = false;
     const editorValue = codeMirrorRef.value.getValue();
-    console.log(editorValue.replace(/\[\[|]]/g, ''));
+    // console.log(editorValue.replace(/\[\[|]]/g, ''));
+    const value = analysisFormula(editorValue, flatFormData.value);
+    emits('update:formula', value);
   };
 
   /**
@@ -250,7 +251,24 @@
   });
 
   /**
-   * @description: 组件数的数据
+   * @description: 扁平化节点
+   * @param {WorkComponent.formulaNode[]} nodes
+   * @return {*}
+   */
+  const flatNodes = (nodes: WorkComponent.formulaNode[]) => {
+    let result: WorkComponent.formulaNode[] = [];
+    nodes.forEach((node) => {
+      if (node.children && node.children.length > 0) {
+        result = result.concat(flatNodes(node.children));
+      } else {
+        result.push(node);
+      }
+    });
+    return result;
+  };
+
+  /**
+   * @description: 组件树的数据
    * @return {*}
    */
   const treeData = computed(() => {
@@ -260,12 +278,20 @@
       isTableList = tableColumnIds.value.indexOf(selectedItemId.value) != -1;
     }
     formulaItemTree(formItems.value, nodes, isTableList);
+    flatFormData.value = isTableList ? flatNodes(nodes) : nodes;
     return nodes;
   });
 
   watchEffect(() => {
     if (treeFunRef.value) {
       treeFunRef.value.filter(filterText.value);
+    }
+  });
+
+  watchEffect(() => {
+    if (codeMirrorRef.value && isNotEmpty(props.formula)) {
+      const label = restoration(props.formula, flatFormData.value);
+      codeMirrorRef.value.setValue(label);
     }
   });
 
