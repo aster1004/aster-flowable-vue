@@ -1,7 +1,10 @@
+import GridLayout from './grid-layout.vue';
+
 import InputText from './input-text.vue';
 
 export default {
   // ------------布局组件-开始------------
+  GridLayout,
   // ------------布局组件-结束------------
 
   // ------------基础组件-开始------------

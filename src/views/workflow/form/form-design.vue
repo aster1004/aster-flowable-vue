@@ -39,7 +39,7 @@
     <el-main class="form-main">
       <div class="main-container">
         <div class="main-header">
-          <el-button size="small">
+          <el-button size="small" @click="preview">
             <template #icon>
               <i class="iconfont icon-jiankong !text-xs pr-5px"></i>
             </template>
@@ -97,6 +97,7 @@
         </el-tabs>
       </el-scrollbar>
     </el-aside>
+    <form-preview ref="formPreviewRef" />
   </el-container>
 </template>
 <script setup lang="ts">
@@ -104,8 +105,9 @@
   import { deleteFormComponent, generateFieldId } from '@/utils/workflow';
   import { componentConfigExport } from '@/views/workflow/components/component-config-export';
   import FormProperties from '@/views/workflow/components/form-properties.vue';
-  import formComponentProperties from '@/views/workflow/components/form-component-properties.vue';
-  import formDesignRender from './form-design-render.vue';
+  import FormComponentProperties from '@/views/workflow/components/form-component-properties.vue';
+  import FormDesignRender from './form-design-render.vue';
+  import FormPreview from './form-preview.vue';
   import { ElMessageBox } from 'element-plus';
   import { computed, onMounted, ref } from 'vue';
   import draggable from 'vuedraggable';
@@ -113,6 +115,9 @@
 
   const workFlowStore = useWorkFlowStore();
   const { t } = useI18n();
+
+  // 注册组件
+  const formPreviewRef = ref();
 
   /** 拖拽中 */
   const leftDrag = ref<boolean>(false);
@@ -148,15 +153,10 @@
   };
 
   /**
-
    * @description: 选中组件才显示删除按钮
-
    * @param element
-
    * @return boolean
-
    */
-
   const showCloseBtn = (element: WorkComponent.ComponentConfig) => {
     if (selectedItem.value && selectedItem.value.id === element.id) {
       return true;
@@ -233,6 +233,14 @@
       workFlowStore.selectFormItem = val;
     },
   });
+
+  /**
+   * @description: 表单预览
+   * @return {*}
+   */
+  const preview = () => {
+    formPreviewRef.value.init();
+  };
 
   onMounted(() => {
     rightActiveTab.value = 'form';
@@ -325,13 +333,13 @@
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      height: 36px;
+      height: 40px;
+      padding-top: 5px;
     }
 
     .main-content {
       height: calc(100vh - 120px);
       max-height: calc(100vh - 80px);
-      padding-top: 18px;
 
       .main-component {
         position: relative;

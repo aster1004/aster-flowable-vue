@@ -42,7 +42,9 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       valueType: ValueType.array,
       props: {
         items: [],
-        number: 2,
+        justify: 'start',
+        gutter: 10,
+        cols: '12,12',
       },
     },
     {

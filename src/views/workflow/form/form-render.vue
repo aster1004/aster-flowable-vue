@@ -6,15 +6,23 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div>
+  <div class="form-render">
     <el-form
       :model="_formData"
       :rules="rules"
       :label-position="formInfo.labelPosition"
       :validate-on-rule-change="false"
     >
-      <div v-for="(item, index) in _formItems.value" :key="index">
+      <div v-for="(item, index) in _formItems" :key="index">
         <form-design-render
+          v-if="item.name === 'GridLayout'"
+          v-model:value="_formData"
+          mode="form"
+          :formData="_formData"
+          :formItem="item"
+        />
+        <form-design-render
+          v-else
           v-model:value="_formData[item.id]"
           mode="form"
           :formData="_formData"
@@ -25,7 +33,6 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { flatFormItems } from '@/utils/workflow';
   import { computed, PropType, ref } from 'vue';
   import FormDesignRender from './form-design-render.vue';
 
@@ -53,9 +60,7 @@
   const rules = ref<WorkForm.FormRuleModel>({});
 
   const _formItems = computed(() => {
-    let items = ref<WorkForm.FormItem[]>([]);
-    flatFormItems(props.formItems, items.value);
-    return items;
+    return props.formItems;
   });
 
   const _formData = computed({
@@ -67,4 +72,8 @@
     },
   });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  .form-render {
+    padding: 10px;
+  }
+</style>

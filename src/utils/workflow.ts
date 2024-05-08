@@ -185,7 +185,7 @@ export const evaluateFormula = (expression, data) => {
 export const flatFormItems = (source: WorkForm.FormItem[], target: WorkForm.FormItem[]) => {
   source.forEach((item) => {
     if (item.name === 'GridLayout') {
-      flatFormItems(target, item.props.items);
+      flatFormItems(item.props.items, target);
     } else {
       target.push(item);
     }

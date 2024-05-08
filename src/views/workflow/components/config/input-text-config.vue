@@ -11,6 +11,12 @@
       <el-input v-model="_formItem.id" readonly />
     </el-form-item>
     <el-form-item label="控件名称">
+      <template #label>
+        <div class="flex justify-between">
+          <span>控件名称</span>
+          <span class="text-xs font-normal">单行文本</span>
+        </div>
+      </template>
       <el-input v-model="_formItem.title" />
     </el-form-item>
     <el-form-item>
@@ -53,7 +59,6 @@
 
   // 选中的组件
   const _formItem = computed(() => {
-    console.log(workFlowStore.selectFormItem);
     return workFlowStore.selectFormItem;
   });
 </script>
