@@ -27,8 +27,8 @@
           >
             <template #item="{ element }">
               <div class="left-component">
-                <i :class="[element.icon, '!text-sm', 'mr-3px']"></i>
-                <span class="text-sm">{{ element.title }}</span>
+                <i :class="[element.icon, '!text-xs', 'mr-3px']"></i>
+                <span class="text-xs">{{ element.title }}</span>
               </div>
             </template>
           </draggable>
@@ -41,7 +41,7 @@
         <div class="main-header">
           <el-button size="small">
             <template #icon>
-              <i class="iconfont icon-jiankong !text-sm pr-5px"></i>
+              <i class="iconfont icon-jiankong !text-xs pr-5px"></i>
             </template>
             {{ $t('button.preview') }}
           </el-button>
@@ -252,7 +252,7 @@
   .el-aside {
     box-sizing: border-box;
     flex-shrink: 0;
-    width: var(--el-aside-width, 290px);
+    width: var(--el-aside-width, 280px);
   }
 
   .form-left {
@@ -297,10 +297,9 @@
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      font-size: 14px;
       color: #304265;
-      width: 125px;
-      height: 35px;
+      width: 110px;
+      height: 32px;
       background: #fff;
       border-radius: 5px;
       margin-bottom: 8px;
