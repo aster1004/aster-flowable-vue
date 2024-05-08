@@ -27,8 +27,8 @@
           >
             <template #item="{ element }">
               <div class="left-component">
-                <i :class="[element.icon, '!text-xs', 'mr-3px']"></i>
-                <span class="text-xs">{{ element.title }}</span>
+                <i :class="[element.icon, '!text-sm', 'mr-3px']"></i>
+                <span class="text-sm">{{ element.title }}</span>
               </div>
             </template>
           </draggable>
@@ -41,7 +41,7 @@
         <div class="main-header">
           <el-button size="small">
             <template #icon>
-              <i class="iconfont icon-jiankong !text-xs pr-5px"></i>
+              <i class="iconfont icon-jiankong !text-sm pr-5px"></i>
             </template>
             {{ $t('button.preview') }}
           </el-button>
@@ -68,12 +68,12 @@
               >
                 <template #item="{ element, index }">
                   <div
-                    class="main-component"
+                    class="main-component w-form-item"
                     @click.stop="onSelectComponent(element)"
                     :style="onSelectedComponentStyle(element)"
                   >
                     <form-design-render :form-item="element" mode="design" />
-                    <div class="close">
+                    <div class="close" v-show="showCloseBtn(element)">
                       <i class="iconfont icon-guanbi1" @click="onDeleteComponent(index)"></i>
                     </div>
                   </div>
@@ -148,13 +148,30 @@
   };
 
   /**
+
+   * @description: 选中组件才显示删除按钮
+
+   * @param element
+
+   * @return boolean
+
+   */
+
+  const showCloseBtn = (element: WorkComponent.ComponentConfig) => {
+    if (selectedItem.value && selectedItem.value.id === element.id) {
+      return true;
+    }
+    return false;
+  };
+
+  /**
    * @description: 选中组件样式
    * @param {*} element 组件
    * @return {*}
    */
   const onSelectedComponentStyle = (element: WorkComponent.ComponentConfig) => {
     return selectedItem.value && selectedItem.value.id === element.id
-      ? 'border-left: 4px solid var(--el-color-primary);'
+      ? 'border-left: 4px solid var(--el-color-primary);background: #ecf8ff;'
       : '';
   };
 
@@ -235,7 +252,7 @@
   .el-aside {
     box-sizing: border-box;
     flex-shrink: 0;
-    width: var(--el-aside-width, 270px);
+    width: var(--el-aside-width, 290px);
   }
 
   .form-left {
@@ -280,14 +297,22 @@
       display: flex;
       justify-content: flex-start;
       align-items: center;
-
+      font-size: 14px;
       color: #304265;
-      width: 110px;
-      height: 32px;
-      background: #f4f8fc;
+      width: 125px;
+      height: 35px;
+      background: #fff;
       border-radius: 5px;
       margin-bottom: 8px;
       padding-left: 8px;
+      border: 1px solid #ccc;
+    }
+    .left-component:hover {
+      background-color: #ecf5ff;
+      color: #409eff;
+      cursor: grab;
+      border: 1px solid #409eff;
+      box-shadow: 0px 4px 8px 0px rgba(200, 229, 239, 1);
     }
   }
 
@@ -315,7 +340,7 @@
         padding-right: 20px;
         .close {
           position: absolute;
-          top: -10px;
+          top: 40px;
           right: 0px;
           i {
             font-size: large;
@@ -328,6 +353,16 @@
             }
           }
         }
+      }
+      .main-component:hover {
+        border: 1px dashed #409eff;
+        background: #ecf8ff;
+      }
+      .w-form-item {
+        position: relative;
+        margin: 10px 2px;
+        padding: 8px;
+        border: 1px dashed white;
       }
     }
   }
