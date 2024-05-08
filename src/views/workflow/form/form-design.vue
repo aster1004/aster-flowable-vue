@@ -339,7 +339,7 @@
         padding-right: 20px;
         .close {
           position: absolute;
-          top: 40px;
+          top: 0px;
           right: 0px;
           i {
             font-size: large;
@@ -359,9 +359,15 @@
       }
       .w-form-item {
         position: relative;
-        margin: 10px 2px;
-        padding: 8px;
+        padding: 15px 25px 15px 15px;
+        margin: 5px 2px;
         border: 1px dashed white;
+        .el-form-item--default {
+          margin-bottom: 0px;
+        }
+        .el-form-item {
+          margin-bottom: 0px;
+        }
       }
     }
   }
