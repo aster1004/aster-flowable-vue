@@ -6,12 +6,12 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div v-if="formItem">
+  <div v-if="_formItem">
     <el-form-item label="控件编码">
-      <el-input v-model="formItem.id" readonly />
+      <el-input v-model="_formItem.id" readonly />
     </el-form-item>
     <el-form-item label="控件名称">
-      <el-input v-model="formItem.title" />
+      <el-input v-model="_formItem.title" />
     </el-form-item>
     <el-form-item>
       <template #label>
@@ -23,16 +23,16 @@
       <el-input type="button" model-value="请设置隐藏条件" @click="showFormula" />
     </el-form-item>
     <el-form-item label="默认值">
-      <el-input v-model="formItem.value" />
+      <el-input v-model="_formItem.value" />
     </el-form-item>
     <el-form-item label="提示语">
-      <el-input v-model="formItem.props.placeholder" placeholder="请设置提示语" />
+      <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
     </el-form-item>
     <el-form-item label="必填项">
-      <el-switch v-model="formItem.props.required" />
+      <el-switch v-model="_formItem.props.required" />
     </el-form-item>
 
-    <formula ref="formulaRef" title="隐藏条件" v-model:formula="formItem.props.hidden" />
+    <formula ref="formulaRef" title="隐藏条件" v-model:formula="_formItem.props.hidden" />
   </div>
 </template>
 <script setup lang="ts">
@@ -52,7 +52,8 @@
   };
 
   // 选中的组件
-  const formItem = computed(() => {
+  const _formItem = computed(() => {
+    console.log(workFlowStore.selectFormItem);
     return workFlowStore.selectFormItem;
   });
 </script>

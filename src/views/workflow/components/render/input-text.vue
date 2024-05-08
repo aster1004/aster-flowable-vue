@@ -44,15 +44,13 @@
       type: String as PropType<'design' | 'form' | 'search'>,
       default: 'design',
     },
+    formData: {
+      type: Object as PropType<WorkForm.FormDataModel>,
+      default: {},
+    },
     formItem: {
       type: Object as PropType<WorkComponent.ComponentConfig>,
       default: {},
-    },
-    formData: {
-      type: Object as PropType<WorkForm.FormDataModel>,
-      default: () => {
-        return {};
-      },
     },
   });
 

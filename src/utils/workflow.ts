@@ -67,7 +67,7 @@ export const formulaItemTree = (
 ) => {
   items.forEach((item) => {
     // 若是一行多列则取子组件
-    if (item.name === 'SpanLayout') {
+    if (item.name === 'GridLayout') {
       formulaItemTree(item.props.items, tree);
     } else if (excludeField(item)) {
       // 排除不需要的组件
@@ -146,7 +146,7 @@ export const analysisFormula = (formula: string, formulaNodes: WorkComponent.for
  * @param {WorkComponent.formulaNode[]} formulaNodes 节点数据集
  * @return {*}
  */
-export const restoration = (formula: string, formulaNodes: WorkComponent.formulaNode[]) => {
+export const restorationFormula = (formula: string, formulaNodes: WorkComponent.formulaNode[]) => {
   if (!formula) {
     return formula;
   }
@@ -173,5 +173,21 @@ export const restoration = (formula: string, formulaNodes: WorkComponent.formula
 export const evaluateFormula = (expression, data) => {
   return evaluate(expression, data, {
     evalMode: true,
+  });
+};
+
+/**
+ * @description: 表单项扁平化，获取根节点控件，排除布局控件
+ * @param {WorkForm} source 源表单项
+ * @param {WorkForm} target 目标表单项
+ * @return {*}
+ */
+export const flatFormItems = (source: WorkForm.FormItem[], target: WorkForm.FormItem[]) => {
+  source.forEach((item) => {
+    if (item.name === 'GridLayout') {
+      flatFormItems(target, item.props.items);
+    } else {
+      target.push(item);
+    }
   });
 };

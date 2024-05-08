@@ -9,9 +9,11 @@
   <component
     :is="formItem.name"
     :ref="formItem.id + 'Ref'"
-    v-model:value="formItem.value"
+    v-model:value="_value"
     :mode="mode"
+    :formData="props.formData"
     :formItem="formItem"
+    :tableIndex="tableIndex"
   />
 </template>
 <script lang="ts">
@@ -22,16 +24,37 @@
   });
 </script>
 <script setup lang="ts">
-  import { PropType } from 'vue';
+  import { computed, PropType } from 'vue';
 
+  const emits = defineEmits(['update:value']);
   const props = defineProps({
+    value: {
+      default: null,
+    },
     mode: {
       type: String as PropType<'design' | 'form' | 'search'>,
       default: 'design',
     },
+    formData: {
+      type: Object as PropType<WorkForm.FormDataModel>,
+      default: () => {},
+    },
     formItem: {
       type: Object as PropType<WorkComponent.ComponentConfig>,
       default: {},
+    },
+    tableIndex: {
+      type: Number,
+      default: 0,
+    },
+  });
+
+  const _value = computed({
+    get() {
+      return props.value;
+    },
+    set(val) {
+      emits('update:value', val);
     },
   });
 </script>

@@ -80,7 +80,7 @@
   import { computed, ref, watchEffect } from 'vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { isDef, isNotEmpty } from '@/utils';
-  import { analysisFormula, formulaItemTree, restoration } from '@/utils/workflow';
+  import { analysisFormula, formulaItemTree, restorationFormula } from '@/utils/workflow';
   import { doc as functionList } from '@/utils/formula/doc';
   import CodeMirror from './code-mirror.vue';
 
@@ -290,7 +290,7 @@
 
   watchEffect(() => {
     if (codeMirrorRef.value && isNotEmpty(props.formula)) {
-      const label = restoration(props.formula, flatFormData.value);
+      const label = restorationFormula(props.formula, flatFormData.value);
       codeMirrorRef.value.setValue(label);
     }
   });

@@ -36,7 +36,7 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '一行多列',
-      name: 'SpanLayout',
+      name: 'GridLayout',
       icon: 'iconfont icon-Columns',
       value: [],
       valueType: ValueType.array,
@@ -52,15 +52,18 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.array,
       props: {
+        // 必填
         required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
         showBorder: true,
         rowLayout: true,
         showSummary: false,
         summaryColumns: [],
         maxSize: 0, //最大条数，为0则不限制
         columns: [], //列设置
-        // 隐藏
-        hidden: '',
       },
     },
     {
@@ -109,9 +112,12 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: '',
       valueType: ValueType.string,
       props: {
+        // 必填
         required: false,
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
       },
     },
     {
@@ -121,10 +127,13 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: 0,
       valueType: ValueType.number,
       props: {
+        // 必填
         required: false,
-        precision: 0,
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
+        precision: 0,
       },
     },
     {
@@ -134,11 +143,14 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: 0,
       valueType: ValueType.number,
       props: {
+        // 必填
         required: false,
-        showChinese: true,
-        precision: 0,
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
+        showChinese: true,
+        precision: 0,
       },
     },
     {
@@ -148,11 +160,14 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: '',
       valueType: ValueType.string,
       props: {
+        // 必填
         required: false,
-        expanding: false,
-        options: ['选项1', '选项2'],
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
+        expanding: false,
+        options: ['选项1', '选项2'],
       },
     },
     {
@@ -162,11 +177,14 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.array,
       props: {
+        // 必填
         required: false,
-        expanding: false,
-        options: ['选项1', '选项2'],
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
+        expanding: false,
+        options: ['选项1', '选项2'],
       },
     },
     {
@@ -176,10 +194,13 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: '',
       valueType: ValueType.date,
       props: {
+        // 必填
         required: false,
-        format: 'yyyy-MM-dd',
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
+        format: 'yyyy-MM-dd',
       },
     },
     {
@@ -189,12 +210,15 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.dateRange,
       props: {
+        // 必填
         required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
         placeholder: ['开始时间', '结束时间'],
         format: 'yyyy-MM-dd',
         showLength: false,
-        // 隐藏
-        hidden: '',
       },
     },
     {
@@ -204,12 +228,15 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.array,
       props: {
+        // 必填
         required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
         maxSize: 10, //图片最大大小MB
         maxNumber: 5, //最大上传数量
         enableZip: true, //图片压缩后再上传
-        // 隐藏
-        hidden: '',
       },
     },
     {
@@ -219,13 +246,15 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.array,
       props: {
+        // 必填
         required: false,
-        onlyRead: false, //是否只读，false只能在线预览，true可以下载
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
         maxSize: 100, //文件最大大小MB
         maxNumber: 10, //最大上传数量
         fileTypes: [], //限制文件上传类型
-        // 隐藏
-        hidden: '',
       },
     },
     {
@@ -235,12 +264,15 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.user,
       props: {
+        // 必填
         required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
         multiple: false,
         expansion: false,
         options: [],
-        // 隐藏
-        hidden: '',
       },
     },
     {
@@ -250,12 +282,15 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.dept,
       props: {
+        // 必填
         required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
         multiple: false,
         expansion: false,
         options: [],
-        // 隐藏
-        hidden: '',
       },
     },
     {
@@ -265,14 +300,17 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: 0,
       valueType: ValueType.number,
       props: {
+        // 必填
         required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
         color: '#f0a732',
         max: 5,
         showScore: true,
         enableHalf: false,
         type: 'star',
-        // 隐藏
-        hidden: '',
       },
     },
   ],
@@ -291,10 +329,13 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: '',
       valueType: ValueType.string,
       props: {
+        // 必填
         required: false,
-        rules: [],
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
+        rules: [],
       },
     },
     {
@@ -304,7 +345,12 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: {},
       valueType: ValueType.object,
       props: {
+        // 必填
         required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
         // 关联流程
         dynamicData: [],
         dynamicName: [],
@@ -313,8 +359,6 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
           showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
           calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
         },
-        // 隐藏
-        hidden: '',
       },
     },
     {
@@ -324,9 +368,12 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: {},
       valueType: ValueType.object,
       props: {
+        // 必填
         required: false,
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
       },
     },
     {
@@ -336,10 +383,13 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: '',
       valueType: ValueType.string,
       props: {
+        // 必填
         required: false,
-        level: 3,
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
+        level: 3,
       },
     },
     {
@@ -349,11 +399,14 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: '',
       valueType: ValueType.string,
       props: {
+        // 必填
         required: false,
-        thickness: 2,
-        color: '#000000',
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
+        thickness: 2,
+        color: '#000000',
       },
     },
     {
@@ -363,10 +416,13 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.array,
       props: {
+        // 必填
         required: false,
-        processCode: null,
         // 隐藏
         hidden: '',
+        // 只读
+        readonly: false,
+        processCode: null,
       },
     },
     {
@@ -376,13 +432,16 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: 0,
       valueType: ValueType.number,
       props: {
-        precision: 0,
+        // 必填
         required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
+        precision: 0,
         isPlus: false,
         jsCode: '',
         explain: [],
-        // 隐藏
-        hidden: '',
       },
     },
     {
@@ -392,13 +451,16 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: '',
       valueType: ValueType.string,
       props: {
-        precision: 0,
+        // 必填
         required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
+        precision: 0,
         isPlus: false,
         jsCode: '',
         explain: [],
-        // 隐藏
-        hidden: '',
       },
     },
   ],
