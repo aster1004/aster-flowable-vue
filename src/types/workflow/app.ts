@@ -31,6 +31,7 @@ export class PlaceholderWidget extends WidgetType {
     elt.style.cssText = `
       border: 1px solid ${DEFAULT_PRIMARY};
       border-radius: 4px;
+      margin: 5px 2px;
       padding: 5px;`;
     elt.textContent = this.name;
     return elt;
