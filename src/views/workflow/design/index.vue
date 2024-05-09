@@ -12,15 +12,20 @@
     </el-header>
     <el-main class="design-main">
       <form-design ref="formDesignRef" v-show="activeMenu === 'formDesign'" />
+      <process-design ref="processDesignRef" v-show="activeMenu === 'processDesign'" />
     </el-main>
   </el-container>
 </template>
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, nextTick } from 'vue';
   import DesignHeader from './design-header.vue';
   import FormDesign from '../form/form-design.vue';
+  import ProcessDesign from '../process/process-design.vue';
 
   const activeMenu = ref('formDesign');
+
+  // 流程设计
+  const processDesignRef = ref();
 
   /**
    * @description 保存
@@ -33,6 +38,9 @@
    * @description 发布
    */
   const publish = () => {
+    nextTick(() => {
+      processDesignRef.value.jsonValue();
+    });
     console.log('publish');
   };
 </script>
