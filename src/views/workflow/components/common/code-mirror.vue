@@ -45,7 +45,7 @@
 
   const baseTheme = EditorView.baseTheme({
     '.cm-line': {
-      padding: '8px 10px',
+      padding: '0px 10px',
       display: 'flex',
       flexWrap: 'wrap',
       alignItems: 'center',
@@ -60,9 +60,6 @@
       editorView.value = new EditorView({
         state: EditorState.create({
           extensions: [placeholders, baseTheme, basicSetup, javascript(), EditorView.lineWrapping],
-          options: {
-            lineWrapping: true,
-          },
         }),
         parent: editorRef.value,
       });
@@ -103,9 +100,9 @@
         insert: text,
       },
       // 光标位置
-      selection: {
-        anchor: from + 4 + val.length,
-      },
+      // selection: {
+      //   anchor: from + 4 + val.length,
+      // },
     });
   };
 

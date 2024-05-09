@@ -155,10 +155,14 @@
    * @param type
    */
   const markText = (from, to, label, type) => {
+    console.log(from, to, label, type);
+    console.log(codeMirrorRef.value.getCursor());
     if (type == 'variable') {
       codeMirrorRef.value.markText(from, to, label, true);
+      codeMirrorRef.value.setCursor(to + 4); //光标位置
     } else {
       codeMirrorRef.value.markText(from, to, label);
+      codeMirrorRef.value.setCursor(to + 2); //光标位置
     }
   };
 
@@ -180,7 +184,10 @@
       codeMirrorRef.value.setCursor(to - 1);
     } else if (typeof value === 'string') {
       codeMirrorRef.value.replaceSelection(value);
+      const to = codeMirrorRef.value.getCursor();
+      codeMirrorRef.value.setCursor(to); //光标位置
     }
+
     codeMirrorRef.value.focus();
   };
 
