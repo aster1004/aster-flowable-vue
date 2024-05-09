@@ -171,7 +171,7 @@
    */
   const onSelectedComponentStyle = (element: WorkComponent.ComponentConfig) => {
     return selectedItem.value && selectedItem.value.id === element.id
-      ? 'border-left: 4px solid var(--el-color-primary);background: #ecf8ff;'
+      ? 'border-left: 4px solid var(--el-color-primary);background: var(--el-menu-active-bg-color);'
       : '';
   };
 
@@ -315,11 +315,11 @@
       border: 1px solid #ccc;
     }
     .left-component:hover {
-      background-color: #ecf5ff;
-      color: #409eff;
+      background-color: var(--el-menu-active-bg-color);
+      color: var(--el-menu-active-color);
       cursor: grab;
-      border: 1px solid #409eff;
-      box-shadow: 0px 4px 8px 0px rgba(200, 229, 239, 1);
+      border: 1px solid var(--el-menu-active-color);
+      box-shadow: 0px 3px 6px 0px var(--el-color-primary-light-6);
     }
   }
 
@@ -356,14 +356,14 @@
             padding: 5px;
 
             &:hover {
-              color: #f56c6c;
+              color: $primary-color;
             }
           }
         }
       }
       .main-component:hover {
-        border: 1px dashed #409eff;
-        background: #ecf8ff;
+        border: 1px dashed var(--el-menu-active-color);
+        background: var(--el-menu-active-bg-color);
       }
       .w-form-item {
         position: relative;

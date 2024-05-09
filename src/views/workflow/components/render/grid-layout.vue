@@ -91,7 +91,7 @@
    */
   const onSelectedComponentStyle = (element: WorkComponent.ComponentConfig) => {
     return _selectedItem.value && _selectedItem.value.id === element.id
-      ? 'border-left: 4px solid var(--el-color-primary);background: #ecf8ff;'
+      ? 'border-left: 4px solid var(--el-color-primary);background: var(--el-menu-active-bg-color);'
       : '';
   };
 
@@ -179,7 +179,7 @@
   .grid-layout {
     min-height: 50px;
     margin-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid #e4e4e4;
   }
 
   .grid-component {
@@ -197,14 +197,14 @@
         padding: 5px;
 
         &:hover {
-          color: #f56c6c;
+          color: $primary-color;
         }
       }
     }
   }
   .grid-component:hover {
-    border: 1px dashed #409eff;
-    background: #ecf8ff;
+    border: 1px dashed var(--el-menu-active-color);
+    background: var(--el-menu-active-bg-color);
   }
   .w-form-item {
     position: relative;
