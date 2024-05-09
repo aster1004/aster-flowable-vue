@@ -1,10 +1,3 @@
-/*
- * @Date: 2022-08-25 14:06:59
- * @LastEditors: StavinLi 495727881@qq.com
- * @LastEditTime: 2023-03-29 15:52:57
- * @FilePath: /Workflow-Vue3/src/api/index.js
- */
-
 // import http from '@/config/axios';
 import request from '@/config/axios';
 import jsonData from '@/data/data.json';
@@ -18,8 +11,8 @@ let baseUrl = import.meta.env.BASE_URL;
  * @param {*} data
  * @returns
  */
-export function getRoles(data) {
-  console.info(jsonData);
+export function getRoles(data: any) {
+  console.info(data);
   return jsonData;
 }
 
@@ -28,7 +21,8 @@ export function getRoles(data) {
  * @param {*} data
  * @returns
  */
-export function getDepartments(data) {
+export function getDepartments(data: any) {
+  console.info(data);
   return departments;
 }
 
@@ -37,7 +31,8 @@ export function getDepartments(data) {
  * @param {*} data
  * @returns
  */
-export function getEmployees(data) {
+export function getEmployees(data: any) {
+  console.info(data);
   return employees;
 }
 /**
@@ -45,7 +40,8 @@ export function getEmployees(data) {
  * @param {*} data
  * @returns
  */
-export function getConditions(data) {
+export function getConditions(data: any) {
+  console.info(data);
   return conditions;
 }
 
@@ -54,7 +50,8 @@ export function getConditions(data) {
  * @param {*} data
  * @returns
  */
-export function getWorkFlowData(data) {
+export function getWorkFlowData(data: any) {
+  console.info(data);
   console.info(jsonData);
   return jsonData;
 }
@@ -63,6 +60,6 @@ export function getWorkFlowData(data) {
  * @param {*} data
  * @returns
  */
-export function setWorkFlowData(data) {
+export function setWorkFlowData(data: any) {
   return request.post(``, data);
 }

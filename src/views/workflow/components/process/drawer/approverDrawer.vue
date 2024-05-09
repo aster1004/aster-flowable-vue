@@ -37,11 +37,14 @@
         <div class="approver_manager" v-if="approverConfig.settype == 2">
           <p>
             <span>发起人的：</span>
-            <select v-model="approverConfig.directorLevel">
-              <option v-for="item in directorMaxLevel" :value="item" :key="item"
-                >{{ item == 1 ? '直接' : '第' + item + '级' }}主管</option
-              >
-            </select>
+            <el-select v-model="approverConfig.directorLevel">
+              <el-option
+                v-for="item in directorMaxLevel"
+                :value="item"
+                :key="item"
+                :label="item == 1 ? '直接主管' : '第' + item + '级主管'"
+              />
+            </el-select>
           </p>
           <p class="tip">找不到主管时，由上级主管代审批</p>
         </div>
@@ -89,11 +92,14 @@
           <p>审批终点</p>
           <p style="padding-bottom: 20px">
             <span>发起人的：</span>
-            <select v-model="approverConfig.examineEndDirectorLevel">
-              <option v-for="item in directorMaxLevel" :value="item" :key="item"
-                >{{ item == 1 ? '最高' : '第' + item }}层级主管</option
-              >
-            </select>
+            <el-select v-model="approverConfig.examineEndDirectorLevel">
+              <el-option
+                v-for="item in directorMaxLevel"
+                :value="item"
+                :key="item"
+                :label="item == 1 ? '最高主管' : '第' + item + '层级主管'"
+              />
+            </el-select>
           </p>
         </div>
         <div
@@ -125,10 +131,9 @@
           </el-radio-group>
         </div>
       </div>
-      <div class="demo-drawer__footer clear">
-        <el-button type="primary" @click="saveApprover">确 定</el-button>
-        <el-button @click="closeDrawer">取 消</el-button>
-      </div>
+      <!-- <div class="demo-drawer__footer clear">
+        
+      </div> -->
       <employees-dialog
         v-model:visible="approverVisible"
         :data="checkedList"
@@ -140,6 +145,10 @@
         @change="sureRoleApprover"
       />
     </div>
+    <template #footer>
+      <el-button type="primary" @click="saveApprover">确 定</el-button>
+      <el-button @click="closeDrawer">取 消</el-button>
+    </template>
   </el-drawer>
 </template>
 <script setup>

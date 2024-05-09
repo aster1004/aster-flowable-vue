@@ -43,11 +43,11 @@
   import { ElMessage } from 'element-plus';
   import { getWorkFlowData, setWorkFlowData } from '@/api/workflow/index';
   import { useStore } from '@/stores/index';
-  import errorDialog from '@/components/dialog/errorDialog.vue';
-  import promoterDrawer from '@/components/drawer/promoterDrawer.vue';
-  import approverDrawer from '@/components/drawer/approverDrawer.vue';
-  import copyerDrawer from '@/components/drawer/copyerDrawer.vue';
-  import conditionDrawer from '@/components/drawer/conditionDrawer.vue';
+  import errorDialog from '@/views/workflow/components/process/dialog/errorDialog.vue';
+  import promoterDrawer from '@/views/workflow/components/process/drawer/promoterDrawer.vue';
+  import approverDrawer from '@/views/workflow/components/process/drawer/approverDrawer.vue';
+  import copyerDrawer from '@/views/workflow/components/process/drawer/copyerDrawer.vue';
+  import conditionDrawer from '@/views/workflow/components/process/drawer/conditionDrawer.vue';
   let { setTableId, setIsTried } = useStore();
 
   let tipList = ref([]);

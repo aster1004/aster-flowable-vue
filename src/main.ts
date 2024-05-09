@@ -53,8 +53,8 @@ setupElementPlus(app);
 setupRouter(app);
 app.use(I18n);
 app.use(VXETable);
-import nodeWrap from '@/components/process/nodeWrap.vue';
+import nodeWrap from '@/views/workflow/components/process/process/nodeWrap.vue';
 app.component('nodeWrap', nodeWrap); //初始化组件
-import addNode from '@/components/process/addNode.vue';
+import addNode from '@/views/workflow/components/process/process/addNode.vue';
 app.component('addNode', addNode); //初始化组件
 app.mount('#app');

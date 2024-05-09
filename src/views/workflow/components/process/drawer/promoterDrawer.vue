@@ -19,10 +19,6 @@
         <p>{{ $func.arrToStr(flowPermission) || '所有人' }}</p>
         <el-button type="primary" @click="addPromoter">添加/修改发起人</el-button>
       </div>
-      <div class="demo-drawer__footer clear">
-        <el-button type="primary" @click="savePromoter">确 定</el-button>
-        <el-button @click="closeDrawer">取 消</el-button>
-      </div>
       <employees-dialog
         :isDepartment="true"
         v-model:visible="promoterVisible"
@@ -30,6 +26,10 @@
         @change="surePromoter"
       />
     </div>
+    <template #footer>
+      <el-button type="primary" @click="savePromoter">确 定</el-button>
+      <el-button @click="closeDrawer">取 消</el-button>
+    </template>
   </el-drawer>
 </template>
 <script setup>

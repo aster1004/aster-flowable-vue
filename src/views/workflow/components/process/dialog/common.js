@@ -1,10 +1,3 @@
-/*
- * @Date: 2022-08-29 14:00:42
- * @LastEditors: StavinLi 495727881@qq.com
- * @LastEditTime: 2023-03-29 15:53:05
- * @FilePath: /Workflow-Vue3/src/components/dialog/common.js
- */
-
 import { getRoles, getDepartments, getEmployees } from '@/api/workflow/index';
 import $func from '@/utils/fun.js';
 import { ref } from 'vue';

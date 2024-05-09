@@ -16,12 +16,15 @@
     :before-close="saveCondition"
   >
     <template #header="{ titleId, titleClass }">
-      <h3 :id="titleId" :class="titleClass">条件设置</h3>
-      <select v-model="conditionConfig.priorityLevel" class="priority_level">
-        <option v-for="item in conditionsConfig.conditionNodes.length" :value="item" :key="item"
-          >优先级{{ item }}</option
-        >
-      </select>
+      <h3 :id="titleId" :class="titleClass" style="font-size: 17px">条件设置</h3>
+      <el-select v-model="conditionConfig.priorityLevel" class="priority_level">
+        <el-option
+          v-for="item in conditionsConfig.conditionNodes.length"
+          :value="item"
+          :key="item"
+          :label="'优先级' + item"
+        />
+      </el-select>
     </template>
     <div class="demo-drawer__content">
       <div class="condition_content drawer_content">
@@ -156,11 +159,11 @@
         @change="sureConditionRole"
         :isDepartment="true"
       />
-      <div class="demo-drawer__footer clear">
-        <el-button type="primary" @click="saveCondition">确 定</el-button>
-        <el-button @click="closeDrawer">取 消</el-button>
-      </div>
     </div>
+    <template #footer>
+      <el-button type="primary" @click="saveCondition">确 定</el-button>
+      <el-button @click="closeDrawer">取 消</el-button>
+    </template>
   </el-drawer>
 </template>
 <script setup>
@@ -348,12 +351,12 @@
       position: absolute;
       top: 11px;
       right: 30px;
-      width: 100px;
-      height: 32px;
+      width: 200px;
+      /* height: 32px;
       background: rgba(255, 255, 255, 1);
       border-radius: 4px;
       border: 1px solid rgba(217, 217, 217, 1);
-      font-size: 12px;
+      font-size: 12px; */
     }
 
     .condition_content {

@@ -5,26 +5,26 @@
         <div class="add-node-popover-body">
           <a class="add-node-popover-item approver" @click="addType(1)">
             <div class="item-wrapper">
-              <span class="iconfont"></span>
+              <span class="iconfont icon-shenpi"></span>
             </div>
             <p>审批人</p>
           </a>
           <a class="add-node-popover-item notifier" @click="addType(2)">
             <div class="item-wrapper">
-              <span class="iconfont"></span>
+              <span class="iconfont icon-chaosongwode"></span>
             </div>
             <p>抄送人</p>
           </a>
           <a class="add-node-popover-item condition" @click="addType(4)">
             <div class="item-wrapper">
-              <span class="iconfont"></span>
+              <span class="iconfont icon-bumen"></span>
             </div>
             <p>条件分支</p>
           </a>
         </div>
         <template #reference>
           <button class="btn" type="button">
-            <span class="iconfont"></span>
+            <span class="iconfont icon-xinzeng"></span>
           </button>
         </template>
       </el-popover>
