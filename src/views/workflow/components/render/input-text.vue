@@ -33,6 +33,7 @@
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
   import { computed, PropType } from 'vue';
+  import mittBus from '@/utils/mittBus';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -70,11 +71,20 @@
    * @description: 是否隐藏, true-隐藏
    */
   const _hidden = computed(() => {
+    let r = false;
     if (props.formItem.props.hidden) {
-      const h = evaluateFormula(props.formItem.props.hidden, props.formData);
-      return h;
+      r = evaluateFormula(props.formItem.props.hidden, props.formData);
     }
-    return false;
+    if (props.formItem.props.required) {
+      // 调用form-render的方法
+      mittBus.emit('changeFormRules', {
+        hidden: r,
+        fieldId: props.formItem.id,
+        fieldName: props.formItem.title,
+        trigger: 'blur',
+      });
+    }
+    return r;
   });
 </script>
 <style scoped lang="scss"></style>

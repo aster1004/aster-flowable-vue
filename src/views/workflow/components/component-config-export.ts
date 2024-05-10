@@ -27,11 +27,12 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       title: '分组标题',
       name: 'GridTitle',
       icon: 'iconfont icon-title',
-      value: {},
+      value: [],
       valueType: ValueType.object,
       props: {
-        title: '分组标题',
-        alignment: 'left',
+        items: [],
+        fontSize: 'text-lg',
+        fontWeight: 'font-600',
       },
     },
     {

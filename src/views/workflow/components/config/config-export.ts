@@ -1,9 +1,11 @@
+import GridTitle from './grid-title-config.vue';
 import GridLayout from './grid-layout-config.vue';
 
 import InputText from './input-text-config.vue';
 
 export default {
   // ------------布局组件-开始------------
+  GridTitle,
   GridLayout,
   // ------------布局组件-结束------------
 

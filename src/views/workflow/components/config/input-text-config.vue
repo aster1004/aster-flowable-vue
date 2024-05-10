@@ -12,7 +12,7 @@
     </el-form-item>
     <el-form-item label="控件名称">
       <template #label>
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
           <span>控件名称</span>
           <span class="text-xs font-normal">单行文本</span>
         </div>
@@ -29,7 +29,15 @@
       <el-input type="button" model-value="请设置隐藏条件" @click="showFormula" />
     </el-form-item>
     <el-form-item label="默认值">
-      <el-input v-model="_formItem.value" />
+      <el-select v-model="valueType">
+        <el-option label="计算公式" value="formula" />
+        <el-option label="数据联动" value="data" />
+      </el-select>
+      <el-input @click="showDefaultValue">
+        <template #suffix>
+          <i class="iconfont icon-xinzeng" style="color: var(--el-color-primary)" />
+        </template>
+      </el-input>
     </el-form-item>
     <el-form-item label="提示语">
       <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
@@ -39,6 +47,7 @@
     </el-form-item>
 
     <formula ref="formulaRef" title="隐藏条件" v-model:formula="_formItem.props.hidden" />
+    <formula ref="defaultValueRef" title="默认值" v-model:formula="defaultValue" />
   </div>
 </template>
 <script setup lang="ts">
@@ -48,13 +57,26 @@
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
+
+  // 默认值
+  const defaultValue = ref<string>('');
+  const valueType = ref<string>('formula');
+
   // 注册组件
   const formulaRef = ref();
+  const defaultValueRef = ref();
+
   /**
    * @description: 显示公式
    */
   const showFormula = () => {
     formulaRef.value.init();
+  };
+  /**
+   * @description: 显示默认值
+   */
+  const showDefaultValue = () => {
+    defaultValueRef.value.init();
   };
 
   // 选中的组件

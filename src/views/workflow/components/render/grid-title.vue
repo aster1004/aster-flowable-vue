@@ -1,55 +1,67 @@
+<!--
+ * @Author: Aster lipian1004@163.com
+ * @Date: 2024-05-10 14:54:53
+ * @FilePath: \aster-flowable-vue\src\views\workflow\components\render\grid-title.vue
+ * @Description: 分组标题配置
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
+-->
 <template>
   <div v-if="mode === 'design'">
-    <div class="flex justify-between items-center" style="color: #606266">
-      <span class="text-sm">分栏布局</span>
-      <span class="text-xs" v-show="_items.length === 0">拖入左侧控件到下方方框内</span>
-    </div>
-    <draggable
-      class="grid-layout"
-      item-key="id"
-      :list="_items"
-      group="form"
-      @start="layoutDrag = true"
-      @end="layoutDrag = false"
-      :options="{
-        animation: 300,
-        chosenClass: 'choose',
-        sort: true,
-      }"
-    >
-      <template #item="{ element, index }">
-        <div
-          class="grid-component grid-item"
-          @click.stop="onSelectComponent(element)"
-          :style="onSelectedComponentStyle(element)"
-        >
-          <form-design-render :form-item="element" :mode="mode" />
-          <div class="close" v-show="showCloseBtn(element)">
-            <i class="iconfont icon-guanbi1" @click="onDeleteComponent(index)"></i>
+    <el-collapse v-model="activeNames" accordion>
+      <el-collapse-item :name="formItem.id">
+        <template #title>
+          <div class="flex justify-between items-center" style="width: 90%; color: #606266">
+            <span
+              :class="[
+                formItem.props.fontSize,
+                formItem.props.fontWeight,
+                formItem.props.fontWeight,
+              ]"
+            >
+              {{ formItem.title }}
+            </span>
+            <span class="text-xs" v-show="_items.length === 0">拖入左侧控件到下方方框内</span>
           </div>
-        </div>
-      </template>
-    </draggable>
+        </template>
+
+        <draggable
+          class="grid-title"
+          item-key="id"
+          :list="_items"
+          group="form"
+          @start="titleDrag = true"
+          @end="titleDrag = false"
+          :options="{
+            animation: 300,
+            chosenClass: 'choose',
+            sort: true,
+          }"
+        >
+          <template #item="{ element, index }">
+            <div
+              class="grid-component grid-item"
+              @click.stop="onSelectComponent(element)"
+              :style="onSelectedComponentStyle(element)"
+            >
+              <form-design-render :form-item="element" :mode="mode" />
+              <div class="close" v-show="showCloseBtn(element)">
+                <i class="iconfont icon-guanbi1" @click="onDeleteComponent(index)"></i>
+              </div>
+            </div>
+          </template>
+        </draggable>
+      </el-collapse-item>
+    </el-collapse>
   </div>
-  <div v-else-if="mode == 'form'">
-    <el-row :gutter="formItem.props.gutter" :justify="formItem.props.justify">
-      <el-col v-for="(item, i) in _items" :key="i" :span="_span(i)">
-        <form-design-render
-          v-model:value="_value[item.id]"
-          :form-item="item"
-          :form-data="_value"
-          :mode="mode"
-        />
-      </el-col>
-    </el-row>
-  </div>
+  <div v-else-if="mode == 'form'"> </div>
+  <div v-else> </div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { deleteFormComponent } from '@/utils/workflow';
   import FormDesignRender from '../../form/form-design-render.vue';
   import { ElMessageBox } from 'element-plus';
-  import { computed, PropType, ref } from 'vue';
+  import { computed, onMounted, PropType, ref } from 'vue';
   import draggable from 'vuedraggable';
   import { useI18n } from 'vue-i18n';
 
@@ -73,7 +85,9 @@
   });
 
   // 拖拽
-  const layoutDrag = ref<boolean>(false);
+  const titleDrag = ref<boolean>(false);
+  // 活动面板
+  const activeNames = ref<string>('');
 
   /**
    * @description: 选中组件
@@ -126,19 +140,6 @@
   };
 
   /**
-   * @description: 计算栅格占据的列数
-   * @param {*} index
-   * @return {*}
-   */
-  const _span = (index: number) => {
-    const cols: number[] = props.formItem.props.cols
-      ? props.formItem.props.cols.split(',')
-      : [12, 12];
-    const len = cols.length;
-    return Number(cols[index % len]);
-  };
-
-  /**
    * @description: 子组件
    * @return {*}
    */
@@ -174,9 +175,15 @@
       emits('update:value', val);
     },
   });
+
+  onMounted(() => {
+    if (props.formItem.id) {
+      activeNames.value = props.formItem.id;
+    }
+  });
 </script>
 <style scoped lang="scss">
-  .grid-layout {
+  .grid-title {
     min-height: 50px;
     margin-top: 5px;
     border: 1px solid #e4e4e4;
