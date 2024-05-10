@@ -6,7 +6,8 @@
   import { basicSetup } from 'codemirror';
   import { EditorState } from '@codemirror/state';
   import { javascript } from '@codemirror/lang-javascript';
-  import { PlaceholderWidget } from '@/types/workflow/app';
+  import { placeholdersPlugin } from '@/views/workflow/components/common/placeholders';
+  import { functionPlugin } from '@/views/workflow/components/common/functions';
   import {
     Decoration,
     DecorationSet,
@@ -19,47 +20,39 @@
   const editorRef = ref();
   const editorView = ref();
 
-  const placeholderMatcher = new MatchDecorator({
-    regexp: /\[\[(.+?)\]\]/g,
-    decoration: (match) => Decoration.replace({ widget: new PlaceholderWidget(match[1]) }),
-  });
-
-  const placeholders = ViewPlugin.fromClass(
-    class {
-      placeholders: DecorationSet;
-      constructor(view: EditorView) {
-        this.placeholders = placeholderMatcher.createDeco(view);
-      }
-      update(update: ViewUpdate) {
-        this.placeholders = placeholderMatcher.updateDeco(update, this.placeholders);
-      }
-    },
-    {
-      decorations: (v) => v.placeholders,
-      provide: (plugin) =>
-        EditorView.atomicRanges.of((view) => {
-          return view.plugin(plugin)?.placeholders || Decoration.none;
-        }),
-    },
-  );
-
   const baseTheme = EditorView.baseTheme({
-    '.cm-line': {
-      padding: '0px 10px',
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignItems: 'center',
+    '&.cm-editor': {
+      fontSize: '15px',
+    },
+    '&.cm-editor.cm-focused': {
+      outline: 'none',
+    },
+    '&.cm-editor .cm-gutterElement': {
+      lineHeight: '28px',
+    },
+    '&.cm-editor .cm-line': {
+      lineHeight: '28px',
+    },
+    '&.cm-editor .ͼt .ͼs': {
+      color: '#d73a49',
     },
   });
-
   const initEditor = () => {
     if (typeof editorView.value !== 'undefined') {
       editorView.value.destroy();
     }
+
     if (editorRef.value) {
       editorView.value = new EditorView({
         state: EditorState.create({
-          extensions: [placeholders, baseTheme, basicSetup, javascript(), EditorView.lineWrapping],
+          extensions: [
+            placeholdersPlugin(),
+            functionPlugin(),
+            baseTheme,
+            basicSetup,
+            javascript(),
+            EditorView.lineWrapping,
+          ],
         }),
         parent: editorRef.value,
       });
@@ -91,19 +84,35 @@
   const replaceSelection = (val) => {
     editorView.value.dispatch(editorView.value.state.replaceSelection(val));
   };
-  const markText = (from: number, to: number, val: string, type = false) => {
-    const text = type ? `[[${val}]]` : `${val}`;
-    editorView.value.dispatch({
-      changes: {
-        from: from,
-        to: to,
-        insert: text,
-      },
-      // 光标位置
-      // selection: {
-      //   anchor: from + 4 + val.length,
-      // },
-    });
+  const markText = (from: number, to: number, val: string, type: string) => {
+    console.log(from, to);
+    if (type == 'variable') {
+      const text = `[[${val}]] `;
+      editorView.value.dispatch({
+        changes: {
+          from: from,
+          to: to,
+          insert: text,
+        },
+        // 光标位置
+        selection: {
+          anchor: from + text.length,
+        },
+      });
+    } else {
+      const text = `${val}()`;
+      editorView.value.dispatch({
+        changes: {
+          from: from,
+          to: to,
+          insert: text,
+        },
+        // 光标位置
+        selection: {
+          anchor: from + text.length - 1,
+        },
+      });
+    }
   };
 
   onMounted(() => {

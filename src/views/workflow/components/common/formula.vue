@@ -148,25 +148,6 @@
   };
 
   /**
-   * @description: 往编辑器添加标签
-   * @param from
-   * @param to
-   * @param label
-   * @param type
-   */
-  const markText = (from, to, label, type) => {
-    console.log(from, to, label, type);
-    console.log(codeMirrorRef.value.getCursor());
-    if (type == 'variable') {
-      codeMirrorRef.value.markText(from, to, label, true);
-      codeMirrorRef.value.setCursor(to + 4); //光标位置
-    } else {
-      codeMirrorRef.value.markText(from, to, label);
-      codeMirrorRef.value.setCursor(to + 2); //光标位置
-    }
-  };
-
-  /**
    * @description 插入内容
    * @param value 值
    * @param type 类型
@@ -176,18 +157,16 @@
     if (type === 'variable') {
       codeMirrorRef.value.replaceSelection(value);
       const to = codeMirrorRef.value.getCursor();
-      markText(from, to, value, type);
+      codeMirrorRef.value.markText(from, to, value, type);
     } else if (type === 'func') {
       codeMirrorRef.value.replaceSelection(`${value}()`);
       const to = codeMirrorRef.value.getCursor();
-      markText(from, to - 2, value, type);
-      codeMirrorRef.value.setCursor(to - 1);
+      codeMirrorRef.value.markText(from, to, value, type);
     } else if (typeof value === 'string') {
       codeMirrorRef.value.replaceSelection(value);
       const to = codeMirrorRef.value.getCursor();
       codeMirrorRef.value.setCursor(to); //光标位置
     }
-
     codeMirrorRef.value.focus();
   };
 
