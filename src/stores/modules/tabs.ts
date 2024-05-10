@@ -86,5 +86,6 @@ export const useTabsStore = defineStore({
       });
     },
   },
+  // 持久化配置
   persist: piniaPersistConfig('aster-tabs'),
 });

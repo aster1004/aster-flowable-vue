@@ -7,7 +7,6 @@
  */
 import { defineStore } from 'pinia';
 import { WorkflowState } from '@/stores/interface/workflow';
-import piniaPersistConfig from '@/config/piniaPersist';
 
 export const useWorkFlowStore = defineStore({
   id: 'aster-workflow',
@@ -32,5 +31,4 @@ export const useWorkFlowStore = defineStore({
       this.isEdit = edit;
     },
   },
-  persist: piniaPersistConfig('aster-workflow'),
 });

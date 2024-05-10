@@ -28,5 +28,6 @@ export const useAppStore = defineStore({
       this.secretKey = data || '';
     },
   },
+  // 持久化配置
   persist: piniaPersistConfig('aster-app'),
 });

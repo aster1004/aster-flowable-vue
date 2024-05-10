@@ -40,5 +40,6 @@ export const useUserStore = defineStore({
       this.userInfo = userInfo;
     },
   },
+  // 持久化配置
   persist: piniaPersistConfig('aster-user'),
 });
