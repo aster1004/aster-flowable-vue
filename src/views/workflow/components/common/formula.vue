@@ -80,9 +80,15 @@
   import { computed, ref, watchEffect } from 'vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { isDef, isNotEmpty } from '@/utils';
-  import { analysisFormula, formulaItemTree, restorationFormula } from '@/utils/workflow';
+  import {
+    analysisFormula,
+    formulaValidate,
+    formulaItemTree,
+    restorationFormula,
+  } from '@/utils/workflow';
   import { doc as functionList } from '@/utils/formula/doc';
   import CodeMirror from './code-mirror.vue';
+  import { ElMessage } from 'element-plus';
 
   const emits = defineEmits<{
     'update:formula': [value: string];
@@ -197,11 +203,18 @@
    * @return {*}
    */
   const onSubmit = () => {
-    visible.value = false;
     const editorValue = codeMirrorRef.value.getValue();
-    // console.log(editorValue.replace(/\[\[|]]/g, ''));
     const value = analysisFormula(editorValue, flatFormData.value);
-    emits('update:formula', value);
+    console.log('---公式为：', value);
+    // 公式校验,校验通过返回true，校验失败返回错误信息
+    const analysisResult = formulaValidate(value);
+    console.log('---公式解析结果：', analysisResult);
+    if (analysisResult === true) {
+      visible.value = false;
+      emits('update:formula', value);
+    } else {
+      ElMessage.warning('公式校验失败：' + analysisResult);
+    }
   };
 
   /**

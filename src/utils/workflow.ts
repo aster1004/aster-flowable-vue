@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 
-import { evaluate } from './formula';
+import { evaluate, parse } from './formula';
 
 /**
  * @description: 生成字段id
@@ -158,7 +158,7 @@ export const restorationFormula = (formula: string, formulaNodes: WorkComponent.
       node.label.indexOf('明细表') == -1 &&
       formula.indexOf(node.value) != -1
     ) {
-      result = result.replace(node.value, '[[' + node.label + ']]');
+      result = result.replaceAll(node.value, '[[' + node.label + ']]');
     }
   });
   return result;
@@ -174,6 +174,28 @@ export const evaluateFormula = (expression, data) => {
   return evaluate(expression, data, {
     evalMode: true,
   });
+};
+
+/**
+ * @description: 公式校验
+ * @param {*} expression 表达式
+ * @return {*}
+ */
+export const formulaValidate = (expression: string) => {
+  try {
+    expression &&
+      parse(expression, {
+        evalMode: true,
+        allowFilter: false,
+      });
+    return true;
+  } catch (e) {
+    if (/\s(\d+:\d+)$/.test(e.message)) {
+      const [, position] = /\s(\d+:\d+)$/.exec(e.message) || [];
+      return '公式值校验错误，错误的位置/原因是 ' + position;
+    }
+    return e.message;
+  }
 };
 
 /**
