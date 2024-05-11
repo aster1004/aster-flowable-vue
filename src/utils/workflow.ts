@@ -189,7 +189,7 @@ export const formulaValidate = (expression: string) => {
         allowFilter: false,
       });
     return true;
-  } catch (e) {
+  } catch (e: any) {
     if (/\s(\d+:\d+)$/.test(e.message)) {
       const [, position] = /\s(\d+:\d+)$/.exec(e.message) || [];
       return '公式值校验错误，错误的位置/原因是 ' + position;
