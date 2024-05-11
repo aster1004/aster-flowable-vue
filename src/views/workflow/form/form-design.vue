@@ -370,6 +370,7 @@
         padding: 15px 25px 15px 15px;
         margin: 5px 2px;
         border: 1px dashed white;
+        background: #fbfcfd;
         .el-form-item--default {
           margin-bottom: 0px;
         }
