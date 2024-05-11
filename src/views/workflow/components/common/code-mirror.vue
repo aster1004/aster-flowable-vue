@@ -8,8 +8,16 @@
   import { javascript } from '@codemirror/lang-javascript';
   import { placeholdersPlugin } from '@/views/workflow/components/common/placeholders';
   import { functionPlugin } from '@/views/workflow/components/common/functions';
-  import { EditorView } from '@codemirror/view';
+  import { EditorView, placeholder } from '@codemirror/view';
 
+  const props = defineProps({
+    // 编辑器默认提示信息
+    placeholder: {
+      type: String,
+      required: false,
+      default: () => '当表达式值解析为true时，当前表单域隐藏',
+    },
+  });
   const editorRef = ref();
   const editorView = ref();
 
@@ -27,6 +35,7 @@
       lineHeight: '28px',
     },
   });
+
   const initEditor = () => {
     if (typeof editorView.value !== 'undefined') {
       editorView.value.destroy();
@@ -42,6 +51,7 @@
             basicSetup,
             javascript(),
             EditorView.lineWrapping,
+            placeholder(props.placeholder as string),
           ],
         }),
         parent: editorRef.value,
