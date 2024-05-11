@@ -21,6 +21,10 @@
   import DesignHeader from './design-header.vue';
   import FormDesign from '../form/form-design.vue';
   import ProcessDesign from '../process/process-design.vue';
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
+
+  // 工作流store
+  const workFlowStore = useWorkFlowStore();
 
   const activeMenu = ref('formDesign');
 
@@ -32,6 +36,7 @@
    */
   const save = () => {
     console.log('save');
+    workFlowStore.design;
   };
 
   /**
