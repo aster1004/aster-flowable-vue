@@ -12,6 +12,16 @@ export const appPageApi = (params: WorkApp.AppParams) => {
 };
 
 /**
+ * @param params 查询应用集合
+ * @returns
+ */
+export const appListApi = (params: any) => {
+  return request.get<WorkApp.AppInfo[]>(PORT5 + `/app/list`, params, {
+    noLoading: true,
+  });
+};
+
+/**
  * @description: 单条信息
  * @return {*}
  */

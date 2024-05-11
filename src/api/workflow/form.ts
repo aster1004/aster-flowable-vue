@@ -14,3 +14,15 @@ import { PORT5 } from '../config';
 export const getAppInfoApi = (appId: string) => {
   return request.get<WorkApp.AppInfo>(PORT5 + `/app/info/${appId}`, {}, { noLoading: true });
 };
+
+/**
+ * 获取流程表单列表
+ *
+ * @param params 流程表单
+ * @returns
+ */
+export const formPageApi = (params: WorkForm.FormParams) => {
+  return request.get<Page.ResPage<WorkForm.FormModel>>(PORT5 + `/form/page`, params, {
+    noLoading: true,
+  });
+};

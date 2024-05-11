@@ -106,6 +106,11 @@ declare namespace WorkForm {
     remark?: string;
   }
 
+  export interface FormParams extends Page.ReqPage {
+    appId: string;
+    formName: string;
+  }
+
   /**
    * 表单信息
    */
