@@ -39,7 +39,12 @@
   import selectBox from '../process/selectBox.vue';
   import selectResult from '../process/selectResult.vue';
   import { computed, watch, ref } from 'vue';
-  import { departments, getDebounceData, getDepartmentList, searchVal } from './common';
+  import {
+    departments,
+    getDebounceData,
+    getDepartmentList,
+    searchVal,
+  } from '@/api/workflow/common';
   import $func from '@/utils/fun.js';
   let props = defineProps({
     visible: {
