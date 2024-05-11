@@ -12,7 +12,7 @@ declare namespace WorkApp {
     status: string;
   }
   export interface AppInfo {
-    id: string;
+    id?: string;
     name: string;
     icon: string;
     iconColor: string;
