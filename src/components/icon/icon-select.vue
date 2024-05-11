@@ -110,6 +110,7 @@
   const spanStyle = reactive({
     width: props.size,
     height: props.size,
+    textAlign: 'center',
   });
 
   // 图标样式

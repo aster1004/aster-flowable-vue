@@ -81,18 +81,47 @@
       >
         <el-table-column type="selection" header-align="center" align="center" width="50" />
         <el-table-column prop="name" label="应用名称" header-align="center" align="center" />
-        <el-table-column prop="icon" label="图标" header-align="center" align="center" />
-        <el-table-column prop="iconColor" label="图标颜色" header-align="center" align="center" />
-        <el-table-column prop="sort" label="排序" header-align="center" align="center" />
-        <el-table-column prop="createTime" label="创建时间" header-align="center" align="center" />
-        <el-table-column prop="status" label="启用状态" header-align="center" align="center">
+        <el-table-column prop="icon" label="图标" header-align="center" align="center" width="120">
+          <template #default="scope">
+            <i
+              :class="[scope.row.icon, 'iconStyle']"
+              :style="{ background: scope.row.iconColor }"
+              v-show="isNotEmpty(scope.row.icon)"
+            ></i>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="sort"
+          label="排序"
+          header-align="center"
+          align="center"
+          width="100"
+        />
+        <el-table-column
+          prop="createTime"
+          label="创建时间"
+          header-align="center"
+          align="center"
+          width="180"
+        />
+        <el-table-column
+          prop="status"
+          label="启用状态"
+          header-align="center"
+          align="center"
+          width="150"
+        >
           <template #default="scope">
             <dict-tag dict-type="status" :value="scope.row.status" />
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注信息" header-align="center" align="center" />
-
-        <el-table-column :label="$t('label.operate')" align="center" class-name="operation">
+        <el-table-column
+          :label="$t('label.operate')"
+          align="center"
+          class-name="operation"
+          width="200"
+        >
           <template #default="scope">
             <el-button
               size="small"
@@ -136,6 +165,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ref, reactive, onMounted } from 'vue';
+  import { isNotEmpty } from '@/utils';
   import AddOrEdit from './add-or-edit.vue';
   import DictSelect from '@/components/dict/dict-select.vue';
   import DictTag from '@/components/dict/dict-tag.vue';
@@ -272,4 +302,15 @@
       .catch(() => {});
   };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+  .iconStyle {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+    color: #ffffff;
+    line-height: 35px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+  }
+</style>

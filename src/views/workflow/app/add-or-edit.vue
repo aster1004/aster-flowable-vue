@@ -22,17 +22,28 @@
         </el-col>
         <el-col :span="24">
           <el-form-item prop="icon" label="图标">
-            <el-input v-model="formData.icon" placeholder="图标" />
+            <icon-select ref="iconSelectRef" v-model:icon="formData.icon" />
+            <!-- <el-input v-model="formData.icon" placeholder="图标" /> -->
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item prop="iconColor" label="图标颜色">
-            <el-input v-model="formData.iconColor" placeholder="图标颜色" />
+            <el-color-picker v-model="formData.iconColor" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="图标浏览">
+            <i :class="formData.icon" :style="[iconStyle]" v-show="isNotEmpty(formData.icon)"></i>
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item prop="sort" label="排序">
-            <el-input v-model="formData.sort" placeholder="排序" />
+            <el-input-number
+              v-model="formData.sort"
+              controls-position="right"
+              :min="0"
+              placeholder="排序"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -41,7 +52,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item prop="r" :remark="$t('label.remark')">
+          <el-form-item prop="remark" :label="$t('label.remark')">
             <el-input
               v-model="formData.remark"
               :rows="2"
@@ -66,6 +77,7 @@
   import { isNotEmpty } from '@/utils';
   import DictRadio from '@/components/dict/dict-radio.vue';
   import { useI18n } from 'vue-i18n';
+  import IconSelect from '@/components/icon/icon-select.vue';
 
   const { t } = useI18n();
 
@@ -84,14 +96,36 @@
     id: '',
     name: '',
     icon: '',
-    iconColor: '',
+    iconColor: '#409EFF',
     sort: 0,
-    status: '',
+    status: '0',
     remark: '',
   });
+
+  const iconStyle = computed(() => {
+    return {
+      width: '35px',
+      height: '35px',
+      fontSize: '20px',
+      color: '#ffffff',
+      lineHeight: '35px',
+      textAlign: 'center',
+      borderRadius: '5px',
+      background: formData.iconColor,
+    };
+  });
+
+  const iconSelectRef = ref();
+
   /** 表单规则 */
   const formRules = computed(() => {
-    return {};
+    return {
+      name: [{ required: true, message: '应用名称不能为空', trigger: 'blur' }],
+      icon: [{ required: true, message: '图标不能为空', trigger: 'blur' }],
+      iconColor: [{ required: true, message: '图标颜色不能为空', trigger: 'blur' }],
+      sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
+      status: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
+    };
   });
 
   /** 初始化 */
