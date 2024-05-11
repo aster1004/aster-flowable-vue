@@ -307,7 +307,6 @@
 
     .formula-aside {
       width: 200px;
-      padding: 10px;
       overflow: auto;
     }
 
