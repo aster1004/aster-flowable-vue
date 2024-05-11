@@ -10,7 +10,14 @@
       <div class="title" :style="`background: rgb(${bgColors[nodeConfig.type]});`">
         <span v-if="nodeConfig.type == 0">{{ nodeConfig.nodeName }}</span>
         <template v-else>
-          <span class="iconfont">{{ nodeConfig.type == 1 ? '' : '' }}</span>
+          <!-- <span class="iconfont">{{ nodeConfig.type == 1 ? '111' : '222' }}</span> -->
+          <i
+            :class="
+              nodeConfig.type == 1
+                ? ['iconfont', 'node-icon', 'icon-shenpi']
+                : ['iconfont', 'node-icon', 'icon-chaosongwode']
+            "
+          ></i>
           <input
             v-if="isInput"
             type="text"
@@ -22,15 +29,16 @@
             :placeholder="defaultText"
           />
           <span v-else class="editable-title" @click="clickEvent()">{{ nodeConfig.nodeName }}</span>
-          <i class="anticon anticon-close close" @click="delNode"></i>
+          <i class="iconfont icon-close node-close" @click="delNode"></i>
+          <!-- <i class="anticon anticon-close close" @click="delNode"></i> -->
         </template>
       </div>
       <div class="content" @click="setPerson">
-        <div class="text">
+        <span class="text">
           <span class="placeholder" v-if="!showText">请选择{{ defaultText }}</span>
           {{ showText }}
-        </div>
-        <i class="anticon anticon-right arrow"></i>
+        </span>
+        <i class="iconfont icon-xiangyou"></i>
       </div>
       <div class="error_tip" v-if="isTried && nodeConfig.error">
         <i class="anticon anticon-exclamation-circle"></i>
@@ -63,7 +71,8 @@
                   <span class="priority-title" @click="setPerson(item.priorityLevel)"
                     >优先级{{ item.priorityLevel }}</span
                   >
-                  <i class="anticon anticon-close close" @click="delTerm(index)"></i>
+                  <i class="iconfont icon-close condition-node-close" @click="delTerm(index)"></i>
+                  <!-- <i class="anticon anticon-close close" @click="delTerm(index)"></i> -->
                 </div>
                 <div
                   class="sort-right"
@@ -321,5 +330,20 @@
     width: 7px;
     height: 7px;
     cursor: pointer;
+  }
+
+  .node-icon {
+    margin-left: -5px;
+  }
+
+  .node-close {
+    position: absolute;
+    right: 10px;
+  }
+
+  .condition-node-close {
+    position: absolute;
+    top: -10px;
+    right: -10px;
   }
 </style>
