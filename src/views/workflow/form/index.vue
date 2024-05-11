@@ -232,6 +232,7 @@
   </div>
 </template>
 <script setup lang="ts">
+  import { useRouter } from 'vue-router';
   import TreeFilter from './tree-filter.vue';
   import { deptListApi } from '@/api/sys/dept';
   import { onMounted, reactive, ref } from 'vue';
@@ -245,6 +246,7 @@
   import { userResetPwdApi } from '@/api/login';
   import { AVATAR_URL } from '@/config';
 
+  const router = useRouter();
   const { t } = useI18n();
   /** 注册组件 */
   const queryForm = ref();
@@ -337,6 +339,8 @@
    * @return {*}
    */
   const handleAdd = () => {
+    router.push('/workflow/design');
+    // window.location.href = 'http://localhost:18081/#/workflow/design'
     addOrEditRef.value.init();
   };
 

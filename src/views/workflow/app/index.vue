@@ -161,7 +161,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { formPageApi } from '@/api/workflow/form';
+  import { appPageApi } from '@/api/workflow/app';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ref, reactive, onMounted } from 'vue';
@@ -215,7 +215,7 @@
    */
   const handleQuery = () => {
     loading.value = true;
-    getFormPageApi(queryParams).then(({ data }) => {
+    appPageApi(queryParams).then(({ data }) => {
       dataList.value = data.list;
       total.value = data.total;
       loading.value = false;
@@ -292,12 +292,12 @@
       lockScroll: false,
     })
       .then(() => {
-        appDeleteApi(val).then((res) => {
+        /* appDeleteApi(val).then((res) => {
           if (res.code == ResultEnum.SUCCESS) {
             ElMessage.success(t('delete.success'));
             handleQuery();
           }
-        });
+        }); */
       })
       .catch(() => {});
   };
