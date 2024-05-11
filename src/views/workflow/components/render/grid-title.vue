@@ -11,13 +11,7 @@
       <el-collapse-item :name="formItem.id">
         <template #title>
           <div class="flex justify-between items-center" style="width: 90%; color: #606266">
-            <span
-              :class="[
-                formItem.props.fontSize,
-                formItem.props.fontWeight,
-                formItem.props.fontWeight,
-              ]"
-            >
+            <span :class="[formItem.props.fontSize, formItem.props.fontWeight]">
               {{ formItem.title }}
             </span>
             <span class="text-xs" v-show="_items.length === 0">拖入左侧控件到下方方框内</span>
@@ -53,8 +47,37 @@
       </el-collapse-item>
     </el-collapse>
   </div>
-  <div v-else-if="mode == 'form'"> </div>
-  <div v-else> </div>
+  <div v-else-if="mode == 'form'">
+    <el-collapse v-model="activeNames" accordion>
+      <el-collapse-item :name="formItem.id">
+        <template #title>
+          <div class="flex justify-between items-center" style="width: 90%; color: #606266">
+            <span :class="[formItem.props.fontSize, formItem.props.fontWeight]">
+              {{ formItem.title }}
+            </span>
+            <span class="text-xs" v-show="_items.length === 0">拖入左侧控件到下方方框内</span>
+          </div>
+        </template>
+        <div v-for="(item, i) in _items" :key="i">
+          <form-design-render
+            v-if="item.name === 'GridLayout'"
+            v-model:value="_value"
+            :form-item="item"
+            :form-data="_value"
+            :mode="mode"
+          />
+          <form-design-render
+            v-else
+            v-model:value="_value[item.id]"
+            :form-item="item"
+            :form-data="_value"
+            :mode="mode"
+          />
+        </div>
+      </el-collapse-item>
+    </el-collapse>
+  </div>
+  <div v-else> {{ formItem.title }} </div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
