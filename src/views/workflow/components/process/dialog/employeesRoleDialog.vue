@@ -51,7 +51,7 @@
     getRoleList,
     getDepartmentList,
     searchVal,
-  } from './common';
+  } from '@/api/workflow/common';
   let props = defineProps({
     visible: {
       type: Boolean,

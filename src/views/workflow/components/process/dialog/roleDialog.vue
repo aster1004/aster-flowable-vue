@@ -35,7 +35,7 @@
   import selectResult from '../process/selectResult.vue';
   import { computed, watch, ref } from 'vue';
   import $func from '@/utils/fun.js';
-  import { roles, getDebounceData, getRoleList, searchVal } from './common';
+  import { roles, getDebounceData, getRoleList, searchVal } from '@/api/workflow/common';
   let props = defineProps({
     visible: {
       type: Boolean,
