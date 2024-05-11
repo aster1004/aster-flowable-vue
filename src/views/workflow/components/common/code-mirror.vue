@@ -6,7 +6,7 @@
   import { basicSetup } from 'codemirror';
   import { EditorState } from '@codemirror/state';
   import { javascript } from '@codemirror/lang-javascript';
-  import { PlaceholderWidget } from '@/types/workflow/app';
+  import { PlaceholderWidget } from '@/utils/workflow';
   import {
     Decoration,
     DecorationSet,
