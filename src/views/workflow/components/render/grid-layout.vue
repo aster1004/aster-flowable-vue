@@ -4,39 +4,44 @@
       <span class="text-sm">分栏布局</span>
       <span class="text-xs" v-show="_items.length === 0">拖入左侧控件到下方方框内</span>
     </div>
-    <draggable
-      class="grid-layout"
-      item-key="id"
-      :list="_items"
-      group="form"
-      @start="layoutDrag = true"
-      @end="layoutDrag = false"
-      :options="{
-        animation: 300,
-        chosenClass: 'choose',
-        sort: true,
-      }"
-    >
-      <template #item="{ element, index }">
-        <div
-          class="grid-component grid-item"
-          @click.stop="onSelectComponent(element)"
-          :style="onSelectedComponentStyle(element)"
+    <el-row :gutter="formItem.props.gutter">
+      <el-col v-for="(item, i) in _items" :key="i" :span="_span(i)">
+        <draggable
+          class="grid-layout"
+          item-key="id"
+          :list="item"
+          group="form"
+          @start="layoutDrag = true"
+          @end="layoutDrag = false"
+          :options="{
+            animation: 300,
+            chosenClass: 'choose',
+            sort: true,
+          }"
         >
-          <form-design-render :form-item="element" :mode="mode" />
-          <div class="close" v-show="showCloseBtn(element)">
-            <i class="iconfont icon-guanbi1" @click="onDeleteComponent(index)"></i>
-          </div>
-        </div>
-      </template>
-    </draggable>
+          <template #item="{ element, index }">
+            <div
+              class="grid-component grid-item"
+              @click.stop="onSelectComponent(element)"
+              :style="onSelectedComponentStyle(element)"
+            >
+              <form-design-render :form-item="element" :mode="mode" />
+              <div class="close" v-show="showCloseBtn(element)">
+                <i class="iconfont icon-guanbi1" @click="onDeleteComponent(index)"></i>
+              </div>
+            </div>
+          </template>
+        </draggable>
+      </el-col>
+    </el-row>
   </div>
   <div v-else-if="mode == 'form'">
     <el-row :gutter="formItem.props.gutter" :justify="formItem.props.justify">
       <el-col v-for="(item, i) in _items" :key="i" :span="_span(i)">
         <form-design-render
-          v-model:value="_value[item.id]"
-          :form-item="item"
+          v-for="subItem in item"
+          v-model:value="_value[subItem.id]"
+          :form-item="subItem"
           :form-data="_value"
           :mode="mode"
         />
@@ -46,10 +51,10 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { deleteFormComponent } from '@/utils/workflow';
+  import { clearFormComponent } from '@/utils/workflow';
   import FormDesignRender from '../../form/form-design-render.vue';
   import { ElMessageBox } from 'element-plus';
-  import { computed, PropType, ref } from 'vue';
+  import { computed, onBeforeMount, PropType, ref, watch } from 'vue';
   import draggable from 'vuedraggable';
   import { useI18n } from 'vue-i18n';
 
@@ -120,7 +125,7 @@
       lockScroll: false,
     })
       .then(() => {
-        deleteFormComponent(_items.value, index);
+        clearFormComponent(_items.value, index);
       })
       .catch(() => {});
   };
@@ -174,10 +179,37 @@
       emits('update:value', val);
     },
   });
+
+  /**
+   * 设置分栏的数量
+   */
+  const refreshSpan = () => {
+    //初始化分栏数据值
+    const spanProps = props.formItem.props;
+    const number = spanProps.cols.split(',').length; //获取当前分栏列数
+    if (number > spanProps.items.length) {
+      for (let i = 0; i < number; i++) {
+        if (!spanProps.items[i]) {
+          spanProps.items.push([]);
+        }
+      }
+    } else {
+      spanProps.items.length = number;
+    }
+  };
+  onBeforeMount(() => {
+    refreshSpan();
+  });
+  watch(
+    () => props.formItem.props.cols,
+    () => {
+      refreshSpan();
+    },
+  );
 </script>
 <style scoped lang="scss">
   .grid-layout {
-    min-height: 50px;
+    min-height: 66px;
     margin-top: 5px;
     border: 1px solid #e4e4e4;
   }

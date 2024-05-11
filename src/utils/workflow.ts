@@ -31,6 +31,17 @@ export const deleteFormComponent = (formComponents: any[], index: number) => {
 };
 
 /**
+ * @ description: 置空数组当前下标对应的内容
+ * @param formComponents
+ * @param index
+ */
+export const clearFormComponent = (formComponents: any[], index: number) => {
+  if (index >= 0 && index < formComponents.length) {
+    formComponents[index] = [];
+  }
+};
+
+/**
  * @description: 排除不需要显示的表单组件
  * @param {WorkForm.FormItem} item 表单组件
  * @return {*}

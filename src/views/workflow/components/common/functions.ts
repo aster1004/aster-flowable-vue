@@ -32,7 +32,6 @@ export const functionPlugin = () => {
       // span.style.cssText = 'color: #6a737d;';
       // span.textContent = "(";
       // elt.appendChild(span);
-      console.log(elt);
       return elt;
     }
     ignoreEvent() {
