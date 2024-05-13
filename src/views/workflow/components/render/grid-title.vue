@@ -56,7 +56,6 @@
             <span :class="[formItem.props.fontSize, formItem.props.fontWeight]">
               {{ formItem.title }}
             </span>
-            <span class="text-xs" v-show="_items.length === 0">拖入左侧控件到下方方框内</span>
           </div>
         </template>
         <div v-for="(item, i) in _items" :key="i">
