@@ -17,4 +17,4 @@ export const PORT3 = PORT + '/gen';
 /** 任务调度模块 */
 export const PORT4 = PORT + '/quartz';
 /** 工作流模块 */
-export const PORT5 = PORT + '/oa';
+export const PORT5 = PORT + '/workflow';

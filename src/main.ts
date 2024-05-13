@@ -15,6 +15,7 @@ import { setupElementPlus } from '@/plugins/elementPlus';
 import '@/assets/styles/element.scss';
 // iconfont css
 import '@/assets/iconfont/iconfont.css';
+import '@/assets/iconfont/iconfont.js';
 // element css
 import 'element-plus/dist/index.css';
 // element dark css
@@ -52,4 +53,8 @@ setupElementPlus(app);
 setupRouter(app);
 app.use(I18n);
 app.use(VXETable);
+import nodeWrap from '@/views/workflow/components/process/process/nodeWrap.vue';
+app.component('nodeWrap', nodeWrap); //初始化组件
+import addNode from '@/views/workflow/components/process/process/addNode.vue';
+app.component('addNode', addNode); //初始化组件
 app.mount('#app');

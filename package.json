@@ -1,7 +1,8 @@
 {
-  "name": "vue3-element",
+  "name": "aster-flowable",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite --mode development",
     "prod": "vite --mode production",
@@ -23,7 +24,10 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@codemirror/commands": "^6.5.0",
     "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.26.3",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.6.8",
@@ -38,6 +42,7 @@
     "jsencrypt": "^3.3.2",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.1",
+    "moment": "^2.30.1",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
@@ -49,6 +54,7 @@
     "vue-codemirror": "^6.1.1",
     "vue-i18n": "^9.11.0",
     "vue-router": "^4.3.0",
+    "vuedraggable": "^4.1.0",
     "vxe-table": "^4.5.21"
   },
   "devDependencies": {

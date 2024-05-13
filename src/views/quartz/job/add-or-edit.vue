@@ -81,17 +81,17 @@
         <el-col :span="24">
           <el-form-item prop="misfirePolicy" :label="$t('label.quartz.misfirePolicy')">
             <el-radio-group v-model="formData.misfirePolicy" size="small">
-              <el-radio-button label="1">{{ $t('label.quartz.immediately') }}</el-radio-button>
-              <el-radio-button label="2">{{ $t('label.quartz.once') }}</el-radio-button>
-              <el-radio-button label="3">{{ $t('label.quartz.abandon') }}</el-radio-button>
+              <el-radio-button value="1">{{ $t('label.quartz.immediately') }}</el-radio-button>
+              <el-radio-button value="2">{{ $t('label.quartz.once') }}</el-radio-button>
+              <el-radio-button value="3">{{ $t('label.quartz.abandon') }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item prop="concurrent" :label="$t('label.quartz.concurrent')">
             <el-radio-group v-model="formData.concurrent" size="small">
-              <el-radio-button label="0">{{ $t('label.quartz.allow') }}</el-radio-button>
-              <el-radio-button label="1">{{ $t('label.quartz.prohibit') }}</el-radio-button>
+              <el-radio-button value="0">{{ $t('label.quartz.allow') }}</el-radio-button>
+              <el-radio-button value="1">{{ $t('label.quartz.prohibit') }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-col>
