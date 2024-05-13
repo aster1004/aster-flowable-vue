@@ -1,3 +1,10 @@
+<!--
+ * @Author: Aster lipian1004@163.com
+ * @Date: 2024-05-13 15:57:26
+ * @FilePath: \aster-flowable-vue\src\views\workflow\components\render\description.vue
+ * @Description: 描述说明
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
+-->
 <template>
   <div
     v-if="!_hidden"
