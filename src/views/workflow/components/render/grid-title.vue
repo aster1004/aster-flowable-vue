@@ -49,7 +49,7 @@
     </el-collapse>
   </div>
   <div v-else-if="mode == 'form'">
-    <el-collapse v-model="activeNames" accordion>
+    <el-collapse v-model="activeNames" accordion v-if="!_hidden">
       <el-collapse-item :name="formItem.id">
         <template #title>
           <div class="flex justify-between items-center" style="width: 90%; color: #606266">
@@ -82,7 +82,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { deleteFormComponent } from '@/utils/workflow';
+  import { deleteFormComponent, evaluateFormula } from '@/utils/workflow';
   import FormDesignRender from '../../form/form-design-render.vue';
   import { ElMessageBox } from 'element-plus';
   import { computed, onMounted, PropType, ref } from 'vue';
@@ -206,6 +206,17 @@
     set(val) {
       emits('update:value', val);
     },
+  });
+
+  /**
+   * @description: 是否隐藏, true-隐藏
+   */
+  const _hidden = computed(() => {
+    let r = false;
+    if (props.formItem.props.hidden) {
+      r = evaluateFormula(props.formItem.props.hidden, props.value);
+    }
+    return r;
   });
 
   onMounted(() => {

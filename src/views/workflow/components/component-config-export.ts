@@ -30,6 +30,7 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.object,
       props: {
+        hidden: '',
         items: [],
         fontSize: 'text-base',
         fontWeight: 'font-600',
@@ -76,10 +77,11 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: '',
       valueType: ValueType.string,
       props: {
-        required: false,
-        color: '#818181',
-        // 隐藏
         hidden: '',
+        color: '#818181',
+        fontSize: 'text-base',
+        icon: 'iconfont icon-xinxi1',
+        justify: 'justify-start',
       },
     },
   ],
