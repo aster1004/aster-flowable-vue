@@ -7,9 +7,6 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件编码">
-      <el-input v-model="_formItem.id" readonly />
-    </el-form-item>
     <el-form-item label="控件名称">
       <el-input v-model="_formItem.title" disabled />
     </el-form-item>

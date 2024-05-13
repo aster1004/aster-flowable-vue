@@ -7,9 +7,6 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件编码">
-      <el-input v-model="_formItem.id" readonly />
-    </el-form-item>
     <el-form-item label="描述说明">
       <template #label>
         <div class="flex justify-between items-center">
@@ -45,17 +42,6 @@
         />
       </el-select>
     </el-form-item>
-    <el-form-item>
-      <template #label>
-        <span>隐藏条件</span>
-        <el-tooltip content="隐藏条件，满足条件时隐藏控件" placement="top">
-          <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
-        </el-tooltip>
-      </template>
-      <el-input type="button" model-value="请设置隐藏条件" @click="showFormula" />
-    </el-form-item>
-
-    <formula ref="formulaRef" title="隐藏条件" v-model:formula="_formItem.props.hidden" />
   </div>
 </template>
 <script setup lang="ts">
@@ -63,12 +49,9 @@
   import ColorPicker from '@/components/color/color-picker.vue';
   import IconSelect from '@/components/icon/icon-select.vue';
   import { computed, ref } from 'vue';
-  import Formula from '../common/formula.vue';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
-  // 注册组件
-  const formulaRef = ref();
 
   // 字体大小
   const fontSizeOptions = ref([
@@ -87,13 +70,6 @@
     { label: '居右', value: 'justify-end' },
     { label: '居中', value: 'justify-center' },
   ]);
-
-  /**
-   * @description: 显示公式
-   */
-  const showFormula = () => {
-    formulaRef.value.init();
-  };
 
   // 选中的组件
   const _formItem = computed(() => {

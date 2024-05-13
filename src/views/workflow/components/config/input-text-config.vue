@@ -7,9 +7,6 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件编码">
-      <el-input v-model="_formItem.id" readonly />
-    </el-form-item>
     <el-form-item label="控件名称">
       <template #label>
         <div class="flex justify-between items-center">
@@ -18,15 +15,6 @@
         </div>
       </template>
       <el-input v-model="_formItem.title" />
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <span>隐藏条件</span>
-        <el-tooltip content="隐藏条件，满足条件时隐藏控件" placement="top">
-          <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
-        </el-tooltip>
-      </template>
-      <el-input type="button" model-value="请设置隐藏条件" @click="showFormula" />
     </el-form-item>
     <el-form-item label="默认值">
       <el-select v-model="valueType">
@@ -46,7 +34,6 @@
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
 
-    <formula ref="formulaRef" title="隐藏条件" v-model:formula="_formItem.props.hidden" />
     <formula ref="defaultValueRef" title="默认值" v-model:formula="defaultValue" />
   </div>
 </template>
@@ -61,17 +48,9 @@
   // 默认值
   const defaultValue = ref<string>('');
   const valueType = ref<string>('formula');
-
   // 注册组件
-  const formulaRef = ref();
   const defaultValueRef = ref();
 
-  /**
-   * @description: 显示公式
-   */
-  const showFormula = () => {
-    formulaRef.value.init();
-  };
   /**
    * @description: 显示默认值
    */

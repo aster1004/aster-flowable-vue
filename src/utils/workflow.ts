@@ -77,8 +77,13 @@ export const formulaItemTree = (
   isTableList: boolean = false,
 ) => {
   items.forEach((item) => {
-    // 若是一行多列则取子组件
+    // 若是一行多列则遍历items,取子组件
     if (item.name === 'GridLayout') {
+      item.props.items.forEach((col) => {
+        formulaItemTree(col, tree);
+      });
+    } else if (item.name === 'GridTitle') {
+      // 若是分组标题则取子组件
       formulaItemTree(item.props.items, tree);
     } else if (excludeField(item)) {
       // 排除不需要的组件
