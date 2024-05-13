@@ -2,17 +2,19 @@
   <div v-if="mode === 'design'">
     <div class="flex justify-between items-center" style="color: #606266">
       <span class="text-sm">分栏布局</span>
-      <span class="text-xs" v-show="_items.length === 0">拖入左侧控件到下方方框内</span>
+      <span class="text-xs" v-show="layoutDrag">拖入左侧控件到下方方框内</span>
     </div>
     <el-row :gutter="formItem.props.gutter">
       <el-col v-for="(item, i) in _items" :key="i" :span="_span(i)">
         <draggable
+          :ref="`draggerRef${i}`"
           class="grid-layout"
           item-key="id"
           :list="item"
           group="form"
           @start="layoutDrag = true"
           @end="layoutDrag = false"
+          @add="onAdd(i)"
           :options="{
             animation: 300,
             chosenClass: 'choose',
@@ -27,7 +29,7 @@
             >
               <form-design-render :form-item="element" :mode="mode" />
               <div class="close" v-show="showCloseBtn(element)">
-                <i class="iconfont icon-guanbi1" @click="onDeleteComponent(index)"></i>
+                <i class="iconfont icon-guanbi1" @click="onDeleteComponent(i, index)"></i>
               </div>
             </div>
           </template>
@@ -51,7 +53,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { clearFormComponent } from '@/utils/workflow';
+  import { deleteFormComponent } from '@/utils/workflow';
   import FormDesignRender from '../../form/form-design-render.vue';
   import { ElMessageBox } from 'element-plus';
   import { computed, onBeforeMount, PropType, ref, watch } from 'vue';
@@ -79,6 +81,21 @@
 
   // 拖拽
   const layoutDrag = ref<boolean>(false);
+
+  /**
+   * @description: 拖拽完成后触发
+   * @param {*} i 表单项索引
+   * @return {*}
+   */
+  const onAdd = (i) => {
+    _items.value[i] = _items.value[i].filter(
+      (item) =>
+        item.name != 'GridTitle' &&
+        item.name != 'GridLayout' &&
+        item.name != 'TableList' &&
+        item.name != 'Description',
+    );
+  };
 
   /**
    * @description: 选中组件
@@ -117,7 +134,7 @@
    * @param {*} index 组件下标
    * @return {*}
    */
-  const onDeleteComponent = (index: number) => {
+  const onDeleteComponent = (draggerIndex: number, index: number) => {
     ElMessageBox.confirm(t('header.deleteComp'), t('common.tips'), {
       confirmButtonText: t('button.confirm'),
       cancelButtonText: t('button.cancel'),
@@ -125,7 +142,7 @@
       lockScroll: false,
     })
       .then(() => {
-        clearFormComponent(_items.value, index);
+        deleteFormComponent(_items.value[draggerIndex], index);
       })
       .catch(() => {});
   };
@@ -184,9 +201,10 @@
    * 设置分栏的数量
    */
   const refreshSpan = () => {
-    //初始化分栏数据值
+    // 初始化分栏数据值
     const spanProps = props.formItem.props;
-    const number = spanProps.cols.split(',').length; //获取当前分栏列数
+    // 获取当前分栏列数
+    const number = spanProps.cols.split(',').length;
     if (number > spanProps.items.length) {
       for (let i = 0; i < number; i++) {
         if (!spanProps.items[i]) {
@@ -197,9 +215,11 @@
       spanProps.items.length = number;
     }
   };
+
   onBeforeMount(() => {
     refreshSpan();
   });
+
   watch(
     () => props.formItem.props.cols,
     () => {

@@ -25,6 +25,7 @@
           group="form"
           @start="titleDrag = true"
           @end="titleDrag = false"
+          @add="onAdd"
           :options="{
             animation: 300,
             chosenClass: 'choose',
@@ -111,6 +112,14 @@
   const titleDrag = ref<boolean>(false);
   // 活动面板
   const activeNames = ref<string>('');
+
+  /**
+   * @description: 拖拽完成后触发
+   * @return {*}
+   */
+  const onAdd = () => {
+    _items.value = _items.value.filter((item) => item.name != 'GridTitle');
+  };
 
   /**
    * @description: 选中组件

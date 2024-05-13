@@ -31,7 +31,7 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       valueType: ValueType.object,
       props: {
         items: [],
-        fontSize: 'text-lg',
+        fontSize: 'text-base',
         fontWeight: 'font-600',
       },
     },
