@@ -14,7 +14,7 @@
           :disable-transitions="true"
           :key="item.dictValue"
           :index="index"
-          :type="item.labelClass == 'primary' ? '' : item.labelClass"
+          :type="item.labelClass"
         >
           {{ item.dictLabel }}
         </el-tag>
@@ -41,7 +41,7 @@
     value: [Number, String],
   });
 
-  const tagValues = ref<string[]>(['primary', 'success', 'info', 'warning', 'danger', '']);
+  const tagValues = ref<string[]>(['primary', 'success', 'info', 'warning', 'danger']);
 
   const values = computed(() => {
     if (props.value !== null && typeof props.value !== 'undefined') {

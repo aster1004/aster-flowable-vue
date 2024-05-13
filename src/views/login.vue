@@ -11,13 +11,13 @@
       <el-switch
         v-model="globalStore.isDark"
         inline-prompt
-        :active-icon="Sunny"
-        :inactive-icon="Moon"
+        :active-icon="Moon"
+        :inactive-icon="Sunny"
         @change="switchDark"
         class="dark"
       />
       <div class="login-left">
-        <img class="login-left-img" src="@/assets/images/login_left1.png" alt="login" />
+        <img class="login-left-img" src="@/assets/images/login_left2.png" alt="login" />
       </div>
       <div class="login-form">
         <div class="login-logo">
@@ -88,6 +88,26 @@
         </div>
       </div>
     </div>
+    <div class="login-footer">
+      <p>
+        <a href="https://gitee.com/lp1791803611/aster-study-plan" target="_blank">
+          {{ currentYear }} © aster.vip By Aster
+        </a>
+      </p>
+      <p>
+        <a target="_blank" href="https://beian.miit.gov.cn/#/Integrated/recordQuery">
+          京ICP备18063634号-2
+        </a>
+        |
+        <img
+          src="http://www.beian.gov.cn/img/ghs.png"
+          style="width: 16px; height: 16px; display: inline-block; margin-right: 4px"
+        />
+        <a target="_blank" href="https://beian.mps.gov.cn/#/query/webSearch?code=11011402054005">
+          京公网安备11011402054005号
+        </a>
+      </p>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -143,6 +163,8 @@
   const captchaBase64 = ref();
   // 秘钥
   const secretKey = ref('');
+  // 年份
+  const currentYear = new Date().getFullYear();
 
   const loginRules = reactive({
     username: [{ required: true, message: t('login.rule.username'), trigger: 'blur' }],
@@ -296,16 +318,9 @@
 </script>
 <style lang="scss" scoped>
   .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
     height: 100%;
     min-height: 550px;
-    background-color: #eeeeee;
-    background-image: url('@/assets/images/login_bg.svg');
-    background-size: 100% 100%;
-    background-size: cover;
+
     .login-box {
       position: relative;
       box-sizing: border-box;
@@ -313,7 +328,7 @@
       align-items: center;
       justify-content: space-around;
       width: 96.5%;
-      height: 94%;
+      height: 92%;
       padding: 0 50px;
       background-color: rgb(255 255 255 / 80%);
       border-radius: 10px;
@@ -382,6 +397,21 @@
           }
         }
       }
+    }
+  }
+
+  .login-footer {
+    position: relative;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--el-text-color-secondary);
+
+    a {
+      font-size: 14px;
+      text-decoration: none;
+      letter-spacing: 0.5px;
     }
   }
 

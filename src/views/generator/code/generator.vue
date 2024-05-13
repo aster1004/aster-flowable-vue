@@ -126,8 +126,8 @@
         <el-col :span="12">
           <el-form-item :label="$t('label.generator.formLayout')" prop="formLayout">
             <el-radio-group v-model="dataForm.formLayout">
-              <el-radio :label="1">{{ $t('label.generator.oneCol') }}</el-radio>
-              <el-radio :label="2">{{ $t('label.generator.twoCol') }}</el-radio>
+              <el-radio :value="1">{{ $t('label.generator.oneCol') }}</el-radio>
+              <el-radio :value="2">{{ $t('label.generator.twoCol') }}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -136,8 +136,8 @@
         <el-col :span="24">
           <el-form-item :label="$t('label.generator.generatorType')" prop="generatorType">
             <el-radio-group v-model="dataForm.generatorType">
-              <el-radio :label="0">{{ $t('label.generator.zipPath') }}</el-radio>
-              <el-radio :label="1">{{ $t('label.generator.customPath') }}</el-radio>
+              <el-radio :value="0">{{ $t('label.generator.zipPath') }}</el-radio>
+              <el-radio :value="1">{{ $t('label.generator.customPath') }}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>

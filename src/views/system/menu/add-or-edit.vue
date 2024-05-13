@@ -171,7 +171,7 @@
     </el-form>
     <template #footer>
       <el-button type="primary" @click="submit">{{ $t('button.confirm') }}</el-button>
-      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
+      <el-button @click="close">{{ $t('button.cancel') }}</el-button>
     </template>
   </el-dialog>
 </template>
@@ -197,6 +197,8 @@
   });
   /** 注册组件 */
   const formDataRef = ref();
+  const iconSelectRef = ref();
+
   const formData = reactive<Menu.MenuOptions>({
     id: '',
     pid: '',
@@ -302,6 +304,11 @@
         }
       });
     });
+  };
+
+  const close = () => {
+    visible.value = false;
+    iconSelectRef.value.hide();
   };
 
   defineExpose({

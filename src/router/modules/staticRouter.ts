@@ -31,6 +31,12 @@ export const staticRouter: RouteRecordRaw[] = [
     redirect: HOME_URL,
     children: [],
   },
+  {
+    path: '/workflow/design',
+    name: 'design',
+    component: () => import('@/views/workflow/design/index.vue'),
+    meta: { title: '流程设计' },
+  },
 ];
 
 /**

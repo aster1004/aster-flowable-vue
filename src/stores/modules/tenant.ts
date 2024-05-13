@@ -36,5 +36,6 @@ export const useTenantStore = defineStore({
       await switchTenantApi(this.tenantId);
     },
   },
+  // 持久化配置
   persist: piniaPersistConfig('aster-tenant'),
 });

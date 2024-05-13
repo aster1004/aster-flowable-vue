@@ -85,6 +85,8 @@ export default {
     changePassword: '修改密码',
     logout: '退出登录',
     logoutTip: '您是否确认退出登录?',
+    // 表单
+    deleteComp: '删除组件会连带删除相关配置,若有子组件则一起删除,是否继续?',
   },
   login: {
     placeholder: {
@@ -136,6 +138,7 @@ export default {
     suspend: '暂 停',
     restore: '恢 复',
     publish: '发 布',
+    save: '保 存',
     showSearch: '显示搜索',
     hideSearch: '隐藏搜索',
     configDict: '配置字典',

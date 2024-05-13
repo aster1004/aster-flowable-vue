@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-26 09:51:14
- * @FilePath: \aster-flowable-vue\src\views\system\dict\data-add-or-edit.vue
+ * @FilePath: \aster-admin\src\views\system\dict\data-add-or-edit.vue
  * @Description: 字典数据新增/编辑
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
@@ -39,7 +39,7 @@
           </el-form-item>
         </el-col>
         <el-form-item prop="labelClass" :label="$t('label.dict.labelClass')">
-          <el-select v-model="labelClass" style="width: 100%" clearable>
+          <el-select v-model="formData.labelClass" style="min-width: 150px" clearable>
             <el-option
               v-for="item in tagList"
               :key="item.value"
@@ -78,7 +78,7 @@
   import { dictDataApi, dictDataSaveApi } from '@/api/sys/dict';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus/es';
-  import { isEmpty, isNotEmpty } from '@/utils';
+  import { isNotEmpty } from '@/utils';
   import { EpPropMergeType } from 'element-plus/es/utils/vue';
   import DictRadio from '@/components/dict/dict-radio.vue';
   import { useAppStore } from '@/stores/modules/app';
@@ -114,27 +114,18 @@
     };
   });
 
-  const labelClass = computed({
-    get() {
-      return formData.labelClass == 'primary' ? '' : formData.labelClass;
-    },
-    set(value) {
-      formData.labelClass = value == '' ? 'primary' : value;
-    },
-  });
-
   /** 标签样式 */
   interface TagModel {
     label: string;
     value: EpPropMergeType<
       StringConstructor,
-      '' | 'success' | 'warning' | 'info' | 'danger',
+      'primary' | 'success' | 'warning' | 'info' | 'danger',
       unknown
     >;
   }
 
   const tagList = ref<TagModel[]>([
-    { value: '', label: 'primary' },
+    { value: 'primary', label: 'primary' },
     { value: 'success', label: 'success' },
     { value: 'info', label: 'info' },
     { value: 'warning', label: 'warning' },
@@ -176,7 +167,6 @@
       if (!valid) {
         return false;
       }
-      formData.labelClass = isEmpty(formData.labelClass) ? 'primary' : formData.labelClass;
       dictDataSaveApi(formData).then((res) => {
         if (res.code == ResultEnum.SUCCESS) {
           // 重新缓存字典

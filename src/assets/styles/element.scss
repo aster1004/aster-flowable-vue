@@ -101,7 +101,6 @@
     padding: 18px 18px 0;
     margin-bottom: 10px;
     .el-form {
-      
       .el-form-item__content > * {
         width: 100%;
       }
@@ -113,16 +112,16 @@
     }
 
     .grid-box {
-      display: grid; 
-      gap: 0px 20px; 
+      display: grid;
+      gap: 0px 20px;
       grid-template-columns: repeat(3, minmax(0px, 1fr));
 
       .grid-column {
-        grid-column: span 1 / span 1; 
+        grid-column: span 1 / span 1;
         margin-left: unset;
       }
       .grid-operation {
-        grid-column: 3 / span 1; 
+        grid-column: 3 / span 1;
         margin-left: unset;
       }
     }
@@ -258,6 +257,8 @@
 
 /* el-dialog */
 .el-dialog {
+  padding: 0 !important;
+
   .el-dialog__header {
     padding: 15px 20px;
     margin: 0;
@@ -265,5 +266,9 @@
     .el-dialog__title {
       font-size: 17px;
     }
+  }
+  .el-dialog__body,
+  .el-dialog__footer {
+    padding: 15px 20px;
   }
 }
