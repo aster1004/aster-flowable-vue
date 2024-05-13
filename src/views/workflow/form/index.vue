@@ -97,14 +97,22 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" header-align="center" align="center" width="50" />
-          <el-table-column prop="avatar" label="表单名称" header-align="center" align="center" />
+          <el-table-column prop="formName" label="表单名称" header-align="center" align="center" />
           <el-table-column
             prop="icon"
             label="图标"
-            width="100"
             header-align="center"
             align="center"
-          />
+            width="120"
+          >
+            <template #default="scope">
+              <i
+                :class="[scope.row.icon, 'iconStyle']"
+                :style="{ background: scope.row.iconColor }"
+                v-show="isNotEmpty(scope.row.icon)"
+              ></i>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="sort"
             label="排序"
@@ -132,8 +140,7 @@
           </el-table-column>
           <el-table-column
             :label="$t('label.operate')"
-            fixed="right"
-            width="260"
+            width="200"
             align="center"
             class-name="operation"
           >
@@ -173,7 +180,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { downloadFile } from '@/utils/fileUtils';
   import { useI18n } from 'vue-i18n';
-  import { isEmpty } from '@/utils';
+  import { isNotEmpty } from '@/utils';
   import { userResetPwdApi } from '@/api/login';
   import { AVATAR_URL } from '@/config';
 
@@ -326,3 +333,15 @@
     handleQuery();
   });
 </script>
+<style lang="scss" scoped>
+  .iconStyle {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+    color: #ffffff;
+    line-height: 35px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+  }
+</style>

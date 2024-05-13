@@ -48,6 +48,12 @@
   import approverDrawer from '@/views/workflow/components/process/drawer/approverDrawer.vue';
   import copyerDrawer from '@/views/workflow/components/process/drawer/copyerDrawer.vue';
   import conditionDrawer from '@/views/workflow/components/process/drawer/conditionDrawer.vue';
+  import { isDef, isNotEmpty } from '@/utils';
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
+
+  // 工作流store
+  const workFlowStore = useWorkFlowStore();
+
   let { setTableId, setIsTried } = useStore();
 
   let tipList = ref([]);
@@ -60,21 +66,29 @@
   let directorMaxLevel = ref(0);
   onMounted(async () => {
     let route = useRoute();
+    console.info(route);
+    let appId = route.query.appId;
+    let id = route.query.id;
     let { data } = await getWorkFlowData({ workFlowDefId: route.query.workFlowDefId });
-    processConfig.value = data;
-    let {
-      nodeConfig: nodes,
-      flowPermission: flows,
-      directorMaxLevel: directors,
-      workFlowDef: works,
-      tableId,
-    } = data;
-    console.info(nodes);
-    nodeConfig.value = nodes;
-    flowPermission.value = flows;
-    directorMaxLevel.value = directors;
-    workFlowDef.value = works;
-    setTableId(tableId);
+    if (isDef(id) && isNotEmpty(id)) {
+      console.info('修改流程设计：', id);
+    } else {
+      processConfig.value = data;
+      let {
+        nodeConfig: nodes,
+        flowPermission: flows,
+        directorMaxLevel: directors,
+        workFlowDef: works,
+        tableId,
+      } = data;
+      console.info(nodes);
+      nodes.childNode = [];
+      nodeConfig.value = nodes;
+      flowPermission.value = [];
+      directorMaxLevel.value = [];
+      workFlowDef.value = works;
+      // setTableId(tableId);
+    }
   });
   const toReturn = () => {
     //window.location.href = ""
@@ -139,8 +153,9 @@
   };
 
   const jsonValue = () => {
-    console.log(JSON.stringify(processConfig.value));
     console.log(JSON.stringify(nodeConfig.value));
+    workFlowStore.design.process = nodeConfig.value;
+    // console.log(JSON.stringify(processConfig.value));
   };
 
   defineExpose({

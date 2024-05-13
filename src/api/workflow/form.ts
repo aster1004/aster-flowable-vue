@@ -26,3 +26,12 @@ export const formPageApi = (params: WorkForm.FormParams) => {
     noLoading: true,
   });
 };
+
+/**
+ * @description: 保存
+ * @param {WorkForm.FormModel} info
+ * @return {*}
+ */
+export const formSaveApi = (info: WorkForm.FormModel) => {
+  return request.post<string>(PORT5 + `/form/save`, info, { noLoading: true });
+};

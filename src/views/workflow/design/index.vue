@@ -17,11 +17,18 @@
   </el-container>
 </template>
 <script setup lang="ts">
-  import { ref, nextTick } from 'vue';
+  import { ref, nextTick, onMounted } from 'vue';
   import DesignHeader from './design-header.vue';
   import FormDesign from '../form/form-design.vue';
   import ProcessDesign from '../process/process-design.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { formSaveApi } from '@/api/workflow/form';
+  import { ResultEnum } from '@/enums/httpEnum';
+  import { ElMessage } from 'element-plus/es';
+  import { useRoute } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
+
+  const { t } = useI18n();
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
@@ -31,11 +38,16 @@
   // 流程设计
   const processDesignRef = ref();
 
+  let route = useRoute();
+
   /**
    * @description 保存
    */
   const save = () => {
     console.log('save');
+    nextTick(() => {
+      processDesignRef.value.jsonValue();
+    });
     workFlowStore.design;
   };
 
@@ -43,11 +55,29 @@
    * @description 发布
    */
   const publish = () => {
+    console.log('publish');
     nextTick(() => {
       processDesignRef.value.jsonValue();
     });
-    console.log('publish');
+    console.info(workFlowStore.design);
+    formSaveApi(workFlowStore.design).then((res) => {
+      console.info('保存成功');
+      console.info(res);
+      if (res.code == ResultEnum.SUCCESS) {
+        ElMessage.success({
+          message: t('common.success'),
+          duration: 500,
+          onClose: () => {},
+        });
+      }
+    });
   };
+
+  onMounted(() => {
+    if (route.query.appId && typeof route.query.appId === 'string') {
+      workFlowStore.design.appId = route.query.appId;
+    }
+  });
 </script>
 <style scoped lang="scss">
   .design-container {
