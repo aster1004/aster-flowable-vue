@@ -86,16 +86,6 @@
                 <i class="iconfont icon-sousuo"></i>
               </el-button>
             </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('button.import')" placement="top">
-              <el-button circle @click="upload" v-hasPerm="['sys:user:import']">
-                <i class="iconfont icon-shangchuan"></i>
-              </el-button>
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('button.export')" placement="top">
-              <el-button circle @click="download" v-hasPerm="['sys:user:export']">
-                <i class="iconfont icon-xiazai"></i>
-              </el-button>
-            </el-tooltip>
           </div>
         </div>
         <el-table
@@ -107,44 +97,28 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" header-align="center" align="center" width="50" />
+          <el-table-column prop="avatar" label="表单名称" header-align="center" align="center" />
           <el-table-column
-            prop="avatar"
-            :label="$t('label.user.avatar')"
-            header-align="center"
-            align="center"
-          >
-            <template #default="scope">
-              <el-avatar
-                :size="40"
-                :src="isEmpty(scope.row.avatar) ? AVATAR_URL : scope.row.avatar"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="username"
-            :label="$t('label.user.username')"
+            prop="icon"
+            label="图标"
             width="100"
             header-align="center"
             align="center"
           />
           <el-table-column
-            prop="nickName"
-            :label="$t('label.user.nickName')"
+            prop="sort"
+            label="排序"
             width="100"
             header-align="center"
             align="center"
           />
           <el-table-column
-            prop="gender"
-            :label="$t('label.user.gender')"
+            prop="version"
+            label="版本号"
             width="100"
             header-align="center"
             align="center"
-          >
-            <template #default="scope">
-              <dict-tag dict-type="gender" :value="scope.row.gender" />
-            </template>
-          </el-table-column>
+          />
           <el-table-column
             prop="status"
             :label="$t('label.status')"
@@ -157,27 +131,6 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="mobile"
-            :label="$t('label.user.mobile')"
-            width="120"
-            header-align="center"
-            align="center"
-          />
-          <el-table-column
-            prop="birthday"
-            :label="$t('label.user.birthday')"
-            width="120"
-            header-align="center"
-            align="center"
-          />
-          <el-table-column
-            prop="signature"
-            :label="$t('label.user.signature')"
-            width="160"
-            header-align="center"
-            show-overflow-tooltip
-          />
-          <el-table-column
             :label="$t('label.operate')"
             fixed="right"
             width="260"
@@ -185,32 +138,11 @@
             class-name="operation"
           >
             <template #default="scope">
-              <el-button
-                size="small"
-                link
-                type="primary"
-                @click="handleEdit(scope.row.id)"
-                v-hasPerm="['sys:user:edit']"
-              >
+              <el-button size="small" link type="primary" @click="handleEdit(scope.row.id)">
                 <i class="iconfont icon-bianji"></i>{{ $t('button.edit') }}
               </el-button>
-              <el-button
-                size="small"
-                link
-                type="primary"
-                @click="handleDelete(scope.row.id)"
-                v-hasPerm="['sys:user:delete']"
-              >
+              <el-button size="small" link type="primary" @click="handleDelete(scope.row.id)">
                 <i class="iconfont icon-shanchu"></i>{{ $t('button.delete') }}
-              </el-button>
-              <el-button
-                size="small"
-                link
-                type="primary"
-                v-hasPerm="['sys:user:reset']"
-                @click="resetPassword(scope.row.id)"
-              >
-                <i class="iconfont icon-psw-reset"></i>{{ $t('label.user.resetPassword') }}
               </el-button>
             </template>
           </el-table-column>
@@ -234,7 +166,6 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router';
   import TreeFilter from './tree-filter.vue';
-  import { deptListApi } from '@/api/sys/dept';
   import { onMounted, reactive, ref } from 'vue';
   import { formPageApi } from '@/api/workflow/form';
   import { userPageApi, userDeleteApi, userExportApi, userBatchSaveApi } from '@/api/sys/user';
@@ -251,7 +182,6 @@
   /** 注册组件 */
   const queryForm = ref();
   const addOrEditRef = ref();
-  const uploadExcelRef = ref();
   /** 是否显示查询 */
   const showSearch = ref(true);
   /** 默认折叠搜索项 */
@@ -268,7 +198,7 @@
   /** 总数 */
   const total = ref<number>(0);
   /** 已选择列表 */
-  const selectedList = ref<User.UserInfo[]>([]);
+  const selectedList = ref<WorkForm.FormModel[]>([]);
   const loading = ref(true);
 
   /** treeFilter */
@@ -276,10 +206,6 @@
     queryParams.pageNum = 1;
     handleQuery();
   };
-
-  onMounted(() => {
-    handleQuery();
-  });
 
   /**
    * @description: 重置查询
@@ -309,7 +235,7 @@
    * @param {*} val
    * @return {*}
    */
-  const handleSelectionChange = (val: User.UserInfo[]) => {
+  const handleSelectionChange = (val: WorkForm.FormModel[]) => {
     selectedList.value = val;
   };
 
@@ -339,9 +265,7 @@
    * @return {*}
    */
   const handleAdd = () => {
-    router.push('/workflow/design');
-    // window.location.href = 'http://localhost:18081/#/workflow/design'
-    addOrEditRef.value.init();
+    router.push({ path: '/workflow/design', query: { appId: queryParams.appId } });
   };
 
   /**
@@ -387,75 +311,18 @@
   };
 
   /**
-   * @description: 重置密码
-   * @param {string} key
-   * @return {*}
+   * 切换应用
    */
-  const resetPassword = (key?: string) => {
-    let keys = [] as any[];
-    if (key) {
-      keys = [key];
-    } else {
-      keys = selectedList.value?.map((item) => item.id);
-    }
-    if (isEmpty(keys)) {
-      ElMessage.warning(t('common.selectOne'));
-      return;
-    }
-    ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
-      confirmButtonText: t('button.confirm'),
-      cancelButtonText: t('button.cancel'),
-      type: 'warning',
-      lockScroll: false,
-    })
-      .then(() => {
-        userResetPwdApi(keys).then((res) => {
-          if (res.code == ResultEnum.SUCCESS) {
-            ElNotification({
-              title: t('label.user.resetPassword'),
-              message: t('common.success'),
-              type: 'success',
-              duration: 3000,
-            });
-          } else {
-            ElNotification({
-              title: t('label.user.resetPassword'),
-              message: t('common.failed'),
-              type: 'error',
-              duration: 3000,
-            });
-          }
-        });
-      })
-      .catch(() => {});
-  };
-
-  /**
-   * @description: 导入
-   * @return {*}
-   */
-  const upload = () => {
-    const params = {
-      title: '用户',
-      tempApi: userExportApi,
-      importApi: userBatchSaveApi,
-      getTableList: handleQuery(),
-    };
-    uploadExcelRef.value.init(params);
-  };
-
-  /**
-   * @description: 导出
-   * @return {*}
-   */
-  const download = () => {
-    ElMessageBox.confirm(t('label.user.exportConfirm'), t('common.tips'), {
-      type: 'warning',
-      lockScroll: false,
-    }).then(() => downloadFile(userExportApi, t('label.user.userList'), queryParams));
-  };
-
   const changeApp = (appInfo: WorkApp.AppInfo) => {
     console.info(appInfo);
+    queryParams.appId = appInfo.id;
+    handleQuery();
   };
+
+  /**
+   * 初始化加载
+   */
+  onMounted(() => {
+    handleQuery();
+  });
 </script>

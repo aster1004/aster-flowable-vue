@@ -14,7 +14,7 @@
     <el-scrollbar :style="{ height: title ? `calc(100% - 95px)` : `calc(100% - 56px)` }">
       <div class="app-container">
         <div
-          class="app"
+          :class="['app', appItem.id == activeId ? 'active' : '']"
           v-for="(appItem, index) in appData"
           :key="index"
           @click="handleClick(appItem)"
@@ -40,6 +40,9 @@
   // 应用信息
   const appData = ref<WorkApp.AppInfo[]>();
 
+  // 选中的应用ID
+  const activeId = ref<string | undefined>('');
+
   onBeforeMount(async () => {
     listApp();
   });
@@ -58,6 +61,7 @@
    */
   const handleClick = (appInfo: WorkApp.AppInfo) => {
     console.info(appInfo);
+    activeId.value = appInfo.id;
     emits('change', appInfo);
   };
 </script>
@@ -118,6 +122,7 @@
       }
       .app-name {
         flex: 1;
+        font-size: 14px;
       }
     }
     .app:hover {

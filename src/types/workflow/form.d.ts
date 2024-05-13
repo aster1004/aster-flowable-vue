@@ -107,8 +107,8 @@ declare namespace WorkForm {
   }
 
   export interface FormParams extends Page.ReqPage {
-    appId: string;
-    formName: string;
+    appId?: string;
+    formName?: string;
   }
 
   /**
