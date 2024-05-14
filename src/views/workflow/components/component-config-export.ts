@@ -123,6 +123,10 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 提示语
+        placeholder: '',
+        // 行数
+        rows: 2,
       },
     },
     {
@@ -138,12 +142,13 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 精确度
         precision: 0,
       },
     },
     {
       title: '金额',
-      name: 'InputMoney',
+      name: 'InputAmount',
       icon: 'iconfont icon-jine',
       value: 0,
       valueType: ValueType.number,
@@ -154,8 +159,10 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        showChinese: true,
+        // 精确度
         precision: 0,
+        // 展示大写
+        showChinese: true,
       },
     },
     {
