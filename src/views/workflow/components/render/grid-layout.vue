@@ -2,7 +2,7 @@
   <div v-if="mode === 'design'">
     <div class="flex justify-between items-center" style="color: #606266">
       <span class="text-sm">分栏布局</span>
-      <span class="text-xs" v-show="layoutDrag">拖入左侧控件到下方方框内</span>
+      <span class="text-xs">拖入左侧控件到下方方框内</span>
     </div>
     <el-row :gutter="formItem.props.gutter">
       <el-col v-for="(item, i) in _items" :key="i" :span="_span(i)">
