@@ -63,9 +63,4 @@
     return workFlowStore.selectFormItem;
   });
 </script>
-<style scoped lang="scss">
-  .tooltip {
-    font-weight: 100;
-    padding-left: 5px;
-  }
-</style>
+<style scoped lang="scss"></style>
