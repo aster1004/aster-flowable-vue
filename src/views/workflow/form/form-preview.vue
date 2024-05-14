@@ -53,6 +53,8 @@
       icon: workFlowStore.design.icon,
       iconColor: workFlowStore.design.iconColor,
       labelPosition: workFlowStore.design.labelPosition,
+      labelWidth: workFlowStore.design.labelWidth,
+      size: workFlowStore.design.size,
     };
     return formInfo;
   });

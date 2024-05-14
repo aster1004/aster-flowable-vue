@@ -92,6 +92,10 @@ declare namespace WorkForm {
     iconColor: string;
     // 标签位置
     labelPosition: string;
+    // 标签宽度,默认80px
+    labelWidth: number;
+    // 组件尺寸 大-large,中-default,小-small
+    size: string;
     // 所属应用
     appId?: string;
     // 版本
