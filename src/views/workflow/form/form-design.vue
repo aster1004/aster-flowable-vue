@@ -51,7 +51,6 @@
             <el-form
               ref="formDesignRef"
               :label-width="formInfo.labelWidth"
-              :size="formInfo.size"
               :label-position="formInfo.labelPosition"
             >
               <draggable

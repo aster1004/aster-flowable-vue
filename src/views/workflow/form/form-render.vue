@@ -12,7 +12,6 @@
       :rules="rules"
       :label-position="formInfo.labelPosition"
       :label-width="formInfo.labelWidth"
-      :size="formInfo.size"
       :validate-on-rule-change="false"
     >
       <div v-for="(item, index) in _formItems" :key="index">
