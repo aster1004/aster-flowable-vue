@@ -179,7 +179,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 只读
         readonly: false,
         // 展开
-        expanding: false,
+        expand: false,
         // 类型 static | dict | dynamic
         type: 'static',
         // 静态选项
@@ -207,7 +207,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 只读
         readonly: false,
         // 展开
-        expanding: false,
+        expand: false,
         // 类型 static | dict | dynamic
         type: 'static',
         // 静态选项

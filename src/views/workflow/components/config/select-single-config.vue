@@ -17,12 +17,6 @@
       <el-input v-model="_formItem.title" />
     </el-form-item>
     <select-config ref="singleConfigRef" v-model:form-item="_formItem" />
-    <el-form-item label="提示语">
-      <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
-    </el-form-item>
-    <el-form-item label="必填项">
-      <el-switch v-model="_formItem.props.required" />
-    </el-form-item>
   </div>
 </template>
 <script setup lang="ts">

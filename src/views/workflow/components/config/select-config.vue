@@ -8,7 +8,7 @@
 <template>
   <div class="select-config">
     <el-form-item label="选项配置">
-      <el-tabs v-model="_formItem.props.type" type="card" class="demo-tabs">
+      <el-tabs v-model="_formItem.props.type" type="border-card" class="select-tabs">
         <el-tab-pane label="静态" name="static">
           <draggable
             :list="_formItem.props.options"
@@ -22,7 +22,7 @@
                 <i class="select-icon iconfont icon-tuozhuai"></i>
                 <el-input v-model="_formItem.props.options[index]">
                   <template #append>
-                    <el-button type="text" @click="removeOption(index)">
+                    <el-button text @click="removeOption(index)">
                       <i class="iconfont icon-shanchu"></i>
                     </el-button>
                   </template>
@@ -31,16 +31,38 @@
             </template>
           </draggable>
           <div class="select-option">
-            <el-button type="text" @click="addOption">添加选项</el-button>
+            <el-button text type="primary" @click="addOption">添加选项</el-button>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="字典" name="dict"> </el-tab-pane>
-        <el-tab-pane label="动态" name="dynamic"> </el-tab-pane>
+        <el-tab-pane label="字典" name="dict">
+          <el-select
+            v-model="_formItem.props.dictType"
+            placeholder="请选择字典"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in _dictList"
+              :key="item.id"
+              :label="item.dictName"
+              :value="item.dictType"
+            />
+          </el-select>
+        </el-tab-pane>
+        <el-tab-pane label="动态" name="dynamic">
+          <!-- TODO select选项动态 -->
+        </el-tab-pane>
       </el-tabs>
+    </el-form-item>
+    <el-form-item label="是否展开">
+      <el-switch v-model="_formItem.props.expand" />
+    </el-form-item>
+    <el-form-item label="必填项">
+      <el-switch v-model="_formItem.props.required" />
     </el-form-item>
   </div>
 </template>
 <script setup lang="ts">
+  import { useAppStore } from '@/stores/modules/app';
   import { computed, PropType } from 'vue';
   import draggable from 'vuedraggable';
 
@@ -51,6 +73,9 @@
       default: () => {},
     },
   });
+
+  // 字典
+  const appStore = useAppStore();
 
   /**
    * @description: 添加选项
@@ -79,9 +104,17 @@
       emits('update:formItem', val);
     },
   });
+
+  // 字典列表
+  const _dictList = computed(() => {
+    return appStore.dictList;
+  });
 </script>
 <style scoped lang="scss">
   .select-config {
+    .select-tabs {
+      width: 100%;
+    }
     .select-option {
       display: flex;
       justify-content: center;
