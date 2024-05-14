@@ -178,8 +178,19 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 展开
         expanding: false,
+        // 类型 static | dict | dynamic
+        type: 'static',
+        // 静态选项
         options: ['选项1', '选项2'],
+        // 字典类型
+        dictType: '',
+        // 动态配置
+        dynamic: {
+          label: '',
+          value: '',
+        },
       },
     },
     {
@@ -195,8 +206,19 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 展开
         expanding: false,
+        // 类型 static | dict | dynamic
+        type: 'static',
+        // 静态选项
         options: ['选项1', '选项2'],
+        // 字典类型
+        dictType: '',
+        // 动态配置
+        dynamic: {
+          label: '',
+          value: '',
+        },
       },
     },
     {
