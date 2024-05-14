@@ -11,6 +11,8 @@
       :model="_formData"
       :rules="rules"
       :label-position="formInfo.labelPosition"
+      :label-width="formInfo.labelWidth"
+      :size="formInfo.size"
       :validate-on-rule-change="false"
     >
       <div v-for="(item, index) in _formItems" :key="index">
@@ -33,7 +35,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, onBeforeUnmount, onMounted, PropType, ref } from 'vue';
+  import { computed, onBeforeUnmount, onMounted, PropType, ref, watchEffect } from 'vue';
   import FormDesignRender from './form-design-render.vue';
   import mittBus from '@/utils/mittBus';
 
@@ -64,6 +66,9 @@
     return props.formItems;
   });
 
+  watchEffect(() => {
+    console.log(props.formInfo);
+  });
   /**
    * 表单数据
    */
