@@ -9,6 +9,8 @@ import InputNumber from './input-number-config.vue';
 import InputAmount from './input-amount-config.vue';
 import SelectSingle from './select-single-config.vue';
 import SelectMultiple from './select-multiple-config.vue';
+import DateTime from './date-time-config.vue';
+import DateTimeRange from './date-time-range-config.vue';
 
 export default {
   // ------------布局组件-开始------------
@@ -26,6 +28,8 @@ export default {
   InputAmount,
   SelectSingle,
   SelectMultiple,
+  DateTime,
+  DateTimeRange,
 
   // ------------基础组件-结束------------
 

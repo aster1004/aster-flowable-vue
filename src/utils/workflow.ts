@@ -6,6 +6,8 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 
+import moment, { Moment } from 'moment';
+import { isEmpty } from '.';
 import { evaluate, parse } from './formula';
 
 /**
@@ -321,4 +323,111 @@ export const convertToChineseAmount = (amount: number | string) => {
     chineseStr += cnInteger;
   }
   return chineseStr;
+};
+
+/**
+ * @description: 获取日期选择器类型
+ * @param {string} format 日期格式
+ * @param {boolean} range 是否范围
+ * @return {*}
+ */
+export const getDateTypeByFormat = (format: string, range: boolean = false) => {
+  if (isEmpty(format)) {
+    return 'date';
+  }
+  if (range) {
+    if (format === 'YYYY-MM-DD') {
+      return 'daterange';
+    } else {
+      return 'datetimerange';
+    }
+  } else {
+    if (format === 'YYYY') {
+      return 'year';
+    }
+    if (format === 'YYYY-MM') {
+      return 'month';
+    }
+    if (format === 'YYYY-MM-DD HH') {
+      return 'datetime';
+    }
+    if (format === 'YYYY-MM-DD HH:mm') {
+      return 'datetime';
+    }
+    if (format === 'YYYY-MM-DD HH:mm:ss') {
+      return 'datetime';
+    }
+    return 'date';
+  }
+};
+
+/**
+ * @description: 获取日期范围的时间长度
+ * @param {string} val 日期范围
+ * @param {string} format 日期格式
+ * @return {*}
+ */
+export const getDateLength = (val: string[], format: string): string => {
+  if (!Array.isArray(val) || val.length !== 2) {
+    return '先选择时间哦';
+  }
+
+  const startMoment = moment(val[0]);
+  const endMoment = moment(val[1]);
+
+  if (!startMoment.isValid() || !endMoment.isValid()) {
+    return '时间格式不正确，请重新选择';
+  }
+
+  const start = startMoment.format(format);
+  const end = endMoment.format(format);
+
+  if (start === end || val[0] === val[1]) {
+    return '0 （时长为0，请确认）';
+  }
+
+  let years = endMoment.diff(startMoment, 'years');
+  let months = endMoment.diff(startMoment, 'months');
+  let days = endMoment.diff(startMoment, 'days');
+  let hours = endMoment.diff(startMoment, 'hours');
+  let minutes = endMoment.diff(startMoment, 'minutes');
+
+  minutes %= 60;
+  hours %= 24;
+  months %= 12;
+
+  const mstart: Moment = startMoment;
+  const mend: Moment = endMoment;
+
+  if (mstart.date() < mend.date()) {
+    days = mend.date() - mstart.date();
+    if ((minutes > 0 || hours > 0) && months > 0) {
+      days--;
+    }
+  } else if (mstart.date() === mend.date()) {
+    const s = moment(startMoment.format('HH:mm:ss'));
+    const e = moment(endMoment.format('HH:mm:ss'));
+    if (e.isBefore(s)) {
+      days = 0;
+    }
+  }
+
+  if (days > 31 && mend.month() - mstart.month() >= 2) {
+    // 将日期推至上月求差，优化处理超过俩月且天超过31的情况
+    days = mend.diff(mstart.add(mend.month() - mstart.month() - 1, 'month'), 'days');
+  }
+
+  // 格式化输出时长
+  const durationFormat = (value: number, unit: string) => {
+    return value > 0 ? `${value} ${unit}` : '';
+  };
+
+  return (
+    '时长：' +
+    durationFormat(years, '年') +
+    durationFormat(months, '个月') +
+    durationFormat(days, '天') +
+    durationFormat(hours, '小时') +
+    durationFormat(minutes, '分钟')
+  );
 };

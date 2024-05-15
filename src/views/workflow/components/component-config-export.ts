@@ -234,7 +234,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        format: 'yyyy-MM-dd',
+        // 日期格式
+        format: 'YYYY-MM-DD',
       },
     },
     {
@@ -250,8 +251,9 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        placeholder: ['开始时间', '结束时间'],
-        format: 'yyyy-MM-dd',
+        // 格式
+        format: 'YYYY-MM-DD',
+        // 时长
         showLength: false,
       },
     },
