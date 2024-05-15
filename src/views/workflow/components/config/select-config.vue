@@ -53,16 +53,22 @@
         </el-tab-pane>
       </el-tabs>
     </el-form-item>
+    <el-form-item label="默认值">
+      <el-select v-model="_formItem.value">
+        <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value" />
+      </el-select>
+    </el-form-item>
     <el-form-item label="是否展开">
       <el-switch v-model="_formItem.props.expand" />
     </el-form-item>
-    <el-form-item label="必填项">
+    <el-form-item label="是否必填">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
   </div>
 </template>
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
+  import { getDictDataList } from '@/utils';
   import { computed, PropType } from 'vue';
   import draggable from 'vuedraggable';
 
@@ -94,6 +100,29 @@
   const removeOption = (index: number) => {
     props.formItem.props.options.splice(index, 1);
   };
+
+  // 选项
+  const options = computed(() => {
+    if (_formItem.value.props.type === 'static') {
+      return _formItem.value.props.options.map((item) => {
+        return {
+          label: item,
+          value: item,
+        };
+      });
+    } else if (_formItem.value.props.type === 'dict') {
+      const dataList = getDictDataList(appStore.dictList, _formItem.value.props.dictType);
+      return dataList.map((item) => {
+        return {
+          label: item.dictLabel,
+          value: item.dictValue,
+        };
+      });
+    } else if (_formItem.value.props.type === 'dynamic') {
+      //TODO 动态选项
+    }
+    return [];
+  });
 
   // 当前组件
   const _formItem = computed({

@@ -9,14 +9,14 @@
   <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
     <template v-if="mode === 'design'">
       <template v-if="formItem.props.expand">
-        <el-radio-group :model-value="_value" disabled>
+        <el-radio-group :model-value="formItem.value" disabled>
           <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
             {{ item.label }}
           </el-radio>
         </el-radio-group>
       </template>
       <template v-else>
-        <el-select :model-value="_value" :multiple="false" disabled>
+        <el-select :model-value="formItem.value" :multiple="false" disabled>
           <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
             {{ item.label }}
           </el-option>
@@ -62,7 +62,7 @@
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType } from 'vue';
+  import { computed, onMounted, PropType } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { getDictDataList } from '@/utils';
 
@@ -109,6 +109,7 @@
         };
       });
     } else if (props.formItem.props.type === 'dynamic') {
+      //TODO 动态选项
     }
     return [];
   });
@@ -143,6 +144,16 @@
       });
     }
     return r;
+  });
+
+  onMounted(() => {
+    if (
+      !props.formItem.id ||
+      !props.formData.hasOwnProperty(props.formItem.id) ||
+      props.formData[props.formItem.id] == undefined
+    ) {
+      _value.value = props.formItem.value;
+    }
   });
 </script>
 <style scoped lang="scss"></style>
