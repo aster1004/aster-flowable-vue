@@ -11,6 +11,8 @@ import SelectSingle from './select-single.vue';
 import SelectMultiple from './select-multiple.vue';
 import DateTime from './date-time.vue';
 import DateTimeRange from './date-time-range.vue';
+import UserPicker from './user-picker.vue';
+import DeptPicker from './dept-picker.vue';
 
 export default {
   // ------------布局组件-开始------------
@@ -29,6 +31,8 @@ export default {
   SelectMultiple,
   DateTime,
   DateTimeRange,
+  UserPicker,
+  DeptPicker,
 
   // ------------基础组件-结束------------
 

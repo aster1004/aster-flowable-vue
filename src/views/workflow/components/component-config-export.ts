@@ -259,7 +259,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '图片',
-      name: 'ImageUpload',
+      name: 'UploadImage',
       icon: 'iconfont icon-tupian',
       value: [],
       valueType: ValueType.array,
@@ -277,7 +277,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '附件',
-      name: 'FileUpload',
+      name: 'UploadFile',
       icon: 'iconfont icon-fujian',
       value: [],
       valueType: ValueType.array,
