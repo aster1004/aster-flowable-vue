@@ -42,7 +42,7 @@
     <el-form-item label="提示语">
       <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
     </el-form-item>
-    <el-form-item label="必填项">
+    <el-form-item label="是否必填">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
 
