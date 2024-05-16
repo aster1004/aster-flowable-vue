@@ -11,6 +11,8 @@ import SelectSingle from './select-single-config.vue';
 import SelectMultiple from './select-multiple-config.vue';
 import DateTime from './date-time-config.vue';
 import DateTimeRange from './date-time-range-config.vue';
+import UploadImage from './upload-image-config.vue';
+import UploadFile from './upload-file-config.vue';
 import UserPicker from './user-picker-config.vue';
 import DeptPicker from './dept-picker-config.vue';
 
@@ -32,6 +34,8 @@ export default {
   SelectMultiple,
   DateTime,
   DateTimeRange,
+  UploadImage,
+  UploadFile,
   UserPicker,
   DeptPicker,
 
