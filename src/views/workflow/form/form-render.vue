@@ -16,8 +16,11 @@
     >
       <div v-for="(item, index) in _formItems" :key="index">
         <form-design-render
-          v-if="item.name === 'GridLayout' || item.name === 'GridTitle'"
+          v-if="
+            item.name === 'GridLayout' || item.name === 'GridTitle' || item.name === 'Description'
+          "
           v-model:value="_formData"
+          :ref="item.id"
           mode="form"
           :formData="_formData"
           :formItem="item"
@@ -25,6 +28,7 @@
         <form-design-render
           v-else
           v-model:value="_formData[item.id]"
+          :ref="item.id"
           mode="form"
           :formData="_formData"
           :formItem="item"

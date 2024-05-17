@@ -51,8 +51,8 @@
   const emit = defineEmits(['update:value']);
   const props = defineProps({
     value: {
-      type: Array<string>,
-      default: '',
+      type: Array as PropType<string[]>,
+      default: () => [],
     },
     mode: {
       type: String as PropType<'design' | 'form' | 'search'>,

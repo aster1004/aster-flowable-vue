@@ -22,7 +22,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { computed, ref } from 'vue';
+  import { computed, ref, watch } from 'vue';
   import FormRender from './form-render.vue';
 
   const workFlowStore = useWorkFlowStore();
@@ -54,10 +54,21 @@
       iconColor: workFlowStore.design.iconColor,
       labelPosition: workFlowStore.design.labelPosition,
       labelWidth: workFlowStore.design.labelWidth,
-      size: workFlowStore.design.size,
     };
     return formInfo;
   });
+
+  watch(
+    () => formData.value,
+    (val) => {
+      console.log('preview--->formData');
+      console.log(val);
+    },
+    {
+      immediate: true,
+      deep: true,
+    },
+  );
 
   defineExpose({ init });
 </script>

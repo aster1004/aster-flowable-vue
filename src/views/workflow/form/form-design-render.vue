@@ -14,6 +14,7 @@
     :formData="props.formData"
     :formItem="formItem"
     :tableIndex="tableIndex"
+    :isChildTable="isChildTable"
   />
 </template>
 <script lang="ts">
@@ -46,6 +47,10 @@
     tableIndex: {
       type: Number,
       default: 0,
+    },
+    isChildTable: {
+      type: Boolean,
+      default: false,
     },
   });
 

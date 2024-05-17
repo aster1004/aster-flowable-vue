@@ -7,14 +7,14 @@
  */
 declare namespace WorkForm {
   declare type FormDataModel = {
-    [key: string]: string;
+    [key: string]: any;
   };
 
   declare type FormRuleModel = {
     [key: string]: Array<any>;
   };
 
-  declare type FormMapMoedl = {
+  declare type FormMapModel = {
     [key: string]: any;
   };
 
@@ -67,7 +67,7 @@ declare namespace WorkForm {
     // 权限
     perm: string;
     // 表单项属性
-    props: FormMapMoedl;
+    props: FormMapModel;
     // 表单项标题
     title: string;
     // 表单项值

@@ -45,10 +45,10 @@
    */
   const save = () => {
     console.log('save');
+    console.log(workFlowStore.design.formItems);
     nextTick(() => {
       processDesignRef.value.jsonValue();
     });
-    workFlowStore.design;
   };
 
   /**

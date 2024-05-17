@@ -6,7 +6,61 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div> 内容 </div>
+  <div v-if="_formItem">
+    <el-form-item label="控件名称">
+      <template #label>
+        <div class="flex justify-between items-center">
+          <span>控件名称</span>
+          <span class="text-xs font-normal">明细表</span>
+        </div>
+      </template>
+      <el-input v-model="_formItem.title" />
+    </el-form-item>
+    <el-form-item label="显示边框">
+      <el-switch v-model="_formItem.props.showBorder" />
+    </el-form-item>
+    <el-form-item label="字段排序">
+      <draggable
+        :list="_formItem.props.columns"
+        item-key=""
+        group="columns"
+        handler=".dragger-option"
+        :options="{ animation: 300, sort: true }"
+      >
+        <template #item="{ element }">
+          <div class="dragger-option">
+            <i :class="['dragger-icon', element.icon]"></i>
+            <span>{{ element.title }}</span>
+          </div>
+        </template>
+      </draggable>
+    </el-form-item>
+  </div>
 </template>
-<script setup lang="ts"></script>
-<style scoped lang="scss"></style>
+<script setup lang="ts">
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { computed } from 'vue';
+  import draggable from 'vuedraggable';
+
+  // 工作流store
+  const workFlowStore = useWorkFlowStore();
+
+  // 选中的组件
+  const _formItem = computed(() => {
+    return workFlowStore.selectFormItem;
+  });
+</script>
+<style scoped lang="scss">
+  .dragger-option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 3px;
+    color: #afadad;
+
+    .dragger-icon {
+      padding: 3px;
+      font-size: 20px !important;
+    }
+  }
+</style>

@@ -56,18 +56,16 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.array,
       props: {
+        // 列设置
+        columns: [],
         // 必填
         required: false,
         // 隐藏
         hidden: '',
         // 只读
         readonly: false,
+        // 边框
         showBorder: true,
-        rowLayout: true,
-        showSummary: false,
-        summaryColumns: [],
-        maxSize: 0, //最大条数，为0则不限制
-        columns: [], //列设置
       },
     },
     {

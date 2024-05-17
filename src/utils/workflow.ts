@@ -200,6 +200,9 @@ export const evaluateFormula = (expression, data) => {
  * @return {*}
  */
 export const formulaValidate = (expression: string) => {
+  if (expression.indexOf('[?]') != -1) {
+    expression = expression.replaceAll('[?]', '');
+  }
   try {
     expression &&
       parse(expression, {

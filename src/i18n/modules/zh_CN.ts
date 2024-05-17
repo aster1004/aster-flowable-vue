@@ -139,6 +139,7 @@ export default {
     restore: '恢 复',
     publish: '发 布',
     save: '保 存',
+    copy: '复 制',
     showSearch: '显示搜索',
     hideSearch: '隐藏搜索',
     configDict: '配置字典',

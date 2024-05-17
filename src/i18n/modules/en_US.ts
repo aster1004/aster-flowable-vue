@@ -140,6 +140,7 @@ export default {
     restore: 'Restore',
     publish: 'Publish',
     save: 'Save',
+    copy: 'Copy',
     showSearch: 'Show Search',
     hideSearch: 'Hide Search',
     configDict: 'Config Dict',
