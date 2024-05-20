@@ -73,9 +73,9 @@
     </el-row>
   </el-form>
   <el-form v-else-if="mode == 'form'">
-    <div class="table-main">
-      <div class="pb-5px font-600">
-        <span class="text-base">{{ formItem.title }}</span>
+    <div class="table-main" :id="formItem.id">
+      <div class="flex justify-between items-center pb-5px">
+        <span class="text-base font-600">{{ formItem.title }}</span>
       </div>
       <el-table
         :data="_value"
@@ -349,6 +349,10 @@
   // };
 </script>
 <style scoped lang="scss">
+  .table-main {
+    background: var(--el-fill-color-blank);
+  }
+
   .table-list {
     color: #606266;
 

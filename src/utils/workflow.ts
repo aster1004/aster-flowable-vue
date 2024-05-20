@@ -170,12 +170,7 @@ export const restorationFormula = (formula: string, formulaNodes: WorkComponent.
   }
   let result = formula;
   formulaNodes.forEach((node) => {
-    if (
-      node.value &&
-      node.label &&
-      node.label.indexOf('明细表') == -1 &&
-      formula.indexOf(node.value) != -1
-    ) {
+    if (node.value && node.label && formula.indexOf(node.value) != -1) {
       result = result.replaceAll(node.value, '[[' + node.label + ']]');
     }
   });

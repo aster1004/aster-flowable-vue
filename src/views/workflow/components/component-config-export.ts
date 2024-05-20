@@ -34,6 +34,7 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
         items: [],
         fontSize: 'text-base',
         fontWeight: 'font-600',
+        justify: 'justify-start',
       },
     },
     {

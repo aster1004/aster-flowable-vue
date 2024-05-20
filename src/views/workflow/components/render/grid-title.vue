@@ -10,11 +10,13 @@
     <el-collapse v-model="activeNames" accordion>
       <el-collapse-item :name="formItem.id">
         <template #title>
-          <div class="flex justify-between items-center" style="width: 90%; color: #606266">
+          <div
+            :class="['flex', 'items-center', `${formItem.props.justify}`]"
+            style="width: 100%; color: #606266"
+          >
             <span :class="[formItem.props.fontSize, formItem.props.fontWeight]">
               {{ formItem.title }}
             </span>
-            <span class="text-xs" v-show="_items.length === 0">拖入左侧控件到下方方框内</span>
           </div>
         </template>
 
@@ -52,7 +54,10 @@
     <el-collapse v-model="activeNames" accordion v-if="!_hidden">
       <el-collapse-item :name="formItem.id">
         <template #title>
-          <div class="flex justify-between items-center" style="width: 90%; color: #606266">
+          <div
+            :class="['flex', 'items-center', `${formItem.props.justify}`]"
+            style="width: 100%; color: #606266"
+          >
             <span :class="[formItem.props.fontSize, formItem.props.fontWeight]">
               {{ formItem.title }}
             </span>

@@ -24,13 +24,20 @@
         :list="_formItem.props.columns"
         item-key=""
         group="columns"
+        class="dragger-main"
         handler=".dragger-option"
         :options="{ animation: 300, sort: true }"
       >
         <template #item="{ element }">
           <div class="dragger-option">
-            <i :class="['dragger-icon', element.icon]"></i>
-            <span>{{ element.title }}</span>
+            <el-row>
+              <el-col :span="4">
+                <i :class="['dragger-icon', element.icon]"></i>
+              </el-col>
+              <el-col :span="20">
+                <span>{{ element.title }}</span>
+              </el-col>
+            </el-row>
           </div>
         </template>
       </draggable>
@@ -51,10 +58,12 @@
   });
 </script>
 <style scoped lang="scss">
+  .dragger-main {
+    width: 100%;
+    padding: 0px 10px;
+  }
+
   .dragger-option {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding-bottom: 3px;
     color: #afadad;
 

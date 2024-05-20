@@ -6,7 +6,10 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
+  <el-form-item :prop="formItem.id" v-if="!_hidden">
+    <template #label>
+      <span v-show="!isChildTable">{{ formItem.title }}</span>
+    </template>
     <template v-if="mode === 'design'">
       <template v-if="formItem.props.expand">
         <el-checkbox-group :model-value="formItem.value" disabled>
@@ -90,6 +93,14 @@
       type: Object as PropType<WorkComponent.ComponentConfig>,
       default: {},
     },
+    isChildTable: {
+      type: Boolean,
+      default: false,
+    },
+    index: {
+      type: Number,
+      default: 0,
+    },
   });
 
   // 字典
@@ -138,9 +149,14 @@
   const _hidden = computed(() => {
     let r = false;
     if (props.formItem.props.hidden) {
-      r = evaluateFormula(props.formItem.props.hidden, props.formData);
+      let expression = props.formItem.props.hidden;
+      // 如果是子表中的控件，则需要用到下标
+      if (props.isChildTable) {
+        expression = expression.replaceAll('?', props.index);
+      }
+      r = evaluateFormula(expression, props.formData);
     }
-    if (props.formItem.props.required) {
+    if (props.formItem.props.required && !props.isChildTable) {
       // 调用form-render的方法
       mittBus.emit('changeFormRules', {
         hidden: r,
@@ -160,6 +176,10 @@
     ) {
       _value.value = props.formItem.value;
     }
+  });
+
+  defineExpose({
+    _hidden,
   });
 </script>
 <style scoped lang="scss"></style>
