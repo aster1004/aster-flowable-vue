@@ -145,9 +145,6 @@
             class-name="operation"
           >
             <template #default="scope">
-              <el-button size="small" link type="primary" @click="handleDeployment(scope.row.id)">
-                <i class="iconfont icon-liuchengguanli"></i>部署
-              </el-button>
               <el-button size="small" link type="primary" @click="handleEdit(scope.row.id)">
                 <i class="iconfont icon-bianji"></i>{{ $t('button.edit') }}
               </el-button>
@@ -322,9 +319,8 @@
   /**
    * 切换应用
    */
-  const changeApp = (appInfo: WorkApp.AppInfo) => {
-    console.info(appInfo);
-    queryParams.appId = appInfo.id;
+  const changeApp = (appId: string) => {
+    queryParams.appId = appId;
     handleQuery();
   };
 
@@ -338,7 +334,7 @@
    * 初始化加载
    */
   onMounted(() => {
-    handleQuery();
+    // handleQuery();
   });
 </script>
 <style lang="scss" scoped>

@@ -36,6 +36,7 @@
   import { ref, watch, onBeforeMount, nextTick } from 'vue';
   import { ElTree } from 'element-plus';
   import { appListApi } from '@/api/workflow/app';
+  import { useRoute } from 'vue-router';
 
   // 应用信息
   const appData = ref<WorkApp.AppInfo[]>();
@@ -60,7 +61,6 @@
    * 点击应用
    */
   const handleClick = (appInfo: WorkApp.AppInfo) => {
-    console.info(appInfo);
     activeId.value = appInfo.id;
     emits('change', appInfo);
   };
