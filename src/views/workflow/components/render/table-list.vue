@@ -121,7 +121,7 @@
                 :form-item="item"
                 :mode="mode"
                 :table-id="formItem.id"
-                :table-index="index"
+                :table-index="scope.$index"
                 :show-label="false"
               />
             </div>

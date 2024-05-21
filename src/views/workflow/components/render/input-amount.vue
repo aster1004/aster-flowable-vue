@@ -24,9 +24,6 @@
         style="width: 100%"
         readonly
       />
-      <div class="amount" v-if="formItem.props.showChinese">
-        {{ chineseAmount }}
-      </div>
     </div>
     <div v-else-if="mode === 'form'" style="width: 100%">
       <el-input-number
@@ -64,7 +61,7 @@
   const props = defineProps({
     value: {
       type: Number,
-      default: '',
+      default: 0,
     },
     mode: {
       type: String as PropType<'design' | 'form' | 'search'>,
