@@ -39,7 +39,8 @@
                   <form-design-render
                     :form-item="item"
                     :mode="mode"
-                    :isChildTable="true"
+                    :table-id="formItem.id"
+                    :table-index="index"
                     :show-label="false"
                   />
                   <div class="close" v-show="showCloseBtn(item)">
@@ -78,7 +79,7 @@
       </el-col>
     </el-row>
   </el-form>
-  <el-form v-else-if="mode == 'form'">
+  <div v-else-if="mode == 'form'">
     <div class="table-main" :id="formItem.id">
       <div class="flex justify-between items-center pb-5px">
         <span class="text-base font-600">{{ formItem.title }}</span>
@@ -119,8 +120,8 @@
                 :form-data="formData"
                 :form-item="item"
                 :mode="mode"
-                :isChildTable="true"
-                :index="scope.$index"
+                :table-id="formItem.id"
+                :table-index="index"
                 :show-label="false"
               />
             </div>
@@ -184,7 +185,7 @@
         </el-button>
       </template>
     </el-drawer>
-  </el-form>
+  </div>
   <div v-else> 出现未知错误,请联系管理员 </div>
 </template>
 <script setup lang="ts">

@@ -6,7 +6,12 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item :prop="formItem.id" v-if="!_hidden">
+  <el-form-item
+    v-if="!_hidden"
+    :prop="formItemProp"
+    :label-width="labelWidth"
+    :show-message="showMessage"
+  >
     <template #label>
       <span v-show="showLabel">{{ formItem.title }}</span>
     </template>
@@ -63,7 +68,7 @@
   import { evaluateFormula } from '@/utils/workflow';
   import { computed, onMounted, PropType } from 'vue';
   import mittBus from '@/utils/mittBus';
-  import { getDictDataList } from '@/utils';
+  import { getDictDataList, isNotEmpty } from '@/utils';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -83,11 +88,11 @@
       type: Object as PropType<WorkComponent.ComponentConfig>,
       default: {},
     },
-    isChildTable: {
-      type: Boolean,
-      default: false,
+    tableId: {
+      type: String,
+      default: '',
     },
-    index: {
+    tableIndex: {
       type: Number,
       default: 0,
     },
@@ -99,6 +104,33 @@
 
   // 字典
   const appStore = useAppStore();
+
+  // 键
+  const formItemProp = computed(() => {
+    if (isNotEmpty(props.tableId)) {
+      return props.tableId + '.' + props.tableIndex + '.' + props.formItem.id;
+    } else {
+      return props.formItem.id;
+    }
+  });
+
+  // 标签长度
+  const labelWidth = computed(() => {
+    if (isNotEmpty(props.tableId)) {
+      return '12px';
+    } else {
+      return '';
+    }
+  });
+
+  // 是否显示校验信息
+  const showMessage = computed(() => {
+    if (isNotEmpty(props.tableId)) {
+      return false;
+    } else {
+      return true;
+    }
+  });
 
   /**
    * @description: 选项
@@ -145,16 +177,18 @@
     if (props.formItem.props.hidden) {
       let expression = props.formItem.props.hidden;
       // 如果是子表中的控件，则需要用到下标
-      if (props.isChildTable) {
-        expression = expression.replaceAll('?', props.index);
+      if (isNotEmpty(props.tableId)) {
+        expression = expression.replaceAll('?', props.tableIndex);
       }
       r = evaluateFormula(expression, props.formData);
     }
-    if (props.formItem.props.required && !props.isChildTable) {
+    if (props.formItem.props.required) {
       // 调用form-render的方法
       mittBus.emit('changeFormRules', {
         hidden: r,
-        fieldId: props.formItem.id,
+        fieldId: isNotEmpty(props.tableId)
+          ? props.tableId + '.' + props.tableIndex + '.' + props.formItem.id
+          : props.formItem.id,
         fieldName: props.formItem.title,
         trigger: 'blur',
       });

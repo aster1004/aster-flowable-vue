@@ -13,8 +13,8 @@
     :mode="mode"
     :formData="props.formData"
     :formItem="formItem"
+    :tableId="tableId"
     :tableIndex="tableIndex"
-    :isChildTable="isChildTable"
     :showLabel="showLabel"
   />
 </template>
@@ -45,13 +45,13 @@
       type: Object as PropType<WorkComponent.ComponentConfig>,
       default: {},
     },
+    tableId: {
+      type: String,
+      default: '',
+    },
     tableIndex: {
       type: Number,
       default: 0,
-    },
-    isChildTable: {
-      type: Boolean,
-      default: false,
     },
     showLabel: {
       type: Boolean,

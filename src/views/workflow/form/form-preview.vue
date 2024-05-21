@@ -16,9 +16,15 @@
     :lock-scroll="false"
     size="60%"
   >
-    <form-render v-model:form-data="formData" :form-items="_formItems" :form-info="_formInfo" />
+    <form-render
+      ref="formRenderRef"
+      v-model:form-data="formData"
+      :form-items="_formItems"
+      :form-info="_formInfo"
+    />
     <template #footer>
-      <el-button type="primary" @click="visible = false">{{ $t('button.cancel') }}</el-button>
+      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
+      <el-button type="primary" @click="validateForm">{{ $t('button.confirm') }}</el-button>
     </template>
   </el-drawer>
 </template>
@@ -35,6 +41,8 @@
   const title = ref('预览');
   // 表单数据
   const formData = ref<WorkForm.FormDataModel>({});
+  // 注册组件
+  const formRenderRef = ref();
 
   /**
    * @description: 初始化
@@ -63,6 +71,13 @@
     };
     return formInfo;
   });
+
+  /**
+   * @description: 验证表单
+   */
+  const validateForm = () => {
+    formRenderRef.value.validate();
+  };
 
   watch(
     () => formData.value,
