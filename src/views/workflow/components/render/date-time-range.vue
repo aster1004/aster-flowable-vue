@@ -8,20 +8,9 @@
 <template>
   <el-form-item :prop="formItem.id" v-if="!_hidden">
     <template #label>
-      <span v-show="!isChildTable">{{ formItem.title }}</span>
+      <span v-show="showLabel">{{ formItem.title }}</span>
     </template>
-    <div v-if="mode === 'design'">
-      <el-date-picker
-        v-model="_value"
-        :type="dateType"
-        :format="formItem.props.format"
-        :value-format="formItem.props.format"
-        readonly
-      />
-      <div class="date-length" v-if="formItem.props.showLength">
-        {{ dateLength }}
-      </div>
-    </div>
+    <el-input v-if="mode === 'design'" :model-value="formItem.value" readonly />
     <div v-else-if="mode === 'form'">
       <el-date-picker
         v-model="_value"
@@ -76,6 +65,10 @@
     index: {
       type: Number,
       default: 0,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
     },
   });
 

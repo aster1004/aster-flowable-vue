@@ -518,4 +518,11 @@ export default {
       packageName: 'Please enter the package name',
     },
   },
+  workflow: {
+    clearRow: 'Clear Row Data',
+    addRowAbove: 'Add Row Above',
+    addRowBelow: 'Add Row Below',
+    prevRow: 'Prev',
+    nextRow: 'Next',
+  },
 };

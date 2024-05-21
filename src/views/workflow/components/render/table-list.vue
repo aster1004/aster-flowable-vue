@@ -28,6 +28,7 @@
               :label="item.title"
               header-align="center"
               align="center"
+              min-width="120px"
             >
               <template #default>
                 <div
@@ -35,7 +36,12 @@
                   @click.stop="onSelectComponent(item)"
                   :style="onSelectedComponentStyle(item)"
                 >
-                  <form-design-render :form-item="item" :mode="mode" :isChildTable="true" />
+                  <form-design-render
+                    :form-item="item"
+                    :mode="mode"
+                    :isChildTable="true"
+                    :show-label="false"
+                  />
                   <div class="close" v-show="showCloseBtn(item)">
                     <i class="iconfont icon-guanbi1" @click="onDeleteComponent(index)"></i>
                   </div>
@@ -84,15 +90,15 @@
         :cell-style="cellStyle"
         :key="Math.random()"
         style="width: 100%"
-        max-height="250"
+        max-height="250px"
       >
-        <el-table-column
-          type="index"
-          label="序号"
-          width="80"
-          header-align="center"
-          align="center"
-        />
+        <el-table-column type="index" label="序号" width="80" header-align="center" align="center">
+          <template #default="scope">
+            <div style="width: 100%" @click="openRowInfo(scope.$index)">
+              <span> {{ scope.$index + 1 }} </span>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column
           v-for="(item, index) in _columns"
           :key="index"
@@ -100,6 +106,7 @@
           :label="item.title"
           header-align="center"
           align="center"
+          min-width="120px"
         >
           <template #header>
             <span style="color: #da4b2b" v-show="item.props.required"> * </span>
@@ -114,30 +121,69 @@
                 :mode="mode"
                 :isChildTable="true"
                 :index="scope.$index"
+                :show-label="false"
               />
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('label.operate')" fixed="right" width="150" align="center">
+        <el-table-column :label="$t('label.operate')" fixed="right" width="80" align="center">
           <template #default="scope">
-            <el-button
-              size="small"
-              link
-              type="primary"
-              @click="handleCopy(scope.row, scope.$index)"
-            >
-              <i class="iconfont icon-xinzeng"></i>{{ $t('button.copy') }}
-            </el-button>
-            <el-button size="small" link type="primary" @click="handleRemove(scope.$index)">
-              <i class="iconfont icon-shanchu"></i>{{ $t('button.delete') }}
-            </el-button>
+            <el-dropdown placement="top-start" trigger="click">
+              <span><i class="iconfont icon-gengduo1"></i></span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="handleCopy(scope.row, scope.$index)">
+                    <i class="iconfont icon-xinzeng !text-sm"></i>{{ $t('button.copy') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handleRemove(scope.$index)">
+                    <i class="iconfont icon-shanchu !text-sm"></i>{{ $t('button.delete') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handleClear(scope.$index)">
+                    <i class="iconfont icon-huancunjiankong !text-sm"></i>
+                    {{ $t('workflow.clearRow') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handleAdd(scope.$index, 'above')">
+                    <i class="iconfont icon-xiangshang !text-sm"></i>
+                    {{ $t('workflow.addRowAbove') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handleAdd(scope.$index, 'below')">
+                    <i class="iconfont icon-xiangxia !text-sm"></i>
+                    {{ $t('workflow.addRowBelow') }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
       <div class="table-btn">
-        <el-button @click="handleAdd"> <i class="iconfont icon-xinzeng pr-5px"></i>增加 </el-button>
+        <el-button @click="handleAdd()">
+          <i class="iconfont icon-xinzeng pr-5px"></i>增加
+        </el-button>
       </div>
     </div>
+    <el-drawer v-model="rowVisible" :append-to-body="true" @close="closeRowInfo">
+      <el-form label-width="auto">
+        <div v-for="(item, index) in _columns" :key="index">
+          <form-design-render
+            v-model:value="_value[rowIndex][item.id]"
+            :form-data="formData"
+            :form-item="item"
+            :mode="mode"
+            :isChildTable="true"
+            :index="rowIndex"
+          />
+        </div>
+      </el-form>
+      <template #footer>
+        <el-button @click="prevRowInfo(rowIndex)" :disabled="rowIndex === 0">
+          {{ $t('workflow.prevRow') }}
+        </el-button>
+        <el-button type="primary" @click="nextRowInfo(rowIndex)">
+          {{ $t('workflow.nextRow') }}
+        </el-button>
+      </template>
+    </el-drawer>
   </el-form>
   <div v-else> 出现未知错误,请联系管理员 </div>
 </template>
@@ -149,6 +195,7 @@
   import { computed, PropType, ref } from 'vue';
   import draggable from 'vuedraggable';
   import { useI18n } from 'vue-i18n';
+  import { generateUUID, isDef } from '@/utils';
 
   const workFlowStore = useWorkFlowStore();
   const { t } = useI18n();
@@ -156,7 +203,7 @@
   const emits = defineEmits(['update:value']);
   const props = defineProps({
     value: {
-      type: Array<WorkForm.FormDataModel>,
+      type: Array as PropType<WorkForm.FormDataModel[]>,
       default: () => [],
     },
     mode: {
@@ -175,6 +222,10 @@
 
   // 拖拽
   const tableDrag = ref<boolean>(false);
+  // 显示行数据详情
+  const rowVisible = ref<boolean>(false);
+  // 行下标
+  const rowIndex = ref<number>(0);
 
   // 单元格样式
   const cellStyle = ref({
@@ -257,7 +308,9 @@
       .then(() => {
         deleteFormComponent(_columns.value, index);
       })
-      .catch(() => {});
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   /**
@@ -308,16 +361,29 @@
 
   /**
    * @description: 添加一行
+   * @param {*} index 行下标
+   * @param {*} position 添加位置
    * @return {*}
    */
-  const handleAdd = () => {
+  const handleAdd = (index?: number, position?: 'above' | 'below') => {
+    console.log(JSON.stringify(_value.value));
     // 使用展开语法来创建对象，提高代码简洁性
     const rowData = _columns.value.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.value }), {});
+    // 给每一行数据添加id
+    rowData[`id`] = generateUUID();
     // 检查当前_value的类型，确保它可以被push操作
     if (_value.value == null || !Array.isArray(_value.value)) {
       _value.value = [rowData];
     } else {
-      _value.value.push(rowData);
+      if (isDef(index)) {
+        if (position === 'above') {
+          _value.value.splice(index, 0, rowData);
+        } else {
+          _value.value.splice(index + 1, 0, rowData);
+        }
+      } else {
+        _value.value.push(rowData);
+      }
     }
   };
 
@@ -328,8 +394,21 @@
    * @return {*}
    */
   const handleCopy = (rowData: any, index: number) => {
+    const data = JSON.parse(JSON.stringify(rowData));
+    // 更改id
+    data[`id`] = generateUUID();
     // 使用splice()方法插入元素
-    _value.value.splice(index + 1, 0, rowData);
+    _value.value.splice(index + 1, 0, data);
+  };
+
+  /**
+   * @description: 清空一行
+   * @param {*} index 行下标
+   * @return {*}
+   */
+  const handleClear = (index: number) => {
+    const rowData = _columns.value.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.value }), {});
+    _value.value[index] = rowData;
   };
 
   /**
@@ -339,6 +418,50 @@
    */
   const handleRemove = (index: number) => {
     _value.value.splice(index, 1);
+  };
+
+  /**
+   * @description: 显示详情
+   * @param {*} index
+   * @return {*}
+   */
+  const openRowInfo = (index: number) => {
+    rowVisible.value = true;
+    rowIndex.value = index;
+  };
+
+  /**
+   * @description: 关闭详情
+   * @return {*}
+   */
+  const closeRowInfo = () => {
+    rowVisible.value = false;
+  };
+
+  /**
+   * @description: 上一条
+   * @param {*} index
+   * @return {*}
+   */
+  const prevRowInfo = (index: number) => {
+    if (index == 0) {
+      rowIndex.value = index;
+    } else {
+      rowIndex.value = index - 1;
+    }
+  };
+
+  /**
+   * @description: 下一条
+   * @param {*} index
+   * @return {*}
+   */
+  const nextRowInfo = (index: number) => {
+    // 若是最后一条，则新增一行
+    if (index == _value.value.length - 1) {
+      handleAdd();
+    }
+    rowIndex.value = index + 1;
   };
 
   // const validate = (callback: Function) => {
@@ -406,13 +529,27 @@
     justify-content: flex-end;
     align-items: center;
   }
+  .table-popover {
+    padding: 5px 10px;
 
-  ::v-deep(.el-form-item__label) {
-    padding: 0px !important;
+    i {
+      padding-right: 5px;
+    }
   }
 
   ::v-deep(.el-form-item--default) {
     margin-top: 8px !important;
     margin-bottom: 8px !important;
+  }
+
+  ::v-deep(.el-table-fixed-column--right .cell) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  ::v-deep(.el-scrollbar__wrap--hidden-default) {
+    scrollbar-width: none;
+    min-height: 60px;
   }
 </style>

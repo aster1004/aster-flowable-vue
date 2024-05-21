@@ -6,19 +6,21 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-dialog
+  <el-drawer
     v-model="visible"
     :title="title"
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :destroy-on-close="true"
+    :show-close="false"
     :lock-scroll="false"
-    width="60%"
-    draggable
+    size="60%"
   >
     <form-render v-model:form-data="formData" :form-items="_formItems" :form-info="_formInfo" />
     <template #footer>
       <el-button type="primary" @click="visible = false">{{ $t('button.cancel') }}</el-button>
     </template>
-  </el-dialog>
+  </el-drawer>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
@@ -31,6 +33,8 @@
   const visible = ref(false);
   /** 标题 */
   const title = ref('预览');
+  // 表单数据
+  const formData = ref<WorkForm.FormDataModel>({});
 
   /**
    * @description: 初始化
@@ -38,9 +42,11 @@
    */
   const init = () => {
     visible.value = true;
+    formData.value = workFlowStore.design.formItems.reduce(
+      (acc, cur) => ({ ...acc, [cur.id]: cur.value }),
+      {},
+    );
   };
-
-  const formData = ref<WorkForm.FormDataModel>({});
 
   const _formItems = computed(() => {
     const formItems = JSON.stringify(workFlowStore.design.formItems);

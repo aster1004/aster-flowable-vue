@@ -8,22 +8,18 @@
 <template>
   <el-form-item :prop="formItem.id" v-if="!_hidden">
     <template #label>
-      <span v-show="!isChildTable">{{ formItem.title }}</span>
+      <span v-show="showLabel">{{ formItem.title }}</span>
     </template>
     <template v-if="mode === 'design'">
       <template v-if="formItem.props.expand">
-        <el-radio-group :model-value="formItem.value" disabled>
+        <el-radio-group :model-value="formItem.value" readonly>
           <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
             {{ item.label }}
           </el-radio>
         </el-radio-group>
       </template>
       <template v-else>
-        <el-select :model-value="formItem.value" :multiple="false" disabled>
-          <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
-            {{ item.label }}
-          </el-option>
-        </el-select>
+        <el-input :model-value="formItem.value" readonly />
       </template>
     </template>
 
@@ -95,6 +91,10 @@
       type: Number,
       default: 0,
     },
+    showLabel: {
+      type: Boolean,
+      default: true,
+    },
   });
 
   // 字典
@@ -163,11 +163,8 @@
   });
 
   onMounted(() => {
-    if (
-      !props.formItem.id ||
-      !props.formData.hasOwnProperty(props.formItem.id) ||
-      props.formData[props.formItem.id] == undefined
-    ) {
+    const dataStr = JSON.stringify(props.formData);
+    if (!props.formItem.id || dataStr.indexOf(props.formItem.id) == -1) {
       _value.value = props.formItem.value;
     }
   });

@@ -8,16 +8,9 @@
 <template>
   <el-form-item :prop="formItem.id" v-if="!_hidden">
     <template #label>
-      <span v-show="!isChildTable">{{ formItem.title }}</span>
+      <span v-show="showLabel">{{ formItem.title }}</span>
     </template>
-    <el-date-picker
-      v-if="mode === 'design'"
-      v-model="_value"
-      :type="dateType"
-      :format="formItem.props.format"
-      :value-format="formItem.props.format"
-      readonly
-    />
+    <el-input v-if="mode === 'design'" :model-value="formItem.value" readonly />
     <el-date-picker
       v-else-if="mode === 'form'"
       v-model="_value"
@@ -68,6 +61,10 @@
     index: {
       type: Number,
       default: 0,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
     },
   });
 

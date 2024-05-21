@@ -512,4 +512,11 @@ export default {
       packageName: '请输入套餐名称',
     },
   },
+  workflow: {
+    clearRow: '清空行数据',
+    addRowAbove: '在上面添加行',
+    addRowBelow: '在下面添加行',
+    prevRow: '上一条',
+    nextRow: '下一条',
+  },
 };

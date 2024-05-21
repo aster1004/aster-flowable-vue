@@ -54,7 +54,7 @@
       </el-tabs>
     </el-form-item>
     <el-form-item label="默认值">
-      <el-select v-model="_formItem.value">
+      <el-select v-model="_formItem.value" :multiple="_formItem.valueType == 'Array'">
         <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value" />
       </el-select>
     </el-form-item>

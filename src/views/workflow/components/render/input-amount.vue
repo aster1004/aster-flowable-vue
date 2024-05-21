@@ -8,7 +8,7 @@
 <template>
   <el-form-item :prop="formItem.id" v-if="!_hidden">
     <template #label>
-      <span v-show="!isChildTable">{{ formItem.title }}</span>
+      <span v-show="showLabel">{{ formItem.title }}</span>
     </template>
     <div v-if="mode === 'design'" style="width: 100%">
       <el-input-number
@@ -79,6 +79,10 @@
     index: {
       type: Number,
       default: 0,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
     },
   });
 

@@ -15,6 +15,7 @@
     :formItem="formItem"
     :tableIndex="tableIndex"
     :isChildTable="isChildTable"
+    :showLabel="showLabel"
   />
 </template>
 <script lang="ts">
@@ -51,6 +52,10 @@
     isChildTable: {
       type: Boolean,
       default: false,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
     },
   });
 
