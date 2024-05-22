@@ -75,22 +75,17 @@
                     label
                   }}</option>
                 </select>
+                <!-- v-enter-number="2" -->
                 <input
                   v-if="item.optType != 6"
                   type="text"
                   :placeholder="'请输入' + item.showName"
-                  v-enter-number="2"
                   v-model="item.zdy1"
                 />
               </p>
               <p v-if="item.optType == 6">
-                <input
-                  type="text"
-                  style="width: 75px"
-                  class="mr_10"
-                  v-enter-number="2"
-                  v-model="item.zdy1"
-                />
+                <!-- v-enter-number="2" -->
+                <input type="text" style="width: 75px" class="mr_10" v-model="item.zdy1" />
                 <select style="width: 60px" v-model="item.opt1">
                   <option v-for="{ value, label } in opt1s" :value="value" :key="value">{{
                     label
@@ -106,7 +101,8 @@
                     label
                   }}</option>
                 </select>
-                <input type="text" style="width: 75px" v-enter-number="2" v-model="item.zdy2" />
+                <!-- v-enter-number="2" -->
+                <input type="text" style="width: 75px" v-model="item.zdy2" />
               </p>
             </div>
             <a

@@ -85,7 +85,8 @@
       nodes.childNode = [];
       nodeConfig.value = nodes;
       flowPermission.value = [];
-      directorMaxLevel.value = [];
+      directorMaxLevel.value = 0;
+      // directorMaxLevel.value = [];
       workFlowDef.value = works;
       // setTableId(tableId);
     }
