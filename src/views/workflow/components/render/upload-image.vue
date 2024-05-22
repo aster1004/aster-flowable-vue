@@ -182,17 +182,14 @@
   });
 
   // 图片列表
-  const fileList = computed({
-    get() {
-      return _value.value.map((f) => {
-        return {
-          name: f.name,
-          url: f.url,
-          status: 'success',
-        };
-      });
-    },
-    set(val) {},
+  const fileList = computed(() => {
+    return _value.value.map((f) => {
+      return {
+        name: f.name,
+        url: f.url,
+        status: 'success',
+      };
+    });
   });
 
   /**
