@@ -130,4 +130,12 @@ declare namespace WorkForm {
     // 动态搜索
     dynamicSearch?: string;
   }
+
+  /**
+   * @description: 附件
+   */
+  export interface FileModel {
+    name: string;
+    url: string;
+  }
 }
