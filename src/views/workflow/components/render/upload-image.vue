@@ -32,6 +32,7 @@
         :on-success="handleSuccess"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
+        :on-error="handleError"
         :before-upload="handleBeforeUpload"
       >
         <i class="iconfont icon-plus !text-4xl"></i>
@@ -72,6 +73,7 @@
   import { isNotEmpty } from '@/utils';
   import { ImageUpload } from '@/config/fileConfig';
   import { ElMessage, UploadProps } from 'element-plus';
+  import { ResultEnum } from '@/enums/httpEnum';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -207,12 +209,15 @@
    * @return {*}
    */
   const handleSuccess: UploadProps['onSuccess'] = (_response) => {
-    console.log(_response);
-    const imgObj: WorkForm.FileModel = {
-      name: _response.data.name,
-      url: _response.data.url,
-    };
-    _value.value.push(imgObj);
+    if (_response.code == ResultEnum.SUCCESS) {
+      const imgObj: WorkForm.FileModel = {
+        name: _response.data.name,
+        url: _response.data.url,
+      };
+      _value.value.push(imgObj);
+    } else {
+      ElMessage.error(_response.message);
+    }
   };
 
   /**
@@ -231,6 +236,14 @@
   const handleRemove: UploadProps['onRemove'] = (file: any) => {
     let i = _value.value.findIndex((v) => v.url == file.url);
     _value.value.splice(i, 1);
+  };
+
+  /**
+   * @description: 上传失败时的操作
+   * @return {*}
+   */
+  const handleError = (error: Error) => {
+    ElMessage.error('文件上传失败:' + error);
   };
 
   /**
