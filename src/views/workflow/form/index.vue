@@ -103,7 +103,7 @@
             label="图标"
             header-align="center"
             align="center"
-            width="120"
+            width="100"
           >
             <template #default="scope">
               <i
@@ -126,7 +126,11 @@
             width="100"
             header-align="center"
             align="center"
-          />
+          >
+            <template #default="scope">
+              <el-tag type="success">v{{ scope.row.version }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="status"
             :label="$t('label.status')"
@@ -146,7 +150,7 @@
           >
             <template #default="scope">
               <el-button size="small" link type="primary" @click="handleDeployment(scope.row.id)">
-                <i class="iconfont icon-liuchengguanli"></i>部署
+                <i class="iconfont icon-fuxuankuang"></i>部署
               </el-button>
               <el-button size="small" link type="primary" @click="handleEdit(scope.row.id)">
                 <i class="iconfont icon-bianji"></i>{{ $t('button.edit') }}
