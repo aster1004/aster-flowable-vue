@@ -269,9 +269,12 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        maxSize: 10, //图片最大大小MB
-        maxNumber: 5, //最大上传数量
-        enableZip: true, //图片压缩后再上传
+        // 图片最大大小MB
+        maxSize: 10,
+        // 最大上传数量
+        maxNumber: 5,
+        // 图片压缩后再上传
+        enableZip: false,
       },
     },
     {
@@ -287,9 +290,12 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        maxSize: 100, //文件最大大小MB
-        maxNumber: 10, //最大上传数量
-        fileTypes: [], //限制文件上传类型
+        // 附件最大大小MB
+        maxSize: 100,
+        // 最大上传数量
+        maxNumber: 10,
+        // 限制附件上传类型
+        fileTypes: [],
       },
     },
     {
