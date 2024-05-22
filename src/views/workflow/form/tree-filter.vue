@@ -10,7 +10,7 @@
     <h4 v-if="title" class="title sle">
       {{ title }}
     </h4>
-    <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable />
+    <!-- <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable /> -->
     <el-scrollbar :style="{ height: title ? `calc(100% - 95px)` : `calc(100% - 56px)` }">
       <div class="app-container">
         <div
@@ -37,6 +37,8 @@
   import { ElTree } from 'element-plus';
   import { appListApi } from '@/api/workflow/app';
   import { useRoute } from 'vue-router';
+
+  const title = ref<string>('应用信息');
 
   // 应用信息
   const appData = ref<WorkApp.AppInfo[]>();

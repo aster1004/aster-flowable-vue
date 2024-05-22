@@ -1,37 +1,13 @@
 <template>
   <div class="main-box">
-    <tree-filter title="应用信息" @change="changeApp" />
+    <tree-filter @change="changeApp" />
     <div class="table-box">
       <div class="card table-search" v-show="showSearch">
         <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
           <div class="grid-box">
             <div class="grid-column">
-              <el-form-item :label="$t('label.user.name')" prop="name">
-                <el-input
-                  v-model="queryParams.name"
-                  :placeholder="$t('placeholder.user.name')"
-                  clearable
-                />
-              </el-form-item>
-            </div>
-            <div class="grid-column">
-              <el-form-item :label="$t('label.user.gender')" prop="gender">
-                <dict-select
-                  v-model="queryParams.gender"
-                  dict-type="gender"
-                  clearable
-                  :placeholder="$t('placeholder.user.gender')"
-                />
-              </el-form-item>
-            </div>
-            <div class="grid-column" v-show="!searchCollapsed">
-              <el-form-item :label="$t('label.status')" prop="status">
-                <dict-select
-                  v-model="queryParams.status"
-                  dict-type="status"
-                  clearable
-                  :placeholder="$t('placeholder.status')"
-                />
+              <el-form-item label="表单名称" prop="formName">
+                <el-input v-model="queryParams.formName" placeholder="请输入表单名称" clearable />
               </el-form-item>
             </div>
             <div class="grid-operation">

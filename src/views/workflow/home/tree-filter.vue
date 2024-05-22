@@ -51,6 +51,8 @@
   // emit
   const emits = defineEmits(['change']);
 
+  const title = ref<string>('应用信息');
+
   // 应用集合
   const appList = ref<WorkApp.AppInfo[]>([]);
 

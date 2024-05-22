@@ -14,26 +14,6 @@
                 />
               </el-form-item>
             </div>
-            <div class="grid-column">
-              <el-form-item :label="$t('label.user.gender')" prop="gender">
-                <dict-select
-                  v-model="queryParams.gender"
-                  dict-type="gender"
-                  clearable
-                  :placeholder="$t('placeholder.user.gender')"
-                />
-              </el-form-item>
-            </div>
-            <div class="grid-column" v-show="!searchCollapsed">
-              <el-form-item :label="$t('label.status')" prop="status">
-                <dict-select
-                  v-model="queryParams.status"
-                  dict-type="status"
-                  clearable
-                  :placeholder="$t('placeholder.status')"
-                />
-              </el-form-item>
-            </div>
             <div class="grid-operation">
               <el-form-item>
                 <div class="search-operation">
