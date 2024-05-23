@@ -46,13 +46,13 @@
     </div>
     <div v-else> </div>
 
-    <el-dialog v-model="previewImageVisible">
+    <el-dialog v-model="previewImageVisible" :title="'预览-' + previewFile.name">
       <div class="image-preview">
         <img w-full :src="previewFile.url" :alt="previewFile.name" />
       </div>
       <template #footer>
         <el-button @click="previewImageVisible = false">{{ $t('button.cancel') }}</el-button>
-        <el-button type="primary" @click="download">{{ $t('button.download') }}</el-button>
+        <el-button type="primary" @click="handleDownload">{{ $t('button.download') }}</el-button>
       </template>
     </el-dialog>
   </el-form-item>
@@ -66,6 +66,7 @@
   import { ElMessage, ElMessageBox, UploadProps } from 'element-plus';
   import { useI18n } from 'vue-i18n';
   import { ResultEnum } from '@/enums/httpEnum';
+  import { downloadFileByUrl } from '@/utils/fileUtils';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -284,7 +285,7 @@
    * @description: 下载附件
    * @return {*}
    */
-  const download = () => {
+  const handleDownload = () => {
     if (isNotEmpty(previewFile.value.url)) {
       ElMessageBox.confirm('是否要下载此文件?', t('common.tips'), {
         confirmButtonText: t('button.confirm'),
@@ -292,7 +293,7 @@
         type: 'warning',
         lockScroll: false,
       }).then(async () => {
-        window.open(`${previewFile.value.url}?name=${previewFile.value.name}`, '_blank');
+        downloadFileByUrl(previewFile.value.url, previewFile.value.name);
       });
     } else {
       ElMessage.error('附件不存在');

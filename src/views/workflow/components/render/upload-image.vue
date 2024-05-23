@@ -30,12 +30,27 @@
         :multipl="formItem.props.maxNumber > 1"
         :on-exceed="handleExceed"
         :on-success="handleSuccess"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
         :on-error="handleError"
         :before-upload="handleBeforeUpload"
       >
         <i class="iconfont icon-plus !text-4xl"></i>
+
+        <template #file="{ file }">
+          <div>
+            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+            <span class="el-upload-list__item-actions">
+              <span class="el-upload-list__item-preview px-3px" @click="handlePreview(file)">
+                <i class="iconfont icon-zoom-in"></i>
+              </span>
+              <span class="el-upload-list__item-delete px-3px" @click="handleDownload(file)">
+                <i class="iconfont icon-xiazai"></i>
+              </span>
+              <span class="el-upload-list__item-delete px-3px" @click="handleRemove(file, [])">
+                <i class="iconfont icon-shanchu"></i>
+              </span>
+            </span>
+          </div>
+        </template>
       </el-upload>
       <div v-else class="image-readonly">
         <el-image
@@ -61,7 +76,7 @@
 
     <el-dialog v-model="previewVisible">
       <div class="image-preview">
-        <img w-full :src="previewImageUrl" alt="预览图片" />
+        <img w-full :src="previewFile.url" :alt="previewFile.name" />
       </div>
     </el-dialog>
   </el-form-item>
@@ -72,8 +87,10 @@
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import { ImageUpload } from '@/config/fileConfig';
-  import { ElMessage, UploadProps } from 'element-plus';
+  import { ElMessage, ElMessageBox, UploadProps } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
   import { ResultEnum } from '@/enums/httpEnum';
+  import { downloadFileByUrl } from '@/utils/fileUtils';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -107,11 +124,14 @@
     },
   });
 
+  const { t } = useI18n();
   // 显示预览
   const previewVisible = ref<boolean>(false);
   // 预览图片url
-  const previewImageUrl = ref<string>('');
-
+  const previewFile = ref<WorkForm.FileModel>({
+    name: '',
+    url: '',
+  });
   // 键
   const formItemProp = computed(() => {
     if (isNotEmpty(props.tableId)) {
@@ -225,7 +245,10 @@
    * @return {*}
    */
   const handlePreview: UploadProps['onPreview'] = (file: any) => {
-    previewImageUrl.value = file.url;
+    previewFile.value = {
+      name: file.name,
+      url: file.url,
+    };
     previewVisible.value = true;
   };
 
@@ -264,6 +287,26 @@
       return false;
     }
     return true;
+  };
+
+  /**
+   * @description: 下载图片
+   * @param {*} file
+   * @return {*}
+   */
+  const handleDownload = (file: any) => {
+    if (isNotEmpty(file.url)) {
+      ElMessageBox.confirm('是否要下载此图片?', t('common.tips'), {
+        confirmButtonText: t('button.confirm'),
+        cancelButtonText: t('button.cancel'),
+        type: 'warning',
+        lockScroll: false,
+      }).then(async () => {
+        downloadFileByUrl(file.url, file.name);
+      });
+    } else {
+      ElMessage.error('图片不存在');
+    }
   };
 
   defineExpose({
