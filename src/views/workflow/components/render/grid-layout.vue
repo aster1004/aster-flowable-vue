@@ -143,6 +143,7 @@
     })
       .then(() => {
         deleteFormComponent(_items.value[draggerIndex], index);
+        _selectedItem.value = null;
       })
       .catch(() => {});
   };

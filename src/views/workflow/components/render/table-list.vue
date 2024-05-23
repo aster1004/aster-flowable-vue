@@ -308,6 +308,7 @@
     })
       .then(() => {
         deleteFormComponent(_columns.value, index);
+        _selectedItem.value = null;
       })
       .catch((e) => {
         console.log(e);
