@@ -17,16 +17,24 @@ import UserPicker from './user-picker-config.vue';
 import DeptPicker from './dept-picker-config.vue';
 import Rate from './rate-config.vue';
 
+import SerialNumber from './serial-number-config.vue';
+import AssociatedForm from './associated-form-config.vue';
+import GeoLocation from './geo-location-config.vue';
+import Area from './area-config.vue';
+import Signature from './signature-config.vue';
+import AssociatedProcess from './associated-process-config.vue';
+import CalcFormula from './calc-formula-config.vue';
+
 export default {
-  // ------------布局组件-开始------------
+  // ------------布局控件-开始------------
   GridTitle,
   GridLayout,
   TableList,
   Description,
 
-  // ------------布局组件-结束------------
+  // ------------布局控件-结束------------
 
-  // ------------基础组件-开始------------
+  // ------------基础控件-开始------------
   InputText,
   InputTextarea,
   InputNumber,
@@ -41,11 +49,18 @@ export default {
   DeptPicker,
   Rate,
 
-  // ------------基础组件-结束------------
+  // ------------基础控件-结束------------
 
-  // ------------高级组件-开始------------
-  // ------------高级组件-结束------------
+  // ------------高级控件-开始------------
+  SerialNumber,
+  AssociatedForm,
+  GeoLocation,
+  Area,
+  Signature,
+  AssociatedProcess,
+  CalcFormula,
+  // ------------高级控件-结束------------
 
-  // ------------其他组件-开始------------
-  // ------------其他组件-结束------------
+  // ------------其他控件-开始------------
+  // ------------其他控件-结束------------
 };

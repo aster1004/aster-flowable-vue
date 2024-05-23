@@ -368,7 +368,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
   components: [
     {
       title: '流水号',
-      name: 'CreateNumber',
+      name: 'SerialNumber',
       icon: 'iconfont icon-liushuihaoziduan',
       value: '',
       valueType: ValueType.string,
@@ -384,7 +384,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '关联表单',
-      name: 'DynamicDataMultiple',
+      name: 'AssociatedForm',
       icon: 'iconfont icon-guanlianbiaodan',
       value: {},
       valueType: ValueType.object,
@@ -407,7 +407,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '地理位置',
-      name: 'Location',
+      name: 'GeoLocation',
       icon: 'iconfont icon-dingwei',
       value: {},
       valueType: ValueType.object,
@@ -422,7 +422,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '省市区',
-      name: 'Provinces',
+      name: 'Area',
       icon: 'iconfont icon-shengshiqu',
       value: '',
       valueType: ValueType.string,
@@ -438,7 +438,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '签名',
-      name: 'SignPanel',
+      name: 'Signature',
       icon: 'iconfont icon-qianming',
       value: '',
       valueType: ValueType.string,
@@ -454,8 +454,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
-      title: '流程关联',
-      name: 'ProcessIndex',
+      title: '关联流程',
+      name: 'AssociatedProcess',
       icon: 'iconfont icon-guanlianliucheng',
       value: [],
       valueType: ValueType.array,
@@ -490,7 +490,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '计算公式(高级)',
-      name: 'CustomInput',
+      name: 'CalcFormulaAdvanced',
       icon: 'iconfont icon-hanshu',
       value: '',
       valueType: ValueType.string,
