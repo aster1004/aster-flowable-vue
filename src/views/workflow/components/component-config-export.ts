@@ -314,6 +314,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         multiple: false,
         expansion: false,
         options: [],
+        placeholder: '请选择人员',
       },
     },
     {
@@ -328,6 +329,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 隐藏
         hidden: '',
         // 只读
+        placeholder: '请选择部门',
         readonly: false,
         multiple: false,
         expansion: false,
