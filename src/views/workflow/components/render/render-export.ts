@@ -15,6 +15,7 @@ import UploadImage from './upload-image.vue';
 import UploadFile from './upload-file.vue';
 import UserPicker from './user-picker.vue';
 import DeptPicker from './dept-picker.vue';
+import Rate from './rate.vue';
 
 export default {
   // ------------布局组件-开始------------
@@ -37,6 +38,7 @@ export default {
   UploadFile,
   UserPicker,
   DeptPicker,
+  Rate,
 
   // ------------基础组件-结束------------
 

@@ -336,7 +336,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '评分',
-      name: 'Score',
+      name: 'Rate',
       icon: 'iconfont icon-xihuan',
       value: 0,
       valueType: ValueType.number,
@@ -347,11 +347,14 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        color: '#f0a732',
+        // 颜色
+        colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
+        // 最大分值
         max: 5,
+        // 允许半星
+        allowHalf: false,
+        // 显示分值
         showScore: true,
-        enableHalf: false,
-        type: 'star',
       },
     },
   ],
