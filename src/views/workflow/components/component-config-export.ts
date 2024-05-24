@@ -437,7 +437,10 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 级别
         level: 3,
+        // 提示文字
+        placeholder: '请选择地区',
       },
     },
     {

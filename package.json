@@ -28,6 +28,7 @@
     "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/state": "^6.4.1",
     "@codemirror/view": "^6.26.3",
+    "@vant/area-data": "^1.5.1",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.6.8",

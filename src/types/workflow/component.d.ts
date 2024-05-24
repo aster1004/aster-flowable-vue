@@ -55,4 +55,13 @@ declare namespace WorkComponent {
     // 子集
     children?: formulaNode[];
   }
+
+  /**
+   * @description: 地区节点
+   */
+  export interface AreaNode {
+    label: string;
+    value: string;
+    children?: AreaNode[];
+  }
 }
