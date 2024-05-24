@@ -17,6 +17,8 @@ export const useWorkFlowStore = defineStore({
       labelPosition: 'left',
       formName: '未命名表单',
       formItems: [],
+      labelWidth: 80,
+      size: 'default', // 大-large,中-default,小-small
     },
   }),
   actions: {

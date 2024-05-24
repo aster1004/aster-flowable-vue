@@ -68,3 +68,14 @@ export const editPasswordApi = (params: Login.ResetPassword) => {
 export const userExportApi = (params: User.UserInfo) => {
   return request.download(PORT1 + `/user/export`, params, { noLoading: true });
 };
+
+/**
+ * @description: 通过ids批量获取用户信息
+ * @param ids
+ * @return {*}
+ */
+export const userSelectBatchIdsApi = (ids: string[]) => {
+  return request.post<User.UserInfo[]>(PORT1 + `/user/selectBatchIds`, ids, {
+    noLoading: true,
+  });
+};

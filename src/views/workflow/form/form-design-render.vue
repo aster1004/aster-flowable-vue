@@ -13,7 +13,9 @@
     :mode="mode"
     :formData="props.formData"
     :formItem="formItem"
+    :tableId="tableId"
     :tableIndex="tableIndex"
+    :showLabel="showLabel"
   />
 </template>
 <script lang="ts">
@@ -43,9 +45,17 @@
       type: Object as PropType<WorkComponent.ComponentConfig>,
       default: {},
     },
+    tableId: {
+      type: String,
+      default: '',
+    },
     tableIndex: {
       type: Number,
       default: 0,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
     },
   });
 

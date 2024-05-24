@@ -5,8 +5,8 @@
  * @Description: 文件工具类
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
-
-import { ElNotification } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
+import axios from 'axios';
 
 /**
  * @description 接收数据流生成 blob，创建链接，下载文件
@@ -15,7 +15,7 @@ import { ElNotification } from 'element-plus';
  * @param {Object} params 导出的参数 (默认{})
  * @param {Boolean} isNotify 是否有导出消息提示 (默认为 true)
  * @param {String} fileType 导出的文件格式 (默认为.xlsx)
- * */
+ */
 export const downloadFile = async (
   api: (params: any) => Promise<any>,
   tempName: string,
@@ -50,4 +50,49 @@ export const downloadFile = async (
   } catch (error) {
     console.log(error);
   }
+};
+
+/**
+ * @description 下载文件
+ * @param {String} url 下载地址
+ * @param {String} filename 文件名
+ * @param {String} method 请求方式
+ */
+export const downloadFileByUrl = async (
+  url: string,
+  filename?: string,
+  method: string = 'GET',
+): Promise<any> => {
+  return axios({
+    responseType: 'blob',
+    url: url,
+    method: method,
+  })
+    .then((res: any): any => {
+      console.log('down-url--->');
+      console.log(res);
+      // 创建a标签
+      const down = document.createElement('a');
+      // 文件名没传，则使用时间戳
+      down.download = filename || new Date().getTime().toString();
+      // 隐藏a标签
+      down.style.display = 'none';
+
+      // 创建下载url
+      let binaryData: any[] = [];
+      binaryData.push(res.data);
+      down.href = URL.createObjectURL(new Blob(binaryData));
+
+      // 模拟点击下载
+      document.body.appendChild(down);
+      down.click();
+
+      // 释放URL
+      URL.revokeObjectURL(down.href);
+      // 下载完成移除
+      document.body.removeChild(down);
+    })
+    .catch((err) => {
+      ElMessage.error(err.message);
+    });
 };

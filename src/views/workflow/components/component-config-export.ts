@@ -34,6 +34,7 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
         items: [],
         fontSize: 'text-base',
         fontWeight: 'font-600',
+        justify: 'justify-start',
       },
     },
     {
@@ -56,18 +57,16 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       value: [],
       valueType: ValueType.array,
       props: {
+        // 列设置
+        columns: [],
         // 必填
         required: false,
         // 隐藏
         hidden: '',
         // 只读
         readonly: false,
+        // 边框
         showBorder: true,
-        rowLayout: true,
-        showSummary: false,
-        summaryColumns: [],
-        maxSize: 0, //最大条数，为0则不限制
-        columns: [], //列设置
       },
     },
     {
@@ -123,6 +122,10 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 提示语
+        placeholder: '',
+        // 行数
+        rows: 2,
       },
     },
     {
@@ -138,12 +141,13 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 精确度
         precision: 0,
       },
     },
     {
       title: '金额',
-      name: 'InputMoney',
+      name: 'InputAmount',
       icon: 'iconfont icon-jine',
       value: 0,
       valueType: ValueType.number,
@@ -154,8 +158,10 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        showChinese: true,
+        // 精确度
         precision: 0,
+        // 展示大写
+        showChinese: true,
       },
     },
     {
@@ -171,8 +177,19 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        expanding: false,
+        // 展开
+        expand: false,
+        // 类型 static | dict | dynamic
+        type: 'static',
+        // 静态选项
         options: ['选项1', '选项2'],
+        // 字典类型
+        dictType: '',
+        // 动态配置
+        dynamic: {
+          label: '',
+          value: '',
+        },
       },
     },
     {
@@ -188,8 +205,19 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        expanding: false,
+        // 展开
+        expand: false,
+        // 类型 static | dict | dynamic
+        type: 'static',
+        // 静态选项
         options: ['选项1', '选项2'],
+        // 字典类型
+        dictType: '',
+        // 动态配置
+        dynamic: {
+          label: '',
+          value: '',
+        },
       },
     },
     {
@@ -205,7 +233,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        format: 'yyyy-MM-dd',
+        // 日期格式
+        format: 'YYYY-MM-DD',
       },
     },
     {
@@ -221,14 +250,15 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        placeholder: ['开始时间', '结束时间'],
-        format: 'yyyy-MM-dd',
+        // 格式
+        format: 'YYYY-MM-DD',
+        // 时长
         showLength: false,
       },
     },
     {
       title: '图片',
-      name: 'ImageUpload',
+      name: 'UploadImage',
       icon: 'iconfont icon-tupian',
       value: [],
       valueType: ValueType.array,
@@ -239,14 +269,17 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        maxSize: 10, //图片最大大小MB
-        maxNumber: 5, //最大上传数量
-        enableZip: true, //图片压缩后再上传
+        // 图片最大大小MB
+        maxSize: 10,
+        // 最大上传数量
+        maxNumber: 5,
+        // 图片压缩后再上传
+        enableZip: false,
       },
     },
     {
       title: '附件',
-      name: 'FileUpload',
+      name: 'UploadFile',
       icon: 'iconfont icon-fujian',
       value: [],
       valueType: ValueType.array,
@@ -257,9 +290,12 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        maxSize: 100, //文件最大大小MB
-        maxNumber: 10, //最大上传数量
-        fileTypes: [], //限制文件上传类型
+        // 附件最大大小MB
+        maxSize: 100,
+        // 最大上传数量
+        maxNumber: 10,
+        // 限制附件上传类型
+        fileTypes: [],
       },
     },
     {
@@ -278,6 +314,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         multiple: false,
         expansion: false,
         options: [],
+        placeholder: '请选择人员',
       },
     },
     {
@@ -292,6 +329,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 隐藏
         hidden: '',
         // 只读
+        placeholder: '请选择部门',
         readonly: false,
         multiple: false,
         expansion: false,
@@ -300,7 +338,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '评分',
-      name: 'Score',
+      name: 'Rate',
       icon: 'iconfont icon-xihuan',
       value: 0,
       valueType: ValueType.number,
@@ -311,11 +349,14 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        color: '#f0a732',
+        // 颜色
+        colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
+        // 最大分值
         max: 5,
+        // 允许半星
+        allowHalf: false,
+        // 显示分值
         showScore: true,
-        enableHalf: false,
-        type: 'star',
       },
     },
   ],
@@ -329,7 +370,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
   components: [
     {
       title: '流水号',
-      name: 'CreateNumber',
+      name: 'SerialNumber',
       icon: 'iconfont icon-liushuihaoziduan',
       value: '',
       valueType: ValueType.string,
@@ -345,7 +386,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '关联表单',
-      name: 'DynamicDataMultiple',
+      name: 'AssociatedForm',
       icon: 'iconfont icon-guanlianbiaodan',
       value: {},
       valueType: ValueType.object,
@@ -368,7 +409,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '地理位置',
-      name: 'Location',
+      name: 'GeoLocation',
       icon: 'iconfont icon-dingwei',
       value: {},
       valueType: ValueType.object,
@@ -379,11 +420,13 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 提示文字
+        placeholder: '请选择地理位置',
       },
     },
     {
       title: '省市区',
-      name: 'Provinces',
+      name: 'Area',
       icon: 'iconfont icon-shengshiqu',
       value: '',
       valueType: ValueType.string,
@@ -399,7 +442,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '签名',
-      name: 'SignPanel',
+      name: 'Signature',
       icon: 'iconfont icon-qianming',
       value: '',
       valueType: ValueType.string,
@@ -415,8 +458,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
-      title: '流程关联',
-      name: 'ProcessIndex',
+      title: '关联流程',
+      name: 'AssociatedProcess',
       icon: 'iconfont icon-guanlianliucheng',
       value: [],
       valueType: ValueType.array,
@@ -451,7 +494,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       title: '计算公式(高级)',
-      name: 'CustomInput',
+      name: 'CalcFormulaAdvanced',
       icon: 'iconfont icon-hanshu',
       value: '',
       valueType: ValueType.string,

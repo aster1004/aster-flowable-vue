@@ -19,6 +19,17 @@ export const deptListApi = (params?: Dept.DeptParams) => {
 };
 
 /**
+ * @description: 获取当前部门信息及当前部门下的第一级子部门，为空则获取全部
+ * @param {Dept.DeptParams} params
+ * @return {*}
+ */
+export const getDeptAndSubDeptById = (params?: Dept.DeptParams) => {
+  return request.get<Dept.DeptInfo[]>(PORT1 + `/org/getDeptAndSubDeptById`, params, {
+    noLoading: true,
+  });
+};
+
+/**
  * @description: 单条信息
  * @param {string} id
  * @return {*}
@@ -43,4 +54,15 @@ export const deptSaveApi = (dept: Dept.DeptInfo) => {
  */
 export const deptDeleteApi = (ids: string[]) => {
   return request.post<string>(PORT1 + `/org/delete`, ids, { noLoading: true });
+};
+
+/**
+ * @description: 通过部门ids批量获取部门信息
+ * @param ids
+ * @return {*}
+ */
+export const deptSelectBatchIdsApi = (ids: string[]) => {
+  return request.post<Dept.DeptInfo[]>(PORT1 + `/org/selectBatchIds`, ids, {
+    noLoading: true,
+  });
 };

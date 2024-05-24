@@ -1,37 +1,13 @@
 <template>
   <div class="main-box">
-    <tree-filter title="应用信息" @change="changeApp" />
+    <tree-filter @change="changeApp" />
     <div class="table-box">
       <div class="card table-search" v-show="showSearch">
         <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
           <div class="grid-box">
             <div class="grid-column">
-              <el-form-item :label="$t('label.user.name')" prop="name">
-                <el-input
-                  v-model="queryParams.name"
-                  :placeholder="$t('placeholder.user.name')"
-                  clearable
-                />
-              </el-form-item>
-            </div>
-            <div class="grid-column">
-              <el-form-item :label="$t('label.user.gender')" prop="gender">
-                <dict-select
-                  v-model="queryParams.gender"
-                  dict-type="gender"
-                  clearable
-                  :placeholder="$t('placeholder.user.gender')"
-                />
-              </el-form-item>
-            </div>
-            <div class="grid-column" v-show="!searchCollapsed">
-              <el-form-item :label="$t('label.status')" prop="status">
-                <dict-select
-                  v-model="queryParams.status"
-                  dict-type="status"
-                  clearable
-                  :placeholder="$t('placeholder.status')"
-                />
+              <el-form-item label="表单名称" prop="formName">
+                <el-input v-model="queryParams.formName" placeholder="请输入表单名称" clearable />
               </el-form-item>
             </div>
             <div class="grid-operation">
@@ -97,14 +73,22 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" header-align="center" align="center" width="50" />
-          <el-table-column prop="avatar" label="表单名称" header-align="center" align="center" />
+          <el-table-column prop="formName" label="表单名称" header-align="center" align="center" />
           <el-table-column
             prop="icon"
             label="图标"
-            width="100"
             header-align="center"
             align="center"
-          />
+            width="100"
+          >
+            <template #default="scope">
+              <i
+                :class="[scope.row.icon, 'iconStyle']"
+                :style="{ background: scope.row.iconColor }"
+                v-show="isNotEmpty(scope.row.icon)"
+              ></i>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="sort"
             label="排序"
@@ -118,7 +102,11 @@
             width="100"
             header-align="center"
             align="center"
-          />
+          >
+            <template #default="scope">
+              <el-tag type="success">v{{ scope.row.version }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="status"
             :label="$t('label.status')"
@@ -132,12 +120,14 @@
           </el-table-column>
           <el-table-column
             :label="$t('label.operate')"
-            fixed="right"
-            width="260"
+            width="200"
             align="center"
             class-name="operation"
           >
             <template #default="scope">
+              <el-button size="small" link type="primary" @click="handleDeployment(scope.row.id)">
+                <i class="iconfont icon-fuxuankuang"></i>部署
+              </el-button>
               <el-button size="small" link type="primary" @click="handleEdit(scope.row.id)">
                 <i class="iconfont icon-bianji"></i>{{ $t('button.edit') }}
               </el-button>
@@ -167,13 +157,12 @@
   import { useRouter } from 'vue-router';
   import TreeFilter from './tree-filter.vue';
   import { onMounted, reactive, ref } from 'vue';
-  import { formPageApi } from '@/api/workflow/form';
-  import { userPageApi, userDeleteApi, userExportApi, userBatchSaveApi } from '@/api/sys/user';
+  import { formPageApi, formDeleteApi, deploymentApi } from '@/api/workflow/form';
   import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
   import { downloadFile } from '@/utils/fileUtils';
   import { useI18n } from 'vue-i18n';
-  import { isEmpty } from '@/utils';
+  import { isNotEmpty } from '@/utils';
   import { userResetPwdApi } from '@/api/login';
   import { AVATAR_URL } from '@/config';
 
@@ -300,7 +289,7 @@
       lockScroll: false,
     })
       .then(() => {
-        userDeleteApi(val).then((res) => {
+        formDeleteApi(val).then((res) => {
           if (res.code == ResultEnum.SUCCESS) {
             ElMessage.success(t('delete.success'));
             handleQuery();
@@ -319,6 +308,12 @@
     handleQuery();
   };
 
+  const handleDeployment = (id: String) => {
+    deploymentApi(id).then((res) => {
+      console.info('部署：', res);
+    });
+  };
+
   /**
    * 初始化加载
    */
@@ -326,3 +321,15 @@
     handleQuery();
   });
 </script>
+<style lang="scss" scoped>
+  .iconStyle {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+    color: #ffffff;
+    line-height: 35px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+  }
+</style>

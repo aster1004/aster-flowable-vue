@@ -63,4 +63,8 @@
   ::v-deep(.el-form-item__label) {
     font-weight: 600;
   }
+  .tooltip {
+    font-weight: 100;
+    padding-left: 5px;
+  }
 </style>

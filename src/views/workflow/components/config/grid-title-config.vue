@@ -31,11 +31,21 @@
         />
       </el-select>
     </el-form-item>
+    <el-form-item label="对齐方式">
+      <el-select v-model="_formItem.props.justify">
+        <el-option
+          v-for="(item, i) in justifyOptions"
+          :key="i"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+    </el-form-item>
   </div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
@@ -62,6 +72,13 @@
     { label: '800', value: 'font-800' },
     { label: '900', value: 'font-900' },
   ];
+
+  // 对齐方式
+  const justifyOptions = ref([
+    { label: '居左', value: 'justify-start' },
+    { label: '居右', value: 'justify-end' },
+    { label: '居中', value: 'justify-center' },
+  ]);
 
   // 选中的组件
   const _formItem = computed(() => {

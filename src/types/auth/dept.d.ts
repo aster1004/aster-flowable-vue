@@ -6,9 +6,10 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 declare namespace Dept {
-  export interface DeptParams {
+  export interface DeptParams extends Page.ReqPage {
     orgName?: string;
     status: string;
+    id?: string;
   }
 
   export interface DeptInfo {
