@@ -14,6 +14,7 @@
     :destroy-on-close="true"
     :show-close="false"
     :lock-scroll="false"
+    :z-index="666"
     size="60%"
   >
     <form-render

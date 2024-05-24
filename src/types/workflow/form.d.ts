@@ -138,4 +138,18 @@ declare namespace WorkForm {
     name: string;
     url: string;
   }
+
+  /**
+   * @description: 地理位置
+   */
+  export interface GeoPositionModel {
+    // 地址
+    address: string;
+    // 经度
+    longitude: number;
+    // 纬度
+    latitude: number;
+    // 区域编码
+    adcode?: string;
+  }
 }
