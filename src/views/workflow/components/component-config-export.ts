@@ -420,6 +420,8 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 提示文字
+        placeholder: '请选择地理位置',
       },
     },
     {
