@@ -8,15 +8,20 @@
 <template>
   <div class="form-render">
     <el-form
+      ref="formRef"
       :model="_formData"
       :rules="rules"
       :label-position="formInfo.labelPosition"
+      :label-width="formInfo.labelWidth"
       :validate-on-rule-change="false"
     >
       <div v-for="(item, index) in _formItems" :key="index">
         <form-design-render
-          v-if="item.name === 'GridLayout' || item.name === 'GridTitle'"
+          v-if="
+            item.name === 'GridLayout' || item.name === 'GridTitle' || item.name === 'Description'
+          "
           v-model:value="_formData"
+          :ref="item.id"
           mode="form"
           :formData="_formData"
           :formItem="item"
@@ -24,6 +29,7 @@
         <form-design-render
           v-else
           v-model:value="_formData[item.id]"
+          :ref="item.id"
           mode="form"
           :formData="_formData"
           :formItem="item"
@@ -33,7 +39,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, onBeforeUnmount, onMounted, PropType, ref } from 'vue';
+  import { computed, onBeforeUnmount, onMounted, PropType, ref, watchEffect } from 'vue';
   import FormDesignRender from './form-design-render.vue';
   import mittBus from '@/utils/mittBus';
 
@@ -57,6 +63,9 @@
     },
   });
 
+  // 注册组件
+  const formRef = ref();
+
   /**
    * 表单项
    */
@@ -64,6 +73,9 @@
     return props.formItems;
   });
 
+  watchEffect(() => {
+    console.log(props.formInfo);
+  });
   /**
    * 表单数据
    */
@@ -104,6 +116,22 @@
   };
 
   /**
+   * @description: 表单校验
+   * @return {*}
+   */
+  const validate = () => {
+    formRef.value.validate((valid) => {
+      if (valid) {
+        console.log('submit!');
+        return true;
+      } else {
+        console.log('error submit!!');
+        return false;
+      }
+    });
+  };
+
+  /**
    * 表单规则
    */
   const rules = ref<WorkForm.FormRuleModel>({});
@@ -124,6 +152,7 @@
       ];
       rules.value[params.fieldId] = rule;
     }
+    console.log('rules---->');
     console.log(rules.value);
   });
 
@@ -134,6 +163,10 @@
   onBeforeUnmount(() => {
     // 组件销毁时关闭mitt事件监听器
     mittBus.off('changeFormRules', () => {});
+  });
+
+  defineExpose({
+    validate,
   });
 </script>
 <style scoped lang="scss">

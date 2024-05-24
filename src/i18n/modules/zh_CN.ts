@@ -139,6 +139,7 @@ export default {
     restore: '恢 复',
     publish: '发 布',
     save: '保 存',
+    copy: '复 制',
     showSearch: '显示搜索',
     hideSearch: '隐藏搜索',
     configDict: '配置字典',
@@ -510,5 +511,12 @@ export default {
       domain: '请输入域名',
       packageName: '请输入套餐名称',
     },
+  },
+  workflow: {
+    clearRow: '清空行数据',
+    addRowAbove: '在上面添加行',
+    addRowBelow: '在下面添加行',
+    prevRow: '上一条',
+    nextRow: '下一条',
   },
 };

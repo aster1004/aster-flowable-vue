@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4195112 */
-  src: url('//at.alicdn.com/t/c/font_4195112_dztiyjf3wyd.woff2?t=1713927556058') format('woff2'),
-       url('//at.alicdn.com/t/c/font_4195112_dztiyjf3wyd.woff?t=1713927556058') format('woff'),
-       url('//at.alicdn.com/t/c/font_4195112_dztiyjf3wyd.ttf?t=1713927556058') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_4195112_v6gipx377hf.woff2?t=1716431760018') format('woff2'),
+       url('//at.alicdn.com/t/c/font_4195112_v6gipx377hf.woff?t=1716431760018') format('woff'),
+       url('//at.alicdn.com/t/c/font_4195112_v6gipx377hf.ttf?t=1716431760018') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,26 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-zoom-in:before {
+  content: "\e67d";
+}
+
+.icon-plus:before {
+  content: "\e67c";
+}
+
+.icon-fangda:before {
+  content: "\e6a8";
+}
+
+.icon-gengduo1:before {
+  content: "\e67b";
+}
+
+.icon-tuozhuai:before {
+  content: "\e69c";
 }
 
 .icon-fuwujiekou:before {
@@ -37,64 +57,12 @@
   content: "\e694";
 }
 
-.icon-rizhi1:before {
-  content: "\e69d";
-}
-
 .icon-jiekou1:before {
   content: "\e74b";
 }
 
-.icon-fayuanjigou:before {
-  content: "\e6f9";
-}
-
-.icon-zuzhijigou:before {
-  content: "\e67b";
-}
-
-.icon-token:before {
-  content: "\e67c";
-}
-
-.icon-svg-:before {
-  content: "\e67d";
-}
-
 .icon-zhangtao_pingzheng:before {
   content: "\e67e";
-}
-
-.icon-zitiyulan:before {
-  content: "\ec86";
-}
-
-.icon-xinxi2:before {
-  content: "\e67f";
-}
-
-.icon-rizhi2:before {
-  content: "\e680";
-}
-
-.icon-token1:before {
-  content: "\ead1";
-}
-
-.icon-zhuanxierizhi:before {
-  content: "\e681";
-}
-
-.icon-rizhi3:before {
-  content: "\e682";
-}
-
-.icon-rizhi4:before {
-  content: "\e683";
-}
-
-.icon-token2:before {
-  content: "\e685";
 }
 
 .icon-bukejian:before {
@@ -105,14 +73,6 @@
   content: "\e688";
 }
 
-.icon-token3:before {
-  content: "\e68f";
-}
-
-.icon-zuzhijigou1:before {
-  content: "\e689";
-}
-
 .icon-bukejian2:before {
   content: "\e68a";
 }
@@ -121,28 +81,8 @@
   content: "\e68b";
 }
 
-.icon-rizhi5:before {
-  content: "\e68d";
-}
-
-.icon-token4:before {
-  content: "\e91b";
-}
-
-.icon-pingzheng:before {
-  content: "\e68e";
-}
-
 .icon-tokenguanli:before {
   content: "\e810";
-}
-
-.icon-dashuju:before {
-  content: "\e6fa";
-}
-
-.icon-kejianxing-kejian:before {
-  content: "\e690";
 }
 
 .icon-qianming:before {

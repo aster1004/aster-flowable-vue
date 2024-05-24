@@ -160,7 +160,7 @@
       font-size: 15px;
       font-weight: bold;
       color: var(--el-text-color-primary);
-      background: var(--el-fill-color-light);
+      background: var(--el-fill-color-light) !important;
     }
     .el-table__row {
       height: 45px;

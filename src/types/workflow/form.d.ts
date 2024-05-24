@@ -7,14 +7,14 @@
  */
 declare namespace WorkForm {
   declare type FormDataModel = {
-    [key: string]: string;
+    [key: string]: any;
   };
 
   declare type FormRuleModel = {
     [key: string]: Array<any>;
   };
 
-  declare type FormMapMoedl = {
+  declare type FormMapModel = {
     [key: string]: any;
   };
 
@@ -67,7 +67,7 @@ declare namespace WorkForm {
     // 权限
     perm: string;
     // 表单项属性
-    props: FormMapMoedl;
+    props: FormMapModel;
     // 表单项标题
     title: string;
     // 表单项值
@@ -92,6 +92,8 @@ declare namespace WorkForm {
     iconColor: string;
     // 标签位置
     labelPosition: string;
+    // 标签宽度,默认80px
+    labelWidth: number;
     // 所属应用
     appId?: string;
     // 版本
@@ -127,5 +129,27 @@ declare namespace WorkForm {
     processConfig?: string;
     // 动态搜索
     dynamicSearch?: string;
+  }
+
+  /**
+   * @description: 附件
+   */
+  export interface FileModel {
+    name: string;
+    url: string;
+  }
+
+  /**
+   * @description: 地理位置
+   */
+  export interface GeoPositionModel {
+    // 地址
+    address: string;
+    // 经度
+    longitude: number;
+    // 纬度
+    latitude: number;
+    // 区域编码
+    adcode?: string;
   }
 }

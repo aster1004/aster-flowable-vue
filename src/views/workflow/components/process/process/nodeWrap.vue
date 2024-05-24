@@ -18,13 +18,13 @@
                 : ['iconfont', 'node-icon', 'icon-chaosongwode']
             "
           ></i>
+          <!-- @focus="$event.currentTarget.select()"
+            v-focus -->
           <input
             v-if="isInput"
             type="text"
             class="ant-input editable-title-input"
             @blur="blurEvent()"
-            @focus="$event.currentTarget.select()"
-            v-focus
             v-model="nodeConfig.nodeName"
             :placeholder="defaultText"
           />
@@ -56,13 +56,13 @@
               <div class="auto-judge" :class="isTried && item.error ? 'error active' : ''">
                 <div class="sort-left" v-if="index != 0" @click="arrTransfer(index, -1)">&lt;</div>
                 <div class="title-wrapper">
+                  <!-- @focus="$event.currentTarget.select()"
+                    v-focus -->
                   <input
                     v-if="isInputList[index]"
                     type="text"
                     class="ant-input editable-title-input"
                     @blur="blurEvent(index)"
-                    @focus="$event.currentTarget.select()"
-                    v-focus
                     v-model="item.nodeName"
                   />
                   <span v-else class="editable-title" @click="clickEvent(index)">{{

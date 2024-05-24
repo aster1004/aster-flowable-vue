@@ -26,5 +26,13 @@
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
+    <script type="text/javascript">
+      // 高德地图JSAPI安全密钥的使用：https://lbs.amap.com/api/javascript-api-v2/guide/abc/jscode
+      // 为图方便使用了明文设置安全密钥，建议生产环境下改为代理服务器转发的方式设置密钥
+      window._AMapSecurityConfig = {
+        // 安全密钥
+        securityJsCode: '46a3fcc4ecd925aa0d13bc64d36bd8e2', 
+      };
+    </script>
   </body>
 </html>

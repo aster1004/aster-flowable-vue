@@ -6,6 +6,8 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 
+import moment, { Moment } from 'moment';
+import { isEmpty } from '.';
 import { evaluate, parse } from './formula';
 
 /**
@@ -168,12 +170,7 @@ export const restorationFormula = (formula: string, formulaNodes: WorkComponent.
   }
   let result = formula;
   formulaNodes.forEach((node) => {
-    if (
-      node.value &&
-      node.label &&
-      node.label.indexOf('明细表') == -1 &&
-      formula.indexOf(node.value) != -1
-    ) {
+    if (node.value && node.label && formula.indexOf(node.value) != -1) {
       result = result.replaceAll(node.value, '[[' + node.label + ']]');
     }
   });
@@ -198,6 +195,9 @@ export const evaluateFormula = (expression, data) => {
  * @return {*}
  */
 export const formulaValidate = (expression: string) => {
+  if (expression.indexOf('[?]') != -1) {
+    expression = expression.replaceAll('[?]', '');
+  }
   try {
     expression &&
       parse(expression, {
@@ -228,4 +228,204 @@ export const flatFormItems = (source: WorkForm.FormItem[], target: WorkForm.Form
       target.push(item);
     }
   });
+};
+
+/**
+ * @description: 将数字金额转为汉字金额
+ * @param {number} amount
+ * @return {*}
+ */
+export const convertToChineseAmount = (amount: number | string) => {
+  // 汉字的数字
+  const cnNums = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+  // 基本单位
+  const cnIntRadice = ['', '拾', '佰', '仟'];
+  // 对应整数部分扩展单位
+  const cnIntUnits = ['', '万', '亿', '兆'];
+  // 对应小数部分单位
+  const cnDecUnits = ['角', '分', '厘', '毫', '丝', '忽', '微'];
+  // 整数金额时后面跟的字符
+  const cnInteger = '整';
+  // 整型完以后的单位
+  const cnIntLast = '元';
+  // 最大处理的数字
+  let maxNum = 999999999999999.999999;
+  //金额整数部分
+  let integerNum;
+  // 金额小数部分
+  let decimalNum;
+  // 输出的中文金额字符串
+  let chineseStr = '';
+  // 分离金额后用的数组，预定义
+  let parts;
+  if (amount === 0 || amount === '') {
+    return '';
+  }
+  const money = typeof amount === 'string' ? parseFloat(amount) : amount;
+  if (money >= maxNum) {
+    // 超出最大处理数字
+    return '';
+  }
+  if (money === 0) {
+    chineseStr = cnNums[0] + cnIntLast + cnInteger;
+    return chineseStr;
+  }
+  // 转换为字符串
+  const moneyStr = money + '';
+  if (moneyStr.indexOf('.') === -1) {
+    integerNum = moneyStr;
+    decimalNum = '';
+  } else {
+    parts = moneyStr.split('.');
+    integerNum = parts[0];
+    decimalNum = parts[1].substr(0, 4);
+  }
+  // 获取整型部分转换
+  if (parseInt(integerNum, 10) > 0) {
+    var zeroCount = 0;
+    var IntLen = integerNum.length;
+    for (let i = 0; i < IntLen; i++) {
+      let n = integerNum.substr(i, 1);
+      let p = IntLen - i - 1;
+      let q = p / 4;
+      let m = p % 4;
+      if (n == '0') {
+        zeroCount++;
+      } else {
+        if (zeroCount > 0) {
+          chineseStr += cnNums[0];
+        }
+        // 归零
+        zeroCount = 0;
+        chineseStr += cnNums[parseInt(n)] + cnIntRadice[m];
+      }
+      if (m == 0 && zeroCount < 4) {
+        chineseStr += cnIntUnits[q];
+      }
+    }
+    chineseStr += cnIntLast;
+  }
+  // 小数部分
+  if (decimalNum !== '') {
+    let decLen = decimalNum.length;
+    for (let i = 0; i < decLen; i++) {
+      let n = decimalNum.substr(i, 1);
+      if (n !== '0') {
+        chineseStr += cnNums[Number(n)] + cnDecUnits[i];
+      }
+    }
+  }
+  if (chineseStr === '') {
+    chineseStr += cnNums[0] + cnIntLast + cnInteger;
+  } else if (decimalNum === '') {
+    chineseStr += cnInteger;
+  }
+  return chineseStr;
+};
+
+/**
+ * @description: 获取日期选择器类型
+ * @param {string} format 日期格式
+ * @param {boolean} range 是否范围
+ * @return {*}
+ */
+export const getDateTypeByFormat = (format: string, range: boolean = false) => {
+  if (isEmpty(format)) {
+    return 'date';
+  }
+  if (range) {
+    if (format === 'YYYY-MM-DD') {
+      return 'daterange';
+    } else {
+      return 'datetimerange';
+    }
+  } else {
+    if (format === 'YYYY') {
+      return 'year';
+    }
+    if (format === 'YYYY-MM') {
+      return 'month';
+    }
+    if (format === 'YYYY-MM-DD HH') {
+      return 'datetime';
+    }
+    if (format === 'YYYY-MM-DD HH:mm') {
+      return 'datetime';
+    }
+    if (format === 'YYYY-MM-DD HH:mm:ss') {
+      return 'datetime';
+    }
+    return 'date';
+  }
+};
+
+/**
+ * @description: 获取日期范围的时间长度
+ * @param {string} val 日期范围
+ * @param {string} format 日期格式
+ * @return {*}
+ */
+export const getDateLength = (val: string[], format: string): string => {
+  if (!Array.isArray(val) || val.length !== 2) {
+    return '先选择时间哦';
+  }
+
+  const startMoment = moment(val[0]);
+  const endMoment = moment(val[1]);
+
+  if (!startMoment.isValid() || !endMoment.isValid()) {
+    return '时间格式不正确，请重新选择';
+  }
+
+  const start = startMoment.format(format);
+  const end = endMoment.format(format);
+
+  if (start === end || val[0] === val[1]) {
+    return '0 （时长为0，请确认）';
+  }
+
+  let years = endMoment.diff(startMoment, 'years');
+  let months = endMoment.diff(startMoment, 'months');
+  let days = endMoment.diff(startMoment, 'days');
+  let hours = endMoment.diff(startMoment, 'hours');
+  let minutes = endMoment.diff(startMoment, 'minutes');
+
+  minutes %= 60;
+  hours %= 24;
+  months %= 12;
+
+  const mstart: Moment = startMoment;
+  const mend: Moment = endMoment;
+
+  if (mstart.date() < mend.date()) {
+    days = mend.date() - mstart.date();
+    if ((minutes > 0 || hours > 0) && months > 0) {
+      days--;
+    }
+  } else if (mstart.date() === mend.date()) {
+    const s = moment(startMoment.format('HH:mm:ss'));
+    const e = moment(endMoment.format('HH:mm:ss'));
+    if (e.isBefore(s)) {
+      days = 0;
+    }
+  }
+
+  if (days > 31 && mend.month() - mstart.month() >= 2) {
+    // 将日期推至上月求差，优化处理超过俩月且天超过31的情况
+    days = mend.diff(mstart.add(mend.month() - mstart.month() - 1, 'month'), 'days');
+  }
+
+  // 格式化输出时长
+  const durationFormat = (value: number, unit: string) => {
+    return value > 0 ? `${value} ${unit}` : '';
+  };
+
+  return (
+    '时长：' +
+    durationFormat(years, '年') +
+    durationFormat(months, '个月') +
+    durationFormat(days, '天') +
+    durationFormat(hours, '小时') +
+    durationFormat(minutes, '分钟')
+  );
 };

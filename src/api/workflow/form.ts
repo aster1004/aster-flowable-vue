@@ -26,3 +26,42 @@ export const formPageApi = (params: WorkForm.FormParams) => {
     noLoading: true,
   });
 };
+
+/**
+ * 获取流程表单集合
+ *
+ * @param params 流程表单
+ * @returns
+ */
+export const formListApi = (params: WorkForm.BaseInfo) => {
+  return request.get<WorkForm.FormModel[]>(PORT5 + `/form/list`, params, {
+    noLoading: true,
+  });
+};
+
+/**
+ * @description: 保存
+ * @param {WorkForm.FormModel} info
+ * @return {*}
+ */
+export const formSaveApi = (info: WorkForm.FormModel) => {
+  return request.post<string>(PORT5 + `/form/save`, info, { noLoading: true });
+};
+
+/**
+ * @description: 删除
+ * @param {any} ids
+ * @return {*}
+ */
+export const formDeleteApi = (ids: any) => {
+  return request.post<string>(PORT5 + `/form/delete`, ids, { noLoading: true });
+};
+
+/**
+ * @description: 流程部署
+ * @param id 主键
+ * @return {*}
+ */
+export const deploymentApi = (id: String) => {
+  return request.post<string>(PORT5 + `/form/deployment/${id}`, {}, { noLoading: true });
+};

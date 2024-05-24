@@ -50,7 +50,7 @@
           <el-scrollbar style="height: 100%">
             <el-form
               ref="formDesignRef"
-              label-width="80px"
+              :label-width="formInfo.labelWidth"
               :label-position="formInfo.labelPosition"
             >
               <draggable
@@ -109,7 +109,7 @@
   import FormDesignRender from './form-design-render.vue';
   import FormPreview from './form-preview.vue';
   import { ElMessageBox } from 'element-plus';
-  import { computed, onMounted, ref } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import draggable from 'vuedraggable';
   import { useI18n } from 'vue-i18n';
 
@@ -140,7 +140,7 @@
    * @return {*}
    */
   const release = () => {
-    selectedItem.value = null;
+    _selectedItem.value = null;
   };
 
   /**
@@ -149,7 +149,7 @@
    * @return {*}
    */
   const onSelectComponent = (element: WorkComponent.ComponentConfig) => {
-    selectedItem.value = element;
+    _selectedItem.value = element;
   };
 
   /**
@@ -158,7 +158,7 @@
    * @return boolean
    */
   const showCloseBtn = (element: WorkComponent.ComponentConfig) => {
-    if (selectedItem.value && selectedItem.value.id === element.id) {
+    if (_selectedItem.value && _selectedItem.value.id === element.id) {
       return true;
     }
     return false;
@@ -170,7 +170,7 @@
    * @return {*}
    */
   const onSelectedComponentStyle = (element: WorkComponent.ComponentConfig) => {
-    return selectedItem.value && selectedItem.value.id === element.id
+    return _selectedItem.value && _selectedItem.value.id === element.id
       ? 'border-left: 4px solid var(--el-color-primary);background: var(--el-menu-active-bg-color);'
       : '';
   };
@@ -189,6 +189,7 @@
     })
       .then(() => {
         deleteFormComponent(formItems.value, index);
+        _selectedItem.value = null;
       })
       .catch(() => {});
   };
@@ -224,15 +225,26 @@
   /**
    * @description: 选中的表单组件
    */
-  const selectedItem = computed({
+  const _selectedItem = computed({
     get() {
-      rightActiveTab.value = workFlowStore.selectFormItem == null ? 'form' : 'component';
       return workFlowStore.selectFormItem;
     },
     set(val) {
       workFlowStore.selectFormItem = val;
     },
   });
+
+  // 监听选中的表单组件
+  watch(
+    () => workFlowStore.selectFormItem,
+    (val) => {
+      rightActiveTab.value = val == null ? 'form' : 'component';
+    },
+    {
+      immediate: true,
+      deep: true,
+    },
+  );
 
   /**
    * @description: 表单预览

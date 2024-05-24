@@ -140,6 +140,7 @@ export default {
     restore: 'Restore',
     publish: 'Publish',
     save: 'Save',
+    copy: 'Copy',
     showSearch: 'Show Search',
     hideSearch: 'Hide Search',
     configDict: 'Config Dict',
@@ -516,5 +517,12 @@ export default {
       domain: 'Please enter the domain',
       packageName: 'Please enter the package name',
     },
+  },
+  workflow: {
+    clearRow: 'Clear Row Data',
+    addRowAbove: 'Add Row Above',
+    addRowBelow: 'Add Row Below',
+    prevRow: 'Prev',
+    nextRow: 'Next',
   },
 };

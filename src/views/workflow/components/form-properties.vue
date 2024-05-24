@@ -54,6 +54,12 @@
         </template>
         <dict-select v-model="formInfo.labelPosition" dict-type="label_position"></dict-select>
       </el-form-item>
+      <el-form-item>
+        <template #label>
+          <span class="form-label">标签宽度</span>
+        </template>
+        <el-input type="number" v-model="formInfo.labelWidth"></el-input>
+      </el-form-item>
       <el-form-item prop="remark">
         <template #label>
           <span class="form-label">表单描述</span>
