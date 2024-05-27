@@ -17,9 +17,7 @@
     </template>
     <div v-if="mode === 'design'">
       <div class="file-empty">
-        <el-button type="primary" plain>
-          <i class="iconfont icon-fujian pr-5px"></i>附件上传
-        </el-button>
+        <el-button> <i class="iconfont icon-fujian pr-5px"></i>点击上传附件 </el-button>
       </div>
     </div>
     <div v-else-if="mode === 'form'">
@@ -38,9 +36,7 @@
         :on-error="handleError"
         :before-upload="handleBeforeUpload"
       >
-        <el-button type="primary" plain>
-          <i class="iconfont icon-fujian pr-5px"></i>附件上传
-        </el-button>
+        <el-button> <i class="iconfont icon-fujian pr-5px"></i>点击上传附件 </el-button>
       </el-upload>
       <div v-else class="file-readonly"> </div>
     </div>
