@@ -31,7 +31,13 @@
     <div v-else>
       <el-image v-if="isNotEmpty(_value)" class="sign-form-image" :src="_value" />
     </div>
-    <Sign ref="signRef" @success="handleSuccess" />
+    <Sign
+      ref="signRef"
+      :show-line-width="formItem.props.showLineWidth"
+      :show-line-color="formItem.props.showLineColor"
+      :show-local="formItem.props.showLocal"
+      @success="handleSuccess"
+    />
   </el-form-item>
 </template>
 <script setup lang="ts">
