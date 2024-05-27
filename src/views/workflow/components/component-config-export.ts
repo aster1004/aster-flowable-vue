@@ -456,8 +456,12 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        thickness: 2,
-        color: '#000000',
+        // 显示线宽
+        showLineWidth: false,
+        // 显示颜色
+        showLineColor: false,
+        // 显示本地签名
+        showLocal: false,
       },
     },
     {
