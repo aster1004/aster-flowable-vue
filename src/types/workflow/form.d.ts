@@ -82,8 +82,8 @@ declare namespace WorkForm {
   export interface BaseInfo {
     // id
     id?: string;
-    // 表单id
-    formId?: string;
+    // 表单编码
+    code?: string;
     // 表单名称
     formName: string;
     // 表单图标

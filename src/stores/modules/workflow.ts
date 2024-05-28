@@ -18,17 +18,18 @@ export const useWorkFlowStore = defineStore({
       formName: '未命名表单',
       formItems: [],
       labelWidth: 80,
-      size: 'default', // 大-large,中-default,小-small
     },
   }),
   actions: {
-    // wflow
+    // 设置选中节点
     setSelectedNode(node: object) {
       this.selectedNode = node;
     },
+    // 加载表单信息
     loadForm(form: WorkForm.FormModel) {
       this.design = form;
     },
+    // 设置是否编辑
     setIsEdit(edit: boolean) {
       this.isEdit = edit;
     },

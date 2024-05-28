@@ -9,13 +9,6 @@ import request from '@/config/axios';
 import { PORT5 } from '../config';
 
 /**
- * @description: 获取应用信息
- */
-export const getAppInfoApi = (appId: string) => {
-  return request.get<WorkApp.AppInfo>(PORT5 + `/app/info/${appId}`, {}, { noLoading: true });
-};
-
-/**
  * 获取流程表单列表
  *
  * @param params 流程表单
@@ -64,4 +57,13 @@ export const formDeleteApi = (ids: any) => {
  */
 export const deploymentApi = (id: String) => {
   return request.post<string>(PORT5 + `/form/deployment/${id}`, {}, { noLoading: true });
+};
+
+/**
+ * @description: 获取流程表单详情
+ * @param {String} id 表单主键
+ * @return {*}
+ */
+export const formInfoApi = (id: String) => {
+  return request.get<WorkForm.FormModel>(PORT5 + `/form/info/${id}`, {}, { noLoading: true });
 };
