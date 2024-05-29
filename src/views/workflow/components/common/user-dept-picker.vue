@@ -1,7 +1,7 @@
 <!--
  * @Author: lwj
  * @Date: 2024-05-17 09:53:47
- * @FilePath: \aster-flowable-vue\src\components\userOrgPicker\user-dept-picker.vue
+ * @FilePath: \aster-flowable-vue\src\views\workflow\components\common\user-dept-picker.vue
  * @Description: 用户、部门选择组件
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
@@ -274,17 +274,14 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  // dialog状态
-  import { reactive, ref, PropType, watchEffect } from 'vue';
+  import { reactive, ref, PropType } from 'vue';
   import { deptListApi } from '@/api/sys/dept';
   import TreeFilter from '@/components/tree/tree-filter.vue';
   import { userPageApi } from '@/api/sys/user';
   import { getDeptAndSubDeptById } from '@/api/sys/dept';
   import { ElMessage } from 'element-plus';
-  import { useI18n } from 'vue-i18n';
-  const { t } = useI18n();
-  const dialogVisible = ref(false);
-  const emits = defineEmits(['selectOk']);
+
+  const emits = defineEmits(['success']);
   const props = defineProps({
     mode: {
       type: Boolean,
@@ -311,33 +308,25 @@
     },
   });
 
+  /** 显示组件 */
+  const dialogVisible = ref(false);
   const queryForm = ref();
-  /** 数据列表 */
-  const dataList = ref<User.UserInfo[]>([]);
-  /** 总数 */
-  const total = ref<number>(0);
 
   // 定义一个联合类型
   type UserOrDept = User.UserInfo | Dept.DeptInfo;
-  // 使用联合类型作为ref的类型
   /** 已选择列表 */
   const selectedList = ref<UserOrDept[]>([]);
+  /** 数据列表 */
+  const dataList = ref<UserOrDept[]>([]);
+  /** 总数 */
+  const total = ref<number>(0);
 
   /** 要提交的列表 */
   const submitList = ref<UserOrDept[]>([]);
   const loading = ref(true);
-
   const tableRef = ref();
-
   const treeDataRef = ref();
-  /** treeFilter */
-  const changeTreeFilter = (val: string) => {
-    queryParams.orgId = val;
-    queryDeptParams.id = val;
-    queryParams.pageNum = 1;
-    queryDeptParams.pageNum = 1;
-    handleQuery();
-  };
+
   /** 部门查询条件 */
   const queryDeptParams = reactive<Dept.DeptParams>({
     orgName: '',
@@ -346,6 +335,7 @@
     pageNum: 1,
     pageSize: 10,
   });
+
   /** 查询条件 */
   const queryParams = reactive<User.UserParams>({
     name: '',
@@ -355,6 +345,7 @@
     pageNum: 1,
     pageSize: 10,
   });
+
   /**
    * @description: 查询
    * @return {*}
@@ -377,6 +368,19 @@
   };
 
   /**
+   * @description: 改变树过滤条件
+   * @param {string} val
+   * @return {*}
+   */
+  const changeTreeFilter = (val: string) => {
+    queryParams.orgId = val;
+    queryDeptParams.id = val;
+    queryParams.pageNum = 1;
+    queryDeptParams.pageNum = 1;
+    handleQuery();
+  };
+
+  /**
    * @description: 选择列
    * @param {*} val
    * @return {*}
@@ -386,11 +390,12 @@
   };
 
   /**
-   * 	当用户手动勾选数据行的 Checkbox 时触发的事件
-   * @param selection
+   * @description: 当用户手动勾选数据行的 Checkbox 时触发的事件
+   * @param {*} selection
+   * @return {*}
    */
   const selectAll = (selection) => {
-    // 清除 所有勾选项
+    // 清除所有勾选项
     if (props.formItem.props.multiple) {
       selectedList.value = selection;
     } else {
@@ -399,6 +404,7 @@
       selectedList.value = [];
     }
   };
+
   const handleRowClick = (row) => {
     //如果是多选
     if (props.formItem.props.multiple) {
@@ -430,12 +436,13 @@
       }
     }
   };
+
   /**
    * @description: 添加
    * @param {string} key
    * @return {*}
    */
-  const handleAdd = (row: any) => {
+  const handleAdd = (row?: any) => {
     let val: any = [];
     if (row && row.id) {
       val.push({
@@ -445,7 +452,7 @@
       });
     } else {
       // 同时返回名称username
-      val = selectedList.value?.map((item) => {
+      val = selectedList.value?.map((item: any) => {
         return {
           id: item.id,
           username: item.username,
@@ -457,7 +464,7 @@
         return;
       }
     }
-    //将val 的值push到submitList，并且判断submitList里没有才加入
+    // 将val 的值push到submitList，并且判断submitList里没有才加入
     val.forEach((item: UserOrDept) => {
       if (!submitList.value.some((val) => val.id == item.id)) {
         if (props.formItem.props.multiple) {
@@ -524,10 +531,15 @@
    * @return {*}
    */
   const submit = () => {
-    emits('selectOk', Object.assign([], submitList.value));
+    emits('success', Object.assign([], submitList.value));
     dialogVisible.value = false;
     resetRecode();
   };
+
+  /**
+   * @description: 重置
+   * @return {*}
+   */
   const resetRecode = () => {
     queryParams.name = '';
     queryParams.gender = '';
@@ -541,7 +553,12 @@
     selectedList.value = [];
     submitList.value = [];
   };
-  /** 初始化 */
+
+  /**
+   * @description: 初始化
+   * @param {*} selectedInfo
+   * @return {*}
+   */
   const init = async (selectedInfo: UserOrDept[]) => {
     dialogVisible.value = true;
     if (selectedInfo.length > 0) {
@@ -551,6 +568,7 @@
     }
     handleQuery();
   };
+
   defineExpose({
     init,
   });

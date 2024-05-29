@@ -24,7 +24,7 @@ export const deptListApi = (params?: Dept.DeptParams) => {
  * @return {*}
  */
 export const getDeptAndSubDeptById = (params?: Dept.DeptParams) => {
-  return request.get<Dept.DeptInfo[]>(PORT1 + `/org/getDeptAndSubDeptById`, params, {
+  return request.get<Page.ResPage<Dept.DeptInfo>>(PORT1 + `/org/getDeptAndSubDeptById`, params, {
     noLoading: true,
   });
 };
@@ -57,11 +57,11 @@ export const deptDeleteApi = (ids: string[]) => {
 };
 
 /**
- * @description: 通过部门ids批量获取部门信息
+ * @description: 批量获取部门信息
  * @param ids
  * @return {*}
  */
-export const deptSelectBatchIdsApi = (ids: string[]) => {
+export const selectDeptsByIdsApi = (ids: string[]) => {
   return request.post<Dept.DeptInfo[]>(PORT1 + `/org/selectBatchIds`, ids, {
     noLoading: true,
   });

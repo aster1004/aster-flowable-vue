@@ -24,11 +24,11 @@
         </el-button>
         <el-tag
           class="add-user-item"
-          v-for="(item, index) in selectedUser"
+          v-for="(item, index) in selectedUsers"
           :key="item"
           closable
           hit
-          @close="handleClose(index)"
+          @close="handleRemove(index)"
         >
           {{ item.username }}
         </el-tag>
@@ -40,25 +40,24 @@
       type="user"
       title="选择人员"
       :form-item="formItem"
-      @selectOk="selectOk"
+      @success="handleSuccess"
     />
   </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, watchEffect, watch, ref, isRef, nextTick } from 'vue';
+  import { computed, PropType, ref } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { User, Plus } from '@element-plus/icons-vue';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
-  import { userSelectBatchIdsApi } from '@/api/sys/user';
+  import { selectUsersByIdsApi } from '@/api/sys/user';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isNotEmpty } from '@/utils';
-  //选人选部门组件
-  const userDeptPickerRef = ref();
+
   const emit = defineEmits(['update:value']);
   const props = defineProps({
     value: {
-      type: Array,
+      type: Array as PropType<string[]>,
       default: () => [],
     },
     mode: {
@@ -74,10 +73,69 @@
       default: {},
     },
   });
-  const selectedUser = ref<User.UserInfo[]>([]);
-  const handleClose = (index: number) => {
+
+  // 选人选部门组件
+  const userDeptPickerRef = ref();
+  // 已选择的人员
+  const selectedUsers = ref<User.UserInfo[]>([]);
+
+  /**
+   * @description: 选人选部门组件初始化
+   * @return {*}
+   */
+  const handleAdd = () => {
+    userDeptPickerRef.value.init(selectedUsers.value);
+  };
+
+  /**
+   * @description: 移除人员
+   * @param {*} index 下标
+   * @return {*}
+   */
+  const handleRemove = (index: number) => {
     _value.value.splice(index, 1);
-    selectedUser.value.splice(index, 1);
+    selectedUsers.value.splice(index, 1);
+  };
+
+  /**
+   * @description: 选人选部门组件回调
+   * @param {*} val 选中人员
+   * @return {*}
+   */
+  const handleSuccess = (val: User.UserInfo[]) => {
+    selectedUsers.value = [];
+    const userIds = ref<string[]>([]);
+    if (val.length > 0) {
+      val.forEach((item: User.UserInfo) => {
+        selectedUsers.value.push(item);
+        item.id && userIds.value.push(item.id);
+      });
+    }
+    _value.value = userIds.value;
+  };
+
+  /**
+   * @description: 批量获取用户信息
+   * @param {*} ids
+   * @return {*}
+   */
+  const selectUsersByIds = (ids: string[]) => {
+    if (isNotEmpty(ids)) {
+      selectUsersByIdsApi(ids).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          const data = res.data;
+          data.forEach((item: User.UserInfo) => {
+            // 通过id判断selectedUsers是否存在该记录，如不存在则push
+            if (selectedUsers.value.some((val: User.UserInfo) => val.id == item.id)) {
+              return;
+            }
+            selectedUsers.value.push(item);
+          });
+        }
+      });
+    } else {
+      selectedUsers.value = [];
+    }
   };
 
   /**
@@ -85,7 +143,7 @@
    */
   const _value = computed({
     get() {
-      selectUserInfoBatchIds(props.value);
+      selectUsersByIds(props.value);
       return props.value;
     },
     set(val) {
@@ -93,39 +151,6 @@
     },
   });
 
-  const selectOk = (val: User.UserInfo[]) => {
-    selectedUser.value = [];
-    const userIds = ref([]);
-    if (val.length > 0) {
-      val.forEach((item: User.UserInfo) => {
-        selectedUser.value.push(item);
-        userIds.value.push(item.id);
-      });
-    }
-    _value.value = userIds.value;
-  };
-  /**
-   * 通过ids批量获取用户信息
-   * @param ids
-   */
-  const selectUserInfoBatchIds = (ids: string[]) => {
-    if (isNotEmpty(ids)) {
-      userSelectBatchIdsApi(ids).then((res) => {
-        if (res.code == ResultEnum.SUCCESS) {
-          const data = res.data;
-          data.forEach((item: User.UserInfo) => {
-            // 通过id判断selectedUser是否存在该记录，如不存在则push
-            if (selectedUser.value.some((val: User.UserInfo) => val.id == item.id)) {
-              return;
-            }
-            selectedUser.value.push(item);
-          });
-        }
-      });
-    } else {
-      selectedUser.value = [];
-    }
-  };
   /**
    * @description: 是否隐藏, true-隐藏
    */
@@ -146,12 +171,9 @@
     return r;
   });
 
-  /**
-   * 选人选部门组件初始化
-   */
-  const handleAdd = () => {
-    userDeptPickerRef.value.init(selectedUser.value);
-  };
+  defineExpose({
+    _hidden,
+  });
 </script>
 <style scoped lang="scss">
   .add-user-wrapper {

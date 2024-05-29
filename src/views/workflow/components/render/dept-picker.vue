@@ -24,11 +24,11 @@
         </el-button>
         <el-tag
           class="add-dept-item"
-          v-for="(item, index) in selectedDept"
+          v-for="(item, index) in selectedDepts"
           :key="item"
           closable
           hit
-          @close="handleClose(index)"
+          @close="handleRemove(index)"
         >
           {{ item.orgName }}
         </el-tag>
@@ -40,25 +40,24 @@
       type="dept"
       title="选择部门"
       :form-item="formItem"
-      @selectOk="selectOk"
+      @success="handleSuccess"
     />
   </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, watchEffect, watch, ref, isRef, nextTick } from 'vue';
+  import { computed, PropType, ref } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { User, Plus } from '@element-plus/icons-vue';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isNotEmpty } from '@/utils';
-  import { deptSelectBatchIdsApi } from '@/api/sys/dept';
-  //选人选部门组件
-  const userDeptPickerRef = ref();
+  import { selectDeptsByIdsApi } from '@/api/sys/dept';
+
   const emit = defineEmits(['update:value']);
   const props = defineProps({
     value: {
-      type: Array,
+      type: Array as PropType<string[]>,
       default: () => [],
     },
     mode: {
@@ -74,10 +73,68 @@
       default: {},
     },
   });
-  const selectedDept = ref<Dept.DeptInfo[]>([]);
-  const handleClose = (index: number) => {
+
+  // 选人选部门组件
+  const userDeptPickerRef = ref();
+  // 已选择的部门
+  const selectedDepts = ref<Dept.DeptInfo[]>([]);
+
+  /**
+   * @description: 选人选部门组件初始化
+   * @return {*}
+   */
+  const handleAdd = () => {
+    userDeptPickerRef.value.init(selectedDepts.value);
+  };
+
+  /**
+   * @description: 移除部门
+   * @param {*} index 下标
+   * @return {*}
+   */
+  const handleRemove = (index: number) => {
     _value.value.splice(index, 1);
-    selectedDept.value.splice(index, 1);
+    selectedDepts.value.splice(index, 1);
+  };
+
+  /**
+   * @description: 添加部门
+   * @return {*}
+   */
+  const handleSuccess = (val: Dept.DeptInfo[]) => {
+    selectedDepts.value = [];
+    const deptIds = ref<string[]>([]);
+    if (val.length > 0) {
+      val.forEach((item: Dept.DeptInfo) => {
+        selectedDepts.value.push(item);
+        item.id && deptIds.value.push(item.id);
+      });
+    }
+    _value.value = deptIds.value;
+  };
+
+  /**
+   * @description: 根据id查询部门信息
+   * @param {*} ids 部门id集合
+   * @return {*}
+   */
+  const selectDeptsByIds = (ids: string[]) => {
+    if (isNotEmpty(ids)) {
+      selectDeptsByIdsApi(ids).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          const data = res.data;
+          data.forEach((item: Dept.DeptInfo) => {
+            // 通过id判断selectedDepts是否存在该记录，如不存在则push
+            if (selectedDepts.value.some((val: Dept.DeptInfo) => val.id == item.id)) {
+              return;
+            }
+            selectedDepts.value.push(item);
+          });
+        }
+      });
+    } else {
+      selectedDepts.value = [];
+    }
   };
 
   /**
@@ -85,7 +142,7 @@
    */
   const _value = computed({
     get() {
-      selectUserInfoBatchIds(props.value);
+      selectDeptsByIds(props.value);
       return props.value;
     },
     set(val) {
@@ -93,40 +150,6 @@
     },
   });
 
-  const selectOk = (val: User.UserInfo[]) => {
-    selectedDept.value = [];
-    const userIds = ref([]);
-    if (val.length > 0) {
-      val.forEach((item: User.UserInfo) => {
-        selectedDept.value.push(item);
-        userIds.value.push(item.id);
-      });
-    }
-    _value.value = userIds.value;
-  };
-
-  /**
-   * 通过部门ids批量获部门信息
-   * @param ids
-   */
-  const selectUserInfoBatchIds = (ids: string[]) => {
-    if (isNotEmpty(ids)) {
-      deptSelectBatchIdsApi(ids).then((res) => {
-        if (res.code == ResultEnum.SUCCESS) {
-          const data = res.data;
-          data.forEach((item: Dept.DeptInfo) => {
-            // 通过id判断selectedDept是否存在该记录，如不存在则push
-            if (selectedDept.value.some((val: Dept.DeptInfo) => val.id == item.id)) {
-              return;
-            }
-            selectedDept.value.push(item);
-          });
-        }
-      });
-    } else {
-      selectedDept.value = [];
-    }
-  };
   /**
    * @description: 是否隐藏, true-隐藏
    */
@@ -147,12 +170,9 @@
     return r;
   });
 
-  /**
-   * 选人选部门组件初始化
-   */
-  const handleAdd = () => {
-    userDeptPickerRef.value.init(selectedDept.value);
-  };
+  defineExpose({
+    _hidden,
+  });
 </script>
 <style scoped lang="scss">
   .add-dept-wrapper {
