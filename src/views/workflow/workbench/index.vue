@@ -1,3 +1,10 @@
+<!--
+ * @Author: Aster lipian1004@163.com
+ * @Date: 2024-05-20 11:56:43
+ * @FilePath: \aster-flowable-vue\src\views\workflow\workbench\index.vue
+ * @Description: 工作台主页
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
+-->
 <template>
   <div class="home-container">
     <el-card class="home-card" shadow="never">
@@ -24,7 +31,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { onMounted, reactive, ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { appListApi } from '@/api/workflow/app';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useRouter } from 'vue-router';
@@ -34,33 +41,36 @@
   const appList = ref<WorkApp.AppInfo[]>();
 
   /**
-   * 初始化加载
-   */
-  onMounted(() => {
-    handleQueryApp();
-  });
-
-  /**
    * 查询应用信息
    */
   const handleQueryApp = () => {
     appListApi({}).then((res) => {
-      console.log(res);
       if (res.code == ResultEnum.SUCCESS) {
         appList.value = res.data;
       }
     });
   };
 
-  const handleApp = (id: string) => {
-    console.info(id);
+  /**
+   * @description: 跳转流程实例列表
+   * @param {*} id
+   * @return {*}
+   */
+  const handleApp = (id?: string) => {
     router.push({
-      path: '/workflow/form/list',
+      path: '/workflow/workbench/instance-list',
       query: {
         appId: id,
       },
     });
   };
+
+  /**
+   * 初始化加载
+   */
+  onMounted(() => {
+    handleQueryApp();
+  });
 </script>
 <style lang="scss" scoped>
   .home-container {

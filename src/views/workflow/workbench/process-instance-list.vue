@@ -1,6 +1,13 @@
+<!--
+ * @Author: Aster lipian1004@163.com
+ * @Date: 2024-05-22 16:11:38
+ * @FilePath: \aster-flowable-vue\src\views\workflow\workbench\process-instance-list.vue
+ * @Description: 流程实例列表
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
+-->
 <template>
   <div class="main-box">
-    <tree-filter title="应用信息" @change="changeApp" />
+    <form-tree-filter title="应用信息" @change="changeApp" />
     <div class="table-box">
       <div class="card table-search" v-show="showSearch">
         <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
@@ -152,16 +159,13 @@
 </template>
 <script setup lang="ts">
   import { useRouter } from 'vue-router';
-  import TreeFilter from './tree-filter.vue';
+  import FormTreeFilter from '../app/form-tree-filter.vue';
   import { onMounted, reactive, ref } from 'vue';
   import { formPageApi, formDeleteApi, deploymentApi } from '@/api/workflow/form';
-  import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
+  import { ElMessage, ElMessageBox } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { downloadFile } from '@/utils/fileUtils';
   import { useI18n } from 'vue-i18n';
   import { isNotEmpty } from '@/utils';
-  import { userResetPwdApi } from '@/api/login';
-  import { AVATAR_URL } from '@/config';
 
   const router = useRouter();
   const { t } = useI18n();

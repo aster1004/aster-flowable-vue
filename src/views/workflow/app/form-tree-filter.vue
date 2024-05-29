@@ -1,3 +1,10 @@
+<!--
+ * @Author: Aster lipian1004@163.com
+ * @Date: 2024-05-22 16:11:38
+ * @FilePath: \aster-flowable-vue\src\views\workflow\app\app-tree-filter.vue
+ * @Description: 应用表单选择器
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
+-->
 <template>
   <div class="card filter">
     <el-select
@@ -38,12 +45,11 @@
 </template>
 
 <script setup lang="ts" name="TreeFilter">
-  import { ref, reactive, watch, onBeforeMount, nextTick, onMounted } from 'vue';
-  import { ElTree } from 'element-plus';
+  import { ref, reactive, onMounted } from 'vue';
   import { formListApi } from '@/api/workflow/form';
   import { appListApi } from '@/api/workflow/app';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { isDef, isNotEmpty, isEmpty } from '@/utils';
+  import { isDef, isNotEmpty } from '@/utils';
   import { useRoute } from 'vue-router';
 
   let route = useRoute();
