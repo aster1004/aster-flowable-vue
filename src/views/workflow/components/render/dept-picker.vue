@@ -166,31 +166,5 @@
     width: 100%;
     display: flex;
     align-items: center;
-
-    .add-dept-icon {
-      display: flex;
-      align-items: center;
-      border-radius: 100px;
-      border: 1px solid var(--el-color-primary);
-      justify-content: center;
-      cursor: pointer;
-      margin: 2px 5px 4px;
-    }
-    .add-dept-item {
-      display: flex;
-      align-items: center;
-      min-width: 70px;
-      height: 32px;
-      padding: 0 4px;
-      margin: 2px 5px 4px;
-    }
-  }
-  .placeholder {
-    margin-left: 10px;
-    color: #adabab;
-    font-size: smaller;
-  }
-  ::v-deep(.el-form-item, .el-form-item--default) {
-    margin-bottom: 0px;
   }
 </style>
