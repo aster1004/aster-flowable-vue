@@ -295,7 +295,6 @@
       type: String,
       default: 'user', //user-选人  dept-选部门 role-选角色
     },
-
     selected: {
       type: Array,
       default: () => {

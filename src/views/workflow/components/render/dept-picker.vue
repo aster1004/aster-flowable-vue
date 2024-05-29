@@ -9,30 +9,27 @@
   <div v-if="mode === 'design'">
     <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
       <div class="add-dept-wrapper">
-        <el-button class="add-dept-icon" type="primary" plain round :icon="User">
-          <Plus style="width: 1em; height: 1em" />
-        </el-button>
+        <el-select v-model="selectedDepts" placeholder="请选择" disabled />
       </div>
-      <span class="placeholder">{{ formItem.props.placeholder }}</span>
     </el-form-item>
   </div>
   <div v-else-if="mode == 'form'">
     <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
       <div class="add-dept-wrapper">
-        <el-button class="add-dept-icon" type="primary" plain round :icon="User" @click="handleAdd">
-          <Plus style="width: 1em; height: 1em" />
-        </el-button>
-        <el-tag
-          class="add-dept-item"
-          v-for="(item, index) in selectedDepts"
-          :key="item"
-          closable
-          hit
-          @close="handleRemove(index)"
+        <el-select
+          v-model="_value"
+          multiple
+          placeholder="请选择"
+          :disabled="formItem.props.readonly"
+          @click="handleAdd"
         >
-          {{ item.orgName }}
-        </el-tag>
-        <span v-if="_value?.length == 0" class="placeholder">{{ formItem.props.placeholder }}</span>
+          <el-option
+            v-for="(item, index) in selectedDepts"
+            :key="index"
+            :label="item.orgName"
+            :value="item.id"
+          />
+        </el-select>
       </div>
     </el-form-item>
     <user-org-picker
@@ -46,9 +43,8 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, ref } from 'vue';
+  import { computed, PropType, ref, watchEffect } from 'vue';
   import mittBus from '@/utils/mittBus';
-  import { User, Plus } from '@element-plus/icons-vue';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isNotEmpty } from '@/utils';
@@ -88,16 +84,6 @@
   };
 
   /**
-   * @description: 移除部门
-   * @param {*} index 下标
-   * @return {*}
-   */
-  const handleRemove = (index: number) => {
-    _value.value.splice(index, 1);
-    selectedDepts.value.splice(index, 1);
-  };
-
-  /**
    * @description: 添加部门
    * @return {*}
    */
@@ -118,22 +104,17 @@
    * @param {*} ids 部门id集合
    * @return {*}
    */
-  const selectDeptsByIds = (ids: string[]) => {
+  const selectDeptsByIds = async (ids: string[]) => {
+    selectedDepts.value = [];
     if (isNotEmpty(ids)) {
-      selectDeptsByIdsApi(ids).then((res) => {
+      await selectDeptsByIdsApi(ids).then((res) => {
         if (res.code == ResultEnum.SUCCESS) {
           const data = res.data;
           data.forEach((item: Dept.DeptInfo) => {
-            // 通过id判断selectedDepts是否存在该记录，如不存在则push
-            if (selectedDepts.value.some((val: Dept.DeptInfo) => val.id == item.id)) {
-              return;
-            }
             selectedDepts.value.push(item);
           });
         }
       });
-    } else {
-      selectedDepts.value = [];
     }
   };
 
@@ -142,12 +123,18 @@
    */
   const _value = computed({
     get() {
-      selectDeptsByIds(props.value);
       return props.value;
     },
     set(val) {
       emit('update:value', val);
     },
+  });
+
+  /**
+   * @description: 监听_value值变化
+   */
+  watchEffect(() => {
+    selectDeptsByIds(_value.value);
   });
 
   /**
@@ -176,9 +163,10 @@
 </script>
 <style scoped lang="scss">
   .add-dept-wrapper {
+    width: 100%;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
+
     .add-dept-icon {
       display: flex;
       align-items: center;

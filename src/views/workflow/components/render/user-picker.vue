@@ -9,9 +9,7 @@
   <div v-if="mode === 'design'">
     <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
       <div class="add-user-wrapper">
-        <el-button class="add-user-icon" type="primary" plain round :icon="User">
-          <Plus style="width: 1em; height: 1em" />
-        </el-button>
+        <el-select v-model="selectedUsers" placeholder="请选择" disabled />
       </div>
       <span class="placeholder">{{ formItem.props.placeholder }}</span>
     </el-form-item>
@@ -19,20 +17,20 @@
   <div v-else-if="mode == 'form'">
     <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
       <div class="add-user-wrapper">
-        <el-button class="add-user-icon" type="primary" plain round :icon="User" @click="handleAdd">
-          <Plus style="width: 1em; height: 1em" />
-        </el-button>
-        <el-tag
-          class="add-user-item"
-          v-for="(item, index) in selectedUsers"
-          :key="item"
-          closable
-          hit
-          @close="handleRemove(index)"
+        <el-select
+          v-model="_value"
+          multiple
+          placeholder="请选择"
+          :disabled="formItem.props.readonly"
+          @click="handleAdd"
         >
-          {{ item.username }}
-        </el-tag>
-        <span v-if="_value?.length == 0" class="placeholder">{{ formItem.props.placeholder }}</span>
+          <el-option
+            v-for="(item, index) in selectedUsers"
+            :key="index"
+            :label="item.username"
+            :value="item.id"
+          />
+        </el-select>
       </div>
     </el-form-item>
     <user-org-picker
@@ -46,9 +44,8 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, ref } from 'vue';
+  import { computed, PropType, ref, watchEffect } from 'vue';
   import mittBus from '@/utils/mittBus';
-  import { User, Plus } from '@element-plus/icons-vue';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { selectUsersByIdsApi } from '@/api/sys/user';
   import { ResultEnum } from '@/enums/httpEnum';
@@ -88,16 +85,6 @@
   };
 
   /**
-   * @description: 移除人员
-   * @param {*} index 下标
-   * @return {*}
-   */
-  const handleRemove = (index: number) => {
-    _value.value.splice(index, 1);
-    selectedUsers.value.splice(index, 1);
-  };
-
-  /**
    * @description: 选人选部门组件回调
    * @param {*} val 选中人员
    * @return {*}
@@ -120,21 +107,16 @@
    * @return {*}
    */
   const selectUsersByIds = (ids: string[]) => {
+    selectedUsers.value = [];
     if (isNotEmpty(ids)) {
       selectUsersByIdsApi(ids).then((res) => {
         if (res.code == ResultEnum.SUCCESS) {
           const data = res.data;
           data.forEach((item: User.UserInfo) => {
-            // 通过id判断selectedUsers是否存在该记录，如不存在则push
-            if (selectedUsers.value.some((val: User.UserInfo) => val.id == item.id)) {
-              return;
-            }
             selectedUsers.value.push(item);
           });
         }
       });
-    } else {
-      selectedUsers.value = [];
     }
   };
 
@@ -143,12 +125,18 @@
    */
   const _value = computed({
     get() {
-      selectUsersByIds(props.value);
       return props.value;
     },
     set(val) {
       emit('update:value', val);
     },
+  });
+
+  /**
+   * @description: 监听_value值变化
+   */
+  watchEffect(() => {
+    selectUsersByIds(_value.value);
   });
 
   /**
