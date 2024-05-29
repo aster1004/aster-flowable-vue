@@ -54,7 +54,7 @@
   const title = import.meta.env.VITE_APP_TITLE;
 
   const authStore = useAuthStore();
-  const menuList = authStore.authMenuList;
+  const menuList = computed(() => authStore.showMenuListGet);
 
   const route = useRoute();
   const router = useRouter();

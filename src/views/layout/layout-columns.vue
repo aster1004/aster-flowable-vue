@@ -72,22 +72,22 @@
 
   const route = useRoute();
   const router = useRouter();
-  const globalStore = useGlobalStore();
-  const isCollapse = computed(() => globalStore.isCollapse);
-
   const authStore = useAuthStore();
-  const menuList = authStore.authMenuList;
-
+  const globalStore = useGlobalStore();
   const subMenuList = ref<Menu.MenuOptions[]>([]);
   const splitActive = ref('');
+
+  const isCollapse = computed(() => globalStore.isCollapse);
+  const menuList = computed(() => authStore.showMenuListGet);
+
   watch(
     () => [menuList, route],
     () => {
       // 当前菜单没有数据直接 return
-      if (!menuList.length) return;
+      if (!menuList.value.length) return;
       splitActive.value = route.path;
 
-      const menuItem = menuList.filter((item: Menu.MenuOptions) => {
+      const menuItem = menuList.value.filter((item: Menu.MenuOptions) => {
         return route.path === item.path || `/${route.path.split('/')[1]}` === item.path;
       });
       if (menuItem.length > 0 && menuItem[0].children?.length)

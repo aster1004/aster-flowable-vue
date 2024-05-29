@@ -238,7 +238,7 @@ export function getFlatMenuList(menuList: Menu.MenuOptions[]): Menu.MenuOptions[
 }
 
 /**
- * @description 使用递归过滤出需要渲染在左侧菜单的列表 (需剔除 isHide == true 的菜单)
+ * @description 使用递归过滤出需要渲染在左侧菜单的列表 (需剔除 isHide == '0' 的菜单)
  * @param {Array} menuList 菜单列表
  * @returns {Array}
  * */

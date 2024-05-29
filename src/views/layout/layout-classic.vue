@@ -55,15 +55,14 @@
   const title = import.meta.env.VITE_APP_TITLE;
 
   const route = useRoute();
+  const authStore = useAuthStore();
   const globalStore = useGlobalStore();
   const isCollapse = computed(() => globalStore.isCollapse);
+  const menuList = computed(() => authStore.showMenuListGet);
   const activeMenu = computed(() => {
     const path = route.path;
     return path;
   });
-
-  const authStore = useAuthStore();
-  const menuList = authStore.authMenuList;
 </script>
 
 <style scoped lang="scss">
