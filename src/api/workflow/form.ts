@@ -26,7 +26,7 @@ export const formPageApi = (params: WorkForm.FormParams) => {
  * @param params 流程表单
  * @returns
  */
-export const formListApi = (params: WorkForm.BaseInfo) => {
+export const formListApi = (params: WorkForm.QueryParams) => {
   return request.get<WorkForm.FormModel[]>(PORT5 + `/form/list`, params, {
     noLoading: true,
   });

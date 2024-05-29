@@ -19,7 +19,7 @@ declare namespace WorkForm {
   };
 
   /**
-   * 表单扩展信息
+   * @description: 表单扩展信息
    */
   export interface FormSettings {
     // 启用签批
@@ -36,7 +36,7 @@ declare namespace WorkForm {
   }
 
   /**
-   * 表单配置
+   * @description: 表单配置
    */
   export interface FormConfig {
     // 表单业务规则
@@ -55,7 +55,7 @@ declare namespace WorkForm {
   }
 
   /**
-   * 表单项
+   * @description: 表单项
    */
   export interface FormItem {
     // 图标
@@ -77,7 +77,7 @@ declare namespace WorkForm {
   }
 
   /**
-   * 表单基础信息
+   * @description: 表单基础信息
    */
   export interface BaseInfo {
     // id
@@ -108,13 +108,31 @@ declare namespace WorkForm {
     remark?: string;
   }
 
+  /**
+   * @description: 分页查询参数
+   */
   export interface FormParams extends Page.ReqPage {
+    id?: string;
+    code?: string;
     appId?: string;
     formName?: string;
   }
 
   /**
-   * 表单信息
+   * @description: 查询参数
+   */
+  export interface QueryParams {
+    id?: string;
+    code?: string;
+    formName?: string;
+    appId?: string;
+    processDefId?: string;
+    version?: string;
+    status?: string;
+  }
+
+  /**
+   * @description: 表单信息
    */
   export interface FormModel extends BaseInfo {
     // 表单扩展配置

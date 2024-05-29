@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-05-22 16:11:38
- * @FilePath: \aster-flowable-vue\src\views\workflow\app\app-tree-filter.vue
+ * @FilePath: \aster-flowable-vue\src\views\workflow\app\form-tree-filter.vue
  * @Description: 应用表单选择器
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
@@ -51,6 +51,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { isDef, isNotEmpty } from '@/utils';
   import { useRoute } from 'vue-router';
+  import { ElMessage } from 'element-plus';
 
   let route = useRoute();
 
@@ -58,70 +59,87 @@
   const emits = defineEmits(['change']);
 
   const title = ref<string>('应用信息');
-
   // 应用集合
   const appList = ref<WorkApp.AppInfo[]>([]);
-
   // 应用信息
   const formList = ref<WorkForm.FormModel[]>([]);
-
   // 选中的应用ID
   const activeId = ref<string | undefined>('');
-
-  const queryParams = reactive<WorkForm.BaseInfo>({
+  // 查询参数
+  const queryParams = reactive<WorkForm.QueryParams>({
     appId: '',
     formName: '',
   });
 
-  onMounted(async () => {
-    if (route.query.appId && typeof route.query.appId === 'string') {
-      queryParams.appId = route.query.appId;
-    }
-    handleQueryApp();
-  });
-
   /**
-   * 查询表单集合
+   * @description: 获取表单列表
+   * @return {*}
    */
-  const listForm = () => {
-    formListApi(queryParams).then((res) => {
-      formList.value = res.data;
-    });
-  };
-
-  /**
-   * 查询应用信息
-   */
-  const handleQueryApp = () => {
-    appListApi({ appId: queryParams.appId }).then((res) => {
-      if (res.code == ResultEnum.SUCCESS) {
-        appList.value = res.data;
-        listForm();
+  const getFormList = () => {
+    formListApi(queryParams).then(({ data }) => {
+      formList.value = data;
+      if (isNotEmpty(formList.value)) {
+        // 默认选中应用下的第一个表单
+        handleClick(formList.value[0]);
+      } else {
+        handleClick();
       }
     });
   };
 
   /**
-   * 点击应用
-   *
+   * @description: 查询应用信息
+   * @return {*}
    */
-  const handleClick = (formInfo: WorkForm.FormModel) => {
-    activeId.value = formInfo.id;
-    emits('change', formInfo.id);
+  const handleQueryApp = () => {
+    appListApi({}).then((res) => {
+      if (res.code == ResultEnum.SUCCESS) {
+        appList.value = res.data;
+        // 获取表单list
+        getFormList();
+      } else {
+        ElMessage.error(res.message);
+      }
+    });
   };
 
   /**
-   * 选择应用
+   * @description: 选中表单
+   * @param {WorkForm.FormModel} formInfo
+   * @return {*}
+   */
+  const handleClick = (formInfo?: WorkForm.FormModel) => {
+    activeId.value = formInfo?.id;
+    const params: WorkForm.QueryParams = {
+      id: formInfo?.id,
+      code: formInfo?.code,
+      appId: formInfo ? formInfo.appId : queryParams.appId,
+    };
+    emits('change', params);
+  };
+
+  /**
+   * @description: 应用选择
+   * @param {any} e 应用ID
+   * @return {*}
    */
   const handleAppChange = (e: any) => {
     activeId.value = '';
     if (isDef(e)) {
       queryParams.appId = e;
-      listForm();
+      getFormList();
     } else {
       formList.value = [];
     }
   };
+
+  onMounted(async () => {
+    if (route.query.appId && typeof route.query.appId === 'string') {
+      queryParams.appId = route.query.appId;
+    }
+    // 查询应用信息
+    handleQueryApp();
+  });
 </script>
 
 <style scoped lang="scss">

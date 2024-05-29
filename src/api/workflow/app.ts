@@ -15,7 +15,7 @@ export const appPageApi = (params: WorkApp.AppParams) => {
  * @param params 查询应用集合
  * @returns
  */
-export const appListApi = (params: any) => {
+export const appListApi = (params: WorkApp.QueryParams) => {
   return request.get<WorkApp.AppInfo[]>(PORT5 + `/app/list`, params, {
     noLoading: true,
   });

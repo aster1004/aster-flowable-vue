@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="main-box">
-    <form-tree-filter title="应用信息" @change="changeApp" />
+    <form-tree-filter title="应用信息" @change="changeForm" />
     <div class="table-box">
       <div class="card table-search" v-show="showSearch">
         <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
@@ -154,30 +154,32 @@
         />
       </div>
     </div>
-    <!-- <add-or-edit ref="addOrEditRef" @refresh="handleQuery" /> -->
+    <form-initiation ref="formInitiationRef" />
   </div>
 </template>
 <script setup lang="ts">
-  import { useRouter } from 'vue-router';
   import FormTreeFilter from '../app/form-tree-filter.vue';
-  import { onMounted, reactive, ref } from 'vue';
+  import FormInitiation from '../form/form-initiation.vue';
+  import { reactive, ref } from 'vue';
   import { formPageApi, formDeleteApi, deploymentApi } from '@/api/workflow/form';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useI18n } from 'vue-i18n';
-  import { isNotEmpty } from '@/utils';
+  import { isEmpty, isNotEmpty } from '@/utils';
 
-  const router = useRouter();
   const { t } = useI18n();
   /** 注册组件 */
   const queryForm = ref();
-  const addOrEditRef = ref();
+  const formInitiationRef = ref();
   /** 是否显示查询 */
   const showSearch = ref(true);
   /** 默认折叠搜索项 */
   const searchCollapsed = ref(true);
+  /** 选中的表单ID */
+  const formId = ref('');
   /** 查询条件 */
   const queryParams = reactive<WorkForm.FormParams>({
+    code: '',
     appId: '',
     formName: '',
     pageNum: 1,
@@ -189,13 +191,6 @@
   const total = ref<number>(0);
   /** 已选择列表 */
   const selectedList = ref<WorkForm.FormModel[]>([]);
-  const loading = ref(true);
-
-  /** treeFilter */
-  const changeTreeFilter = (val: string) => {
-    queryParams.pageNum = 1;
-    handleQuery();
-  };
 
   /**
    * @description: 重置查询
@@ -212,11 +207,9 @@
    * @return {*}
    */
   const handleQuery = () => {
-    loading.value = true;
     formPageApi(queryParams).then(({ data }) => {
       dataList.value = data.list;
       total.value = data.total;
-      loading.value = false;
     });
   };
 
@@ -255,7 +248,11 @@
    * @return {*}
    */
   const handleAdd = () => {
-    router.push({ path: '/workflow/design', query: { appId: queryParams.appId } });
+    if (isEmpty(formId.value)) {
+      ElMessage.warning('请先选择左侧表单');
+      return;
+    }
+    formInitiationRef.value.init(formId.value);
   };
 
   /**
@@ -263,9 +260,7 @@
    * @param {string} key
    * @return {*}
    */
-  const handleEdit = (key: string) => {
-    addOrEditRef.value.init(key);
-  };
+  const handleEdit = (key: string) => {};
 
   /**
    * @description: 删除
@@ -301,25 +296,30 @@
   };
 
   /**
-   * 切换应用
+   * @description: 切换表单
+   * @param {WorkForm.FormModel} formInfo 选中的表单
+   * @return {*}
    */
-  const changeApp = (appId: string) => {
-    queryParams.appId = appId;
+  const changeForm = (params: WorkForm.QueryParams) => {
+    console.log('changeForm', params);
+    queryParams.appId = params.appId;
+    queryParams.code = params.code;
+    if (params.id) {
+      formId.value = params.id;
+    }
     handleQuery();
   };
 
+  /**
+   * @description: 部署
+   * @param {*} id 表单id
+   * @return {*}
+   */
   const handleDeployment = (id: String) => {
     deploymentApi(id).then((res) => {
       console.info('部署：', res);
     });
   };
-
-  /**
-   * 初始化加载
-   */
-  onMounted(() => {
-    // handleQuery();
-  });
 </script>
 <style lang="scss" scoped>
   .iconStyle {
