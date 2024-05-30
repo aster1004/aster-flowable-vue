@@ -6,32 +6,32 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div v-if="mode === 'design'">
-    <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
-      <div class="add-dept-wrapper">
-        <el-select v-model="selectedDepts" placeholder="请选择" disabled />
-      </div>
-    </el-form-item>
-  </div>
-  <div v-else-if="mode == 'form'">
-    <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
-      <div class="add-dept-wrapper">
-        <el-select
-          v-model="_value"
-          multiple
-          placeholder="请选择"
-          :disabled="formItem.props.readonly"
-          @click="handleAdd"
-        >
-          <el-option
-            v-for="(item, index) in selectedDepts"
-            :key="index"
-            :label="item.orgName"
-            :value="item.id"
-          />
-        </el-select>
-      </div>
-    </el-form-item>
+  <el-form-item
+    v-if="!_hidden"
+    :prop="formItemProp"
+    :label-width="labelWidth"
+    :show-message="showMessage"
+  >
+    <template #label>
+      <span v-show="showLabel">{{ formItem.title }}</span>
+    </template>
+
+    <el-select v-if="mode === 'design'" v-model="selectedDepts" placeholder="请选择" disabled />
+    <el-select
+      v-else-if="mode == 'form'"
+      v-model="_value"
+      multiple
+      placeholder="请选择"
+      :disabled="formItem.props.readonly"
+      @click="handleAdd"
+    >
+      <el-option
+        v-for="(item, index) in selectedDepts"
+        :key="index"
+        :label="item.orgName"
+        :value="item.id"
+      />
+    </el-select>
     <user-org-picker
       ref="userDeptPickerRef"
       type="dept"
@@ -39,7 +39,7 @@
       :form-item="formItem"
       @success="handleSuccess"
     />
-  </div>
+  </el-form-item>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
@@ -67,6 +67,18 @@
     formItem: {
       type: Object as PropType<WorkComponent.ComponentConfig>,
       default: {},
+    },
+    tableId: {
+      type: String,
+      default: '',
+    },
+    tableIndex: {
+      type: Number,
+      default: 0,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
     },
   });
 
@@ -118,6 +130,33 @@
     }
   };
 
+  // 键
+  const formItemProp = computed(() => {
+    if (isNotEmpty(props.tableId)) {
+      return props.tableId + '.' + props.tableIndex + '.' + props.formItem.id;
+    } else {
+      return props.formItem.id;
+    }
+  });
+
+  // 标签长度
+  const labelWidth = computed(() => {
+    if (isNotEmpty(props.tableId)) {
+      return '12px';
+    } else {
+      return '';
+    }
+  });
+
+  // 是否显示校验信息
+  const showMessage = computed(() => {
+    if (isNotEmpty(props.tableId)) {
+      return false;
+    } else {
+      return true;
+    }
+  });
+
   /**
    * @description: 组件值
    */
@@ -161,10 +200,4 @@
     _hidden,
   });
 </script>
-<style scoped lang="scss">
-  .add-dept-wrapper {
-    width: 100%;
-    display: flex;
-    align-items: center;
-  }
-</style>
+<style scoped lang="scss"></style>

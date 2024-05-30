@@ -255,7 +255,7 @@
             :label="$t('label.dept.orgName')"
             :show-overflow-tooltip="true"
             header-align="center"
-            width="160"
+            align="center"
           />
           <el-table-column :label="$t('label.operate')" align="center" class-name="operation">
             <template #default="scope">
