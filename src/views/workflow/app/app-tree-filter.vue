@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-27 17:15:13
- * @FilePath: \aster-flowable-vue\src\views\workflow\form\tree-filter.vue
+ * @FilePath: \aster-flowable-vue\src\views\workflow\app\app-tree-filter.vue
  * @Description: 应用选择器
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
@@ -34,6 +34,7 @@
 <script setup lang="ts" name="TreeFilter">
   import { ref, onBeforeMount } from 'vue';
   import { appListApi } from '@/api/workflow/app';
+  import { isNotEmpty } from '@/utils';
 
   const title = ref<string>('应用信息');
 
@@ -50,6 +51,10 @@
   const listApp = () => {
     appListApi({}).then((res) => {
       appData.value = res.data;
+      if (isNotEmpty(appData.value)) {
+        activeId.value = appData.value[0].id;
+        emits('change', appData.value[0]);
+      }
     });
   };
 
