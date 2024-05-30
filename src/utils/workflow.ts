@@ -6,7 +6,9 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 
+import { concat } from 'lodash-es';
 import moment, { Moment } from 'moment';
+import { ref } from 'vue';
 import { isEmpty } from '.';
 import { evaluate, parse } from './formula';
 
@@ -78,6 +80,8 @@ export const formulaItemTree = (
   tree: WorkComponent.formulaNode[],
   isTableList: boolean = false,
 ) => {
+  console.log('-------------');
+  console.log(items, isTableList);
   items.forEach((item) => {
     // 若是一行多列则遍历items,取子组件
     if (item.name === 'GridLayout') {
@@ -215,17 +219,44 @@ export const formulaValidate = (expression: string) => {
 };
 
 /**
- * @description: 表单项扁平化，获取根节点控件，排除布局控件
+ * @description: 表单项扁平化，排除布局控件
  * @param {WorkForm} source 源表单项
- * @param {WorkForm} target 目标表单项
  * @return {*}
  */
-export const flatFormItems = (source: WorkForm.FormItem[], target: WorkForm.FormItem[]) => {
-  source.forEach((item) => {
-    if (item.name === 'GridLayout') {
-      flatFormItems(item.props.items, target);
+export const flatFormItems = (source: WorkForm.FormItem[]) => {
+  return source.reduce((pre, cur) => {
+    if (cur.name === 'GridLayout') {
+      let cols: any[] = [];
+      cur.props.items.forEach((col) => {
+        cols = [...cols, ...flatFormItems(col)];
+      });
+      return [...pre, ...cols];
+    } else if (cur.name === 'GridTitle') {
+      return [...pre, ...flatFormItems(cur.props.items)];
     } else {
-      target.push(item);
+      return [...pre, cur];
+    }
+  }, [] as WorkForm.FormItem[]);
+};
+
+/**
+ * @description: 设置默认值
+ * @param {WorkForm.FormItem[]} formItems 表单项
+ * @param {WorkForm.FormDataModel} formData 表单数据
+ * @return {*}
+ */
+export const setDefaultValue = (
+  formItems: WorkForm.FormItem[],
+  formData: WorkForm.FormDataModel,
+) => {
+  const items = flatFormItems(formItems);
+  // 先给所有项默认空值
+  items.forEach((item) => {
+    formData[item.id] = item.value;
+  });
+  // 处理默认值
+  items.forEach((item) => {
+    if (item.props.hasOwnProperty('defaultValue')) {
     }
   });
 };
