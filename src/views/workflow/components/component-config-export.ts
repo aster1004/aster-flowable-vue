@@ -493,10 +493,9 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        placeholder: '计算结果',
         precision: 0,
-        isPlus: false,
-        jsCode: '',
-        explain: [],
+        formula: '', //公式字符串
       },
     },
     {

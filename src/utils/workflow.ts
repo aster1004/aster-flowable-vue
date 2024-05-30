@@ -6,9 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 
-import { concat } from 'lodash-es';
 import moment, { Moment } from 'moment';
-import { ref } from 'vue';
 import { isEmpty } from '.';
 import { evaluate, parse } from './formula';
 
@@ -176,6 +174,25 @@ export const restorationFormula = (formula: string, formulaNodes: WorkComponent.
   formulaNodes.forEach((node) => {
     if (node.value && node.label && formula.indexOf(node.value) != -1) {
       result = result.replaceAll(node.value, '[[' + node.label + ']]');
+    }
+  });
+  return result;
+};
+
+/**
+ * @description: 还原公式
+ * @param {string} formula 公式
+ * @param { WorkForm.FormItem[]} formItems 表单扁平化后的节点数据
+ * @return {*}
+ */
+export const restorationFormulaByFormItems = (formula: string, formItems: WorkForm.FormItem[]) => {
+  if (!formula) {
+    return formula;
+  }
+  let result = formula;
+  formItems.forEach((node) => {
+    if (node.id && node.name && formula.indexOf(node.id) != -1) {
+      result = result.replaceAll(node.id, '[[' + node.title + ']]');
     }
   });
   return result;

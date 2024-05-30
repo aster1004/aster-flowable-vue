@@ -60,7 +60,7 @@
         </el-collapse>
       </div>
       <div class="formula-main">
-        <code-mirror ref="codeMirrorRef"></code-mirror>
+        <code-mirror ref="codeMirrorRef" :placeholder="placeholder"></code-mirror>
         <div class="formula-fun" v-if="currentFunction">
           <div class="fun-title">{{ currentFunction.name }}</div>
           <div class="fun-content">
@@ -102,6 +102,11 @@
     formula: {
       type: String,
       default: '',
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: () => '当表达式值解析为true时，当前表单域隐藏',
     },
   });
 
