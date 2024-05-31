@@ -6,59 +6,54 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div v-if="mode === 'design'">
-    <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
-      <div class="add-dept-wrapper">
-        <el-button class="add-dept-icon" type="primary" plain round :icon="User">
-          <Plus style="width: 1em; height: 1em" />
-        </el-button>
-      </div>
-      <span class="placeholder">{{ formItem.props.placeholder }}</span>
-    </el-form-item>
-  </div>
-  <div v-else-if="mode == 'form'">
-    <el-form-item :label="formItem.title" :prop="formItem.id" v-if="!_hidden">
-      <div class="add-dept-wrapper">
-        <el-button class="add-dept-icon" type="primary" plain round :icon="User" @click="handleAdd">
-          <Plus style="width: 1em; height: 1em" />
-        </el-button>
-        <el-tag
-          class="add-dept-item"
-          v-for="(item, index) in selectedDept"
-          :key="item"
-          closable
-          hit
-          @close="handleClose(index)"
-        >
-          {{ item.orgName }}
-        </el-tag>
-        <span v-if="_value?.length == 0" class="placeholder">{{ formItem.props.placeholder }}</span>
-      </div>
-    </el-form-item>
+  <el-form-item
+    v-if="!_hidden"
+    :prop="formItemProp"
+    :label-width="labelWidth"
+    :show-message="showMessage"
+  >
+    <template #label>
+      <span v-show="showLabel">{{ formItem.title }}</span>
+    </template>
+
+    <el-select v-if="mode === 'design'" v-model="selectedDepts" placeholder="请选择" disabled />
+    <el-select
+      v-else-if="mode == 'form'"
+      v-model="_value"
+      multiple
+      placeholder="请选择"
+      :disabled="formItem.props.readonly"
+      @click="handleAdd"
+    >
+      <el-option
+        v-for="(item, index) in selectedDepts"
+        :key="index"
+        :label="item.orgName"
+        :value="item.id"
+      />
+    </el-select>
     <user-org-picker
       ref="userDeptPickerRef"
       type="dept"
       title="选择部门"
       :form-item="formItem"
-      @selectOk="selectOk"
+      @success="handleSuccess"
     />
-  </div>
+  </el-form-item>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, watchEffect, watch, ref, isRef, nextTick } from 'vue';
+  import { computed, PropType, ref, watchEffect } from 'vue';
   import mittBus from '@/utils/mittBus';
-  import { User, Plus } from '@element-plus/icons-vue';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isNotEmpty } from '@/utils';
-  import { deptSelectBatchIdsApi } from '@/api/sys/dept';
-  //选人选部门组件
-  const userDeptPickerRef = ref();
+  import { selectDeptsByIdsApi } from '@/api/sys/dept';
+
   const emit = defineEmits(['update:value']);
   const props = defineProps({
     value: {
-      type: Array,
+      type: Array as PropType<string[]>,
       default: () => [],
     },
     mode: {
@@ -73,19 +68,100 @@
       type: Object as PropType<WorkComponent.ComponentConfig>,
       default: {},
     },
+    tableId: {
+      type: String,
+      default: '',
+    },
+    tableIndex: {
+      type: Number,
+      default: 0,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
+    },
   });
-  const selectedDept = ref<Dept.DeptInfo[]>([]);
-  const handleClose = (index: number) => {
-    _value.value.splice(index, 1);
-    selectedDept.value.splice(index, 1);
+
+  // 选人选部门组件
+  const userDeptPickerRef = ref();
+  // 已选择的部门
+  const selectedDepts = ref<Dept.DeptInfo[]>([]);
+
+  /**
+   * @description: 选人选部门组件初始化
+   * @return {*}
+   */
+  const handleAdd = () => {
+    userDeptPickerRef.value.init(selectedDepts.value);
   };
+
+  /**
+   * @description: 添加部门
+   * @return {*}
+   */
+  const handleSuccess = (val: Dept.DeptInfo[]) => {
+    selectedDepts.value = [];
+    const deptIds = ref<string[]>([]);
+    if (val.length > 0) {
+      val.forEach((item: Dept.DeptInfo) => {
+        selectedDepts.value.push(item);
+        item.id && deptIds.value.push(item.id);
+      });
+    }
+    _value.value = deptIds.value;
+  };
+
+  /**
+   * @description: 根据id查询部门信息
+   * @param {*} ids 部门id集合
+   * @return {*}
+   */
+  const selectDeptsByIds = async (ids: string[]) => {
+    selectedDepts.value = [];
+    if (isNotEmpty(ids)) {
+      await selectDeptsByIdsApi(ids).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          const data = res.data;
+          data.forEach((item: Dept.DeptInfo) => {
+            selectedDepts.value.push(item);
+          });
+        }
+      });
+    }
+  };
+
+  // 键
+  const formItemProp = computed(() => {
+    if (isNotEmpty(props.tableId)) {
+      return props.tableId + '.' + props.tableIndex + '.' + props.formItem.id;
+    } else {
+      return props.formItem.id;
+    }
+  });
+
+  // 标签长度
+  const labelWidth = computed(() => {
+    if (isNotEmpty(props.tableId)) {
+      return '12px';
+    } else {
+      return '';
+    }
+  });
+
+  // 是否显示校验信息
+  const showMessage = computed(() => {
+    if (isNotEmpty(props.tableId)) {
+      return false;
+    } else {
+      return true;
+    }
+  });
 
   /**
    * @description: 组件值
    */
   const _value = computed({
     get() {
-      selectUserInfoBatchIds(props.value);
       return props.value;
     },
     set(val) {
@@ -93,40 +169,13 @@
     },
   });
 
-  const selectOk = (val: User.UserInfo[]) => {
-    selectedDept.value = [];
-    const userIds = ref([]);
-    if (val.length > 0) {
-      val.forEach((item: User.UserInfo) => {
-        selectedDept.value.push(item);
-        userIds.value.push(item.id);
-      });
-    }
-    _value.value = userIds.value;
-  };
-
   /**
-   * 通过部门ids批量获部门信息
-   * @param ids
+   * @description: 监听_value值变化
    */
-  const selectUserInfoBatchIds = (ids: string[]) => {
-    if (isNotEmpty(ids)) {
-      deptSelectBatchIdsApi(ids).then((res) => {
-        if (res.code == ResultEnum.SUCCESS) {
-          const data = res.data;
-          data.forEach((item: Dept.DeptInfo) => {
-            // 通过id判断selectedDept是否存在该记录，如不存在则push
-            if (selectedDept.value.some((val: Dept.DeptInfo) => val.id == item.id)) {
-              return;
-            }
-            selectedDept.value.push(item);
-          });
-        }
-      });
-    } else {
-      selectedDept.value = [];
-    }
-  };
+  watchEffect(() => {
+    selectDeptsByIds(_value.value);
+  });
+
   /**
    * @description: 是否隐藏, true-隐藏
    */
@@ -147,42 +196,8 @@
     return r;
   });
 
-  /**
-   * 选人选部门组件初始化
-   */
-  const handleAdd = () => {
-    userDeptPickerRef.value.init(selectedDept.value);
-  };
+  defineExpose({
+    _hidden,
+  });
 </script>
-<style scoped lang="scss">
-  .add-dept-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    .add-dept-icon {
-      display: flex;
-      align-items: center;
-      border-radius: 100px;
-      border: 1px solid var(--el-color-primary);
-      justify-content: center;
-      cursor: pointer;
-      margin: 2px 5px 4px;
-    }
-    .add-dept-item {
-      display: flex;
-      align-items: center;
-      min-width: 70px;
-      height: 32px;
-      padding: 0 4px;
-      margin: 2px 5px 4px;
-    }
-  }
-  .placeholder {
-    margin-left: 10px;
-    color: #adabab;
-    font-size: smaller;
-  }
-  ::v-deep(.el-form-item, .el-form-item--default) {
-    margin-bottom: 0px;
-  }
-</style>
+<style scoped lang="scss"></style>

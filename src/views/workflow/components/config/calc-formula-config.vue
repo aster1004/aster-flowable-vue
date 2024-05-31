@@ -6,7 +6,102 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div> 内容 </div>
+  <div v-if="_formItem">
+    <el-form-item label="控件名称">
+      <template #label>
+        <div class="flex justify-between items-center">
+          <span>控件名称</span>
+          <span class="text-xs font-normal">计算公式</span>
+        </div>
+      </template>
+      <el-input v-model="_formItem.title" />
+    </el-form-item>
+    <el-form-item label="提示语">
+      <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
+    </el-form-item>
+    <el-form-item>
+      <template #label>
+        <span>数值精度</span>
+        <el-tooltip content="小数点后位数" placement="top">
+          <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
+        </el-tooltip>
+      </template>
+      <el-input-number v-model="_formItem.props.precision" :min="0" :max="10" />
+    </el-form-item>
+    <el-form-item label="公式配置">
+      <el-button style="width: 100%" size="mini" :icon="Setting" @click="showFormula"
+        >设置公式</el-button
+      >
+      <div class="calc-preview" v-if="_formItem.props.formula">
+        <code-mirror
+          ref="codeMirrorRef"
+          :editable="false"
+          :placeholder="'请设置公式'"
+        ></code-mirror>
+      </div>
+    </el-form-item>
+    <!--  计算公式组件  -->
+    <formula
+      ref="formulaRef"
+      title="设置公式"
+      :placeholder="'请设置公式'"
+      v-model:formula="_formItem.props.formula"
+    />
+    <el-form-item label="是否必填">
+      <el-switch v-model="_formItem.props.required" />
+    </el-form-item>
+  </div>
 </template>
-<script setup lang="ts"></script>
-<style scoped lang="scss"></style>
+<script setup lang="ts">
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { computed, ref, watchEffect } from 'vue';
+  import { Setting } from '@element-plus/icons-vue';
+  import Formula from '@/views/workflow/components/common/formula.vue';
+  import { isNotEmpty } from '@/utils';
+  import { flatFormItems, restorationFormulaByFormItems } from '@/utils/workflow';
+  import CodeMirror from '@/views/workflow/components/common/code-mirror.vue';
+  const codeMirrorRef = ref();
+  // 工作流store
+  const workFlowStore = useWorkFlowStore();
+  // 注册组件
+  const formulaRef = ref();
+
+  /**
+   * @description: 显示公式
+   */
+  const showFormula = () => {
+    formulaRef.value.init();
+  };
+  // 选中的组件
+  const _formItem = computed(() => {
+    return workFlowStore.selectFormItem;
+  });
+
+  // 选中的组件
+  const _flatFormItems = computed(() => {
+    return flatFormItems(workFlowStore.design.formItems);
+  });
+  watchEffect(() => {
+    if (codeMirrorRef.value && isNotEmpty(_formItem.value?.props.formula)) {
+      const label = restorationFormulaByFormItems(
+        _formItem.value?.props.formula,
+        _flatFormItems.value,
+      );
+      codeMirrorRef.value.setValue(label);
+    }
+  });
+</script>
+<style scoped lang="scss">
+  .calc-preview {
+    word-break: break-all;
+    max-height: 110px;
+    width: 100%;
+    border: 1px dashed var(--el-border-color-light);
+    border-top: none;
+    overflow: auto;
+    color: #a8abb2;
+    ::v-deep(.ͼ2 .cm-gutters) {
+      display: none;
+    }
+  }
+</style>

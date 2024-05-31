@@ -1,8 +1,8 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-10-27 17:15:13
- * @FilePath: \aster-flowable-vue\src\components\tree\tree-filter.vue
- * @Description: 树形选择器
+ * @FilePath: \aster-flowable-vue\src\views\workflow\app\app-tree-filter.vue
+ * @Description: 应用选择器
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
@@ -10,7 +10,6 @@
     <h4 v-if="title" class="title sle">
       {{ title }}
     </h4>
-    <!-- <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable /> -->
     <el-scrollbar :style="{ height: title ? `calc(100% - 95px)` : `calc(100% - 56px)` }">
       <div class="app-container">
         <div
@@ -33,10 +32,9 @@
 </template>
 
 <script setup lang="ts" name="TreeFilter">
-  import { ref, watch, onBeforeMount, nextTick } from 'vue';
-  import { ElTree } from 'element-plus';
+  import { ref, onBeforeMount } from 'vue';
   import { appListApi } from '@/api/workflow/app';
-  import { useRoute } from 'vue-router';
+  import { isNotEmpty } from '@/utils';
 
   const title = ref<string>('应用信息');
 
@@ -53,6 +51,10 @@
   const listApp = () => {
     appListApi({}).then((res) => {
       appData.value = res.data;
+      if (isNotEmpty(appData.value)) {
+        activeId.value = appData.value[0].id;
+        emits('change', appData.value[0]);
+      }
     });
   };
 

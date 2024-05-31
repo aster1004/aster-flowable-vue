@@ -17,12 +17,10 @@
     </template>
     <div v-if="mode === 'design'">
       <div class="file-empty">
-        <el-button type="primary" plain>
-          <i class="iconfont icon-fujian pr-5px"></i>附件上传
-        </el-button>
+        <el-button disabled> <i class="iconfont icon-fujian pr-5px"></i>点击上传附件 </el-button>
       </div>
     </div>
-    <div v-else-if="mode === 'form'">
+    <div v-else-if="mode === 'form'" style="width: 100%">
       <el-upload
         v-if="!formItem.props.readonly"
         list-type="text"
@@ -38,13 +36,23 @@
         :on-error="handleError"
         :before-upload="handleBeforeUpload"
       >
-        <el-button type="primary" plain>
-          <i class="iconfont icon-fujian pr-5px"></i>附件上传
-        </el-button>
+        <el-button> <i class="iconfont icon-fujian pr-5px"></i>点击上传附件 </el-button>
       </el-upload>
-      <div v-else class="file-readonly"> </div>
+      <div v-else class="file-readonly">
+        <el-row v-for="(item, index) in _value" :key="index">
+          <el-col :span="24">
+            <span :title="item.name">{{ item.name }}</span>
+          </el-col>
+        </el-row>
+      </div>
     </div>
-    <div v-else> </div>
+    <div v-else>
+      <el-row v-for="(item, index) in _value" :key="index">
+        <el-col :span="24">
+          <span :title="item.name">{{ item.name }}</span>
+        </el-col>
+      </el-row>
+    </div>
 
     <el-dialog v-model="previewImageVisible" :title="'预览-' + previewFile.name">
       <div class="image-preview">
@@ -307,6 +315,10 @@
 <style scoped lang="scss">
   .file-empty {
     color: #909399;
+  }
+
+  .file-readonly {
+    color: #606266;
   }
 
   .image-preview {

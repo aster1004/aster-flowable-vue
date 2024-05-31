@@ -33,7 +33,7 @@
 
     <template v-else-if="mode === 'form'">
       <template v-if="formItem.props.expand">
-        <el-checkbox-group v-model="_value" :disabled="props.formItem.props.readonly">
+        <el-checkbox-group v-model="_value" :disabled="formItem.props.readonly">
           <el-checkbox
             v-for="(item, i) in options"
             :key="i"
@@ -47,7 +47,7 @@
           v-model="_value"
           :multiple="true"
           :clearable="true"
-          :disabled="props.formItem.props.readonly"
+          :disabled="formItem.props.readonly"
         >
           <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
             {{ item.label }}

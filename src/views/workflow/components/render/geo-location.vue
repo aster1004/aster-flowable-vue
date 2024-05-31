@@ -22,13 +22,21 @@
       </span>
     </div>
     <div v-else-if="mode === 'form'">
-      <el-input :model-value="_value.address" :placeholder="formItem.props.placeholder">
+      <el-input
+        :model-value="_value.address"
+        :placeholder="formItem.props.placeholder"
+        :readonly="formItem.props.readonly"
+      >
         <template #append>
-          <el-button text @click="showAmap">
+          <i v-if="formItem.props.readonly" class="iconfont icon-dingwei"></i>
+          <el-button v-else text @click="showAmap">
             <i class="iconfont icon-dingwei"></i>
           </el-button>
         </template>
       </el-input>
+    </div>
+    <div v-else>
+      {{ _value.address }}
     </div>
 
     <amap-marker ref="amapRef" :form="_value" @address="address"></amap-marker>

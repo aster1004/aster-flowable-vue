@@ -172,4 +172,7 @@
     font-size: smaller;
     text-align: right;
   }
+  ::v-deep(.el-input-number .el-input__inner) {
+    text-align: left;
+  }
 </style>
