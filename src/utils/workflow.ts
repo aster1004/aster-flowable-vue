@@ -228,8 +228,8 @@ export const formulaValidate = (expression: string) => {
     return true;
   } catch (e: any) {
     if (/\s(\d+:\d+)$/.test(e.message)) {
-      const [, position] = /\s(\d+:\d+)$/.exec(e.message) || [];
-      return '公式值校验错误，错误的位置/原因是 ' + position;
+      // const [, position] = /\s(\d+:\d+)$/.exec(e.message) || [];
+      return e.message;
     }
     return e.message;
   }

@@ -100,8 +100,8 @@
     border-top: none;
     overflow: auto;
     color: #a8abb2;
-  }
-  ::v-deep(.ͼ2 .cm-gutters) {
-    display: none;
+    ::v-deep(.ͼ2 .cm-gutters) {
+      display: none;
+    }
   }
 </style>
