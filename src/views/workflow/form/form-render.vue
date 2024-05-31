@@ -39,7 +39,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, onBeforeUnmount, onMounted, PropType, ref, watchEffect } from 'vue';
+  import { computed, onBeforeUnmount, onMounted, PropType, ref } from 'vue';
   import FormDesignRender from './form-design-render.vue';
   import mittBus from '@/utils/mittBus';
   import { ElMessage } from 'element-plus';
