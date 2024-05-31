@@ -155,4 +155,8 @@
     _hidden,
   });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  ::v-deep(.el-input-number .el-input__inner) {
+    text-align: left;
+  }
+</style>
