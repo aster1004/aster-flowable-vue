@@ -8,14 +8,23 @@
 <template>
   <el-drawer
     v-model="visible"
-    :close-on-click-modal="false"
+    :size="drawerSize"
+    :before-close="handleClose"
     :close-on-press-escape="false"
     :destroy-on-close="true"
     :show-close="false"
     :lock-scroll="false"
     :z-index="666"
-    size="100%"
   >
+    <template #header="{ close, titleId, titleClass }">
+      <h4 :id="titleId" :class="[titleClass]">{{ drawerTitle }}</h4>
+      <el-tooltip :content="isFullScreen ? '退出全屏' : '全屏'" placement="bottom">
+        <i :class="[expandClass, 'px-18px']" @click="isFullScreen = !isFullScreen"></i>
+      </el-tooltip>
+      <el-tooltip content="关闭" placement="bottom">
+        <i class="iconfont icon-close px-18px" @click="close"></i>
+      </el-tooltip>
+    </template>
     <form-render
       ref="formRenderRef"
       v-model:form-data="formData"
@@ -23,8 +32,8 @@
       :form-info="_formInfo"
     />
     <template #footer>
-      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
-      <el-button type="primary" @click="validateForm">{{ $t('button.confirm') }}</el-button>
+      <el-button @click="handleSave">暂 存</el-button>
+      <el-button type="primary" @click="handleSubmit">提 交</el-button>
     </template>
   </el-drawer>
 </template>
@@ -32,19 +41,42 @@
   import { formInfoApi } from '@/api/workflow/form';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { ElMessage } from 'element-plus';
-  import { computed, ref, watch } from 'vue';
+  import { setDefaultValue } from '@/utils/workflow';
+  import { ElMessage, ElMessageBox } from 'element-plus';
+  import { computed, ref } from 'vue';
   import FormRender from './form-render.vue';
+  import { useI18n } from 'vue-i18n';
 
   // 获取工作流store
   const workFlowStore = useWorkFlowStore();
+  // 国际化
+  const { t } = useI18n();
 
   /** 显示 */
-  const visible = ref(false);
+  const visible = ref<boolean>(false);
+  // 抽屉标题
+  const drawerTitle = ref<string>('');
+  // 抽屉全屏
+  const isFullScreen = ref<boolean>(false);
   // 注册组件
   const formRenderRef = ref();
   // 表单数据
   const formData = ref<WorkForm.FormDataModel>({});
+
+  /**
+   * @description: 抽屉大小
+   * @return {*}
+   */
+  const drawerSize = computed(() => {
+    return isFullScreen.value ? '100%' : '80%';
+  });
+  /**
+   * @description: 全屏图标改变
+   * @return {*}
+   */
+  const expandClass = computed(() => {
+    return isFullScreen.value ? 'iconfont icon-suoxiao' : 'iconfont icon-quanping';
+  });
 
   // 表单项
   const _formItems = computed(() => {
@@ -91,10 +123,58 @@
   };
 
   /**
-   * @description: 验证表单
+   * @description: 关闭
+   * @return {*}
    */
-  const validateForm = () => {
-    formRenderRef.value.validate();
+  const handleClose = () => {
+    ElMessageBox.confirm('离开后将会放弃本次填写的内容', '数据未保存，确定离开吗?', {
+      confirmButtonText: t('button.confirm'),
+      cancelButtonText: t('button.cancel'),
+      type: 'warning',
+      lockScroll: false,
+    })
+      .then(() => {
+        visible.value = false;
+      })
+      .catch(() => {});
+  };
+
+  /**
+   * @description: 验证表单
+   * @return {*}
+   */
+  const validateForm = async () => {
+    let formValidate = false;
+    await formRenderRef.value.validate(() => {
+      formValidate = true;
+    });
+    return formValidate;
+  };
+
+  /**
+   * @description: 暂存
+   * @return {*}
+   */
+  const handleSave = () => {
+    console.log('暂存，只保存不发起流程');
+    if (!validateForm()) {
+      ElMessage.error('表单校验失败！');
+      return;
+    }
+    console.log('暂存--->', formData.value);
+  };
+
+  /**
+   * @description: 提交
+   * @return {*}
+   */
+  const handleSubmit = () => {
+    console.log('提交，发起流程');
+    if (!validateForm()) {
+      ElMessage.error('表单校验失败！');
+      return;
+    }
+    console.log('提交--->', formData.value);
   };
 
   /**
@@ -105,29 +185,19 @@
     visible.value = true;
     // 加载表单信息
     await loadFormInfo(formId);
+
     if (instanceId) {
       // 加载实例数据
       await loadFormData(formId, instanceId);
+      // 标题
+      drawerTitle.value = _formInfo.value.formName + '-编辑';
     } else {
       // 表单项默认值
-      formData.value = workFlowStore.design.formItems.reduce(
-        (acc, cur) => ({ ...acc, [cur.id]: cur.value }),
-        {},
-      );
+      setDefaultValue(_formItems.value, formData.value);
+      // 标题
+      drawerTitle.value = _formInfo.value.formName + '-新增';
     }
   };
-
-  watch(
-    () => formData.value,
-    (val) => {
-      console.log('preview--->formData');
-      console.log(val);
-    },
-    {
-      immediate: true,
-      deep: true,
-    },
-  );
 
   defineExpose({ init });
 </script>

@@ -77,6 +77,7 @@
    * @description: 验证表单
    */
   const validateForm = () => {
+    console.log(_formItems.value);
     formRenderRef.value.validate();
   };
 

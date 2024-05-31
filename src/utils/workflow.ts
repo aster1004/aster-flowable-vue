@@ -273,7 +273,18 @@ export const setDefaultValue = (
   });
   // 处理默认值
   items.forEach((item) => {
-    if (item.props.hasOwnProperty('defaultValue')) {
+    if (item.props.hasOwnProperty('default')) {
+      const defaultObj = item.props.default;
+      // 静态
+      if (defaultObj.type === 'static') {
+        formData[item.id] = defaultObj.value;
+      } else if (defaultObj.type === 'formula') {
+        // 计算公式
+        formData[item.id] = evaluateFormula(defaultObj.value, formData);
+      } else if (defaultObj.type === 'dynamic') {
+        // TODO数据联动
+        // formData[item.id] = getDynamicValue(defaultObj.value, formData);
+      }
     }
   });
 };

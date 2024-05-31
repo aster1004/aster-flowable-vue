@@ -7,18 +7,16 @@
 -->
 <template>
   <div class="main-box">
-    <form-tree-filter title="应用信息" @change="changeForm" />
+    <!-- 左侧应用表单树 -->
+    <form-tree-filter @change="changeForm" />
+    <!-- 右侧表单实例 -->
     <div class="table-box">
       <div class="card table-search" v-show="showSearch">
         <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
           <div class="grid-box">
             <div class="grid-column">
-              <el-form-item :label="$t('label.user.name')" prop="name">
-                <el-input
-                  v-model="queryParams.name"
-                  :placeholder="$t('placeholder.user.name')"
-                  clearable
-                />
+              <el-form-item label="表单名称" prop="formName">
+                <el-input v-model="queryParams.formName" placeholder="请输入表单名称" clearable />
               </el-form-item>
             </div>
             <div class="grid-operation">
@@ -301,7 +299,6 @@
    * @return {*}
    */
   const changeForm = (params: WorkForm.QueryParams) => {
-    console.log('changeForm', params);
     queryParams.appId = params.appId;
     queryParams.code = params.code;
     if (params.id) {
