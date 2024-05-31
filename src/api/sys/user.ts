@@ -70,11 +70,11 @@ export const userExportApi = (params: User.UserInfo) => {
 };
 
 /**
- * @description: 通过ids批量获取用户信息
+ * @description: 批量获取用户信息
  * @param ids
  * @return {*}
  */
-export const userSelectBatchIdsApi = (ids: string[]) => {
+export const selectUsersByIdsApi = (ids: string[]) => {
   return request.post<User.UserInfo[]>(PORT1 + `/user/selectBatchIds`, ids, {
     noLoading: true,
   });

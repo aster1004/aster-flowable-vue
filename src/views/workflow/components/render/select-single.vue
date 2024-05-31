@@ -30,7 +30,7 @@
 
     <template v-else-if="mode === 'form'">
       <template v-if="formItem.props.expand">
-        <el-radio-group v-model="_value" :disabled="props.formItem.props.readonly">
+        <el-radio-group v-model="_value" :disabled="formItem.props.readonly">
           <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
             {{ item.label }}
           </el-radio>
@@ -41,7 +41,7 @@
           v-model="_value"
           :multiple="false"
           :clearable="true"
-          :disabled="props.formItem.props.readonly"
+          :disabled="formItem.props.readonly"
         >
           <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
             {{ item.label }}

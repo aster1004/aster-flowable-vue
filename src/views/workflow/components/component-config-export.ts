@@ -437,7 +437,10 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        // 级别
         level: 3,
+        // 提示文字
+        placeholder: '请选择地区',
       },
     },
     {
@@ -453,8 +456,12 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        thickness: 2,
-        color: '#000000',
+        // 显示线宽
+        showLineWidth: false,
+        // 显示颜色
+        showLineColor: false,
+        // 显示本地签名
+        showLocal: false,
       },
     },
     {
@@ -486,10 +493,9 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        placeholder: '计算结果',
         precision: 0,
-        isPlus: false,
-        jsCode: '',
-        explain: [],
+        formula: '', //公式字符串
       },
     },
     {

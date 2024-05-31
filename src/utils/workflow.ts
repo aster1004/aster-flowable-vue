@@ -78,6 +78,8 @@ export const formulaItemTree = (
   tree: WorkComponent.formulaNode[],
   isTableList: boolean = false,
 ) => {
+  console.log('-------------');
+  console.log(items, isTableList);
   items.forEach((item) => {
     // 若是一行多列则遍历items,取子组件
     if (item.name === 'GridLayout') {
@@ -178,6 +180,25 @@ export const restorationFormula = (formula: string, formulaNodes: WorkComponent.
 };
 
 /**
+ * @description: 还原公式
+ * @param {string} formula 公式
+ * @param { WorkForm.FormItem[]} formItems 表单扁平化后的节点数据
+ * @return {*}
+ */
+export const restorationFormulaByFormItems = (formula: string, formItems: WorkForm.FormItem[]) => {
+  if (!formula) {
+    return formula;
+  }
+  let result = formula;
+  formItems.forEach((node) => {
+    if (node.id && node.name && formula.indexOf(node.id) != -1) {
+      result = result.replaceAll(node.id, '[[' + node.title + ']]');
+    }
+  });
+  return result;
+};
+
+/**
  * @description: 计算公式
  * @param {*} expression 表达式
  * @param {*} data 数据
@@ -207,25 +228,63 @@ export const formulaValidate = (expression: string) => {
     return true;
   } catch (e: any) {
     if (/\s(\d+:\d+)$/.test(e.message)) {
-      const [, position] = /\s(\d+:\d+)$/.exec(e.message) || [];
-      return '公式值校验错误，错误的位置/原因是 ' + position;
+      // const [, position] = /\s(\d+:\d+)$/.exec(e.message) || [];
+      return e.message;
     }
     return e.message;
   }
 };
 
 /**
- * @description: 表单项扁平化，获取根节点控件，排除布局控件
+ * @description: 表单项扁平化，排除布局控件
  * @param {WorkForm} source 源表单项
- * @param {WorkForm} target 目标表单项
  * @return {*}
  */
-export const flatFormItems = (source: WorkForm.FormItem[], target: WorkForm.FormItem[]) => {
-  source.forEach((item) => {
-    if (item.name === 'GridLayout') {
-      flatFormItems(item.props.items, target);
+export const flatFormItems = (source: WorkForm.FormItem[]) => {
+  return source.reduce((pre, cur) => {
+    if (cur.name === 'GridLayout') {
+      let cols: any[] = [];
+      cur.props.items.forEach((col) => {
+        cols = [...cols, ...flatFormItems(col)];
+      });
+      return [...pre, ...cols];
+    } else if (cur.name === 'GridTitle') {
+      return [...pre, ...flatFormItems(cur.props.items)];
     } else {
-      target.push(item);
+      return [...pre, cur];
+    }
+  }, [] as WorkForm.FormItem[]);
+};
+
+/**
+ * @description: 设置默认值
+ * @param {WorkForm.FormItem[]} formItems 表单项
+ * @param {WorkForm.FormDataModel} formData 表单数据
+ * @return {*}
+ */
+export const setDefaultValue = (
+  formItems: WorkForm.FormItem[],
+  formData: WorkForm.FormDataModel,
+) => {
+  const items = flatFormItems(formItems);
+  // 先给所有项默认空值
+  items.forEach((item) => {
+    formData[item.id] = item.value;
+  });
+  // 处理默认值
+  items.forEach((item) => {
+    if (item.props.hasOwnProperty('default')) {
+      const defaultObj = item.props.default;
+      // 静态
+      if (defaultObj.type === 'static') {
+        formData[item.id] = defaultObj.value;
+      } else if (defaultObj.type === 'formula') {
+        // 计算公式
+        formData[item.id] = evaluateFormula(defaultObj.value, formData);
+      } else if (defaultObj.type === 'dynamic') {
+        // TODO数据联动
+        // formData[item.id] = getDynamicValue(defaultObj.value, formData);
+      }
     }
   });
 };

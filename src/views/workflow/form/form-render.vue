@@ -39,9 +39,10 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, onBeforeUnmount, onMounted, PropType, ref, watchEffect } from 'vue';
+  import { computed, onBeforeUnmount, onMounted, PropType, ref } from 'vue';
   import FormDesignRender from './form-design-render.vue';
   import mittBus from '@/utils/mittBus';
+  import { ElMessage } from 'element-plus';
 
   const emits = defineEmits(['update:formData']);
   const props = defineProps({
@@ -73,9 +74,6 @@
     return props.formItems;
   });
 
-  watchEffect(() => {
-    console.log(props.formInfo);
-  });
   /**
    * 表单数据
    */
@@ -119,13 +117,12 @@
    * @description: 表单校验
    * @return {*}
    */
-  const validate = () => {
-    formRef.value.validate((valid) => {
+  const validate = async (callback: Function) => {
+    await formRef.value.validate(async (valid) => {
       if (valid) {
-        console.log('submit!');
-        return true;
+        await callback();
       } else {
-        console.log('error submit!!');
+        ElMessage.error('表单校验失败!');
         return false;
       }
     });
@@ -152,8 +149,6 @@
       ];
       rules.value[params.fieldId] = rule;
     }
-    console.log('rules---->');
-    console.log(rules.value);
   });
 
   onMounted(() => {

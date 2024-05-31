@@ -60,7 +60,7 @@
         </el-collapse>
       </div>
       <div class="formula-main">
-        <code-mirror ref="codeMirrorRef"></code-mirror>
+        <code-mirror ref="codeMirrorRef" :placeholder="placeholder"></code-mirror>
         <div class="formula-fun" v-if="currentFunction">
           <div class="fun-title">{{ currentFunction.name }}</div>
           <div class="fun-content">
@@ -102,6 +102,11 @@
     formula: {
       type: String,
       default: '',
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: () => '当表达式值解析为true时，当前表单域隐藏',
     },
   });
 
@@ -234,6 +239,14 @@
   });
 
   /**
+   * @description: 选中的组件类型，CalcFormula
+   * @return {*}
+   */
+  const selectedItemName = computed(() => {
+    return workFlowStore.selectFormItem?.name;
+  });
+
+  /**
    * @description: 明细表内的组件id
    * @return {*}
    */
@@ -274,10 +287,21 @@
     let nodes: WorkComponent.formulaNode[] = [];
     let isTableList = false;
     if (isDef(selectedItemId.value)) {
-      isTableList = tableColumnIds.value.indexOf(selectedItemId.value) != -1;
+      // 如果是计算公式，则显示明细表变量
+      if (selectedItemName.value === 'CalcFormula') {
+        isTableList = true;
+      } else {
+        isTableList = tableColumnIds.value.indexOf(selectedItemId.value) != -1;
+      }
     }
     formulaItemTree(formItems.value, nodes, isTableList);
     flatFormData.value = isTableList ? flatNodes(nodes) : nodes;
+    // 排除自身组件，防止循环引用
+    if (isDef(selectedItemId)) {
+      nodes = nodes.filter((node) => {
+        return node.fieldId !== selectedItemId.value;
+      });
+    }
     return nodes;
   });
 

@@ -11,6 +11,12 @@ declare namespace WorkApp {
     name: string;
     status: string;
   }
+
+  export interface QueryParams {
+    id?: string;
+    name?: string;
+  }
+
   export interface AppInfo {
     id?: string;
     name: string;

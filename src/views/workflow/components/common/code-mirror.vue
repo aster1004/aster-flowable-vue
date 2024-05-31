@@ -17,6 +17,11 @@
       required: false,
       default: () => '当表达式值解析为true时，当前表单域隐藏',
     },
+    //是否可编辑
+    editable: {
+      default: true,
+      type: Boolean,
+    },
   });
   const editorRef = ref();
   const editorView = ref();
@@ -51,6 +56,7 @@
             basicSetup,
             javascript(),
             EditorView.lineWrapping,
+            EditorView.editable.of(props.editable),
             placeholder(props.placeholder as string),
           ],
         }),

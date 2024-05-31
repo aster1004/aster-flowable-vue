@@ -6,191 +6,205 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form v-if="mode === 'design'" class="table-list">
-    <div class="table-title">
-      <span class="text-sm">{{ formItem.title }}</span>
-    </div>
-    <el-row>
-      <el-col :span="18" class="table-border">
-        <div class="table-main">
-          <el-table
-            :data="designValue"
-            :border="formItem.props.showBorder"
-            :cell-style="cellStyle"
-            :header-cell-style="headerCellStyle"
-            :key="Math.random()"
-            style="width: 100%"
-          >
-            <el-table-column
-              v-for="(item, index) in _columns"
-              :key="index"
-              :prop="item.id"
-              :label="item.title"
-              header-align="center"
-              align="center"
-              min-width="120px"
+  <div v-if="!_hidden">
+    <el-form v-if="mode === 'design'" class="table-list">
+      <div class="table-title">
+        <span class="text-sm">{{ formItem.title }}</span>
+      </div>
+      <el-row>
+        <el-col :span="18" class="table-border">
+          <div class="table-main">
+            <el-table
+              :data="designValue"
+              :border="formItem.props.showBorder"
+              :cell-style="cellStyle"
+              :header-cell-style="headerCellStyle"
+              :key="Math.random()"
+              style="width: 100%"
             >
-              <template #default>
-                <div
-                  class="table-component"
-                  @click.stop="onSelectComponent(item)"
-                  :style="onSelectedComponentStyle(item)"
-                >
-                  <form-design-render
-                    :form-item="item"
-                    :mode="mode"
-                    :table-id="formItem.id"
-                    :table-index="index"
-                    :show-label="false"
-                  />
-                  <div class="close" v-show="showCloseBtn(item)">
-                    <i class="iconfont icon-guanbi1" @click="onDeleteComponent(index)"></i>
+              <el-table-column
+                v-for="(item, index) in _columns"
+                :key="index"
+                :prop="item.id"
+                :label="item.title"
+                header-align="center"
+                align="center"
+                min-width="120px"
+              >
+                <template #default>
+                  <div
+                    class="table-component"
+                    @click.stop="onSelectComponent(item)"
+                    :style="onSelectedComponentStyle(item)"
+                  >
+                    <form-design-render
+                      :form-item="item"
+                      :mode="mode"
+                      :table-id="formItem.id"
+                      :table-index="index"
+                      :show-label="false"
+                    />
+                    <div class="close" v-show="showCloseBtn(item)">
+                      <i class="iconfont icon-guanbi1" @click="onDeleteComponent(index)"></i>
+                    </div>
                   </div>
-                </div>
-              </template>
-            </el-table-column>
-          </el-table>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-col>
+        <el-col :span="6" class="table-border">
+          <div class="table-tip">
+            <span class="text-xs">拖入左侧控件到此处</span>
+          </div>
+          <draggable
+            ref="draggerRef"
+            class="table-dragger"
+            :style="tableDraggerStyle"
+            item-key="id"
+            :list="_columns"
+            group="form"
+            @start="tableDrag = true"
+            @end="tableDrag = false"
+            @add="onAdd"
+            :options="{
+              animation: 300,
+              chosenClass: 'choose',
+              sort: true,
+            }"
+          >
+            <template #item="{ index }">
+              <span style="display: none"> {{ index }} </span>
+            </template>
+          </draggable>
+        </el-col>
+      </el-row>
+    </el-form>
+    <div v-else-if="mode == 'form'">
+      <div class="table-main" :id="formItem.id">
+        <div class="flex justify-between items-center pb-5px">
+          <span class="text-sm font-600">{{ formItem.title }}</span>
         </div>
-      </el-col>
-      <el-col :span="6" class="table-border">
-        <div class="table-tip">
-          <span class="text-xs">拖入左侧控件到此处</span>
+        <el-table
+          :data="_value"
+          :border="formItem.props.showBorder"
+          :header-cell-style="headerCellStyle"
+          :cell-style="cellStyle"
+          :key="Math.random()"
+          style="width: 100%"
+          max-height="250px"
+        >
+          <el-table-column
+            type="index"
+            label="序号"
+            width="80"
+            header-align="center"
+            align="center"
+          >
+            <template #default="scope">
+              <div style="width: 100%" @click="openRowInfo(scope.$index)">
+                <span> {{ scope.$index + 1 }} </span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-for="(item, index) in _columns"
+            :key="index"
+            :prop="item.id"
+            :label="item.title"
+            header-align="center"
+            align="center"
+            min-width="120px"
+          >
+            <template #header>
+              <span style="color: #da4b2b" v-show="item.props.required"> * </span>
+              {{ item.title }}
+            </template>
+            <template #default="scope">
+              <div class="table-component">
+                <form-design-render
+                  v-model:value="_value[scope.$index][item.id]"
+                  :form-data="formData"
+                  :form-item="item"
+                  :mode="mode"
+                  :table-id="formItem.id"
+                  :table-index="scope.$index"
+                  :show-label="false"
+                />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="!formItem.props.readonly"
+            :label="$t('label.operate')"
+            fixed="right"
+            width="80"
+            align="center"
+          >
+            <template #default="scope">
+              <el-dropdown placement="top-start" trigger="click">
+                <span><i class="iconfont icon-gengduo1"></i></span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="handleCopy(scope.row, scope.$index)">
+                      <i class="iconfont icon-xinzeng !text-sm"></i>{{ $t('button.copy') }}
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="handleRemove(scope.$index)">
+                      <i class="iconfont icon-shanchu !text-sm"></i>{{ $t('button.delete') }}
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="handleClear(scope.$index)">
+                      <i class="iconfont icon-huancunjiankong !text-sm"></i>
+                      {{ $t('workflow.clearRow') }}
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="handleAdd(scope.$index, 'above')">
+                      <i class="iconfont icon-xiangshang !text-sm"></i>
+                      {{ $t('workflow.addRowAbove') }}
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="handleAdd(scope.$index, 'below')">
+                      <i class="iconfont icon-xiangxia !text-sm"></i>
+                      {{ $t('workflow.addRowBelow') }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="table-btn" v-if="!formItem.props.readonly">
+          <el-button @click="handleAdd()">
+            <i class="iconfont icon-xinzeng pr-5px"></i>增加
+          </el-button>
         </div>
-        <draggable
-          ref="draggerRef"
-          class="table-dragger"
-          :style="tableDraggerStyle"
-          item-key="id"
-          :list="_columns"
-          group="form"
-          @start="tableDrag = true"
-          @end="tableDrag = false"
-          @add="onAdd"
-          :options="{
-            animation: 300,
-            chosenClass: 'choose',
-            sort: true,
-          }"
-        >
-          <template #item="{ index }">
-            <span style="display: none"> {{ index }} </span>
-          </template>
-        </draggable>
-      </el-col>
-    </el-row>
-  </el-form>
-  <div v-else-if="mode == 'form'">
-    <div class="table-main" :id="formItem.id">
-      <div class="flex justify-between items-center pb-5px">
-        <span class="text-base font-600">{{ formItem.title }}</span>
       </div>
-      <el-table
-        :data="_value"
-        :border="formItem.props.showBorder"
-        :header-cell-style="headerCellStyle"
-        :cell-style="cellStyle"
-        :key="Math.random()"
-        style="width: 100%"
-        max-height="250px"
-      >
-        <el-table-column type="index" label="序号" width="80" header-align="center" align="center">
-          <template #default="scope">
-            <div style="width: 100%" @click="openRowInfo(scope.$index)">
-              <span> {{ scope.$index + 1 }} </span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-for="(item, index) in _columns"
-          :key="index"
-          :prop="item.id"
-          :label="item.title"
-          header-align="center"
-          align="center"
-          min-width="120px"
-        >
-          <template #header>
-            <span style="color: #da4b2b" v-show="item.props.required"> * </span>
-            {{ item.title }}
-          </template>
-          <template #default="scope">
-            <div class="table-component">
-              <form-design-render
-                v-model:value="_value[scope.$index][item.id]"
-                :form-data="formData"
-                :form-item="item"
-                :mode="mode"
-                :table-id="formItem.id"
-                :table-index="scope.$index"
-                :show-label="false"
-              />
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('label.operate')" fixed="right" width="80" align="center">
-          <template #default="scope">
-            <el-dropdown placement="top-start" trigger="click">
-              <span><i class="iconfont icon-gengduo1"></i></span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="handleCopy(scope.row, scope.$index)">
-                    <i class="iconfont icon-xinzeng !text-sm"></i>{{ $t('button.copy') }}
-                  </el-dropdown-item>
-                  <el-dropdown-item @click="handleRemove(scope.$index)">
-                    <i class="iconfont icon-shanchu !text-sm"></i>{{ $t('button.delete') }}
-                  </el-dropdown-item>
-                  <el-dropdown-item @click="handleClear(scope.$index)">
-                    <i class="iconfont icon-huancunjiankong !text-sm"></i>
-                    {{ $t('workflow.clearRow') }}
-                  </el-dropdown-item>
-                  <el-dropdown-item @click="handleAdd(scope.$index, 'above')">
-                    <i class="iconfont icon-xiangshang !text-sm"></i>
-                    {{ $t('workflow.addRowAbove') }}
-                  </el-dropdown-item>
-                  <el-dropdown-item @click="handleAdd(scope.$index, 'below')">
-                    <i class="iconfont icon-xiangxia !text-sm"></i>
-                    {{ $t('workflow.addRowBelow') }}
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="table-btn">
-        <el-button @click="handleAdd()">
-          <i class="iconfont icon-xinzeng pr-5px"></i>增加
-        </el-button>
-      </div>
+      <el-drawer v-model="rowVisible" :append-to-body="true" @close="closeRowInfo">
+        <el-form label-width="auto">
+          <div v-for="(item, index) in _columns" :key="index">
+            <form-design-render
+              v-model:value="_value[rowIndex][item.id]"
+              :form-data="formData"
+              :form-item="item"
+              :mode="mode"
+              :isChildTable="true"
+              :index="rowIndex"
+            />
+          </div>
+        </el-form>
+        <template #footer>
+          <el-button @click="prevRowInfo(rowIndex)" :disabled="rowIndex === 0">
+            {{ $t('workflow.prevRow') }}
+          </el-button>
+          <el-button type="primary" @click="nextRowInfo(rowIndex)">
+            {{ $t('workflow.nextRow') }}
+          </el-button>
+        </template>
+      </el-drawer>
     </div>
-    <el-drawer v-model="rowVisible" :append-to-body="true" @close="closeRowInfo">
-      <el-form label-width="auto">
-        <div v-for="(item, index) in _columns" :key="index">
-          <form-design-render
-            v-model:value="_value[rowIndex][item.id]"
-            :form-data="formData"
-            :form-item="item"
-            :mode="mode"
-            :isChildTable="true"
-            :index="rowIndex"
-          />
-        </div>
-      </el-form>
-      <template #footer>
-        <el-button @click="prevRowInfo(rowIndex)" :disabled="rowIndex === 0">
-          {{ $t('workflow.prevRow') }}
-        </el-button>
-        <el-button type="primary" @click="nextRowInfo(rowIndex)">
-          {{ $t('workflow.nextRow') }}
-        </el-button>
-      </template>
-    </el-drawer>
+    <div v-else> 出现未知错误,请联系管理员 </div>
   </div>
-  <div v-else> 出现未知错误,请联系管理员 </div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { deleteFormComponent } from '@/utils/workflow';
+  import { deleteFormComponent, evaluateFormula } from '@/utils/workflow';
   import FormDesignRender from '../../form/form-design-render.vue';
   import { ElMessageBox } from 'element-plus';
   import { computed, PropType, ref } from 'vue';
@@ -321,7 +335,14 @@
    */
   const _columns = computed({
     get() {
-      return props.formItem.props.columns;
+      if (props.formItem.props.readonly) {
+        return props.formItem.props.columns.map((col) => {
+          col.props.readonly = true;
+          return col;
+        });
+      } else {
+        return props.formItem.props.columns;
+      }
     },
     set(val) {
       props.formItem.props.columns = val;
@@ -472,10 +493,26 @@
   //   // 需要每一行都验证必填
 
   // };
+  /**
+   * @description: 是否隐藏, true-隐藏
+   */
+  const _hidden = computed(() => {
+    let r = false;
+    if (props.formItem.props.hidden) {
+      let expression = props.formItem.props.hidden;
+      r = evaluateFormula(expression, props.formData);
+    }
+    return r;
+  });
+
+  defineExpose({
+    _hidden,
+  });
 </script>
 <style scoped lang="scss">
   .table-main {
     background: var(--el-fill-color-blank);
+    color: #606266;
   }
 
   .table-list {
@@ -526,7 +563,7 @@
   }
   .table-btn {
     width: 100%;
-    padding-top: 8px;
+    padding: 8px 0px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
