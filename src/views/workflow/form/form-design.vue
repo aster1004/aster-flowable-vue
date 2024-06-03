@@ -216,7 +216,7 @@
   });
 
   /**
-   * @description: 表单数据
+   * @description: 表单信息
    */
   const formInfo = computed(() => {
     return workFlowStore.design;
@@ -255,6 +255,7 @@
   };
 
   onMounted(() => {
+    // 默认选中表单属性
     rightActiveTab.value = 'form';
   });
 </script>

@@ -32,13 +32,13 @@
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
+  // 路由
+  const route = useRoute();
 
+  // 活动菜单
   const activeMenu = ref('formDesign');
-
   // 流程设计
   const processDesignRef = ref();
-
-  let route = useRoute();
 
   /**
    * @description 保存
@@ -73,9 +73,15 @@
     });
   };
 
-  onMounted(() => {
+  onMounted(async () => {
+    console.log('design--->', route.query);
+    // 新增
     if (route.query.appId && typeof route.query.appId === 'string') {
       workFlowStore.design.appId = route.query.appId;
+    }
+    // 编辑
+    if (route.query.formId && typeof route.query.formId === 'string') {
+      await workFlowStore.loadFormInfo(route.query.formId);
     }
   });
 </script>

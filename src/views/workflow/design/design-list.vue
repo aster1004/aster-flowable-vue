@@ -157,13 +157,11 @@
         />
       </div>
     </div>
-    <form-initiation ref="formInitiationRef" />
   </div>
 </template>
 <script setup lang="ts">
   import { useRouter } from 'vue-router';
   import AppTreeFilter from '../app/app-tree-filter.vue';
-  import FormInitiation from '../form/form-initiation.vue';
   import { onMounted, reactive, ref } from 'vue';
   import { formPageApi, formDeleteApi, deploymentApi } from '@/api/workflow/form';
   import { ElMessage, ElMessageBox } from 'element-plus';
@@ -175,7 +173,6 @@
   const { t } = useI18n();
   /** 注册组件 */
   const queryForm = ref();
-  const formInitiationRef = ref();
   /** 是否显示查询 */
   const showSearch = ref(true);
   /** 默认折叠搜索项 */
@@ -253,7 +250,6 @@
    * @return {*}
    */
   const handleAdd = () => {
-    formInitiationRef.value.init();
     router.push({ path: '/workflow/design', query: { appId: queryParams.appId } });
   };
 
@@ -263,7 +259,7 @@
    * @return {*}
    */
   const handleEdit = (key: string) => {
-    // addOrEditRef.value.init(key);
+    router.push({ path: '/workflow/design', query: { formId: key } });
   };
 
   /**

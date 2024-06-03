@@ -38,8 +38,6 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-  import { formInfoApi } from '@/api/workflow/form';
-  import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { setDefaultValue } from '@/utils/workflow';
   import { ElMessage, ElMessageBox } from 'element-plus';
@@ -95,21 +93,6 @@
     };
     return formInfo;
   });
-
-  /**
-   * @description: 加载表单信息
-   * @param {string} id 表单主键
-   * @return {*}
-   */
-  const loadFormInfo = async (formId: string) => {
-    await formInfoApi(formId).then((res) => {
-      if (res.code == ResultEnum.SUCCESS) {
-        workFlowStore.loadForm(res.data);
-      } else {
-        ElMessage.error(res.message);
-      }
-    });
-  };
 
   /**
    * @description: 加载实例数据
@@ -184,8 +167,8 @@
   const init = async (formId: string, instanceId?: string) => {
     visible.value = true;
     // 加载表单信息
-    await loadFormInfo(formId);
-
+    await workFlowStore.loadFormInfo(formId);
+    // TODO根据流程配置设置显隐和只读
     if (instanceId) {
       // 加载实例数据
       await loadFormData(formId, instanceId);

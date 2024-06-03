@@ -7,6 +7,9 @@
  */
 import { defineStore } from 'pinia';
 import { WorkflowState } from '@/stores/interface/workflow';
+import { formInfoApi } from '@/api/workflow/form';
+import { ResultEnum } from '@/enums/httpEnum';
+import { ElMessage } from 'element-plus';
 
 export const useWorkFlowStore = defineStore({
   id: 'aster-workflow',
@@ -21,13 +24,31 @@ export const useWorkFlowStore = defineStore({
     },
   }),
   actions: {
+    // 初始化表单信息
+    async initFormInfo() {
+      this.design = {
+        icon: 'iconfont icon-gengduo',
+        iconColor: '',
+        labelPosition: 'left',
+        formName: '未命名表单',
+        formItems: [],
+        labelWidth: 80,
+      };
+    },
+    // 加载表单信息
+    async loadFormInfo(formId: string) {
+      await formInfoApi(formId).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          this.design = res.data;
+        } else {
+          this.initFormInfo();
+          ElMessage.error(res.message);
+        }
+      });
+    },
     // 设置选中节点
     setSelectedNode(node: object) {
       this.selectedNode = node;
-    },
-    // 加载表单信息
-    loadForm(form: WorkForm.FormModel) {
-      this.design = form;
     },
     // 设置是否编辑
     setIsEdit(edit: boolean) {
