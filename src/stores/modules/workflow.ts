@@ -25,8 +25,9 @@ export const useWorkFlowStore = defineStore({
   }),
   actions: {
     // 初始化表单信息
-    async initFormInfo() {
+    async initFormInfo(appId?: string) {
       this.design = {
+        appId: appId,
         icon: 'iconfont icon-gengduo',
         iconColor: '',
         labelPosition: 'left',

@@ -77,12 +77,13 @@
     console.log('design--->', route.query);
     // 新增
     if (route.query.appId && typeof route.query.appId === 'string') {
-      workFlowStore.design.appId = route.query.appId;
+      await workFlowStore.initFormInfo(route.query.appId);
     }
     // 编辑
     if (route.query.formId && typeof route.query.formId === 'string') {
       await workFlowStore.loadFormInfo(route.query.formId);
     }
+    console.log(workFlowStore.design);
   });
 </script>
 <style scoped lang="scss">
