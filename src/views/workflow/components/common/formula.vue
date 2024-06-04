@@ -185,13 +185,17 @@
    * @description: 节点点击
    */
   const handleNodeClick = (data, type) => {
+    console.log('---节点点击：', data, type);
     if (type === 'fun') {
       // 如果是函数树，则判断一下第一级节点不可点击
       if (!data.disabled && data.disabled !== true) {
         insertContent(data.name, 'func');
       }
     } else {
-      insertContent(data.label, 'variable');
+      // 设置【明细表.明细表】的节点不可点击
+      if (!data.disabled) {
+        insertContent(data.label, 'variable');
+      }
     }
   };
 
@@ -287,8 +291,8 @@
     let nodes: WorkComponent.formulaNode[] = [];
     let isTableList = false;
     if (isDef(selectedItemId.value)) {
-      // 如果是计算公式，则显示明细表变量
-      if (selectedItemName.value === 'CalcFormula') {
+      // 如果是汇总计算，则显示明细表变量
+      if (selectedItemName.value === 'SummaryFormula') {
         isTableList = true;
       } else {
         isTableList = tableColumnIds.value.indexOf(selectedItemId.value) != -1;

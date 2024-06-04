@@ -161,7 +161,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 精确度
         precision: 0,
         // 展示大写
-        showChinese: true,
+        showChinese: false,
       },
     },
     {
@@ -499,11 +499,11 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
-      title: '计算公式(高级)',
-      name: 'CalcFormulaAdvanced',
+      title: '汇总计算',
+      name: 'SummaryFormula',
       icon: 'iconfont icon-hanshu',
-      value: '',
-      valueType: ValueType.string,
+      value: 0,
+      valueType: ValueType.number,
       props: {
         // 必填
         required: false,
@@ -511,10 +511,9 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        placeholder: '计算结果',
         precision: 0,
-        isPlus: false,
-        jsCode: '',
-        explain: [],
+        formula: '', //公式字符串
       },
     },
   ],

@@ -24,7 +24,7 @@ import Area from './area.vue';
 import Signature from './signature.vue';
 import AssociatedProcess from './associated-process.vue';
 import CalcFormula from './calc-formula.vue';
-
+import SummaryFormula from './summary-formula.vue';
 export default {
   // ------------布局控件-开始------------
   GridTitle,
@@ -58,6 +58,7 @@ export default {
   Signature,
   AssociatedProcess,
   CalcFormula,
+  SummaryFormula,
   // ------------高级控件-结束------------
 
   // ------------其他控件-开始------------
