@@ -45,41 +45,36 @@ export const clearFormComponent = (formComponents: any[], index: number) => {
 
 /**
  * @description: 排除不需要显示的表单组件
- * @param {WorkForm.FormItem} item 表单组件
+ * @param {WorkComponent.ComponentConfig} item 表单组件
  * @return {*}
  */
-const excludeField = (item: WorkForm.FormItem) => {
+const excludeComponent = (item: WorkComponent.ComponentConfig) => {
   return (
-    item.name !== 'ImageUpload' &&
-    item.name !== 'FileUpload' &&
-    item.name !== 'Description' &&
-    item.name !== 'TextareaInput' &&
-    item.name !== 'DynamicData' &&
-    item.name !== 'DynamicDataMultiple' &&
-    item.name !== 'SubProcess' &&
-    item.name !== 'TableSubProcess' &&
     item.name !== 'TableList' &&
-    item.name !== 'WebIframe' &&
-    item.name !== 'VueContainer' &&
-    item.name !== 'ProcessIndex'
+    item.name !== 'Description' &&
+    item.name !== 'UploadImage' &&
+    item.name !== 'UploadFile' &&
+    item.name !== 'GeoLocation' &&
+    item.name !== 'Signature' &&
+    item.name !== 'AssociatedProcess' &&
+    item.name !== 'CalcFormula' &&
+    item.name !== 'CalcFormulaAdvanced'
   );
 };
 
 /**
  * @description: 获取表单组件的公式树
- * @param {WorkForm.FormItem[]} items 表单组件
+ * @param {WorkComponent.ComponentConfig[]} items 表单组件
  * @param {WorkComponent.formulaNode[]} tree 表单组件的公式树
  * @param {boolean} isTableList 是否是明细表
  * @param {string} variable 表单变量名
  * @return {*}
  */
 export const formulaItemTree = (
-  items: WorkForm.FormItem[],
+  items: WorkComponent.ComponentConfig[],
   tree: WorkComponent.formulaNode[],
   isTableList: boolean = false,
 ) => {
-  console.log('-------------');
-  console.log(items, isTableList);
   items.forEach((item) => {
     // 若是一行多列则遍历items,取子组件
     if (item.name === 'GridLayout') {
@@ -89,7 +84,7 @@ export const formulaItemTree = (
     } else if (item.name === 'GridTitle') {
       // 若是分组标题则取子组件
       formulaItemTree(item.props.items, tree);
-    } else if (excludeField(item)) {
+    } else if (excludeComponent(item)) {
       // 排除不需要的组件
       tree.push({
         fieldId: item.id,
@@ -97,7 +92,7 @@ export const formulaItemTree = (
         value: item.id,
       });
     } else if (item.name === 'TableList' && isTableList) {
-      // 明细表
+      // 若是明细表
       let children: WorkComponent.formulaNode[] = [];
       item.props.columns.forEach((col) => {
         children.push({
@@ -182,10 +177,13 @@ export const restorationFormula = (formula: string, formulaNodes: WorkComponent.
 /**
  * @description: 还原公式
  * @param {string} formula 公式
- * @param { WorkForm.FormItem[]} formItems 表单扁平化后的节点数据
+ * @param { WorkComponent.ComponentConfig[]} formItems 表单扁平化后的节点数据
  * @return {*}
  */
-export const restorationFormulaByFormItems = (formula: string, formItems: WorkForm.FormItem[]) => {
+export const restorationFormulaByFormItems = (
+  formula: string,
+  formItems: WorkComponent.ComponentConfig[],
+) => {
   if (!formula) {
     return formula;
   }
@@ -237,11 +235,11 @@ export const formulaValidate = (expression: string) => {
 
 /**
  * @description: 表单项扁平化，排除布局控件
- * @param {WorkForm} source 源表单项
+ * @param {WorkForm} formItems 源表单项
  * @return {*}
  */
-export const flatFormItems = (source: WorkForm.FormItem[]) => {
-  return source.reduce((pre, cur) => {
+export const flatFormItems = (formItems: WorkComponent.ComponentConfig[]) => {
+  return formItems.reduce((pre, cur) => {
     if (cur.name === 'GridLayout') {
       let cols: any[] = [];
       cur.props.items.forEach((col) => {
@@ -253,17 +251,29 @@ export const flatFormItems = (source: WorkForm.FormItem[]) => {
     } else {
       return [...pre, cur];
     }
-  }, [] as WorkForm.FormItem[]);
+  }, [] as WorkComponent.ComponentConfig[]);
+};
+
+/**
+ * @description: 表单项扁平化，排除布局控件和无法筛选的控件
+ * @param {WorkForm} formItems 源表单项
+ * @return {*}
+ */
+export const flatFormItemsExclude = (formItems: WorkComponent.ComponentConfig[]) => {
+  const items: WorkComponent.ComponentConfig[] = flatFormItems(formItems);
+  return items.filter((item) => {
+    return excludeComponent(item);
+  });
 };
 
 /**
  * @description: 设置默认值
- * @param {WorkForm.FormItem[]} formItems 表单项
+ * @param {WorkComponent.ComponentConfig[]} formItems 表单项
  * @param {WorkForm.FormDataModel} formData 表单数据
  * @return {*}
  */
 export const setDefaultValue = (
-  formItems: WorkForm.FormItem[],
+  formItems: WorkComponent.ComponentConfig[],
   formData: WorkForm.FormDataModel,
 ) => {
   const items = flatFormItems(formItems);

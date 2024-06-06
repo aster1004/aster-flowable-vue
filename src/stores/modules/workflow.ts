@@ -21,6 +21,13 @@ export const useWorkFlowStore = defineStore({
       formName: '未命名表单',
       formItems: [],
       labelWidth: 80,
+      listSettings: {
+        queryItems: [],
+        columns: [],
+        sortBy: 'create_time',
+        sortDirection: 'desc',
+        actions: [],
+      },
     },
   }),
   actions: {
@@ -34,6 +41,10 @@ export const useWorkFlowStore = defineStore({
         formName: '未命名表单',
         formItems: [],
         labelWidth: 80,
+        listSettings: {
+          queryItems: [],
+          columns: [],
+        },
       };
     },
     // 加载表单信息

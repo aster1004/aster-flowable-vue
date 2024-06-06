@@ -11,8 +11,9 @@
       <design-header ref="designHeaderRef" v-model="activeMenu" @save="save" @publish="publish" />
     </el-header>
     <el-main class="design-main">
-      <form-design ref="formDesignRef" v-show="activeMenu === 'formDesign'" />
+      <form-design ref="formDesignRef" v-if="activeMenu === 'formDesign'" />
       <process-design ref="processDesignRef" v-show="activeMenu === 'processDesign'" />
+      <list-design ref="listDesignRef" v-if="activeMenu == 'listDesign'" />
     </el-main>
   </el-container>
 </template>
@@ -21,6 +22,7 @@
   import DesignHeader from './design-header.vue';
   import FormDesign from '../form/form-design.vue';
   import ProcessDesign from '../process/process-design.vue';
+  import ListDesign from '../list/list-design.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { formSaveApi } from '@/api/workflow/form';
   import { ResultEnum } from '@/enums/httpEnum';
@@ -45,10 +47,10 @@
    */
   const save = () => {
     console.log('save');
-    console.log(workFlowStore.design.formItems);
-    nextTick(() => {
-      processDesignRef.value.jsonValue();
-    });
+    console.log(workFlowStore.design);
+    // nextTick(() => {
+    //   processDesignRef.value.jsonValue();
+    // });
   };
 
   /**
@@ -74,7 +76,6 @@
   };
 
   onMounted(async () => {
-    console.log('design--->', route.query);
     // 新增
     if (route.query.appId && typeof route.query.appId === 'string') {
       await workFlowStore.initFormInfo(route.query.appId);
@@ -83,7 +84,6 @@
     if (route.query.formId && typeof route.query.formId === 'string') {
       await workFlowStore.loadFormInfo(route.query.formId);
     }
-    console.log(workFlowStore.design);
   });
 </script>
 <style scoped lang="scss">

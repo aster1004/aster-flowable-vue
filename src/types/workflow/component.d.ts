@@ -15,7 +15,7 @@ declare namespace WorkComponent {
    */
   export interface ComponentConfig {
     // 组件id
-    id?: string;
+    id: string;
     // 组件标题
     title: string;
     // 组件名称
