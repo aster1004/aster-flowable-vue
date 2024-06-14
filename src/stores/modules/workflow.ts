@@ -44,6 +44,9 @@ export const useWorkFlowStore = defineStore({
         listSettings: {
           queryItems: [],
           columns: [],
+          sortBy: 'create_time',
+          sortDirection: 'desc',
+          actions: [],
         },
       };
     },

@@ -55,6 +55,16 @@ declare namespace WorkForm {
   }
 
   /**
+   * @description: 功能按钮接口
+   */
+  export interface FunctionButton {
+    id: string;
+    title: string;
+    icon: string;
+    click: any;
+  }
+
+  /**
    * @description: 列表设置信息
    */
   export interface FormListSettings {
@@ -67,7 +77,7 @@ declare namespace WorkForm {
     // 排序方向: asc-升序,desc-降序
     sortDirection?: string;
     // 功能
-    actions?: any[];
+    actions?: FunctionButton[];
   }
 
   /**
