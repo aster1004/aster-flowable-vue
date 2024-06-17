@@ -50,6 +50,7 @@
   import conditionDrawer from '@/views/workflow/components/process/drawer/conditionDrawer.vue';
   import { isDef, isNotEmpty } from '@/utils';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import processData from '@/data/process.json';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
@@ -68,13 +69,18 @@
     let route = useRoute();
     console.info(route);
     let appId = route.query.appId;
-    let id = route.query.id;
+    // let id = route.query.id;
     let { data } = await getWorkFlowData({ workFlowDefId: route.query.workFlowDefId });
+    console.info('流程设计json：', data);
     if (isDef(id) && isNotEmpty(id)) {
       console.info('修改流程设计：', id);
     } else {
+      console.info('初始化流程设计');
+      workFlowStore.design.process = processData;
+      console.info(workFlowStore.design.process);
       processConfig.value = data;
-      let {
+      nodeConfig.value = processData;
+      /* let {
         nodeConfig: nodes,
         flowPermission: flows,
         directorMaxLevel: directors,
@@ -86,9 +92,9 @@
       nodeConfig.value = nodes;
       flowPermission.value = [];
       directorMaxLevel.value = 0;
-      // directorMaxLevel.value = [];
-      workFlowDef.value = works;
-      // setTableId(tableId);
+      workFlowDef.value = works; */
+      //1 directorMaxLevel.value = [];
+      //1 setTableId(tableId);
     }
   });
   const toReturn = () => {

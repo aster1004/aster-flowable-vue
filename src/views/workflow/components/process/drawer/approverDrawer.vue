@@ -1,179 +1,137 @@
 <template>
   <el-drawer
     :append-to-body="true"
-    title="审批人设置"
+    :title="approverConfig.value.nodeName"
     v-model="visible"
-    class="set_promoter"
     :show-close="false"
-    :size="550"
+    :size="450"
     :before-close="saveApprover"
   >
-    <div class="demo-drawer__content">
-      <div class="drawer_content">
-        <div class="approver_content">
-          <el-radio-group v-model="approverConfig.settype" class="clear" @change="changeType">
-            <el-radio v-for="{ value, label } in setTypes" :key="value" :label="value">{{
-              label
-            }}</el-radio>
-          </el-radio-group>
-          <el-button type="primary" @click="addApprover" v-if="approverConfig.settype == 1"
-            >添加/修改成员</el-button
-          >
-          <p class="selected_list" v-if="approverConfig.settype == 1">
-            <span v-for="(item, index) in approverConfig.nodeUserList" :key="index"
-              >{{ item.name }}
-              <img
-                src="@/assets/images/add-close1.png"
-                @click="$func.removeEle(approverConfig.nodeUserList, item, 'targetId')"
-              />
-            </span>
-            <a
-              v-if="approverConfig.nodeUserList.length != 0"
-              @click="approverConfig.nodeUserList = []"
-              >清除</a
-            >
-          </p>
-        </div>
-        <div class="approver_manager" v-if="approverConfig.settype == 2">
-          <p>
-            <span>发起人的：</span>
-            <el-select v-model="approverConfig.directorLevel">
-              <el-option
-                v-for="item in directorMaxLevel"
-                :value="item"
-                :key="item"
-                :label="item == 1 ? '直接主管' : '第' + item + '级主管'"
-              />
-            </el-select>
-          </p>
-          <p class="tip">找不到主管时，由上级主管代审批</p>
-        </div>
-        <div class="approver_self" v-if="approverConfig.settype == 5">
-          <p>该审批节点设置“发起人自己”后，审批人默认为发起人</p>
-        </div>
-        <div class="approver_self_select" v-show="approverConfig.settype == 4">
-          <el-radio-group v-model="approverConfig.selectMode" style="width: 100%">
-            <el-radio v-for="{ value, label } in selectModes" :label="value" :key="value">{{
-              label
-            }}</el-radio>
-          </el-radio-group>
-          <h3>选择范围</h3>
-          <el-radio-group
-            v-model="approverConfig.selectRange"
-            style="width: 100%"
-            @change="changeRange"
-          >
-            <el-radio v-for="{ value, label } in selectRanges" :label="value" :key="value">{{
-              label
-            }}</el-radio>
-          </el-radio-group>
-          <template v-if="approverConfig.selectRange == 2 || approverConfig.selectRange == 3">
-            <el-button type="primary" @click="addApprover" v-if="approverConfig.selectRange == 2"
-              >添加/修改成员</el-button
-            >
-            <el-button type="primary" @click="addRoleApprover" v-else>添加/修改角色</el-button>
-            <p class="selected_list">
-              <span v-for="(item, index) in approverConfig.nodeUserList" :key="index"
-                >{{ item.name }}
-                <img
-                  src="@/assets/images/add-close1.png"
-                  @click="$func.removeEle(approverConfig.nodeUserList, item, 'targetId')"
+    <el-form
+      ref="nodeFormRef"
+      style="max-width: 600px"
+      :rules="[]"
+      label-width="auto"
+      class="demo-ruleForm"
+      status-icon
+    >
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="节点属性" name="nodeProps">
+          <el-form-item label="节点ID" prop="nodeId">
+            <el-input readonly v-model="approverConfig.id" />
+          </el-form-item>
+          <el-form-item label="审核人" prop="nodeId">
+            <el-input v-model="nodeForm.nodeId" readonly>
+              <template #suffix>
+                <i class="iconfont icon-xinzeng icon-primary" />
+              </template>
+            </el-input>
+          </el-form-item>
+        </el-tab-pane>
+        <el-tab-pane label="表单权限" name="formPermission">
+          <el-table :data="formFieldData" style="width: 100%">
+            <el-table-column prop="title" label="属性" />
+            <el-table-column prop="edit" label="编辑" header-align="center" align="center">
+              <template #header>
+                <el-checkbox
+                  label="编辑"
+                  v-model="headerConfig.edit"
+                  @change="checkedAll('edit')"
                 />
-              </span>
-              <a
-                v-if="approverConfig.nodeUserList.length != 0 && approverConfig.selectRange != 1"
-                @click="approverConfig.nodeUserList = []"
-                >清除</a
-              >
-            </p>
-          </template>
-        </div>
-        <div class="approver_manager" v-if="approverConfig.settype == 7">
-          <p>审批终点</p>
-          <p style="padding-bottom: 20px">
-            <span>发起人的：</span>
-            <el-select v-model="approverConfig.examineEndDirectorLevel">
-              <el-option
-                v-for="item in directorMaxLevel"
-                :value="item"
-                :key="item"
-                :label="item == 1 ? '最高主管' : '第' + item + '层级主管'"
-              />
-            </el-select>
-          </p>
-        </div>
-        <div
-          class="approver_some"
-          v-if="
-            (approverConfig.settype == 1 && approverConfig.nodeUserList.length > 1) ||
-            approverConfig.settype == 2 ||
-            (approverConfig.settype == 4 && approverConfig.selectMode == 2)
-          "
-        >
-          <p>多人审批时采用的审批方式</p>
-          <el-radio-group v-model="approverConfig.examineMode" class="clear">
-            <el-radio :label="1">依次审批</el-radio>
-            <br />
-            <el-radio :label="2" v-if="approverConfig.settype != 2"
-              >会签(须所有审批人同意)</el-radio
-            >
-          </el-radio-group>
-        </div>
-        <div
-          class="approver_some"
-          v-if="approverConfig.settype == 2 || approverConfig.settype == 7"
-        >
-          <p>审批人为空时</p>
-          <el-radio-group v-model="approverConfig.noHanderAction" class="clear">
-            <el-radio :label="1">自动审批通过/不允许发起</el-radio>
-            <br />
-            <el-radio :label="2">转交给审核管理员</el-radio>
-          </el-radio-group>
-        </div>
-      </div>
-      <!-- <div class="demo-drawer__footer clear">
-        
-      </div> -->
-      <employees-dialog
-        v-model:visible="approverVisible"
-        :data="checkedList"
-        @change="sureApprover"
-      />
-      <role-dialog
-        v-model:visible="approverRoleVisible"
-        :data="checkedRoleList"
-        @change="sureRoleApprover"
-      />
-    </div>
+              </template>
+              <template #default="scope">
+                <el-checkbox-group v-model="scope.row.operation" :max="1">
+                  <el-checkbox value="edit" />
+                </el-checkbox-group>
+              </template>
+            </el-table-column>
+            <el-table-column prop="readonly" label="只读" header-align="center" align="center">
+              <template #header>
+                <el-checkbox
+                  label="只读"
+                  v-model="headerConfig.readonly"
+                  @change="checkedAll('readonly')"
+                />
+              </template>
+              <template #default="scope">
+                <el-checkbox-group v-model="scope.row.operation" :max="1">
+                  <el-checkbox value="readonly" />
+                </el-checkbox-group>
+              </template>
+            </el-table-column>
+            <el-table-column prop="hidden" label="隐藏" header-align="center" align="center">
+              <template #header>
+                <el-checkbox
+                  label="隐藏"
+                  v-model="headerConfig.hidden"
+                  @change="checkedAll('hidden')"
+                />
+              </template>
+              <template #default="scope">
+                <el-checkbox-group v-model="scope.row.operation" :max="1">
+                  <el-checkbox value="hiddden" />
+                </el-checkbox-group>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+    </el-form>
     <template #footer>
       <el-button type="primary" @click="saveApprover">确 定</el-button>
       <el-button @click="closeDrawer">取 消</el-button>
     </template>
   </el-drawer>
 </template>
-<script setup>
-  import { ref, watch, computed } from 'vue';
-  import $func from '@/utils/fun';
-  import { setTypes, selectModes, selectRanges } from '@/utils/const';
+<script setup lang="ts">
+  import { ref, computed, watch, onMounted } from 'vue';
   import { useStore } from '@/stores/index';
-  import employeesDialog from '../dialog/employeesDialog.vue';
-  import roleDialog from '../dialog/roleDialog.vue';
+  import type { TabsPaneContext } from 'element-plus';
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { flatFormItems } from '@/utils/workflow';
 
-  let props = defineProps({
-    directorMaxLevel: {
-      type: Number,
-      default: 0,
-    },
-  });
-  let approverConfig = ref({});
-  let approverVisible = ref(false);
-  let approverRoleVisible = ref(false);
-  let checkedRoleList = ref([]);
-  let checkedList = ref([]);
   let store = useStore();
-  let { setApproverConfig, setApprover } = store;
+  let { setApprover } = store;
+
+  // let approverConfig = ref({});
+
+  let approverConfig = ref<any>({});
   let approverConfig1 = computed(() => store.approverConfig1);
+
+  watch(approverConfig1, (val) => {
+    console.info('approverConfig:', val);
+    approverConfig.value = val;
+  });
+
   let approverDrawer = computed(() => store.approverDrawer);
+
+  const headerConfig = ref({
+    required: false,
+    edit: false,
+    hidden: false,
+    readonly: false,
+  });
+
+  /* const formFieldData = ref<any[]>([
+     { fieldName: '原因', operation: ['edit'] },
+     { fieldName: '日期', operation: ['hiddden'] },
+   ]);
+  */
+  // 工作流store
+  const workFlowStore = useWorkFlowStore();
+
+  const formFieldData = computed(() => {
+    let formItems = flatFormItems(workFlowStore.design.formItems);
+    formItems.forEach((formItem: any) => {
+      formItem.operation = ['edit'];
+    });
+    return formItems;
+  });
+
+  const nodeForm = ref({
+    nodeId: '',
+  });
+
   let visible = computed({
     get() {
       return approverDrawer.value;
@@ -182,114 +140,39 @@
       closeDrawer();
     },
   });
-  watch(approverConfig1, (val) => {
-    approverConfig.value = val.value;
-  });
-  let changeRange = () => {
-    approverConfig.value.nodeUserList = [];
-  };
-  const changeType = (val) => {
-    approverConfig.value.nodeUserList = [];
-    approverConfig.value.examineMode = 1;
-    approverConfig.value.noHanderAction = 2;
-    if (val == 2) {
-      approverConfig.value.directorLevel = 1;
-    } else if (val == 4) {
-      approverConfig.value.selectMode = 1;
-      approverConfig.value.selectRange = 1;
-    } else if (val == 7) {
-      approverConfig.value.examineEndDirectorLevel = 1;
+
+  // 选中的tab
+  const activeName = ref<string>('nodeProps');
+
+  const checkedAll = (field: string) => {
+    console.info(field, headerConfig.value[field]);
+    for (let key in headerConfig.value) {
+      if (headerConfig.value[field]) {
+        if (key !== field) {
+          headerConfig.value[key] = false;
+        }
+      }
     }
-  };
-  const addApprover = () => {
-    approverVisible.value = true;
-    checkedList.value = approverConfig.value.nodeUserList;
-  };
-  const addRoleApprover = () => {
-    approverRoleVisible.value = true;
-    checkedRoleList.value = approverConfig.value.nodeUserList;
-  };
-  const sureApprover = (data) => {
-    approverConfig.value.nodeUserList = data;
-    approverVisible.value = false;
-  };
-  const sureRoleApprover = (data) => {
-    approverConfig.value.nodeUserList = data;
-    approverRoleVisible.value = false;
-  };
-  const saveApprover = () => {
-    approverConfig.value.error = !$func.setApproverStr(approverConfig.value);
-    setApproverConfig({
-      value: approverConfig.value,
-      flag: true,
-      id: approverConfig1.value.id,
+    formFieldData.value.forEach((formField: any) => {
+      formField.operation = headerConfig.value[field] ? [field] : [];
     });
-    closeDrawer();
+  };
+
+  const handleClick = (tab: TabsPaneContext, event: Event) => {
+    console.log(tab, event);
+  };
+
+  const saveApprover = () => {
+    // 权限
+    approverConfig.value.formPermission = formFieldData.value;
+    console.info(formFieldData.value);
+    console.info(approverConfig.value);
+    // closeDrawer();
   };
   const closeDrawer = () => {
     setApprover(false);
   };
+
+  onMounted(() => {});
 </script>
-<style lang="scss">
-  .set_promoter {
-    .approver_content {
-      padding-bottom: 10px;
-      border-bottom: 1px solid #f2f2f2;
-    }
-    .approver_self_select,
-    .approver_content {
-      .el-button {
-        margin-bottom: 20px;
-      }
-    }
-    .approver_content,
-    .approver_some,
-    .approver_self_select {
-      .el-radio-group {
-        display: unset;
-      }
-      .el-radio {
-        width: 27%;
-        margin-bottom: 20px;
-        height: 16px;
-      }
-    }
-    .approver_manager p {
-      line-height: 32px;
-    }
-    .approver_manager select {
-      width: 420px;
-      height: 32px;
-      background: rgba(255, 255, 255, 1);
-      border-radius: 4px;
-      border: 1px solid rgba(217, 217, 217, 1);
-    }
-    .approver_manager p.tip {
-      margin: 10px 0 22px 0;
-      font-size: 12px;
-      line-height: 16px;
-      color: #f8642d;
-    }
-    .approver_self {
-      padding: 28px 20px;
-    }
-    .approver_self_select,
-    .approver_manager,
-    .approver_content,
-    .approver_some {
-      padding: 20px 20px 0;
-    }
-    .approver_manager p:first-of-type,
-    .approver_some p {
-      line-height: 19px;
-      font-size: 14px;
-      margin-bottom: 14px;
-    }
-    .approver_self_select h3 {
-      margin: 5px 0 20px;
-      font-size: 14px;
-      font-weight: bold;
-      line-height: 19px;
-    }
-  }
-</style>
+<style lang="scss"></style>

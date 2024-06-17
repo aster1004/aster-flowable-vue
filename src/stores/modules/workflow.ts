@@ -20,6 +20,7 @@ export const useWorkFlowStore = defineStore({
       labelPosition: 'left',
       formName: '未命名表单',
       formItems: [],
+      process: {},
       labelWidth: 80,
       listSettings: {
         queryItems: [],

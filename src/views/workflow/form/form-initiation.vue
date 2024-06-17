@@ -44,6 +44,8 @@
   import { computed, ref } from 'vue';
   import FormRender from './form-render.vue';
   import { useI18n } from 'vue-i18n';
+  import { formSubmitApi } from '@/api/workflow/process';
+  import { ResultEnum } from '@/enums/httpEnum';
 
   // 获取工作流store
   const workFlowStore = useWorkFlowStore();
@@ -158,6 +160,24 @@
       return;
     }
     console.log('提交--->', formData.value);
+    let submitFormData = {
+      formId: formData.value.formId,
+      formStatus: '0',
+      formData: formData.value,
+    };
+    // 提交表单
+    formSubmitApi(submitFormData).then((res) => {
+      console.info(res);
+      if (res.code == ResultEnum.SUCCESS) {
+        ElMessage.success({
+          message: t('common.success'),
+          duration: 500,
+          onClose: () => {
+            visible.value = false;
+          },
+        });
+      }
+    });
   };
 
   /**
@@ -168,6 +188,7 @@
     visible.value = true;
     // 加载表单信息
     await workFlowStore.loadFormInfo(formId);
+    formData.value.formId = formId;
     // TODO根据流程配置设置显隐和只读
     if (instanceId) {
       // 加载实例数据
