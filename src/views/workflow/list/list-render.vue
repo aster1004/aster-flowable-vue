@@ -62,23 +62,17 @@
           <el-button type="primary" @click="handleAdd">
             <i class="iconfont icon-xinzeng pr-5px"></i>{{ $t('button.add') }}
           </el-button>
-          <el-button type="danger" @click="handleDelete()">
-            <i class="iconfont icon-shanchu pr-5px"></i>{{ $t('button.delete') }}
-          </el-button>
         </div>
         <div class="header-button-ri">
-          <el-tooltip effect="dark" :content="$t('button.refresh')" placement="top">
-            <el-button circle @click="handleQuery">
-              <i class="iconfont icon-shuaxin"></i>
-            </el-button>
-          </el-tooltip>
           <el-tooltip
+            v-for="(item, index) in _actions"
+            :key="index"
+            :content="item.title"
             effect="dark"
-            :content="showSearch ? $t('button.hideSearch') : $t('button.showSearch')"
             placement="top"
           >
-            <el-button circle @click="showSearch = !showSearch">
-              <i class="iconfont icon-sousuo"></i>
+            <el-button circle @click="handleClick(item.click)">
+              <i :class="item.icon"></i>
             </el-button>
           </el-tooltip>
         </div>
@@ -115,7 +109,7 @@
   import { formInfoByCodeApi } from '@/api/workflow/form';
   import { isEmpty, isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { ElMessage, ElMessageBox } from 'element-plus';
+  import { ElMessage } from 'element-plus';
 
   const props = defineProps({
     type: {
@@ -164,6 +158,58 @@
   };
 
   /**
+   * @description: 筛选
+   * @return {*}
+   */
+  const handleShowQuery = () => {
+    showSearch.value = !showSearch.value;
+  };
+
+  /**
+   * @description: 导入
+   * @return {*}
+   */
+  const handleImport = () => {
+    //TODO 列表导入
+    console.log('导入操作暂未开发(*^▽^*)');
+  };
+
+  /**
+   * @description: 导出
+   * @return {*}
+   */
+  const handleExport = () => {
+    console.log('导出操作暂未开发(*^▽^*)');
+  };
+
+  /**
+   * @description: 显示列
+   * @return {*}
+   */
+  const handleShowColumns = () => {
+    console.log('显示列操作暂未开发(*^▽^*)');
+  };
+
+  /**
+   * @description: 点击按钮
+   * @param {string} funName 名称
+   * @return {*}
+   */
+  const handleClick = (funName: string) => {
+    if (funName === 'handleQuery') {
+      handleQuery();
+    } else if (funName === 'handleShowQuery') {
+      handleShowQuery();
+    } else if (funName === 'handleImport') {
+      handleImport();
+    } else if (funName === 'handleExport') {
+      handleExport();
+    } else if (funName === 'handleShowColumns') {
+      handleShowColumns();
+    }
+  };
+
+  /**
    * @description: 重置查询
    * @return {*}
    */
@@ -206,46 +252,6 @@
     formInitiationRef.value.init(props.formId);
   };
 
-  /**
-   * @description: 修改
-   * @param {string} key
-   * @return {*}
-   */
-  const handleEdit = (key: string) => {};
-
-  /**
-   * @description: 删除
-   * @param {string} key
-   * @return {*}
-   */
-  const handleDelete = (key?: string) => {
-    // let val: any = [];
-    // if (key) {
-    //   val.push(key);
-    // } else {
-    //   val = selectedList.value?.map((item) => item.id);
-    //   if (!val || val.length == 0) {
-    //     ElMessage.warning(t('delete.empty'));
-    //     return;
-    //   }
-    // }
-    // ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
-    //   confirmButtonText: t('button.confirm'),
-    //   cancelButtonText: t('button.cancel'),
-    //   type: 'warning',
-    //   lockScroll: false,
-    // })
-    //   .then(() => {
-    //     // formDeleteApi(val).then((res) => {
-    //     //   if (res.code == ResultEnum.SUCCESS) {
-    //     //     ElMessage.success(t('delete.success'));
-    //     //     handleQuery();
-    //     //   }
-    //     // });
-    //   })
-    //   .catch(() => {});
-  };
-
   // 列表设置内容
   const _listSettings = computed(() => {
     const settings = workFlowStore.design.listSettings;
@@ -255,6 +261,14 @@
       loadFormInfoByStore(settings.columns);
     }
     return settings;
+  });
+
+  // 功能按钮
+  const _actions = computed(() => {
+    if (_listSettings.value.actions && _listSettings.value.actions.length > 0) {
+      return _listSettings.value.actions;
+    }
+    return [];
   });
 
   // 表单基础信息
