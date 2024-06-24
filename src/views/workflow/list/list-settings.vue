@@ -137,7 +137,7 @@
     { id: '2', title: '筛选', icon: 'iconfont icon-sousuo', click: 'handleShowQuery' },
     { id: '3', title: '导入', icon: 'iconfont icon-shangchuan', click: 'handleImport' },
     { id: '4', title: '导出', icon: 'iconfont icon-xiazai', click: 'handleExport' },
-    { id: '5', title: '显示', icon: 'iconfont icon-shuaxin', click: 'handleShowColumns' },
+    { id: '5', title: '显示', icon: 'iconfont icon-liebiao', click: 'handleShowColumns' },
   ]);
   // 功能按钮
   const actions = ref(

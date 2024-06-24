@@ -71,7 +71,20 @@
             effect="dark"
             placement="top"
           >
-            <el-button circle @click="handleClick(item.click)">
+            <el-button
+              v-if="item.click != 'handleShowColumns'"
+              circle
+              @click="handleClick(item.click)"
+            >
+              <i :class="item.icon"></i>
+            </el-button>
+            <el-button
+              v-else
+              ref="showColumnsRef"
+              v-popover="popoverRef"
+              circle
+              v-click-outside="handleShowColumns"
+            >
               <i :class="item.icon"></i>
             </el-button>
           </el-tooltip>
@@ -79,7 +92,7 @@
       </div>
       <el-table ref="listTableRef" :data="dataList" :border="true" row-key="id">
         <el-table-column
-          v-for="(item, index) in _listSettings.columns"
+          v-for="(item, index) in tableColumns"
           :key="index"
           :prop="item.id"
           :label="item.title"
@@ -99,10 +112,52 @@
       />
     </div>
     <form-initiation ref="formInitiationRef" />
+
+    <el-popover
+      ref="popoverRef"
+      trigger="click"
+      placement="left-start"
+      virtual-triggering
+      persistent
+      :width="240"
+      :show-arrow="false"
+    >
+      <div class="popover-title" style="width: 100%">
+        <span>列表字段</span>
+        <div class="flex justify-center items-center">
+          <span class="pr-10px">全选</span>
+          <el-checkbox
+            v-model="columnCheckAll"
+            :indeterminate="columnIndeterminate"
+            @change="handleColumnCheckAll"
+          ></el-checkbox>
+        </div>
+      </div>
+      <div class="popover-content">
+        <el-checkbox-group
+          v-model="columnCheckedIds"
+          :style="{
+            height: _listSettings.columns.length * 30 + 10 + 'px',
+            overflow: 'auto',
+          }"
+          style="max-height: 500px"
+          @change="handleColumnCheckChange"
+        >
+          <div class="popover-checkbox" v-for="(item, index) in _listSettings.columns" :key="index">
+            <div class="popover-checkbox-title">
+              {{ item.title }}
+            </div>
+            <div class="popover-checkbox-o">
+              <el-checkbox :value="item.id" :label="item.id" />
+            </div>
+          </div>
+        </el-checkbox-group>
+      </div>
+    </el-popover>
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, PropType, reactive, ref, watch } from 'vue';
+  import { computed, PropType, reactive, ref, unref, watch } from 'vue';
   import FormDesignRender from '../form/form-design-render.vue';
   import FormInitiation from '../form/form-initiation.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
@@ -110,6 +165,7 @@
   import { isEmpty, isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus';
+  import vClickOutside from 'element-plus/es/directives/click-outside/index';
 
   const props = defineProps({
     type: {
@@ -131,7 +187,10 @@
   // 注册组件
   const formInitiationRef = ref();
   const listQueryFormRef = ref();
+  const popoverRef = ref();
 
+  // 初始化标记
+  const initFlag = ref(true);
   // 是否显示查询
   const showSearch = ref(true);
   // 是否合并查询
@@ -147,6 +206,14 @@
     pageNum: 1,
     pageSize: 10,
   });
+  // 列表字段
+  const tableColumns = ref<WorkComponent.ComponentConfig[]>([]);
+  // 列表字段全选
+  const columnCheckAll = ref(false);
+  // 列表字段全选状态
+  const columnIndeterminate = ref(false);
+  // 已选中查询字段id
+  const columnCheckedIds = ref<string[]>([]);
 
   /**
    * @description: 查询
@@ -187,7 +254,7 @@
    * @return {*}
    */
   const handleShowColumns = () => {
-    console.log('显示列操作暂未开发(*^▽^*)');
+    unref(popoverRef).popperRef?.delayHide?.();
   };
 
   /**
@@ -207,6 +274,42 @@
     } else if (funName === 'handleShowColumns') {
       handleShowColumns();
     }
+  };
+
+  /**
+   * @description: 列表字段全选
+   * @return {*}
+   */
+  const handleColumnCheckAll = (val: boolean) => {
+    if (val) {
+      // 避免queryItems的变动影响_formItem
+      tableColumns.value = JSON.parse(JSON.stringify(_listSettings.value.columns));
+      columnCheckedIds.value = tableColumns.value.map((item) => item.id);
+    } else {
+      tableColumns.value = [];
+      columnCheckedIds.value = [];
+    }
+  };
+  /**
+   * @description: 列表字段选中操作
+   * @param {*} value 已选中的列表字段id
+   * @return {*}
+   */
+  const handleColumnCheckChange = (value: string[]) => {
+    const checkedCount = value.length;
+    columnCheckAll.value = checkedCount === _listSettings.value.columns.length;
+    columnIndeterminate.value =
+      checkedCount > 0 && checkedCount < _listSettings.value.columns.length;
+
+    tableColumns.value = [];
+    // 双重循环是为了保护已经排序的字段不受影响
+    columnCheckedIds.value.forEach((id) => {
+      _listSettings.value.columns.forEach((item) => {
+        if (item.id == id) {
+          tableColumns.value.push(item);
+        }
+      });
+    });
   };
 
   /**
@@ -259,6 +362,11 @@
       readonly.value = true;
       // 从store中获取表单信息
       loadFormInfoByStore(settings.columns);
+    }
+    if (initFlag.value && settings.columns.length > 0) {
+      initFlag.value = false;
+      tableColumns.value = JSON.parse(JSON.stringify(settings.columns));
+      columnCheckedIds.value = tableColumns.value.map((item) => item.id);
     }
     return settings;
   });
@@ -331,4 +439,52 @@
     },
   );
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  .popover-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    color: var(--el-color-primary);
+  }
+
+  .popover-content {
+    .popover-checkbox {
+      height: 30px;
+      line-height: 30px;
+      display: flex;
+      cursor: pointer;
+      padding-left: 10px;
+      box-sizing: border-box;
+      border-radius: 2px;
+    }
+
+    .popover-checkbox-title {
+      flex: 1;
+      color: #303133;
+      text-align: left;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow-wrap: break-word;
+    }
+
+    .popover-checkbox-o {
+      width: 30px;
+      text-align: center;
+    }
+
+    .popover-checkbox:hover {
+      background-color: var(--el-color-primary);
+    }
+
+    .popover-checkbox:hover .popover-checkbox-title {
+      color: #ffffff;
+    }
+
+    ::v-deep(.el-checkbox__label) {
+      display: none;
+    }
+  }
+</style>
