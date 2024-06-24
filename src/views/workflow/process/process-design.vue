@@ -60,7 +60,7 @@
   let tipList = ref([]);
   let tipVisible = ref(false);
   let nowVal = ref(100);
-  let processConfig = ref({});
+  const processConfig = ref({});
   let nodeConfig = ref({});
   let workFlowDef = ref({});
   let flowPermission = ref([]);
@@ -69,7 +69,7 @@
     let route = useRoute();
     console.info(route);
     let appId = route.query.appId;
-    // let id = route.query.id;
+    let id = route.query.id;
     let { data } = await getWorkFlowData({ workFlowDefId: route.query.workFlowDefId });
     console.info('流程设计json：', data);
     if (isDef(id) && isNotEmpty(id)) {
@@ -77,9 +77,10 @@
     } else {
       console.info('初始化流程设计');
       workFlowStore.design.process = processData;
-      console.info(workFlowStore.design.process);
+      console.info('process', JSON.stringify(workFlowStore.design.process));
       processConfig.value = data;
-      nodeConfig.value = processData;
+      nodeConfig.value = processData.nodeConfig;
+
       /* let {
         nodeConfig: nodes,
         flowPermission: flows,
@@ -87,8 +88,8 @@
         workFlowDef: works,
         tableId,
       } = data;
-      console.info(nodes);
-      nodes.childNode = [];
+      console.info(nodes); */
+      /* nodes.childNode = [];
       nodeConfig.value = nodes;
       flowPermission.value = [];
       directorMaxLevel.value = 0;

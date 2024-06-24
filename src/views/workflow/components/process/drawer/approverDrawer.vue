@@ -1,7 +1,7 @@
 <template>
   <el-drawer
     :append-to-body="true"
-    :title="approverConfig.value.nodeName"
+    :title="approverConfig.nodeName"
     v-model="visible"
     :show-close="false"
     :size="450"
@@ -95,8 +95,8 @@
 
   // let approverConfig = ref({});
 
-  let approverConfig = ref<any>({});
-  let approverConfig1 = computed(() => store.approverConfig1);
+  const approverConfig = ref<any>({});
+  const approverConfig1 = computed(() => store.approverConfig1);
 
   watch(approverConfig1, (val) => {
     console.info('approverConfig:', val);
