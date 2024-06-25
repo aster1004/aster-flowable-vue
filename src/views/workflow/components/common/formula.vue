@@ -16,7 +16,7 @@
   >
     <div class="formula">
       <div class="formula-aside">
-        <el-collapse v-model="activeCollapse" accordion style="width: ;100%">
+        <el-collapse v-model="activeCollapse" accordion style="width: 100%">
           <el-collapse-item name="currentForm" title="当前表单">
             <el-tree
               ref="currentFormRef"

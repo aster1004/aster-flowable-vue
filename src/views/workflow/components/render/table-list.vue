@@ -102,8 +102,11 @@
             align="center"
           >
             <template #default="scope">
-              <div style="width: 100%" @click="openRowInfo(scope.$index)">
+              <div class="hover-container" @click="openRowInfo(scope.$index)">
                 <span> {{ scope.$index + 1 }} </span>
+                <span class="hover-text">
+                  <i class="iconfont icon-fangda"></i>
+                </span>
               </div>
             </template>
           </el-table-column>
@@ -178,6 +181,7 @@
       </div>
       <el-drawer v-model="rowVisible" :append-to-body="true" @close="closeRowInfo">
         <el-form label-width="auto">
+          <span>第 {{ rowIndex + 1 }} 行</span>
           <div v-for="(item, index) in _columns" :key="index">
             <form-design-render
               v-model:value="_value[rowIndex][item.id]"
@@ -211,7 +215,6 @@
   import draggable from 'vuedraggable';
   import { useI18n } from 'vue-i18n';
   import { generateUUID, isDef } from '@/utils';
-
   const workFlowStore = useWorkFlowStore();
   const { t } = useI18n();
 
@@ -590,5 +593,19 @@
   ::v-deep(.el-scrollbar__wrap--hidden-default) {
     scrollbar-width: none;
     min-height: 60px;
+  }
+  .hover-container {
+    width: 100%;
+    position: relative;
+  }
+  .hover-text {
+    display: none;
+    margin-left: 4px;
+    color: #333;
+  }
+  .hover-container:hover {
+    .hover-text {
+      display: inline-flex;
+    }
   }
 </style>
