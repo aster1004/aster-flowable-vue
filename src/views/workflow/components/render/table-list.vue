@@ -102,7 +102,7 @@
             align="center"
           >
             <template #default="scope">
-              <div class="hover-container" @click="openRowInfo(scope.$index)">
+              <div @click="openRowInfo(scope.$index)">
                 <span> {{ scope.$index + 1 }} </span>
                 <span class="hover-text">
                   <i class="iconfont icon-fangda"></i>
@@ -594,8 +594,7 @@
     scrollbar-width: none;
     min-height: 60px;
   }
-  .hover-container {
-    width: 100%;
+  .el-table__row {
     position: relative;
   }
   .hover-text {
@@ -603,7 +602,7 @@
     margin-left: 4px;
     color: #333;
   }
-  .hover-container:hover {
+  .el-table__row:hover {
     .hover-text {
       display: inline-flex;
     }
