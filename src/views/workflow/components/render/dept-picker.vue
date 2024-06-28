@@ -32,6 +32,20 @@
         :value="item.id"
       />
     </el-select>
+    <el-select
+      v-else-if="mode == 'search'"
+      v-model="_value"
+      multiple
+      placeholder="请选择"
+      @click="handleAdd"
+    >
+      <el-option
+        v-for="(item, index) in selectedDepts"
+        :key="index"
+        :label="item.orgName"
+        :value="item.id"
+      />
+    </el-select>
     <user-org-picker
       ref="userDeptPickerRef"
       type="dept"

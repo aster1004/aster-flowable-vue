@@ -98,6 +98,8 @@ declare namespace WorkForm {
     labelPosition: string;
     // 标签宽度,默认80px
     labelWidth: number;
+    // 数据标题
+    dataTitle?: string[];
     // 所属应用
     appId?: string;
     // 版本

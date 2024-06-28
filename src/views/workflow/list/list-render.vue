@@ -11,7 +11,7 @@
     <div class="card table-search" v-show="showSearch">
       <el-form
         ref="listQueryFormRef"
-        :model="queryFormData"
+        :model="queryParams.customParams"
         :inline="false"
         :label-position="_formInfo.labelPosition"
         :label-width="_formInfo.labelWidth"
@@ -24,10 +24,10 @@
             v-show="index < 2 || !searchCollapsed"
           >
             <form-design-render
-              v-model:value="queryFormData[item.id]"
+              v-model:value="queryParams.customParams[item.id]"
               :ref="item.id"
               mode="search"
-              :formData="queryFormData"
+              :formData="queryParams.customParams"
               :formItem="item"
             />
           </div>
@@ -91,6 +91,7 @@
         </div>
       </div>
       <el-table ref="listTableRef" :data="dataList" :border="true" row-key="id">
+        <el-table-column prop="dataTitle" label="数据标题" header-align="center" align="center" />
         <el-table-column
           v-for="(item, index) in tableColumns"
           :key="index"
@@ -102,8 +103,8 @@
       </el-table>
       <el-pagination
         :background="true"
-        v-model:current-page="queryFormData.pageNum"
-        v-model:page-size="queryFormData.pageSize"
+        v-model:current-page="queryParams.pageNum"
+        v-model:page-size="queryParams.pageSize"
         :page-sizes="[10, 25, 50, 100]"
         :total="total"
         layout="total, sizes, prev, pager, next, jumper"
@@ -166,6 +167,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus';
   import vClickOutside from 'element-plus/es/directives/click-outside/index';
+  import { instancePageApi } from '@/api/workflow/instance';
 
   const props = defineProps({
     type: {
@@ -202,9 +204,13 @@
   // 列表数据
   const dataList = ref<any[]>([]);
   // 查询条件
-  const queryFormData = reactive<WorkForm.FormParams>({
+  const queryParams = reactive<Process.InstanceParams>({
     pageNum: 1,
     pageSize: 10,
+    code: '',
+    columns: [],
+    customParams: {},
+    customItems: [],
   });
   // 列表字段
   const tableColumns = ref<WorkComponent.ComponentConfig[]>([]);
@@ -219,8 +225,35 @@
    * @description: 查询
    * @return {*}
    */
-  const handleQuery = () => {
-    if (isNotEmpty(props.code) && !readonly) {
+  const handleQuery = async () => {
+    if (isNotEmpty(props.code) && !readonly.value) {
+      queryParams.code = props.code;
+      // 自定义查询配置
+      if (_listSettings.value.queryItems.length > 0) {
+        queryParams.customItems = _listSettings.value.queryItems;
+      }
+      // table列表字段
+      if (_listSettings.value.columns.length > 0) {
+        queryParams.columns = _listSettings.value.columns.map((c) => c.id);
+      }
+      console.log('q--->', queryParams);
+      await instancePageApi(queryParams).then((res) => {
+        if (res.code === ResultEnum.SUCCESS) {
+          dataList.value = res.data.list.map((item) => {
+            if (_formInfo.value.dataTitle && _formInfo.value.dataTitle.length > 0) {
+              let dataTitle = '';
+              _formInfo.value.dataTitle.forEach((field) => {
+                dataTitle += item[field] + ' ';
+              });
+              return { dataTitle, ...item };
+            }
+            return item;
+          });
+          total.value = res.data.total;
+        } else {
+          ElMessage.error(res.message);
+        }
+      });
     }
   };
 
@@ -318,7 +351,7 @@
    */
   const resetQuery = () => {
     listQueryFormRef.value.resetFields();
-    queryFormData.pageNum = 1;
+    queryParams.pageNum = 1;
     handleQuery();
   };
 
@@ -328,8 +361,8 @@
    * @return {*}
    */
   const handleSizeChange = (val: number) => {
-    queryFormData.pageNum = 1;
-    queryFormData.pageSize = val;
+    queryParams.pageNum = 1;
+    queryParams.pageSize = val;
     handleQuery();
   };
 
@@ -339,7 +372,7 @@
    * @return {*}
    */
   const handleCurrentChange = (val: number) => {
-    queryFormData.pageNum = val;
+    queryParams.pageNum = val;
     handleQuery();
   };
 
@@ -384,6 +417,7 @@
     return {
       labelPosition: workFlowStore.design.labelPosition,
       labelWidth: workFlowStore.design.labelWidth,
+      dataTitle: workFlowStore.design.dataTitle,
     };
   });
 
@@ -393,7 +427,7 @@
    */
   const loadFormInfoByStore = async (columns: WorkComponent.ComponentConfig[]) => {
     // 模拟列表数据
-    let data = {};
+    let data = { dataTitle: '--' };
     columns.forEach((item) => {
       data[item.id] = '--';
     });
@@ -408,7 +442,7 @@
    * @return {*}
    */
   const loadFormInfoByCode = async (code: string) => {
-    await formInfoByCodeApi(code).then((res) => {
+    await formInfoByCodeApi(code).then(async (res) => {
       if (res.code == ResultEnum.SUCCESS) {
         workFlowStore.design = res.data;
         // 如果表单没有配置列表设置，则默认配置
@@ -421,6 +455,8 @@
             actions: [],
           };
         }
+        // 查询
+        await handleQuery();
       } else {
         ElMessage.error(res.message);
       }

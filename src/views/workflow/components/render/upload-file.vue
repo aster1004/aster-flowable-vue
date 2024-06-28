@@ -46,6 +46,9 @@
         </el-row>
       </div>
     </div>
+    <div v-else-if="mode === 'search'" style="width: 100%">
+      {{ _value }}
+    </div>
     <div v-else>
       <el-row v-for="(item, index) in _value" :key="index">
         <el-col :span="24">
