@@ -191,8 +191,6 @@
   const listQueryFormRef = ref();
   const popoverRef = ref();
 
-  // 初始化标记
-  const initFlag = ref(true);
   // 是否显示查询
   const showSearch = ref(true);
   // 是否合并查询
@@ -236,7 +234,6 @@
       if (_listSettings.value.columns.length > 0) {
         queryParams.columns = _listSettings.value.columns.map((c) => c.id);
       }
-      console.log('q--->', queryParams);
       await instancePageApi(queryParams).then((res) => {
         if (res.code === ResultEnum.SUCCESS) {
           dataList.value = res.data.list.map((item) => {
@@ -396,11 +393,6 @@
       // 从store中获取表单信息
       loadFormInfoByStore(settings.columns);
     }
-    if (initFlag.value && settings.columns.length > 0) {
-      initFlag.value = false;
-      tableColumns.value = JSON.parse(JSON.stringify(settings.columns));
-      columnCheckedIds.value = tableColumns.value.map((item) => item.id);
-    }
     return settings;
   });
 
@@ -454,6 +446,18 @@
             sortDirection: 'desc',
             actions: [],
           };
+          tableColumns.value = [];
+          columnCheckedIds.value = [];
+        } else {
+          if (workFlowStore.design.listSettings.columns.length > 0) {
+            tableColumns.value = JSON.parse(
+              JSON.stringify(workFlowStore.design.listSettings.columns),
+            );
+            columnCheckedIds.value = tableColumns.value.map((item) => item.id);
+          } else {
+            tableColumns.value = [];
+            columnCheckedIds.value = [];
+          }
         }
         // 查询
         await handleQuery();
@@ -473,6 +477,7 @@
         loadFormInfoByCode(val);
       }
     },
+    { immediate: true, deep: true },
   );
 </script>
 <style scoped lang="scss">
