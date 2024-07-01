@@ -42,19 +42,26 @@
           </div>
         </div>
       </el-form-item>
-      <el-form-item>
+      <el-form-item prop="dataTitle">
         <template #label>
           <span class="form-label">数据标题</span>
         </template>
-        <el-input placeholder="请选择数据标题" />
+        <el-select v-model="formInfo.dataTitle" multiple placeholder="请选择数据标题">
+          <el-option
+            v-for="(item, index) in _flatFormItems"
+            :key="index"
+            :label="item.title"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item prop="labelPosition">
         <template #label>
           <span class="form-label">标签位置</span>
         </template>
         <dict-select v-model="formInfo.labelPosition" dict-type="label_position"></dict-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item prop="labelWidth">
         <template #label>
           <span class="form-label">标签宽度</span>
         </template>
@@ -75,6 +82,7 @@
   import IconSelect from '@/components/icon/icon-select.vue';
   import ColorPicker from '@/components/color/color-picker.vue';
   import { isDef, isNotEmpty } from '@/utils';
+  import { flatFormItems } from '@/utils/workflow';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
@@ -91,6 +99,7 @@
       { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' },
     ],
     icon: [{ required: true, message: '请选择图标', trigger: 'blur' }],
+    dataTitle: [{ required: true, message: '请选择数据标题', trigger: 'blur' }],
   };
 
   /**
@@ -98,6 +107,16 @@
    */
   const formInfo = computed(() => {
     return workFlowStore.design;
+  });
+
+  /**
+   * 表单项平铺，排除布局组件
+   */
+  const _flatFormItems = computed(() => {
+    const items = flatFormItems(workFlowStore.design.formItems);
+    return items.filter((item) => {
+      return item.type !== 'TableList';
+    });
   });
 
   /**

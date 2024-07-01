@@ -250,6 +250,8 @@
   };
   const setPerson = (priorityLevel) => {
     var { type } = props.nodeConfig;
+    console.info('nodeConfig：', props.nodeConfig);
+    console.info('type：', type);
     if (type == 0) {
       setPromoter(true);
       setFlowPermission({

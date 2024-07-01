@@ -1107,3 +1107,8 @@ textarea.ant-input {
 .ant-btn {
   position: relative;
 }
+
+.icon-primary {
+  color: var(--el-color-primary);
+  cursor: pointer;
+}

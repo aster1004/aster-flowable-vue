@@ -67,3 +67,12 @@ export const deploymentApi = (id: String) => {
 export const formInfoApi = (id: String) => {
   return request.get<WorkForm.FormModel>(PORT5 + `/form/info/${id}`, {}, { noLoading: true });
 };
+
+/**
+ * @description: 根据code获取最新的流程表单信息
+ * @param {String} code 表单code
+ * @return {*}
+ */
+export const formInfoByCodeApi = (code: String) => {
+  return request.get<WorkForm.FormModel>(PORT5 + `/form/code/${code}`, {}, { noLoading: true });
+};

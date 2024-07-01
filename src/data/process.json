@@ -1,0 +1,23 @@
+{
+  "tableId": "",
+  "directorMaxLevel": 4,
+  "flowPermission": [],
+  "formPermission": [],
+  "nodeConfig": {
+    "nodeName": "发起人",
+    "type": 0,
+    "priorityLevel": "",
+    "settype": "",
+    "selectMode": "",
+    "selectRange": "",
+    "directorLevel": "",
+    "examineMode": "",
+    "noHanderAction": "",
+    "examineEndDirectorLevel": "",
+    "ccSelfSelectFlag": "",
+    "conditionList": [],
+    "nodeUserList": [],
+    "childNode": {},
+    "conditionNodes": []
+  }
+}

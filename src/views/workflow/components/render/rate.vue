@@ -26,6 +26,14 @@
       :show-score="formItem.props.showScore"
       :disabled="formItem.props.readonly"
     />
+    <el-input-number
+      v-else-if="mode === 'search'"
+      v-model="_value"
+      size="small"
+      clearable
+      :controls="false"
+      style="width: 100%"
+    />
     <el-rate
       v-else
       :model-value="_value"

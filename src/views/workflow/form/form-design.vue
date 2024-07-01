@@ -5,7 +5,6 @@
  * @Description: 表单设计
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
-<!-- 模板 -->
 <template>
   <el-container style="height: 100%">
     <!-- 左侧组件列表 -->
@@ -216,7 +215,7 @@
   });
 
   /**
-   * @description: 表单数据
+   * @description: 表单信息
    */
   const formInfo = computed(() => {
     return workFlowStore.design;
@@ -255,6 +254,7 @@
   };
 
   onMounted(() => {
+    // 默认选中表单属性
     rightActiveTab.value = 'form';
   });
 </script>
@@ -277,15 +277,18 @@
 
   .form-left {
     margin: 0 5px;
+    border-radius: 6px;
   }
 
   .form-main {
     margin: 0 5px;
+    border-radius: 6px;
   }
 
   .form-right {
     margin: 0 5px;
     background-color: #fff !important;
+    border-radius: 6px;
   }
 
   .left-container {
