@@ -16,7 +16,10 @@ declare namespace Role {
     roleIds: string[];
     menuIds: string[];
   }
-
+  export interface RoleUserInfo {
+    userId: string;
+    roleId: string;
+  }
   export interface RoleInfo {
     id?: string;
     roleName: string;

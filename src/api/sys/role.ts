@@ -80,3 +80,14 @@ export const roleMenuSaveApi = (params: Role.RoleMenuParams) => {
 export const dataScopeSaveApi = (dataScope: Role.DataScope) => {
   return request.post<string>(PORT1 + `/role/org`, dataScope, { noLoading: true });
 };
+
+/**
+ * @description: 批量获取角色信息
+ * @param ids
+ * @return {*}
+ */
+export const selectRolesByIdsApi = (ids: string[]) => {
+  return request.post<Role.RoleInfo[]>(PORT1 + `/role/selectBatchIds`, ids, {
+    noLoading: true,
+  });
+};

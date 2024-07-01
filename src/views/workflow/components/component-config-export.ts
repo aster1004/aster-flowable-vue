@@ -330,6 +330,11 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         expansion: false,
         options: [],
         placeholder: '请选择人员',
+        // 可被可被选择的人员
+        canselected: {
+          type: 'user', // 可选类型，user（选人) | dept(选部门) | sysRole(系统角色) | flowRole(流程角色)
+          ids: [], // 对应类型的ids
+        },
       },
     },
     {
@@ -350,6 +355,11 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         multiple: false,
         expansion: false,
         options: [],
+        // 可被选择的部门
+        canselected: {
+          type: 'dept', // 可选类型,固定位dept
+          ids: [],
+        },
       },
     },
     {
