@@ -24,6 +24,7 @@ import Area from './area-config.vue';
 import Signature from './signature-config.vue';
 import AssociatedProcess from './associated-process-config.vue';
 import CalcFormula from './calc-formula-config.vue';
+import SummaryFormula from './summary-formula-config.vue';
 
 export default {
   // ------------布局控件-开始------------
@@ -59,6 +60,7 @@ export default {
   Signature,
   AssociatedProcess,
   CalcFormula,
+  SummaryFormula,
   // ------------高级控件-结束------------
 
   // ------------其他控件-开始------------

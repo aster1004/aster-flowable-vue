@@ -24,6 +24,7 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
   title: '布局控件',
   components: [
     {
+      id: '',
       title: '分组标题',
       name: 'GridTitle',
       icon: 'iconfont icon-title',
@@ -38,6 +39,7 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '一行多列',
       name: 'GridLayout',
       icon: 'iconfont icon-Columns',
@@ -51,6 +53,7 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '明细表',
       name: 'TableList',
       icon: 'iconfont icon-biaoge',
@@ -70,6 +73,7 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '描述说明',
       name: 'Description',
       icon: 'iconfont icon-help',
@@ -93,6 +97,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
   title: '基础控件',
   components: [
     {
+      id: '',
       title: '单行文本',
       name: 'InputText',
       icon: 'iconfont icon-danhangwenben',
@@ -110,6 +115,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '多行文本',
       name: 'InputTextarea',
       icon: 'iconfont icon-duohangwenben',
@@ -129,6 +135,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '数字',
       name: 'InputNumber',
       icon: 'iconfont icon-shuzi',
@@ -146,6 +153,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '金额',
       name: 'InputAmount',
       icon: 'iconfont icon-jine',
@@ -161,10 +169,11 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 精确度
         precision: 0,
         // 展示大写
-        showChinese: true,
+        showChinese: false,
       },
     },
     {
+      id: '',
       title: '单选框',
       name: 'SelectSingle',
       icon: 'iconfont icon-danxuankuang',
@@ -193,6 +202,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '复选框',
       name: 'SelectMultiple',
       icon: 'iconfont icon-fuxuankuang',
@@ -221,6 +231,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '日期',
       name: 'DateTime',
       icon: 'iconfont icon-riqi',
@@ -238,6 +249,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '日期范围',
       name: 'DateTimeRange',
       icon: 'iconfont icon-riqifanwei',
@@ -257,6 +269,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '图片',
       name: 'UploadImage',
       icon: 'iconfont icon-tupian',
@@ -278,6 +291,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '附件',
       name: 'UploadFile',
       icon: 'iconfont icon-fujian',
@@ -299,6 +313,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '人员',
       name: 'UserPicker',
       icon: 'iconfont icon-yonghu',
@@ -318,6 +333,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '部门',
       name: 'DeptPicker',
       icon: 'iconfont icon-bumendanxuan',
@@ -337,6 +353,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '评分',
       name: 'Rate',
       icon: 'iconfont icon-xihuan',
@@ -369,6 +386,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
   title: '高级控件',
   components: [
     {
+      id: '',
       title: '流水号',
       name: 'SerialNumber',
       icon: 'iconfont icon-liushuihaoziduan',
@@ -385,6 +403,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '关联表单',
       name: 'AssociatedForm',
       icon: 'iconfont icon-guanlianbiaodan',
@@ -408,6 +427,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '地理位置',
       name: 'GeoLocation',
       icon: 'iconfont icon-dingwei',
@@ -425,6 +445,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '省市区',
       name: 'Area',
       icon: 'iconfont icon-shengshiqu',
@@ -444,6 +465,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '签名',
       name: 'Signature',
       icon: 'iconfont icon-qianming',
@@ -465,6 +487,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '关联流程',
       name: 'AssociatedProcess',
       icon: 'iconfont icon-guanlianliucheng',
@@ -481,6 +504,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
+      id: '',
       title: '计算公式',
       name: 'CalcFormula',
       icon: 'iconfont icon-jisuangongshi',
@@ -499,11 +523,12 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       },
     },
     {
-      title: '计算公式(高级)',
-      name: 'CalcFormulaAdvanced',
+      id: '',
+      title: '汇总计算',
+      name: 'SummaryFormula',
       icon: 'iconfont icon-hanshu',
-      value: '',
-      valueType: ValueType.string,
+      value: 0,
+      valueType: ValueType.number,
       props: {
         // 必填
         required: false,
@@ -511,14 +536,57 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
+        placeholder: '计算结果',
         precision: 0,
-        isPlus: false,
-        jsCode: '',
-        explain: [],
+        formula: '', //公式字符串
       },
     },
   ],
 };
+
+/** 列表默认字段 */
+export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
+  {
+    id: 'create_by',
+    title: '创建人员',
+    name: 'UserPicker',
+    icon: 'iconfont icon-yonghu',
+    value: [],
+    valueType: 'User',
+    props: {
+      // 必填
+      required: false,
+      // 隐藏
+      hidden: '',
+      // 只读
+      readonly: false,
+      multiple: false,
+      expansion: false,
+      options: [],
+      placeholder: '请选择人员',
+    },
+  },
+  {
+    id: 'create_time',
+    title: '创建时间',
+    name: 'DateTimeRange',
+    icon: 'iconfont icon-riqifanwei',
+    value: [],
+    valueType: 'DateRange',
+    props: {
+      // 必填
+      required: false,
+      // 隐藏
+      hidden: '',
+      // 只读
+      readonly: false,
+      // 格式
+      format: 'YYYY-MM-DD',
+      // 时长
+      showLength: false,
+    },
+  },
+];
 
 /**
  * @description: 组件配置导出

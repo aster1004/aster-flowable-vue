@@ -1,13 +1,15 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-05-22 16:11:38
- * @FilePath: \aster-flowable-vue\src\views\workflow\design\design-list.vue
- * @Description: 流程设计列表
+ * @FilePath: \aster-flowable-vue\src\views\workflow\workbench\task-list.vue
+ * @Description: 流程实例列表
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
   <div class="main-box">
-    <app-tree-filter @change="changeApp" />
+    <!-- 左侧应用表单树 -->
+    <form-tree-filter @change="changeForm" />
+    <!-- 右侧表单实例 -->
     <div class="table-box">
       <div class="card table-search" v-show="showSearch">
         <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
@@ -80,51 +82,23 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" header-align="center" align="center" width="50" />
-          <el-table-column prop="formName" label="表单名称" header-align="center" align="center" />
+          <el-table-column prop="id" label="主键" header-align="center" align="center" />
+          <el-table-column prop="taskId" label="任务ID" header-align="center" align="center" />
+          <el-table-column prop="nodeName" label="环节" header-align="center" align="center" />
           <el-table-column
-            prop="icon"
-            label="图标"
-            header-align="center"
-            align="center"
-            width="100"
-          >
-            <template #default="scope">
-              <i
-                :class="[scope.row.icon, 'iconStyle']"
-                :style="{ background: scope.row.iconColor }"
-                v-show="isNotEmpty(scope.row.icon)"
-              ></i>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="sort"
-            label="排序"
-            width="100"
+            prop="taskTime"
+            label="创建时间"
+            width="180"
             header-align="center"
             align="center"
           />
           <el-table-column
-            prop="version"
-            label="版本号"
-            width="100"
-            header-align="center"
-            align="center"
-          >
-            <template #default="scope">
-              <el-tag type="success">v{{ scope.row.version }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="status"
+            prop="form_status"
             :label="$t('label.status')"
             width="100"
             header-align="center"
             align="center"
-          >
-            <template #default="scope">
-              <dict-tag dict-type="status" :value="scope.row.status" />
-            </template>
-          </el-table-column>
+          />
           <el-table-column
             :label="$t('label.operate')"
             width="200"
@@ -132,11 +106,8 @@
             class-name="operation"
           >
             <template #default="scope">
-              <el-button size="small" link type="primary" @click="handleDeployment(scope.row.id)">
-                <i class="iconfont icon-fuxuankuang"></i>部署
-              </el-button>
-              <el-button size="small" link type="primary" @click="handleEdit(scope.row.id)">
-                <i class="iconfont icon-bianji"></i>{{ $t('button.edit') }}
+              <el-button size="small" link type="primary" @click="handle(scope.row.taskId)">
+                <i class="iconfont icon-bianji"></i>办理
               </el-button>
               <el-button size="small" link type="primary" @click="handleDelete(scope.row.id)">
                 <i class="iconfont icon-shanchu"></i>{{ $t('button.delete') }}
@@ -157,28 +128,33 @@
         />
       </div>
     </div>
+    <form-initiation ref="formInitiationRef" />
   </div>
 </template>
 <script setup lang="ts">
-  import { useRouter } from 'vue-router';
-  import AppTreeFilter from '../app/app-tree-filter.vue';
-  import { onMounted, reactive, ref } from 'vue';
-  import { formPageApi, formDeleteApi, deploymentApi } from '@/api/workflow/form';
+  import FormTreeFilter from '../app/form-tree-filter.vue';
+  import FormInitiation from '../form/form-initiation.vue';
+  import { reactive, ref } from 'vue';
+  import { formDeleteApi } from '@/api/workflow/form';
+  import { taskPageApi, completeTaskApi } from '@/api/workflow/process';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useI18n } from 'vue-i18n';
-  import { isNotEmpty } from '@/utils';
+  import { isEmpty } from '@/utils';
 
-  const router = useRouter();
   const { t } = useI18n();
   /** 注册组件 */
   const queryForm = ref();
+  const formInitiationRef = ref();
   /** 是否显示查询 */
   const showSearch = ref(true);
   /** 默认折叠搜索项 */
   const searchCollapsed = ref(true);
+  /** 选中的表单ID */
+  const formId = ref('');
   /** 查询条件 */
   const queryParams = reactive<WorkForm.FormParams>({
+    code: '',
     appId: '',
     formName: '',
     pageNum: 1,
@@ -190,7 +166,6 @@
   const total = ref<number>(0);
   /** 已选择列表 */
   const selectedList = ref<WorkForm.FormModel[]>([]);
-  const loading = ref(true);
 
   /**
    * @description: 重置查询
@@ -207,11 +182,9 @@
    * @return {*}
    */
   const handleQuery = () => {
-    loading.value = true;
-    formPageApi(queryParams).then(({ data }) => {
+    taskPageApi(queryParams).then(({ data }) => {
       dataList.value = data.list;
       total.value = data.total;
-      loading.value = false;
     });
   };
 
@@ -250,16 +223,23 @@
    * @return {*}
    */
   const handleAdd = () => {
-    router.push({ path: '/workflow/design', query: { appId: queryParams.appId } });
+    if (isEmpty(formId.value)) {
+      ElMessage.warning('请先选择左侧表单');
+      return;
+    }
+    formInitiationRef.value.init(formId.value);
   };
 
   /**
-   * @description: 修改
-   * @param {string} key
+   * @description: 完成任务
+   * @param {string} taskId
    * @return {*}
    */
-  const handleEdit = (key: string) => {
-    router.push({ path: '/workflow/design', query: { formId: key } });
+  const handle = (taskId: string) => {
+    console.info('处理待办：', taskId);
+    completeTaskApi(taskId, {}).then((res) => {
+      console.info(res);
+    });
   };
 
   /**
@@ -296,26 +276,18 @@
   };
 
   /**
-   * 切换应用
+   * @description: 切换表单
+   * @param {WorkForm.FormModel} formInfo 选中的表单
+   * @return {*}
    */
-  const changeApp = (appInfo: WorkApp.AppInfo) => {
-    console.info(appInfo);
-    queryParams.appId = appInfo.id;
+  const changeForm = (params: WorkForm.QueryParams) => {
+    queryParams.appId = params.appId;
+    queryParams.code = params.code;
+    if (params.id) {
+      formId.value = params.id;
+    }
     handleQuery();
   };
-
-  const handleDeployment = (id: String) => {
-    deploymentApi(id).then((res) => {
-      console.info('部署：', res);
-    });
-  };
-
-  /**
-   * 初始化加载
-   */
-  onMounted(() => {
-    handleQuery();
-  });
 </script>
 <style lang="scss" scoped>
   .iconStyle {

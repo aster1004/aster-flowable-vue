@@ -38,14 +38,14 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-  import { formInfoApi } from '@/api/workflow/form';
-  import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { setDefaultValue } from '@/utils/workflow';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { computed, ref } from 'vue';
   import FormRender from './form-render.vue';
   import { useI18n } from 'vue-i18n';
+  import { formSubmitApi } from '@/api/workflow/process';
+  import { ResultEnum } from '@/enums/httpEnum';
 
   // 获取工作流store
   const workFlowStore = useWorkFlowStore();
@@ -95,21 +95,6 @@
     };
     return formInfo;
   });
-
-  /**
-   * @description: 加载表单信息
-   * @param {string} id 表单主键
-   * @return {*}
-   */
-  const loadFormInfo = async (formId: string) => {
-    await formInfoApi(formId).then((res) => {
-      if (res.code == ResultEnum.SUCCESS) {
-        workFlowStore.loadForm(res.data);
-      } else {
-        ElMessage.error(res.message);
-      }
-    });
-  };
 
   /**
    * @description: 加载实例数据
@@ -175,6 +160,24 @@
       return;
     }
     console.log('提交--->', formData.value);
+    let submitFormData = {
+      formId: formData.value.formId,
+      formStatus: '0',
+      formData: formData.value,
+    };
+    // 提交表单
+    formSubmitApi(submitFormData).then((res) => {
+      console.info(res);
+      if (res.code == ResultEnum.SUCCESS) {
+        ElMessage.success({
+          message: t('common.success'),
+          duration: 500,
+          onClose: () => {
+            visible.value = false;
+          },
+        });
+      }
+    });
   };
 
   /**
@@ -184,8 +187,9 @@
   const init = async (formId: string, instanceId?: string) => {
     visible.value = true;
     // 加载表单信息
-    await loadFormInfo(formId);
-
+    await workFlowStore.loadFormInfo(formId);
+    formData.value.formId = formId;
+    // TODO根据流程配置设置显隐和只读
     if (instanceId) {
       // 加载实例数据
       await loadFormData(formId, instanceId);

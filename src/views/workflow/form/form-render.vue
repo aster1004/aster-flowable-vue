@@ -51,7 +51,7 @@
       default: () => {},
     },
     formItems: {
-      type: Array<WorkForm.FormItem>,
+      type: Array<WorkComponent.ComponentConfig>,
       default: () => [],
     },
     formInfo: {
@@ -88,11 +88,14 @@
 
   /**
    * @description: 解析表单项
-   * @param {WorkForm.FormItem[]} formItems
+   * @param {WorkComponent.ComponentConfig[]} formItems
    * @param {WorkForm.FormRuleModel} rules
    * @return {*}
    */
-  const analysisFormItems = (formItems: WorkForm.FormItem[], rules: WorkForm.FormRuleModel) => {
+  const analysisFormItems = (
+    formItems: WorkComponent.ComponentConfig[],
+    rules: WorkForm.FormRuleModel,
+  ) => {
     if (!formItems) return {};
     formItems.forEach((item) => {
       if (item.name === 'GridLayout') {

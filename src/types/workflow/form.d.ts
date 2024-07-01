@@ -55,25 +55,29 @@ declare namespace WorkForm {
   }
 
   /**
-   * @description: 表单项
+   * @description: 功能按钮接口
    */
-  export interface FormItem {
-    // 图标
-    icon: string;
-    // 表单项ID
+  export interface FunctionButton {
     id: string;
-    // 表单项名称
-    name: string;
-    // 权限
-    perm: string;
-    // 表单项属性
-    props: FormMapModel;
-    // 表单项标题
     title: string;
-    // 表单项值
-    value: any;
-    // 表单项值类型
-    valueType: string;
+    icon: string;
+    click: any;
+  }
+
+  /**
+   * @description: 列表设置信息
+   */
+  export interface FormListSettings {
+    // 查询条件
+    queryItems: WorkComponent.ComponentConfig[];
+    // 列表字段
+    columns: WorkComponent.ComponentConfig[];
+    // 排序字段
+    sortBy?: string;
+    // 排序方向: asc-升序,desc-降序
+    sortDirection?: string;
+    // 功能
+    actions?: FunctionButton[];
   }
 
   /**
@@ -94,6 +98,8 @@ declare namespace WorkForm {
     labelPosition: string;
     // 标签宽度,默认80px
     labelWidth: number;
+    // 数据标题
+    dataTitle?: string[];
     // 所属应用
     appId?: string;
     // 版本
@@ -116,6 +122,7 @@ declare namespace WorkForm {
     code?: string;
     appId?: string;
     formName?: string;
+    [key: string]: any;
   }
 
   /**
@@ -140,13 +147,13 @@ declare namespace WorkForm {
     // 表单配置
     formConfig?: FormConfig;
     // 表单项
-    formItems: Array<FormItem>;
+    formItems: WorkComponent.ComponentConfig[];
     // 流程
     process?: object;
     // 流程配置
     processConfig?: string;
-    // 动态搜索
-    dynamicSearch?: string;
+    // 列表配置
+    listSettings: FormListSettings;
   }
 
   /**

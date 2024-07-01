@@ -11,8 +11,9 @@
       <design-header ref="designHeaderRef" v-model="activeMenu" @save="save" @publish="publish" />
     </el-header>
     <el-main class="design-main">
-      <form-design ref="formDesignRef" v-show="activeMenu === 'formDesign'" />
+      <form-design ref="formDesignRef" v-if="activeMenu === 'formDesign'" />
       <process-design ref="processDesignRef" v-show="activeMenu === 'processDesign'" />
+      <list-design ref="listDesignRef" v-if="activeMenu == 'listDesign'" />
     </el-main>
   </el-container>
 </template>
@@ -21,6 +22,7 @@
   import DesignHeader from './design-header.vue';
   import FormDesign from '../form/form-design.vue';
   import ProcessDesign from '../process/process-design.vue';
+  import ListDesign from '../list/list-design.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { formSaveApi } from '@/api/workflow/form';
   import { ResultEnum } from '@/enums/httpEnum';
@@ -32,23 +34,23 @@
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
+  // 路由
+  const route = useRoute();
 
+  // 活动菜单
   const activeMenu = ref('formDesign');
-
   // 流程设计
   const processDesignRef = ref();
-
-  let route = useRoute();
 
   /**
    * @description 保存
    */
   const save = () => {
     console.log('save');
-    console.log(workFlowStore.design.formItems);
-    nextTick(() => {
-      processDesignRef.value.jsonValue();
-    });
+    console.log(workFlowStore.design);
+    // nextTick(() => {
+    //   processDesignRef.value.jsonValue();
+    // });
   };
 
   /**
@@ -73,9 +75,14 @@
     });
   };
 
-  onMounted(() => {
+  onMounted(async () => {
+    // 新增
     if (route.query.appId && typeof route.query.appId === 'string') {
-      workFlowStore.design.appId = route.query.appId;
+      await workFlowStore.initFormInfo(route.query.appId);
+    }
+    // 编辑
+    if (route.query.formId && typeof route.query.formId === 'string') {
+      await workFlowStore.loadFormInfo(route.query.formId);
     }
   });
 </script>
