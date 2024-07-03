@@ -92,14 +92,42 @@
       </div>
       <el-table ref="listTableRef" :data="dataList" :border="true" row-key="id">
         <el-table-column prop="dataTitle" label="数据标题" header-align="center" align="center" />
-        <el-table-column
-          v-for="(item, index) in tableColumns"
-          :key="index"
-          :prop="item.id"
-          :label="item.title"
-          header-align="center"
-          align="center"
-        />
+        <template v-if="type === 'design'">
+          <el-table-column
+            v-for="(item, index) in tableColumns"
+            :key="index"
+            :prop="item.id"
+            :label="item.title"
+            header-align="center"
+            align="center"
+          />
+        </template>
+        <template v-else>
+          <el-table-column
+            v-for="(item, index) in tableColumns"
+            :key="index"
+            :prop="item.id"
+            :label="item.title"
+            header-align="center"
+            align="center"
+          >
+            <template #default="scope">
+              <div class="table-component">
+                <span v-if="item.id == 'create_time'">
+                  {{ scope.row[item.id] }}
+                </span>
+                <form-design-render
+                  v-else
+                  :value="convertDataType(item, scope.row[item.id])"
+                  :form-data="{}"
+                  :form-item="item"
+                  :show-label="false"
+                  mode="table"
+                />
+              </div>
+            </template>
+          </el-table-column>
+        </template>
       </el-table>
       <el-pagination
         :background="true"
@@ -163,6 +191,7 @@
   import FormInitiation from '../form/form-initiation.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { formInfoByCodeApi } from '@/api/workflow/form';
+  import { convertDataType } from '@/utils/workflow';
   import { isEmpty, isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus';
@@ -418,6 +447,8 @@
    * @return {*}
    */
   const loadFormInfoByStore = async (columns: WorkComponent.ComponentConfig[]) => {
+    tableColumns.value = columns;
+    columnCheckedIds.value = tableColumns.value.map((item) => item.id);
     // 模拟列表数据
     let data = { dataTitle: '--' };
     columns.forEach((item) => {
