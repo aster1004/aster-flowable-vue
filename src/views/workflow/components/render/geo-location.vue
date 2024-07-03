@@ -35,9 +35,12 @@
         </template>
       </el-input>
     </div>
-    <div v-else>
-      {{ _value.address }}
+    <div v-else-if="mode === 'search'">
+      <el-input v-model="_value" />
     </div>
+    <span v-else>
+      {{ _value.address }}
+    </span>
 
     <amap-marker ref="amapRef" :form="_value" @address="address"></amap-marker>
   </el-form-item>
@@ -56,7 +59,7 @@
       default: {},
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {

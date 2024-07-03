@@ -39,16 +39,14 @@
                 </el-form-item>
               </div>
               <div class="search-right">
-                <el-form-item>
-                  <el-button type="primary" @click="handleQuery">
-                    <i class="iconfont icon-sousuo pr-5px" style="font-size: 12px"></i>
-                    {{ $t('button.search') }}
-                  </el-button>
-                  <el-button @click="resetQuery">
-                    <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
-                    {{ $t('button.reset') }}
-                  </el-button>
-                </el-form-item>
+                <el-button type="primary" @click="handleQuery">
+                  <i class="iconfont icon-sousuo pr-5px" style="font-size: 12px"></i>
+                  {{ $t('button.search') }}
+                </el-button>
+                <el-button @click="resetQuery">
+                  <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
+                  {{ $t('button.reset') }}
+                </el-button>
               </div>
             </div>
           </el-form>
@@ -80,8 +78,8 @@
             width="50"
           />
           <el-table-column
-            prop="username"
-            :label="$t('label.user.username')"
+            prop="realName"
+            :label="$t('label.user.realName')"
             width="120"
             header-align="center"
             align="center"
@@ -108,7 +106,7 @@
           v-model:page-size="queryParams.pageSize"
           :page-sizes="[10, 25, 50, 100]"
           :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, sizes, prev, pager, next"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -170,16 +168,14 @@
                 </el-form-item>
               </div>
               <div class="search-right">
-                <el-form-item>
-                  <el-button type="primary" @click="handleQuery">
-                    <i class="iconfont icon-sousuo pr-5px" style="font-size: 12px"></i>
-                    {{ $t('button.search') }}
-                  </el-button>
-                  <el-button @click="resetQuery">
-                    <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
-                    {{ $t('button.reset') }}
-                  </el-button>
-                </el-form-item>
+                <el-button type="primary" @click="handleQuery">
+                  <i class="iconfont icon-sousuo pr-5px" style="font-size: 12px"></i>
+                  {{ $t('button.search') }}
+                </el-button>
+                <el-button @click="resetQuery">
+                  <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
+                  {{ $t('button.reset') }}
+                </el-button>
               </div>
             </div>
           </el-form>
@@ -231,7 +227,7 @@
           v-model:page-size="queryDeptParams.pageSize"
           :page-sizes="[10, 25, 50, 100]"
           :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, sizes, prev, pager, next"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -283,16 +279,14 @@
                 </el-form-item>
               </div>
               <div class="search-right">
-                <el-form-item>
-                  <el-button type="primary" @click="handleQuery">
-                    <i class="iconfont icon-sousuo pr-5px" style="font-size: 12px"></i>
-                    {{ $t('button.search') }}
-                  </el-button>
-                  <el-button @click="resetQuery">
-                    <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
-                    {{ $t('button.reset') }}
-                  </el-button>
-                </el-form-item>
+                <el-button type="primary" @click="handleQuery">
+                  <i class="iconfont icon-sousuo pr-5px" style="font-size: 12px"></i>
+                  {{ $t('button.search') }}
+                </el-button>
+                <el-button @click="resetQuery">
+                  <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
+                  {{ $t('button.reset') }}
+                </el-button>
               </div>
             </div>
           </el-form>
@@ -344,7 +338,7 @@
           v-model:page-size="queryDeptParams.pageSize"
           :page-sizes="[10, 25, 50, 100]"
           :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, sizes, prev, pager, next"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -385,8 +379,8 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { reactive, ref, PropType, computed, watchEffect } from 'vue';
-  import { deptListApi, selectDeptsByIdsApi } from '@/api/sys/dept';
+  import { reactive, ref, PropType, computed } from 'vue';
+  import { deptListApi } from '@/api/sys/dept';
   import TreeFilter from '@/components/tree/tree-filter.vue';
   import { selectUsersByDeptIdsApi, userPageApi, selectUsersByRoleIdsApi } from '@/api/sys/user';
   import { getDeptAndSubDeptById } from '@/api/sys/dept';
@@ -498,8 +492,8 @@
    */
   const getUserList = () => {
     userIds.value = [];
-    const ids = _canselected.value.ids;
-    const type = _canselected.value.type;
+    const ids = _canselected.value?.ids;
+    const type = _canselected.value?.type;
     // 判断ids是否有值，有则需要做权限筛选，获取需要过滤的用户id（userIds）
     if (isNotEmpty(ids)) {
       switch (type) {
@@ -594,10 +588,10 @@
    * @param ids
    */
   const getDeptList = () => {
-    const ids = _canselected.value.ids;
+    const ids = _canselected.value?.ids;
     dataList.value = [];
     getDeptAndSubDeptById(queryDeptParams).then(async ({ data }) => {
-      if (ids.length > 0) {
+      if (ids && ids.length > 0) {
         // 通过totalPages 计算总页码
         const totalPages = Math.ceil(data.total / queryDeptParams.pageSize);
         //处理超过一页的情况，循环totalPages，获取每一页的数据，然后进行过滤

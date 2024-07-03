@@ -34,15 +34,9 @@
       :controls="false"
       style="width: 100%"
     />
-    <el-rate
-      v-else
-      :model-value="_value"
-      :colors="formItem.props.colors"
-      :max="formItem.props.max"
-      :allow-half="formItem.props.allowHalf"
-      :show-score="formItem.props.showScore"
-      disabled
-    />
+    <span v-else>
+      {{ _value }}
+    </span>
   </el-form-item>
 </template>
 <script setup lang="ts">
@@ -58,7 +52,7 @@
       default: 0,
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {

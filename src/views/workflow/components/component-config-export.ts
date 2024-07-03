@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 
-const ValueType = {
+export const ValueType = {
   string: 'String',
   object: 'Object',
   array: 'Array',
@@ -556,6 +556,35 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
 
 /** 列表默认字段 */
 export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
+  {
+    id: 'form_status',
+    title: '表单状态',
+    name: 'SelectSingle',
+    icon: 'iconfont icon-danxuankuang',
+    value: '',
+    valueType: ValueType.string,
+    props: {
+      // 必填
+      required: false,
+      // 隐藏
+      hidden: '',
+      // 只读
+      readonly: false,
+      // 展开
+      expand: false,
+      // 类型 static | dict | dynamic
+      type: 'dict',
+      // 静态选项
+      options: [],
+      // 字典类型
+      dictType: 'form_status',
+      // 动态配置
+      dynamic: {
+        label: '',
+        value: '',
+      },
+    },
+  },
   {
     id: 'create_by',
     title: '创建人员',
