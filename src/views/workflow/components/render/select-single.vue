@@ -6,62 +6,87 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
-    </template>
+  <div>
     <template v-if="mode === 'design'">
-      <template v-if="formItem.props.expand">
-        <el-radio-group :model-value="formItem.value" readonly>
-          <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
-            {{ item.label }}
-          </el-radio>
-        </el-radio-group>
-      </template>
-      <template v-else>
-        <el-input :model-value="formItem.value" readonly />
-      </template>
+      <el-form-item
+        v-if="!_hidden"
+        :prop="formItemProp"
+        :label-width="labelWidth"
+        :show-message="showMessage"
+      >
+        <template #label>
+          <span v-show="showLabel">{{ formItem.title }}</span>
+        </template>
+        <template v-if="formItem.props.expand">
+          <el-radio-group :model-value="formItem.value" readonly>
+            <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
+              {{ item.label }}
+            </el-radio>
+          </el-radio-group>
+        </template>
+        <template v-else>
+          <el-input :model-value="formItem.value" readonly />
+        </template>
+      </el-form-item>
     </template>
 
     <template v-else-if="mode === 'form'">
-      <template v-if="formItem.props.expand">
-        <el-radio-group v-model="_value" :disabled="formItem.props.readonly">
-          <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
-            {{ item.label }}
-          </el-radio>
-        </el-radio-group>
-      </template>
-      <template v-else>
-        <el-select
-          v-model="_value"
-          :multiple="false"
-          :clearable="true"
-          :disabled="formItem.props.readonly"
-        >
+      <el-form-item
+        v-if="!_hidden"
+        :prop="formItemProp"
+        :label-width="labelWidth"
+        :show-message="showMessage"
+      >
+        <template #label>
+          <span v-show="showLabel">{{ formItem.title }}</span>
+        </template>
+        <template v-if="formItem.props.expand">
+          <el-radio-group v-model="_value" :disabled="formItem.props.readonly">
+            <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
+              {{ item.label }}
+            </el-radio>
+          </el-radio-group>
+        </template>
+        <template v-else>
+          <el-select
+            v-model="_value"
+            :multiple="false"
+            :clearable="true"
+            :disabled="formItem.props.readonly"
+          >
+            <el-option
+              v-for="(item, i) in options"
+              :key="i"
+              :label="item.label"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </el-option>
+          </el-select>
+        </template>
+      </el-form-item>
+    </template>
+    <template v-else-if="mode === 'search'">
+      <el-form-item
+        v-if="!_hidden"
+        :prop="formItemProp"
+        :label-width="labelWidth"
+        :show-message="showMessage"
+      >
+        <template #label>
+          <span v-show="showLabel">{{ formItem.title }}</span>
+        </template>
+        <el-select v-model="_value" :multiple="false" :clearable="true">
           <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
             {{ item.label }}
           </el-option>
         </el-select>
-      </template>
+      </el-form-item>
     </template>
-
-    <template v-else-if="mode === 'search'">
-      <el-select v-model="_value" :multiple="false" :clearable="true">
-        <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
-          {{ item.label }}
-        </el-option>
-      </el-select>
-    </template>
-
     <template v-else>
-      {{ _value }}
+      {{ _label }}
     </template>
-  </el-form-item>
+  </div>
 </template>
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
@@ -77,7 +102,7 @@
       default: '',
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {
@@ -167,6 +192,21 @@
     set(val) {
       emit('update:value', val);
     },
+  });
+
+  /**
+   * @description: 标签
+   */
+  const _label = computed(() => {
+    let label = '';
+    if (isNotEmpty(_value.value)) {
+      options.value.forEach((item) => {
+        if (item.value === _value.value) {
+          label = item.label;
+        }
+      });
+    }
+    return label;
   });
 
   /**

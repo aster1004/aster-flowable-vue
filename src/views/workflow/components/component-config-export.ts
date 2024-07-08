@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 
-const ValueType = {
+export const ValueType = {
   string: 'String',
   object: 'Object',
   array: 'Array',
@@ -330,6 +330,11 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         expansion: false,
         options: [],
         placeholder: '请选择人员',
+        // 可被可被选择的人员
+        canselected: {
+          type: 'user', // 可选类型，user（选人) | dept(选部门) | sysRole(系统角色) | flowRole(流程角色)
+          ids: [], // 对应类型的ids
+        },
       },
     },
     {
@@ -350,6 +355,11 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         multiple: false,
         expansion: false,
         options: [],
+        // 可被选择的部门
+        canselected: {
+          type: 'dept', // 可选类型,固定位dept
+          ids: [],
+        },
       },
     },
     {
@@ -546,6 +556,35 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
 
 /** 列表默认字段 */
 export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
+  {
+    id: 'form_status',
+    title: '流程状态',
+    name: 'SelectSingle',
+    icon: 'iconfont icon-danxuankuang',
+    value: '',
+    valueType: ValueType.string,
+    props: {
+      // 必填
+      required: false,
+      // 隐藏
+      hidden: '',
+      // 只读
+      readonly: false,
+      // 展开
+      expand: false,
+      // 类型 static | dict | dynamic
+      type: 'dict',
+      // 静态选项
+      options: [],
+      // 字典类型
+      dictType: 'form_status',
+      // 动态配置
+      dynamic: {
+        label: '',
+        value: '',
+      },
+    },
+  },
   {
     id: 'create_by',
     title: '创建人员',

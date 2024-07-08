@@ -203,7 +203,7 @@
         </template>
       </el-drawer>
     </div>
-    <div v-else> 出现未知错误,请联系管理员 </div>
+    <div v-else> {{ _value }} </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -225,7 +225,7 @@
       default: () => [],
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {

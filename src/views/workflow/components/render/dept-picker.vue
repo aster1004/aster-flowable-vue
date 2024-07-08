@@ -46,6 +46,9 @@
         :value="item.id"
       />
     </el-select>
+    <span v-else>
+      {{ _names }}
+    </span>
     <user-org-picker
       ref="userDeptPickerRef"
       type="dept"
@@ -71,7 +74,7 @@
       default: () => [],
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {
@@ -131,16 +134,18 @@
    * @return {*}
    */
   const selectDeptsByIds = async (ids: string[]) => {
-    selectedDepts.value = [];
     if (isNotEmpty(ids)) {
       await selectDeptsByIdsApi(ids).then((res) => {
         if (res.code == ResultEnum.SUCCESS) {
+          selectedDepts.value = [];
           const data = res.data;
           data.forEach((item: Dept.DeptInfo) => {
             selectedDepts.value.push(item);
           });
         }
       });
+    } else {
+      selectedDepts.value = [];
     }
   };
 
@@ -181,6 +186,20 @@
     set(val) {
       emit('update:value', val);
     },
+  });
+
+  /**
+   * @description: 已选中部门的名称
+   */
+  const _names = computed(() => {
+    if (isNotEmpty(selectedDepts.value)) {
+      return selectedDepts.value
+        .map((item: Dept.DeptInfo) => {
+          return item.orgName;
+        })
+        .join(',');
+    }
+    return '';
   });
 
   /**
