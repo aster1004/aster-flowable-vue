@@ -65,7 +65,7 @@
     </template>
 
     <template v-else>
-      {{ _value }}
+      {{ _label }}
     </template>
   </el-form-item>
 </template>
@@ -83,7 +83,7 @@
       default: () => [],
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {
@@ -173,6 +173,23 @@
     set(val) {
       emit('update:value', val);
     },
+  });
+
+  /**
+   * @description: 标签
+   */
+  const _label = computed(() => {
+    let label = '';
+    if (isNotEmpty(_value.value)) {
+      _value.value.forEach((val) => {
+        options.value.forEach((item) => {
+          if (item.value === val) {
+            label += item.label + ' ';
+          }
+        });
+      });
+    }
+    return label;
   });
 
   /**

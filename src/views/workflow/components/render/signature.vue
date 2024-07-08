@@ -28,9 +28,12 @@
       </div>
       <el-image v-if="isNotEmpty(_value)" class="sign-form-image" :src="_value" />
     </div>
-    <div v-else>
+    <div v-else-if="mode === 'search'" class="sign-form">
       <el-image v-if="isNotEmpty(_value)" class="sign-form-image" :src="_value" />
     </div>
+    <span v-else>
+      {{ _value }}
+    </span>
     <Sign
       ref="signRef"
       :show-line-width="formItem.props.showLineWidth"
@@ -54,7 +57,7 @@
       default: '',
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {

@@ -64,17 +64,14 @@
       </div>
     </div>
     <div v-else-if="mode === 'search'" style="width: 100%">
-      {{ _value }}
+      <el-input v-model="_value[0]" />
     </div>
     <div v-else>
-      <el-image
-        style="width: 100px; height: 100px"
-        :preview-src-list="previewList"
-        v-for="(img, i) in fileList"
-        :key="i"
-        :alt="img.name"
-        :src="img.url"
-      />
+      <span v-for="(item, index) in _value" :key="index">
+        <p>
+          {{ item.name }}
+        </p>
+      </span>
     </div>
 
     <el-dialog v-model="previewVisible" :title="'预览-' + previewFile.name">
@@ -102,7 +99,7 @@
       default: () => [],
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {

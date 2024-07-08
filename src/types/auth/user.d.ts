@@ -19,7 +19,7 @@ declare namespace User {
   }
 
   export interface UserInfo {
-    id?: string;
+    id: string;
     avatar?: string; // 头像
     username: string; // 用户名
     nickName?: string; // 昵称

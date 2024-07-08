@@ -29,9 +29,12 @@
       separator="-"
       clearable
     />
-    <div v-else>
+    <div v-else-if="mode === 'search'">
       <el-input v-model="_value" clearable />
     </div>
+    <span v-else>
+      {{ _value }}
+    </span>
   </el-form-item>
 </template>
 <script setup lang="ts">
@@ -48,7 +51,7 @@
       default: '',
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {

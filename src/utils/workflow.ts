@@ -6,8 +6,9 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 
+import { ValueType } from '@/views/workflow/components/component-config-export';
 import moment, { Moment } from 'moment';
-import { isEmpty } from '.';
+import { isEmpty, isNotEmpty, isObject } from '.';
 import { evaluate, parse } from './formula';
 
 /**
@@ -267,6 +268,22 @@ export const flatFormItemsExclude = (formItems: WorkComponent.ComponentConfig[])
 };
 
 /**
+ * 获取字段id所属的表单项
+ * @param fieldId 字段id
+ * @param formItems 表单项
+ * @returns
+ */
+export const selectFormItemByFieldId = (
+  fieldId: string,
+  formItems: WorkComponent.ComponentConfig[],
+) => {
+  const items = flatFormItemsExclude(formItems);
+  return items.find((item) => {
+    return item.id === fieldId;
+  });
+};
+
+/**
  * @description: 设置默认值
  * @param {WorkComponent.ComponentConfig[]} formItems 表单项
  * @param {WorkForm.FormDataModel} formData 表单数据
@@ -497,4 +514,40 @@ export const getDateLength = (val: string[], format: string): string => {
     durationFormat(hours, '小时') +
     durationFormat(minutes, '分钟')
   );
+};
+
+/**
+ * @description: 转换值类型
+ * @param {WorkComponent} formItem 配置项
+ * @param {any} value 值
+ * @return {*}
+ */
+export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: any) => {
+  if (value == undefined) {
+    return '';
+  }
+  if (formItem.valueType === ValueType.string) {
+    return value;
+  } else if (formItem.valueType === ValueType.number) {
+    return isNotEmpty(value) ? Number(value) : null;
+  } else if (formItem.valueType === ValueType.date) {
+    return isNotEmpty(value) ? value.replace('T', ' ') : null;
+  } else if (formItem.valueType === ValueType.object) {
+    if (typeof value === 'string' && isNotEmpty(value) && value.indexOf('{') != -1) {
+      return JSON.parse(value);
+    }
+    return isObject(value) ? value : {};
+  } else if (
+    formItem.valueType === ValueType.array ||
+    formItem.valueType === ValueType.user ||
+    formItem.valueType === ValueType.dept ||
+    formItem.valueType === ValueType.dateRange
+  ) {
+    if (typeof value === 'string' && isNotEmpty(value) && value.indexOf('[') != -1) {
+      return JSON.parse(value);
+    }
+    return Array.isArray(value) ? value : [];
+  } else {
+    return value;
+  }
 };

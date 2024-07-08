@@ -47,6 +47,9 @@
         :value="item.id"
       />
     </el-select>
+    <span v-else>
+      {{ _names }}
+    </span>
     <user-org-picker
       ref="userDeptPickerRef"
       type="user"
@@ -72,7 +75,7 @@
       default: () => [],
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
       default: 'design',
     },
     formData: {
@@ -133,16 +136,18 @@
    * @return {*}
    */
   const selectUsersByIds = (ids: string[]) => {
-    selectedUsers.value = [];
     if (isNotEmpty(ids)) {
       selectUsersByIdsApi(ids).then((res) => {
         if (res.code == ResultEnum.SUCCESS) {
+          selectedUsers.value = [];
           const data = res.data;
           data.forEach((item: User.UserInfo) => {
             selectedUsers.value.push(item);
           });
         }
       });
+    } else {
+      selectedUsers.value = [];
     }
   };
 
@@ -183,6 +188,20 @@
     set(val) {
       emit('update:value', val);
     },
+  });
+
+  /**
+   * @description: 已选中用户的名称
+   */
+  const _names = computed(() => {
+    if (isNotEmpty(selectedUsers.value)) {
+      return selectedUsers.value
+        .map((item: User.UserInfo) => {
+          return item.realName;
+        })
+        .join(',');
+    }
+    return '';
   });
 
   /**

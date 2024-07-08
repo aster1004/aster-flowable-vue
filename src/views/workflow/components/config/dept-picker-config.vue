@@ -25,24 +25,134 @@
       </template>
       <el-input v-model="_formItem.props.placeholder" />
     </el-form-item>
+    <el-form-item label="默认值">
+      <el-select v-model="valueType">
+        <el-option label="计算公式" value="formula" />
+        <el-option label="数据联动" value="data" />
+      </el-select>
+      <el-input @click="showDefaultValue">
+        <template #suffix>
+          <i class="iconfont icon-xinzeng" style="color: var(--el-color-primary)" />
+        </template>
+      </el-input>
+    </el-form-item>
+    <el-form-item label="仅以下部门可被选择">
+      <el-input @click="showSelectedDialog" readonly v-model="_selectedInfos">
+        <template #suffix>
+          <i class="iconfont icon-xinzeng" style="color: var(--el-color-primary)" />
+        </template>
+      </el-input>
+    </el-form-item>
     <el-form-item label="是否必填">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
     <el-form-item label="是否多选">
       <el-switch v-model="_formItem.props.multiple" />
     </el-form-item>
+    <user-org-picker
+      ref="userDeptPickerRef"
+      type="dept"
+      title="部门选择"
+      :form-item="_formItem"
+      :multiple="true"
+      @success="handleSuccess"
+    />
+    <formula ref="defaultValueRef" title="默认值" v-model:formula="defaultValue" />
   </div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { computed } from 'vue';
-
+  import { computed, ref, watchEffect } from 'vue';
+  import { isNotEmpty } from '@/utils';
+  import { selectDeptsByIdsApi } from '@/api/sys/dept';
+  import { ResultEnum } from '@/enums/httpEnum';
+  import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
+  import Formula from '@/views/workflow/components/common/formula.vue';
+  const valueType = ref<string>('formula');
   // 工作流store
   const workFlowStore = useWorkFlowStore();
-
+  // 默认值
+  const defaultValue = ref<string>('');
+  // 注册组件
+  const defaultValueRef = ref();
+  // 定义一个联合类型
+  type UserDeptRole = User.UserInfo | Dept.DeptInfo | Role.RoleInfo;
+  // 选人选部门组件
+  const userDeptPickerRef = ref();
+  const selectedInfos = ref<UserDeptRole[]>([]);
   // 选中的组件
   const _formItem = computed(() => {
     return workFlowStore.selectFormItem;
+  });
+
+  /**
+   * @description: 显示默认值
+   */
+  const showDefaultValue = () => {
+    defaultValueRef.value.init();
+  };
+
+  /**
+   * @description: 显示筛选部门弹窗
+   */
+  const showSelectedDialog = () => {
+    userDeptPickerRef.value.init(selectedInfos.value);
+  };
+  /**
+   * @description: 选人选部门组件回调
+   * @param {*} val 选中人员
+   * @return {*}
+   */
+  const handleSuccess = (val: UserDeptRole[]) => {
+    const deptIds = ref<string[]>([]);
+    if (val.length > 0) {
+      val.forEach((item: UserDeptRole) => {
+        selectedInfos.value.push(item);
+        item.id && deptIds.value.push(item.id);
+      });
+    }
+    _canselected.value.ids = deptIds.value;
+    selectedInfos.value = [];
+  };
+  const _canselected = computed({
+    get() {
+      return _formItem.value?.props?.canselected;
+    },
+    set(val) {
+      if (_formItem.value) {
+        // 如果_props存在则直接赋值，否则初始化_props对象
+        if (!_formItem.value.props) _formItem.value.props = {};
+        _formItem.value.props.canselected = val;
+      }
+    },
+  });
+  const _selectedInfos = computed(() => {
+    // 根据不通类型，获取不通的名称，如user 获取username，dept 获取deptName，role 获取roleName
+    return (selectedInfos.value || []).map((item: any) => item?.orgName);
+  });
+
+  /**
+   * @description: 根据id查询部门信息
+   * @param {*} ids 部门id集合
+   * @return {*}
+   */
+  const selectDeptsByIds = async (ids: string[]) => {
+    selectedInfos.value = [];
+    _canselected.value.ids = [];
+    if (isNotEmpty(ids)) {
+      await selectDeptsByIdsApi(ids).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          const data = res.data;
+          data.forEach((item: Dept.DeptInfo) => {
+            selectedInfos.value.push(item);
+            _canselected.value.ids.push(item.id);
+          });
+        }
+      });
+    }
+  };
+  watchEffect(() => {
+    selectDeptsByIds(_canselected.value.ids);
   });
 </script>
 <style scoped lang="scss"></style>
