@@ -91,8 +91,16 @@
         </div>
       </div>
       <el-table ref="listTableRef" :data="dataList" :border="true" row-key="id">
-        <el-table-column prop="dataTitle" label="数据标题" header-align="center" align="center" />
+        <el-table-column fixed type="index" width="50" />
         <template v-if="type === 'design'">
+          <el-table-column
+            prop="dataTitle"
+            label="数据标题"
+            fixed
+            header-align="center"
+            align="center"
+            width="160"
+          />
           <el-table-column
             v-for="(item, index) in tableColumns"
             :key="index"
@@ -100,16 +108,42 @@
             :label="item.title"
             header-align="center"
             align="center"
+            width="160"
           />
         </template>
         <template v-else>
           <el-table-column
+            prop="dataTitle"
+            label="数据标题"
+            fixed
+            header-align="center"
+            align="center"
+            width="160"
+            show-overflow-tooltip
+          >
+            <template #default="scope">
+              <div class="flex text-blue-500" @click="handleDetail(scope.row.id)">
+                <form-design-render
+                  v-for="(item, index) in _dataTitleFormItems"
+                  :key="index"
+                  :value="convertDataType(item, scope.row.dataTitle[index])"
+                  :form-data="{}"
+                  :form-item="item"
+                  :show-label="false"
+                  mode="table"
+                />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
             v-for="(item, index) in tableColumns"
             :key="index"
             :prop="item.id"
             :label="item.title"
             header-align="center"
             align="center"
+            width="160"
+            show-overflow-tooltip
           >
             <template #default="scope">
               <div class="table-component">
@@ -153,7 +187,7 @@
     >
       <div class="popover-title" style="width: 100%">
         <span>列表字段</span>
-        <div class="flex justify-center items-center">
+        <div class="flex items-center justify-center">
           <span class="pr-10px">全选</span>
           <el-checkbox
             v-model="columnCheckAll"
@@ -191,7 +225,7 @@
   import FormInitiation from '../form/form-initiation.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { formInfoByCodeApi } from '@/api/workflow/form';
-  import { convertDataType } from '@/utils/workflow';
+  import { convertDataType, selectFormItemByFieldId } from '@/utils/workflow';
   import { isEmpty, isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus';
@@ -267,9 +301,9 @@
         if (res.code === ResultEnum.SUCCESS) {
           dataList.value = res.data.list.map((item) => {
             if (_formInfo.value.dataTitle && _formInfo.value.dataTitle.length > 0) {
-              let dataTitle = '';
+              let dataTitle: any[] = [];
               _formInfo.value.dataTitle.forEach((field) => {
-                dataTitle += item[field] + ' ';
+                dataTitle.push(item[field]);
               });
               return { dataTitle, ...item };
             }
@@ -414,6 +448,15 @@
     formInitiationRef.value.init(props.formId);
   };
 
+  /**
+   * @description: 详情
+   * @param {*} id id
+   * @return {*}
+   */
+  const handleDetail = (id: string) => {
+    const tableName = queryParams.code;
+  };
+
   // 列表设置内容
   const _listSettings = computed(() => {
     const settings = workFlowStore.design.listSettings;
@@ -439,7 +482,24 @@
       labelPosition: workFlowStore.design.labelPosition,
       labelWidth: workFlowStore.design.labelWidth,
       dataTitle: workFlowStore.design.dataTitle,
+      formItems: workFlowStore.design.formItems,
     };
+  });
+
+  /**
+   * @description: 表单标题表单项
+   */
+  const _dataTitleFormItems = computed(() => {
+    let arr: WorkComponent.ComponentConfig[] = [];
+    if (_formInfo.value.dataTitle && _formInfo.value.dataTitle.length > 0) {
+      _formInfo.value.dataTitle.forEach((fieldId) => {
+        const item = selectFormItemByFieldId(fieldId, _formInfo.value.formItems);
+        if (item != null) {
+          arr.push(item);
+        }
+      });
+    }
+    return arr;
   });
 
   /**
@@ -512,6 +572,36 @@
   );
 </script>
 <style scoped lang="scss">
+  ::v-deep(.el-table .cell) {
+    .el-form-item {
+      margin-bottom: 0 !important;
+    }
+    .el-form-item--default {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  ::v-deep(.table-component) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .el-form-item {
+      margin-bottom: 0 !important;
+      .el-form-item__label {
+        height: 0px !important;
+        line-height: 0 !important;
+      }
+    }
+    .el-form-item--default {
+      margin-bottom: 0 !important;
+      .el-form-item__label {
+        height: 0px !important;
+        line-height: 0 !important;
+      }
+    }
+  }
+
   .popover-title {
     display: flex;
     justify-content: space-between;

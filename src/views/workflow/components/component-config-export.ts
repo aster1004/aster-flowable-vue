@@ -558,7 +558,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
 export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
   {
     id: 'form_status',
-    title: '表单状态',
+    title: '流程状态',
     name: 'SelectSingle',
     icon: 'iconfont icon-danxuankuang',
     value: '',

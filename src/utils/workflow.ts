@@ -268,6 +268,22 @@ export const flatFormItemsExclude = (formItems: WorkComponent.ComponentConfig[])
 };
 
 /**
+ * 获取字段id所属的表单项
+ * @param fieldId 字段id
+ * @param formItems 表单项
+ * @returns
+ */
+export const selectFormItemByFieldId = (
+  fieldId: string,
+  formItems: WorkComponent.ComponentConfig[],
+) => {
+  const items = flatFormItemsExclude(formItems);
+  return items.find((item) => {
+    return item.id === fieldId;
+  });
+};
+
+/**
  * @description: 设置默认值
  * @param {WorkComponent.ComponentConfig[]} formItems 表单项
  * @param {WorkForm.FormDataModel} formData 表单数据
@@ -501,9 +517,10 @@ export const getDateLength = (val: string[], format: string): string => {
 };
 
 /**
- * 转换值类型
- * @param formItem 配置项
- * @param value 值
+ * @description: 转换值类型
+ * @param {WorkComponent} formItem 配置项
+ * @param {any} value 值
+ * @return {*}
  */
 export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: any) => {
   if (value == undefined) {

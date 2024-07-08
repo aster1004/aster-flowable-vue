@@ -194,8 +194,6 @@
    * @description: 已选中用户的名称
    */
   const _names = computed(() => {
-    console.log('------------------');
-    console.log(selectedUsers.value);
     if (isNotEmpty(selectedUsers.value)) {
       return selectedUsers.value
         .map((item: User.UserInfo) => {
