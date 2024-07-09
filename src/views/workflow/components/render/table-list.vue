@@ -82,7 +82,7 @@
     </el-form>
     <div v-else-if="mode == 'form'">
       <div class="table-main" :id="formItem.id">
-        <div class="flex justify-between items-center pb-5px">
+        <div class="flex items-center justify-between pb-5px">
           <span class="text-sm font-600">{{ formItem.title }}</span>
         </div>
         <el-table

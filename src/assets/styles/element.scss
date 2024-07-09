@@ -227,7 +227,8 @@
     padding: 16px 20px;
     margin-bottom: 0;
     border-bottom: 1px solid var(--el-border-color-lighter);
-    span {
+    
+    .el-drawer__title {
       font-size: 17px;
       line-height: 17px;
       color: var(--el-text-color-primary) !important;

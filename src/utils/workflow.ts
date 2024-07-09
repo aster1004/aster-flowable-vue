@@ -277,7 +277,7 @@ export const selectFormItemByFieldId = (
   fieldId: string,
   formItems: WorkComponent.ComponentConfig[],
 ) => {
-  const items = flatFormItemsExclude(formItems);
+  const items = flatFormItems(formItems);
   return items.find((item) => {
     return item.id === fieldId;
   });
@@ -514,6 +514,23 @@ export const getDateLength = (val: string[], format: string): string => {
     durationFormat(hours, '小时') +
     durationFormat(minutes, '分钟')
   );
+};
+
+/**
+ * @description: 转换值类型
+ * @param {WorkComponent.ComponentConfig[]} formItems 配置项
+ * @param {string} key 字段id
+ * @param {any} value 值
+ * @return {*}
+ */
+export const convertDataTypes = (
+  formItems: WorkComponent.ComponentConfig[],
+  key: string,
+  value: any,
+) => {
+  const formItem = selectFormItemByFieldId(key, formItems);
+  if (formItem == undefined) return value;
+  return convertDataType(formItem, value);
 };
 
 /**

@@ -99,7 +99,7 @@
             fixed
             header-align="center"
             align="center"
-            width="160"
+            width="180"
           />
           <el-table-column
             v-for="(item, index) in tableColumns"
@@ -108,7 +108,7 @@
             :label="item.title"
             header-align="center"
             align="center"
-            width="160"
+            width="180"
           />
         </template>
         <template v-else>
@@ -118,11 +118,11 @@
             fixed
             header-align="center"
             align="center"
-            width="160"
+            width="180"
             show-overflow-tooltip
           >
             <template #default="scope">
-              <div class="flex text-blue-500" @click="handleDetail(scope.row.id)">
+              <el-button class="flex" type="primary" link @click="handleDetail(scope.row)">
                 <form-design-render
                   v-for="(item, index) in _dataTitleFormItems"
                   :key="index"
@@ -132,7 +132,7 @@
                   :show-label="false"
                   mode="table"
                 />
-              </div>
+              </el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -142,8 +142,7 @@
             :label="item.title"
             header-align="center"
             align="center"
-            width="160"
-            show-overflow-tooltip
+            width="180"
           >
             <template #default="scope">
               <div class="table-component">
@@ -217,12 +216,14 @@
         </el-checkbox-group>
       </div>
     </el-popover>
+    <form-detail ref="formDetailRef" />
   </div>
 </template>
 <script setup lang="ts">
   import { computed, PropType, reactive, ref, unref, watch } from 'vue';
   import FormDesignRender from '../form/form-design-render.vue';
   import FormInitiation from '../form/form-initiation.vue';
+  import FormDetail from '../form/form-detail.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { formInfoByCodeApi } from '@/api/workflow/form';
   import { convertDataType, selectFormItemByFieldId } from '@/utils/workflow';
@@ -253,6 +254,7 @@
   const formInitiationRef = ref();
   const listQueryFormRef = ref();
   const popoverRef = ref();
+  const formDetailRef = ref();
 
   // 是否显示查询
   const showSearch = ref(true);
@@ -450,11 +452,14 @@
 
   /**
    * @description: 详情
-   * @param {*} id id
+   * @param {*} row 行数据
    * @return {*}
    */
-  const handleDetail = (id: string) => {
-    const tableName = queryParams.code;
+  const handleDetail = (row: any) => {
+    const code = queryParams.code;
+    const id = row.id;
+    const procDefId = row.procDefId;
+    formDetailRef.value.init(id, code, procDefId);
   };
 
   // 列表设置内容

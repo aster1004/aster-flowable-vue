@@ -15,6 +15,7 @@
           :key="item.dictValue"
           :index="index"
           :type="item.labelClass"
+          :size="size"
         >
           {{ item.dictLabel }}
         </el-tag>
@@ -27,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
+  import { computed, PropType, ref } from 'vue';
   import { useAppStore } from '@/stores/modules/app';
   import { getDictDataList } from '@/utils';
 
@@ -39,6 +40,10 @@
       required: true,
     },
     value: [Number, String],
+    size: {
+      type: String as PropType<'large' | 'default' | 'small'>,
+      default: 'default',
+    },
   });
 
   const tagValues = ref<string[]>(['primary', 'success', 'info', 'warning', 'danger']);

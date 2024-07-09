@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div>
+  <div style="width: 100%">
     <template v-if="mode === 'design'">
       <el-form-item
         v-if="!_hidden"
