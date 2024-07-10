@@ -69,6 +69,7 @@
           nodeUserList: [],
         };
       }
+      data['id'] = 'node_' + new Date().getTime();
       emits('update:childNodeP', data);
     } else {
       emits('update:childNodeP', {
