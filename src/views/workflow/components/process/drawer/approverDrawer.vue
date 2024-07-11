@@ -126,8 +126,9 @@
       title="选择审批人"
       :visible="rangeVisible"
       v-if="rangeVisible"
+      @submit="handleRange"
       @closeRange="closeRange"
-      :value="111111"
+      :value="[]"
     />
   </el-drawer>
 </template>
@@ -138,6 +139,7 @@
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { flatFormItems } from '@/utils/workflow';
   import Range from '../../render/range.vue';
+  import { isNotEmpty } from '@/utils';
 
   let store = useStore();
   let { setApprover } = store;
@@ -254,6 +256,28 @@
 
   // 选中的tab
   const activeName = ref<string>('nodeProps');
+
+  /**
+   * 获取选中的审批人
+   * @param val
+   */
+  const handleRange = (val: any) => {
+    let expression = '';
+    if (isNotEmpty(val)) {
+      expression = val
+        .map((v) => {
+          if (v.type === 'user') {
+            return '{用户：' + v.name + '}';
+          } else if (v.type === 'dept') {
+            return '{部门：' + v.name + '}';
+          } else {
+            return '';
+          }
+        })
+        .join(',');
+    }
+    nodeForm.value.approveUser = expression;
+  };
 
   const checkedAll = (field: string) => {
     console.info(field, headerConfig.value[field]);
