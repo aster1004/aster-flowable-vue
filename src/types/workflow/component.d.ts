@@ -57,11 +57,31 @@ declare namespace WorkComponent {
   }
 
   /**
-   * @description: 地区节点
+   * @description: 树节点
    */
-  export interface AreaNode {
+  export interface TreeNode {
     label: string;
     value: string;
-    children?: AreaNode[];
+    leaf?: boolean;
+    children?: TreeNode[];
+  }
+
+  /**
+   * @description: 数据填充模型
+   */
+  export interface DataFillModel {
+    currentFieldId: string;
+    associatedFieldId: string;
+  }
+
+  /**
+   * @description: 数据填充选项
+   */
+  export interface DataFillOption {
+    label: string;
+    value: string;
+    disabled?: boolean;
+    type: string;
+    name: string;
   }
 }

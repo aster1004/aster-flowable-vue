@@ -8,9 +8,9 @@
 
 export const ValueType = {
   string: 'String',
+  number: 'Number',
   object: 'Object',
   array: 'Array',
-  number: 'Number',
   date: 'Date',
   user: 'User',
   dept: 'Dept',
@@ -426,14 +426,18 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        // 关联流程
-        dynamicData: [],
-        dynamicName: [],
-        rules: [],
-        filters: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
+        // 关联表单
+        formCode: [],
+        formName: '',
+        // 数据填充规则
+        dataFill: [],
+        // 数据范围限定
+        dataScope: {
+          label: '', // 公式回显用
+          value: '', // 公式解析用
         },
+        // 显示字段
+        displayField: [],
       },
     },
     {

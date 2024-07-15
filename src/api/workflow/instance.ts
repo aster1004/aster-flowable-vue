@@ -33,3 +33,16 @@ export const instanceInfoApi = (params: Process.InstanceQueryParams) => {
     noLoading: true,
   });
 };
+
+/**
+ * @description: 根据code获取流程实例
+ * @param {String} code 表单code
+ * @return {*}
+ */
+export const instanceListByCodeApi = (code: String, status: string) => {
+  return request.post<Process.InstanceInfo[]>(
+    PORT5 + `/process/instance/list`,
+    { code: code, status: status },
+    { noLoading: true },
+  );
+};

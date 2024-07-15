@@ -57,9 +57,10 @@ const excludeComponent = (item: WorkComponent.ComponentConfig) => {
     item.name !== 'UploadFile' &&
     item.name !== 'GeoLocation' &&
     item.name !== 'Signature' &&
+    item.name !== 'AssociatedForm' &&
     item.name !== 'AssociatedProcess' &&
     item.name !== 'CalcFormula' &&
-    item.name !== 'CalcFormulaAdvanced'
+    item.name !== 'SummaryFormula'
   );
 };
 
@@ -314,6 +315,86 @@ export const setDefaultValue = (
       }
     }
   });
+};
+
+/**
+ * @description: 获取数据填充的表单项
+ * @param {WorkComponent.ComponentConfig[]} formItems 表单项
+ * @param {boolean} showTableList 是否显示明细表
+ * @return {*}
+ */
+export const dataFillOptionsByFormItems = (
+  formItems: WorkComponent.ComponentConfig[],
+  showTableList: boolean = false,
+) => {
+  // 先排除布局控件
+  const items = flatFormItems(formItems);
+  let options: WorkComponent.DataFillOption[] = [];
+  items
+    .filter((item: WorkComponent.ComponentConfig) => {
+      if (item.name === 'TableList') {
+        return showTableList;
+      } else if (item.name === 'AssociatedForm') {
+        return false;
+      } else {
+        return true;
+      }
+    })
+    .map((item: WorkComponent.ComponentConfig) => {
+      if (item.name === 'TableList') {
+        item.props.columns.forEach((column) => {
+          options.push({
+            label: item.title + '.' + column.title,
+            value: item.id + '.' + column.id,
+            disabled: false,
+            type: column.valueType,
+            name: column.name,
+          });
+        });
+      } else {
+        options.push({
+          label: item.title,
+          value: item.id,
+          disabled: false,
+          type: item.valueType,
+          name: item.name,
+        });
+      }
+    });
+  return options;
+};
+
+/**
+ * @description: 筛选数据填充项
+ * @param {string} filterType 过滤类型
+ * @param {string} filterName 过滤名称
+ * @param {string} targetType 目标类型
+ * @param {string} targetName 目标名称
+ * @return {*}
+ */
+export const filterDataFillOptionsFilter = (
+  filterType: string,
+  filterName: string,
+  targetType: string,
+  targetName: string,
+) => {
+  if (filterType === ValueType.string) {
+    return targetType === ValueType.string;
+  } else if (
+    filterType === ValueType.number ||
+    filterType === ValueType.date ||
+    filterType == ValueType.dateRange
+  ) {
+    return (
+      targetType === filterType || targetName === 'InputText' || targetName === 'InputTextarea'
+    );
+  } else if (filterType === ValueType.array || filterType === ValueType.object) {
+    return targetName == filterName || targetName === 'InputText' || targetName === 'InputTextarea';
+  } else if (filterType === ValueType.user || filterType === ValueType.dept) {
+    return targetName == filterName;
+  } else {
+    return false;
+  }
 };
 
 /**
