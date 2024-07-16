@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { shallowRef, defineEmits, ref, PropType, computed } from 'vue';
+  import { shallowRef, ref, PropType, computed } from 'vue';
   import AMapLoader from '@amap/amap-jsapi-loader';
   import { isEmpty } from '@/utils';
 

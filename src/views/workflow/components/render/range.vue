@@ -286,7 +286,7 @@
     margin-top: 20px;
   }
 
-  ::v-deep .tag-container .el-card__body {
+  ::v-deep(.tag-container .el-card__body) {
     padding: 7px !important;
     padding-left: 0px !important;
   }
@@ -301,7 +301,7 @@
     width: 200px;
   }
 
-  ::v-deep .el-tag {
+  ::v-deep(.el-tag) {
     margin-left: 8px;
     margin-bottom: 8px;
   }
