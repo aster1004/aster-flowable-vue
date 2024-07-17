@@ -41,7 +41,7 @@ export const instanceInfoApi = (params: Process.InstanceQueryParams) => {
  * @return {*}
  */
 export const instanceInfoByInstanceIdApi = (code: string, instanceId: string) => {
-  return request.post<Process.InstanceDetail>(
+  return request.get<Process.InstanceDetail>(
     PORT5 + `/process/instance/info/${instanceId}`,
     {
       code: code,

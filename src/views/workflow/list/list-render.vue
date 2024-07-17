@@ -216,6 +216,7 @@
         </el-checkbox-group>
       </div>
     </el-popover>
+
     <form-detail ref="formDetailRef" />
   </div>
 </template>

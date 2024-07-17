@@ -11,6 +11,7 @@
     :show-close="false"
     :lock-scroll="false"
     :size="drawerSize"
+    :append-to-body="true"
     style="background-color: #f5f7fa !important"
   >
     <template #header="{ close }">
@@ -18,7 +19,7 @@
         <div class="form-header-content">
           <div class="form-header-left">
             <div class="form-header-title">
-              <span :title="_formInfo.formName">{{ _formInfo.formName }}</span>
+              <span :title="_baseFormInfo.formName">{{ _baseFormInfo.formName }}</span>
             </div>
             <div class="form-header-tag">
               <dict-tag dict-type="form_status" :value="formStatus" size="small" />
@@ -51,8 +52,8 @@
             <form-render
               ref="formRenderRef"
               v-model:form-data="formData"
-              :form-items="_formItems"
-              :form-info="_formInfo"
+              :form-items="formInfo.formItems"
+              :form-info="_baseFormInfo"
               style="margin: 8px"
             />
             <div class="form-complete" v-if="formStatus === '9'">
@@ -114,6 +115,23 @@
   const formData = ref<WorkForm.FormDataModel>({});
   // 表单状态
   const formStatus = ref<string>('');
+  // 表单信息
+  const formInfo = ref<WorkForm.FormModel>({
+    icon: 'iconfont icon-gengduo',
+    iconColor: '',
+    labelPosition: 'left',
+    formName: '未命名表单',
+    formItems: [],
+    process: {},
+    labelWidth: 80,
+    listSettings: {
+      queryItems: [],
+      columns: [],
+      sortBy: 'create_time',
+      sortDirection: 'desc',
+      actions: [],
+    },
+  });
   // 折叠状态
   const isCollapse = ref<boolean>(true);
   // 活动标签
@@ -206,24 +224,30 @@
     queryParams.procDefId = procDefId;
     await instanceInfoApi(queryParams).then((res) => {
       if (res.code === ResultEnum.SUCCESS) {
-        // 显示抽屉
-        visible.value = true;
-        // 默认不显示footer
-        isFooter.value = false;
-
-        const instanceInfo = res.data.instanceInfo;
+        // 表单信息
         const formDesignInfo = res.data.formInfo;
+        if (isNotEmpty(formDesignInfo)) {
+          formInfo.value = formDesignInfo;
+        }
+        // 表单数据
+        const instanceInfo = res.data.instanceInfo;
         if (isNotEmpty(instanceInfo)) {
           formStatus.value = instanceInfo['form_status'];
           for (const key in instanceInfo) {
             if (key.indexOf('field') != -1) {
-              formData.value[key] = convertDataTypes(_formItems.value, key, instanceInfo[key]);
+              formData.value[key] = convertDataTypes(
+                formInfo.value.formItems,
+                key,
+                instanceInfo[key],
+              );
             }
           }
         }
-        if (isNotEmpty(formDesignInfo)) {
-          workFlowStore.design = formDesignInfo;
-        }
+
+        // 显示抽屉
+        visible.value = true;
+        // 默认不显示footer
+        isFooter.value = false;
       } else {
         visible.value = false;
         ElMessage.error(res.message);
@@ -244,24 +268,30 @@
     }
     await instanceInfoByInstanceIdApi(code, procInstId).then((res) => {
       if (res.code === ResultEnum.SUCCESS) {
-        // 显示抽屉
-        visible.value = true;
-        // 默认不显示footer
-        isFooter.value = false;
-
-        const instanceInfo = res.data.instanceInfo;
+        // 表单信息
         const formDesignInfo = res.data.formInfo;
+        if (isNotEmpty(formDesignInfo)) {
+          formInfo.value = formDesignInfo;
+        }
+        // 表单数据
+        const instanceInfo = res.data.instanceInfo;
         if (isNotEmpty(instanceInfo)) {
           formStatus.value = instanceInfo['form_status'];
           for (const key in instanceInfo) {
             if (key.indexOf('field') != -1) {
-              formData.value[key] = convertDataTypes(_formItems.value, key, instanceInfo[key]);
+              formData.value[key] = convertDataTypes(
+                formInfo.value.formItems,
+                key,
+                instanceInfo[key],
+              );
             }
           }
         }
-        if (isNotEmpty(formDesignInfo)) {
-          workFlowStore.design = formDesignInfo;
-        }
+
+        // 显示抽屉
+        visible.value = true;
+        // 默认不显示footer
+        isFooter.value = false;
       } else {
         visible.value = false;
         ElMessage.error(res.message);
@@ -269,22 +299,16 @@
     });
   };
 
-  // 表单项
-  const _formItems = computed(() => {
-    const formItems = JSON.stringify(workFlowStore.design.formItems);
-    return JSON.parse(formItems);
-  });
-
   // 表单基本信息
-  const _formInfo = computed(() => {
-    const formInfo: WorkForm.BaseInfo = {
-      formName: workFlowStore.design.formName,
-      icon: workFlowStore.design.icon,
-      iconColor: workFlowStore.design.iconColor,
-      labelPosition: workFlowStore.design.labelPosition,
-      labelWidth: workFlowStore.design.labelWidth,
+  const _baseFormInfo = computed(() => {
+    const info: WorkForm.BaseInfo = {
+      formName: formInfo.value.formName,
+      icon: formInfo.value.icon,
+      iconColor: formInfo.value.iconColor,
+      labelPosition: formInfo.value.labelPosition,
+      labelWidth: formInfo.value.labelWidth,
     };
-    return formInfo;
+    return info;
   });
 
   defineExpose({

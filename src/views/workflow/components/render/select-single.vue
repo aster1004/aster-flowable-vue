@@ -200,7 +200,6 @@
   watch(
     () => props.formItem.props.type,
     async (val: string) => {
-      console.log('w--->', val);
       if (val === 'static') {
         options.value = props.formItem.props.options.map((item) => {
           return {

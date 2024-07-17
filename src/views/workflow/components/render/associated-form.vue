@@ -58,8 +58,8 @@
       <el-button class="flex" type="primary" link @click="handleAssociatedForm(_value.value)">
         {{ _value.label }}
       </el-button>
-      <form-detail ref="associatedFormDetailRef" />
     </template>
+    <form-detail ref="associatedFormDetailRef" />
   </el-form-item>
 </template>
 <script setup lang="ts">
