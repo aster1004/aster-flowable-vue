@@ -166,7 +166,11 @@
           _formItem.value.props.displayField = associatedFormInfo.value.dataTitle;
         }
         displayFormItems.value = flatFormItemsExclude(res.data.formItems).filter((item) => {
-          return item.name !== 'UserPicker' && item.name !== 'DeptPicker';
+          return (
+            item.name !== 'AssociatedForm' &&
+            item.name !== 'UserPicker' &&
+            item.name !== 'DeptPicker'
+          );
         });
       } else {
         ElMessage.error(res.message);

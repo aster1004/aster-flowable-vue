@@ -35,6 +35,24 @@ export const instanceInfoApi = (params: Process.InstanceQueryParams) => {
 };
 
 /**
+ * @description: 根据流程实例id获取流程实例详情
+ * @param {String} code 表单code
+ * @param {String} instanceId 流程实例id
+ * @return {*}
+ */
+export const instanceInfoByInstanceIdApi = (code: string, instanceId: string) => {
+  return request.post<Process.InstanceDetail>(
+    PORT5 + `/process/instance/info/${instanceId}`,
+    {
+      code: code,
+    },
+    {
+      noLoading: true,
+    },
+  );
+};
+
+/**
  * @description: 根据code获取流程实例
  * @param {String} code 表单code
  * @return {*}

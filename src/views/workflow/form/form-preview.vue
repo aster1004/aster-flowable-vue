@@ -52,10 +52,10 @@
   const init = () => {
     visible.value = true;
     console.log(JSON.stringify(formData.value));
-    // formData.value = workFlowStore.design.formItems.reduce(
-    //   (acc, cur) => ({ ...acc, [cur.id]: cur.value }),
-    //   {},
-    // );
+    formData.value = workFlowStore.design.formItems.reduce(
+      (acc, cur) => ({ ...acc, [cur.id]: cur.value }),
+      {},
+    );
     console.log(JSON.stringify(formData.value));
   };
 

@@ -459,7 +459,7 @@
     const code = queryParams.code;
     const id = row.id;
     const procDefId = row.procDefId;
-    formDetailRef.value.init(id, code, procDefId);
+    formDetailRef.value.getInstanceInfo(id, code, procDefId);
   };
 
   // 列表设置内容

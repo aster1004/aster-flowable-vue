@@ -36,11 +36,36 @@
         </el-option>
       </el-select>
     </template>
+    <template v-else-if="mode === 'search'">
+      <el-select
+        v-model="_value"
+        :multiple="false"
+        :clearable="true"
+        :disabled="formItem.props.readonly"
+        @change="handleChange"
+      >
+        <el-option
+          v-for="(item, i) in associatedOptions"
+          :key="i"
+          :label="item.label"
+          :value="item"
+        >
+          {{ item.label }}
+        </el-option>
+      </el-select>
+    </template>
+    <template v-else>
+      <el-button class="flex" type="primary" link @click="handleAssociatedForm(_value.value)">
+        {{ _value.label }}
+      </el-button>
+      <form-detail ref="associatedFormDetailRef" />
+    </template>
   </el-form-item>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
   import { computed, PropType, ref, watch } from 'vue';
+  import FormDetail from '../../form/form-detail.vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import { instanceListByCodeApi } from '@/api/workflow/instance';
@@ -80,6 +105,8 @@
     },
   });
 
+  // 注册组件
+  const associatedFormDetailRef = ref();
   // 关联表单的流程实例
   const associatedList = ref<Process.InstanceInfo[]>([]);
   // 关联表单的流程实例选项
@@ -154,6 +181,16 @@
         });
       }
     }
+  };
+
+  /**
+   * @description: 打开关联表单
+   * @param {*} instanceId 流程实例id
+   * @return {*}
+   */
+  const handleAssociatedForm = (instanceId: string) => {
+    const code = props.formItem.props.formCode[1];
+    associatedFormDetailRef.value.getInstanceInfoByInstanceId(code, instanceId);
   };
 
   /**

@@ -95,7 +95,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { instanceInfoApi } from '@/api/workflow/instance';
+  import { instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/instance';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isEmpty, isNotEmpty } from '@/utils';
   import { computed, reactive, ref } from 'vue';
@@ -189,10 +189,13 @@
   };
 
   /**
-   * @description: 初始化
+   * @description: 获取表单信息
+   * @param {string} id
+   * @param {string} code
+   * @param {string} procDefId
    * @return {*}
    */
-  const init = async (id: string, code: string, procDefId: string) => {
+  const getInstanceInfo = async (id: string, code: string, procDefId: string) => {
     if (isEmpty(id) || isEmpty(code)) {
       ElMessage.error('参数错误');
       return;
@@ -202,6 +205,44 @@
     queryParams.code = code;
     queryParams.procDefId = procDefId;
     await instanceInfoApi(queryParams).then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        // 显示抽屉
+        visible.value = true;
+        // 默认不显示footer
+        isFooter.value = false;
+
+        const instanceInfo = res.data.instanceInfo;
+        const formDesignInfo = res.data.formInfo;
+        if (isNotEmpty(instanceInfo)) {
+          formStatus.value = instanceInfo['form_status'];
+          for (const key in instanceInfo) {
+            if (key.indexOf('field') != -1) {
+              formData.value[key] = convertDataTypes(_formItems.value, key, instanceInfo[key]);
+            }
+          }
+        }
+        if (isNotEmpty(formDesignInfo)) {
+          workFlowStore.design = formDesignInfo;
+        }
+      } else {
+        visible.value = false;
+        ElMessage.error(res.message);
+      }
+    });
+  };
+
+  /**
+   * @description: 通过实例id获取表单信息
+   * @param {string} code 表单编码
+   * @param {string} procInstId 流程实例id
+   * @return {*}
+   */
+  const getInstanceInfoByInstanceId = async (code: string, procInstId: string) => {
+    if (isEmpty(procInstId) || isEmpty(code)) {
+      ElMessage.error('参数错误');
+      return;
+    }
+    await instanceInfoByInstanceIdApi(code, procInstId).then((res) => {
       if (res.code === ResultEnum.SUCCESS) {
         // 显示抽屉
         visible.value = true;
@@ -247,7 +288,8 @@
   });
 
   defineExpose({
-    init,
+    getInstanceInfo,
+    getInstanceInfoByInstanceId,
   });
 </script>
 
