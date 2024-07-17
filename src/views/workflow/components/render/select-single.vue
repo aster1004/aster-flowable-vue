@@ -6,13 +6,14 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div style="width: 100%">
+  <div class="el-form-item">
     <template v-if="mode === 'design'">
       <el-form-item
         v-if="!_hidden"
         :prop="formItemProp"
         :label-width="labelWidth"
         :show-message="showMessage"
+        style="width: 100%"
       >
         <template #label>
           <span v-show="showLabel">{{ formItem.title }}</span>
@@ -36,6 +37,7 @@
         :prop="formItemProp"
         :label-width="labelWidth"
         :show-message="showMessage"
+        style="width: 100%"
       >
         <template #label>
           <span v-show="showLabel">{{ formItem.title }}</span>
@@ -72,6 +74,7 @@
         :prop="formItemProp"
         :label-width="labelWidth"
         :show-message="showMessage"
+        style="width: 100%"
       >
         <template #label>
           <span v-show="showLabel">{{ formItem.title }}</span>
@@ -91,9 +94,11 @@
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, onMounted, PropType } from 'vue';
+  import { computed, onMounted, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { getDictDataList, isNotEmpty } from '@/utils';
+  import { instanceListByCodeApi } from '@/api/workflow/instance';
+  import { ResultEnum } from '@/enums/httpEnum';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -129,6 +134,8 @@
 
   // 字典
   const appStore = useAppStore();
+  // 选项
+  const options = ref<any[]>([]);
 
   // 键
   const formItemProp = computed(() => {
@@ -158,29 +165,65 @@
   });
 
   /**
-   * @description: 选项
+   * @description: 获取动态选项
+   * @return {*}
    */
-  const options = computed(() => {
-    if (props.formItem.props.type === 'static') {
-      return props.formItem.props.options.map((item) => {
-        return {
-          label: item,
-          value: item,
-        };
+  const getDynamicOptions = async () => {
+    if (
+      isNotEmpty(props.formItem.props.dynamic.value) &&
+      props.formItem.props.dynamic.value.length == 3
+    ) {
+      await instanceListByCodeApi(props.formItem.props.dynamic.value[1], '9').then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          if (res.data && res.data.length > 0) {
+            options.value = res.data.map((item: Process.InstanceInfo) => {
+              const fieldId = props.formItem.props.dynamic.value[2];
+              const label = item[fieldId];
+              return {
+                value: item.procInstId + '.' + fieldId,
+                label: label,
+              };
+            });
+          } else {
+            options.value = [];
+          }
+        } else {
+          options.value = [];
+        }
       });
-    } else if (props.formItem.props.type === 'dict') {
-      const dataList = getDictDataList(appStore.dictList, props.formItem.props.dictType);
-      return dataList.map((item) => {
-        return {
-          label: item.dictLabel,
-          value: item.dictValue,
-        };
-      });
-    } else if (props.formItem.props.type === 'dynamic') {
-      //TODO 动态选项
+    } else {
+      options.value = [];
     }
-    return [];
-  });
+  };
+
+  // 监听类型变化
+  watch(
+    () => props.formItem.props.type,
+    async (val: string) => {
+      console.log('w--->', val);
+      if (val === 'static') {
+        options.value = props.formItem.props.options.map((item) => {
+          return {
+            label: item,
+            value: item,
+          };
+        });
+      } else if (val === 'dict') {
+        const dataList = getDictDataList(appStore.dictList, props.formItem.props.dictType);
+        options.value = dataList.map((item) => {
+          return {
+            label: item.dictLabel,
+            value: item.dictValue,
+          };
+        });
+      } else if (val === 'dynamic') {
+        await getDynamicOptions();
+      } else {
+        options.value = [];
+      }
+    },
+    { immediate: true, deep: true },
+  );
 
   /**
    * @description: 组件值

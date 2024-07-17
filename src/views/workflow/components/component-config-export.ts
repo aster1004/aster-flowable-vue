@@ -197,7 +197,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 动态配置
         dynamic: {
           label: '',
-          value: '',
+          value: [],
         },
       },
     },
@@ -226,7 +226,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 动态配置
         dynamic: {
           label: '',
-          value: '',
+          value: [],
         },
       },
     },
@@ -417,7 +417,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       title: '关联表单',
       name: 'AssociatedForm',
       icon: 'iconfont icon-guanlianbiaodan',
-      value: {},
+      value: { label: '', value: '' },
       valueType: ValueType.object,
       props: {
         // 必填

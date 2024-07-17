@@ -57,7 +57,6 @@ const excludeComponent = (item: WorkComponent.ComponentConfig) => {
     item.name !== 'UploadFile' &&
     item.name !== 'GeoLocation' &&
     item.name !== 'Signature' &&
-    item.name !== 'AssociatedForm' &&
     item.name !== 'AssociatedProcess' &&
     item.name !== 'CalcFormula' &&
     item.name !== 'SummaryFormula'
@@ -622,7 +621,7 @@ export const convertDataTypes = (
  */
 export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: any) => {
   if (value == undefined) {
-    return '';
+    return formItem.value;
   }
   if (formItem.valueType === ValueType.string) {
     return value;
