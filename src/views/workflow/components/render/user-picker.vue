@@ -61,7 +61,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, ref, watchEffect } from 'vue';
+  import { computed, onMounted, PropType, ref } from 'vue';
   import mittBus from '@/utils/mittBus';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { selectUsersByIdsApi } from '@/api/sys/user';
@@ -207,7 +207,7 @@
   /**
    * @description: 监听_value值变化
    */
-  watchEffect(() => {
+  onMounted(() => {
     selectUsersByIds(_value.value);
   });
 
