@@ -595,7 +595,7 @@ export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
     name: 'UserPicker',
     icon: 'iconfont icon-yonghu',
     value: [],
-    valueType: 'User',
+    valueType: ValueType.user,
     props: {
       // 必填
       required: false,
@@ -607,6 +607,11 @@ export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
       expansion: false,
       options: [],
       placeholder: '请选择人员',
+      // 可被可被选择的人员
+      canselected: {
+        type: 'user', // 可选类型，user（选人) | dept(选部门) | sysRole(系统角色) | flowRole(流程角色)
+        ids: [], // 对应类型的ids
+      },
     },
   },
   {

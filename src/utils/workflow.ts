@@ -623,6 +623,10 @@ export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: 
   if (value == undefined) {
     return formItem.value;
   }
+  // 特殊处理创建人员
+  if (formItem.id === 'create_by') {
+    return Array.isArray(value) ? value : [value];
+  }
   if (formItem.valueType === ValueType.string) {
     return value;
   } else if (formItem.valueType === ValueType.number) {
