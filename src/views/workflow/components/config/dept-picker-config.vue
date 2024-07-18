@@ -55,6 +55,7 @@
       title="部门选择"
       :form-item="_formItem"
       :multiple="true"
+      mode="design"
       @success="handleSuccess"
     />
     <formula ref="defaultValueRef" title="默认值" v-model:formula="defaultValue" />

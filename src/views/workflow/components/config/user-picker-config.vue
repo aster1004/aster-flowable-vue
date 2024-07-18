@@ -62,6 +62,7 @@
       :title="pickerTitle"
       :form-item="_formItem"
       :multiple="true"
+      mode="design"
       @success="handleSuccess"
     />
     <formula ref="defaultValueRef" title="默认值" v-model:formula="defaultValue" />
@@ -155,13 +156,13 @@
    */
   const _selectedInfos = computed(() => {
     console.log('canselected', selectedInfos.value);
-    // 根据不通类型，获取不通的名称，如user 获取username，dept 获取deptName，role 获取roleName
+    // 根据不通类型，获取不通的名称，如user 获取realName，dept 获取deptName，role 获取roleName
     return (selectedInfos.value || []).map((item: any) => getLabel(item));
   });
   const getLabel = (item: any) => {
     switch (_canselected.value.type) {
       case 'user':
-        return item?.username;
+        return item?.realName;
       case 'dept':
         return item?.orgName;
       case 'sysRole':

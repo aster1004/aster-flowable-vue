@@ -55,6 +55,7 @@
       type="user"
       title="选择人员"
       :form-item="formItem"
+      mode="form"
       @success="handleSuccess"
     />
   </el-form-item>

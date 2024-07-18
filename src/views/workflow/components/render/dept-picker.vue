@@ -53,6 +53,7 @@
       ref="userDeptPickerRef"
       type="dept"
       title="选择部门"
+      mode="form"
       :form-item="formItem"
       @success="handleSuccess"
     />
