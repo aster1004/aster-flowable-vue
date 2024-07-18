@@ -42,7 +42,6 @@
     <el-input-number
       v-else-if="mode === 'search'"
       v-model="_value"
-      size="small"
       clearable
       :precision="formItem.props.precision"
       :placeholder="formItem.props.placeholder"

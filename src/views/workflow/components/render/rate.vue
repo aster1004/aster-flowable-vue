@@ -29,7 +29,6 @@
     <el-input-number
       v-else-if="mode === 'search'"
       v-model="_value"
-      size="small"
       clearable
       :controls="false"
       style="width: 100%"

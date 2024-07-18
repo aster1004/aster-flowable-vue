@@ -263,6 +263,23 @@
   const searchCollapsed = ref(true);
   // 是否只读
   const readonly = ref(false);
+  // 表单信息
+  const formInfo = ref<WorkForm.FormModel>({
+    icon: 'iconfont icon-gengduo',
+    iconColor: '',
+    labelPosition: 'left',
+    formName: '未命名表单',
+    formItems: [],
+    process: {},
+    labelWidth: 80,
+    listSettings: {
+      queryItems: [],
+      columns: [],
+      sortBy: 'create_time',
+      sortDirection: 'desc',
+      actions: [],
+    },
+  });
   // 列表数据总数
   const total = ref(0);
   // 列表数据
@@ -290,6 +307,7 @@
    * @return {*}
    */
   const handleQuery = async () => {
+    console.log('handleQuery');
     if (isNotEmpty(props.code) && !readonly.value) {
       queryParams.code = props.code;
       // 自定义查询配置
@@ -412,10 +430,15 @@
    * @description: 重置查询
    * @return {*}
    */
-  const resetQuery = () => {
+  const resetQuery = async () => {
     listQueryFormRef.value.resetFields();
     queryParams.pageNum = 1;
-    handleQuery();
+    queryParams.code = '';
+    queryParams.columns = [];
+    queryParams.customItems = [];
+    queryParams.customParams = {};
+
+    await handleQuery();
   };
 
   /**
@@ -465,9 +488,10 @@
 
   // 列表设置内容
   const _listSettings = computed(() => {
-    const settings = workFlowStore.design.listSettings;
+    let settings = formInfo.value.listSettings;
     if (props.type === 'design') {
       readonly.value = true;
+      settings = workFlowStore.design.listSettings;
       // 从store中获取表单信息
       loadFormInfoByStore(settings.columns);
     }
@@ -484,11 +508,19 @@
 
   // 表单基础信息
   const _formInfo = computed(() => {
+    if (props.type === 'design') {
+      return {
+        labelPosition: workFlowStore.design.labelPosition,
+        labelWidth: workFlowStore.design.labelWidth,
+        dataTitle: workFlowStore.design.dataTitle,
+        formItems: workFlowStore.design.formItems,
+      };
+    }
     return {
-      labelPosition: workFlowStore.design.labelPosition,
-      labelWidth: workFlowStore.design.labelWidth,
-      dataTitle: workFlowStore.design.dataTitle,
-      formItems: workFlowStore.design.formItems,
+      labelPosition: formInfo.value.labelPosition,
+      labelWidth: formInfo.value.labelWidth,
+      dataTitle: formInfo.value.dataTitle,
+      formItems: formInfo.value.formItems,
     };
   });
 
@@ -531,12 +563,13 @@
    * @return {*}
    */
   const loadFormInfoByCode = async (code: string) => {
+    console.log('loadFormInfoByCode');
     await formInfoByCodeApi(code).then(async (res) => {
       if (res.code == ResultEnum.SUCCESS) {
-        workFlowStore.design = res.data;
+        formInfo.value = res.data;
         // 如果表单没有配置列表设置，则默认配置
         if (res.data.listSettings == null) {
-          workFlowStore.design.listSettings = {
+          formInfo.value.listSettings = {
             queryItems: [],
             columns: [],
             sortBy: 'create_time',
@@ -546,10 +579,8 @@
           tableColumns.value = [];
           columnCheckedIds.value = [];
         } else {
-          if (workFlowStore.design.listSettings.columns.length > 0) {
-            tableColumns.value = JSON.parse(
-              JSON.stringify(workFlowStore.design.listSettings.columns),
-            );
+          if (formInfo.value.listSettings.columns.length > 0) {
+            tableColumns.value = JSON.parse(JSON.stringify(formInfo.value.listSettings.columns));
             columnCheckedIds.value = tableColumns.value.map((item) => item.id);
           } else {
             tableColumns.value = [];
@@ -557,7 +588,7 @@
           }
         }
         // 查询
-        await handleQuery();
+        await resetQuery();
       } else {
         ElMessage.error(res.message);
       }
@@ -567,8 +598,13 @@
   // 监听表单编码
   watch(
     () => props.code,
-    (val) => {
+    (val: string) => {
+      // 默认显示查询条件并折叠
+      showSearch.value = true;
+      searchCollapsed.value = true;
+      // 如果是列表模式，则加载表单信息
       if (props.type == 'list' && isNotEmpty(val)) {
+        console.log('watch');
         readonly.value = false;
         // 根据code获取表单信息
         loadFormInfoByCode(val);

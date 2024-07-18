@@ -35,7 +35,6 @@
     <el-input
       v-else-if="mode === 'search'"
       v-model="_value"
-      size="small"
       clearable
       :placeholder="formItem.props.placeholder"
     />

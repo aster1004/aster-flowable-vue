@@ -18,7 +18,7 @@ export const instancePageApi = (params: Process.InstanceParams) => {
     PORT5 + `/process/instance/page`,
     params,
     {
-      noLoading: true,
+      noLoading: false,
     },
   );
 };
