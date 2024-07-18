@@ -26,7 +26,21 @@
           </el-radio-group>
         </template>
         <template v-else>
-          <el-input :model-value="formItem.value" readonly />
+          <el-select
+            :model-value="formItem.value"
+            :multiple="false"
+            :clearable="true"
+            :disabled="true"
+          >
+            <el-option
+              v-for="(item, i) in options"
+              :key="i"
+              :label="item.label"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </el-option>
+          </el-select>
         </template>
       </el-form-item>
     </template>
