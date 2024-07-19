@@ -137,6 +137,7 @@
    * @return {*}
    */
   const handleSuccess = (val: UserDeptRole[]) => {
+    selectedInfos.value = [];
     const userIds = ref<string[]>([]);
     if (val.length > 0) {
       val.forEach((item: UserDeptRole) => {
@@ -145,7 +146,6 @@
       });
     }
     _canselected.value.ids = userIds.value;
-    selectedInfos.value = [];
   };
 
   /**

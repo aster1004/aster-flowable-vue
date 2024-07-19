@@ -162,6 +162,7 @@
    * @return {*}
    */
   const handleSuccess = (val: UserDeptRole[]) => {
+    selectedInfos.value = [];
     const deptIds = ref<string[]>([]);
     if (val.length > 0) {
       val.forEach((item: UserDeptRole) => {
@@ -170,7 +171,6 @@
       });
     }
     _canselected.value.ids = deptIds.value;
-    selectedInfos.value = [];
   };
 
   /**
@@ -179,6 +179,7 @@
    * @return {*}
    */
   const handleDefaultSuccess = (val: UserDeptRole[]) => {
+    defaultInfos.value = [];
     const deptIds = ref<string[]>([]);
     if (val.length > 0) {
       val.forEach((item: UserDeptRole) => {
@@ -187,7 +188,6 @@
       });
     }
     _default.value = deptIds.value;
-    defaultInfos.value = [];
   };
 
   /**
@@ -204,6 +204,7 @@
           const data = res.data;
           data.forEach((item: Dept.DeptInfo) => {
             selectedInfos.value.push(item);
+            _canselected.value.ids.push(item.id);
           });
         }
       });
