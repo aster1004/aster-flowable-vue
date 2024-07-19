@@ -12,7 +12,7 @@
     </el-header>
     <el-main class="design-main">
       <form-design ref="formDesignRef" v-if="activeMenu === 'formDesign'" />
-      <process-design ref="processDesignRef" v-show="activeMenu === 'processDesign'" />
+      <process-design ref="processDesignRef" v-if="activeMenu === 'processDesign'" />
       <list-design ref="listDesignRef" v-if="activeMenu == 'listDesign'" />
     </el-main>
   </el-container>
@@ -58,9 +58,9 @@
    */
   const publish = () => {
     console.log('publish');
-    nextTick(() => {
+    /*    nextTick(() => {
       processDesignRef.value.jsonValue();
-    });
+    });*/
     console.info(workFlowStore.design);
     formSaveApi(workFlowStore.design).then((res) => {
       console.info('保存成功');

@@ -814,6 +814,7 @@
    * @return {*}
    */
   const init = async (selectedInfo: UserOrDept[]) => {
+    console.log(selectedInfo);
     dialogVisible.value = true;
     if (selectedInfo.length > 0) {
       submitList.value = JSON.parse(JSON.stringify(selectedInfo));

@@ -28,7 +28,7 @@
       <el-option
         v-for="(item, index) in selectedUsers"
         :key="index"
-        :label="item.username"
+        :label="item.realName"
         :value="item.id"
       />
     </el-select>
@@ -43,7 +43,7 @@
       <el-option
         v-for="(item, index) in selectedUsers"
         :key="index"
-        :label="item.username"
+        :label="item.realName"
         :value="item.id"
       />
     </el-select>
@@ -136,9 +136,9 @@
    * @param {*} ids
    * @return {*}
    */
-  const selectUsersByIds = (ids: string[]) => {
+  const selectUsersByIds = async (ids: string[]) => {
     if (isNotEmpty(ids)) {
-      selectUsersByIdsApi(ids).then((res) => {
+      await selectUsersByIdsApi(ids).then((res) => {
         if (res.code == ResultEnum.SUCCESS) {
           selectedUsers.value = [];
           const data = res.data;
@@ -206,10 +206,10 @@
   });
 
   /**
-   * @description: 监听_value值变化
+   * @description: 监听_value值变化,获取对象全量信息，用于表单回显
    */
-  onMounted(() => {
-    selectUsersByIds(_value.value);
+  onMounted(async () => {
+    await selectUsersByIds(_value.value);
   });
 
   /**

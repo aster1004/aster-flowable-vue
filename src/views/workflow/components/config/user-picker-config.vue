@@ -36,6 +36,13 @@
         </template>
       </el-input>
     </el-form-item>
+    <el-form-item label="设置默认值">
+      <el-input @click="setDefaultDialog" readonly v-model="_defaultInfos">
+        <template #suffix>
+          <i class="iconfont icon-xinzeng" style="color: var(--el-color-primary)" />
+        </template>
+      </el-input>
+    </el-form-item>
     <el-form-item label="仅以下人员可被选择">
       <el-select v-model="_canselected.type">
         <el-option label="人员选择" value="user" />
@@ -65,6 +72,16 @@
       mode="design"
       @success="handleSuccess"
     />
+    <!--  设置默认值，是否多选取决于_formItem.props.multiple  -->
+    <user-org-picker
+      ref="userDeptDefaultPickerRef"
+      type="user"
+      title="用户选择"
+      :form-item="_formItem"
+      :multiple="_formItem.props.multiple"
+      mode="design"
+      @success="handleDefaultSuccess"
+    />
     <formula ref="defaultValueRef" title="默认值" v-model:formula="defaultValue" />
   </div>
 </template>
@@ -90,6 +107,10 @@
   type UserDeptRole = User.UserInfo | Dept.DeptInfo | Role.RoleInfo;
   // 选人选部门组件
   const userDeptPickerRef = ref();
+  // 选选部门组件，设置默认值
+  const userDeptDefaultPickerRef = ref();
+  const defaultInfos = ref<UserDeptRole[]>([]);
+
   /**
    * @description: 显示默认值
    */
@@ -102,6 +123,12 @@
    */
   const showSelectedDialog = () => {
     userDeptPickerRef.value.init(selectedInfos.value);
+  };
+  /**
+   * @description: 设置默认值
+   */
+  const setDefaultDialog = () => {
+    userDeptDefaultPickerRef.value.init(defaultInfos.value);
   };
   const selectedInfos = ref<UserDeptRole[]>([]);
   /**
@@ -120,6 +147,24 @@
     _canselected.value.ids = userIds.value;
     selectedInfos.value = [];
   };
+
+  /**
+   * @description: 选人选部门设置默认值组件回调
+   * @param {*} val 选中人员
+   * @return {*}
+   */
+  const handleDefaultSuccess = (val: UserDeptRole[]) => {
+    const userIds = ref<string[]>([]);
+    if (val.length > 0) {
+      val.forEach((item: UserDeptRole) => {
+        defaultInfos.value.push(item);
+        item.id && userIds.value.push(item.id);
+      });
+    }
+    _default.value = userIds.value;
+    defaultInfos.value = [];
+  };
+
   // 选中的组件
   const _formItem = computed(() => {
     return workFlowStore.selectFormItem;
@@ -137,6 +182,20 @@
       }
     },
   });
+  /**
+   * @description: 默认值,id数组
+   */
+  const _default = computed({
+    get() {
+      return _formItem.value?.value || [];
+    },
+    set(val) {
+      if (_formItem.value) {
+        _formItem.value.value = val;
+      }
+    },
+  });
+
   const titleMap = {
     user: '人员选择',
     dept: '部门选择',
@@ -146,6 +205,13 @@
   // 弹窗标题
   const pickerTitle = computed(() => titleMap[_canselected.value.type] || '未知类型');
 
+  /**
+   * @description: 显示用户名
+   */
+  const _defaultInfos = computed(() => {
+    // 根据不通类型，获取不通的名称，如user 获取realName，dept 获取deptName，role 获取roleName
+    return (defaultInfos.value || []).map((item: any) => item?.realName);
+  });
   /**
    *  @description: 显示逗号拼接的字符串
    *  canselected: {
@@ -207,8 +273,8 @@
    * @param {*} ids
    * @return {*}
    */
-  const selectUsersByIds = (ids: string[]) => {
-    selectUsersByIdsApi(ids).then((res) => {
+  const selectUsersByIds = async (ids: string[]) => {
+    await selectUsersByIdsApi(ids).then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
         const data = res.data;
         data.forEach((item: User.UserInfo) => {
@@ -255,12 +321,31 @@
       });
     }
   };
+  /**
+   * @description: 查询默认值：根据id查询用户信息
+   * @param {*} ids 用户id集合
+   * @return {*}
+   */
+  const selectUserDefaultByIds = async (ids: string[]) => {
+    defaultInfos.value = [];
+    if (isNotEmpty(ids)) {
+      await selectUsersByIdsApi(ids).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          const data = res.data;
+          data.forEach((item: User.UserInfo) => {
+            defaultInfos.value.push(item);
+          });
+        }
+      });
+    }
+  };
 
   /**
    * @description: 监听_canselected.value值变化，获取对应的label
    */
   watchEffect(() => {
     getLabelByTypeAndIds(_canselected.value.type, _canselected.value.ids);
+    selectUserDefaultByIds(_default.value);
   });
 </script>
 <style scoped lang="scss"></style>

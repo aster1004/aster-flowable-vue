@@ -204,7 +204,7 @@
   });
 
   /**
-   * @description: 监听_value值变化
+   * @description: 监听_value值变化,获取对象全量信息，用于表单回显
    */
   onMounted(() => {
     selectDeptsByIds(_value.value);
