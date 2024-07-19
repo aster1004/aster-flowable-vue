@@ -13,11 +13,11 @@
     :show-message="showMessage"
   >
     <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
+      <span v-show="showLabel">{{ _formItem.title }}</span>
     </template>
     <template v-if="mode === 'design'">
-      <template v-if="formItem.props.expand">
-        <el-checkbox-group :model-value="formItem.value" readonly>
+      <template v-if="_formItem.props.expand">
+        <el-checkbox-group :model-value="_formItem.value" readonly>
           <el-checkbox
             v-for="(item, i) in options"
             :key="i"
@@ -28,7 +28,7 @@
       </template>
       <template v-else>
         <el-select
-          :model-value="formItem.value"
+          :model-value="_formItem.value"
           :multiple="true"
           :clearable="true"
           :disabled="true"
@@ -86,6 +86,7 @@
   import { getDictDataList, isNotEmpty } from '@/utils';
   import { instanceListByCodeApi } from '@/api/workflow/instance';
   import { ResultEnum } from '@/enums/httpEnum';
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -119,6 +120,8 @@
     },
   });
 
+  // 工作流store
+  const workFlowStore = useWorkFlowStore();
   // 字典
   const appStore = useAppStore();
   // 选项
@@ -183,33 +186,54 @@
     }
   };
 
-  // 监听类型变化
+  /**
+   * @description: 根据选项类型获取选项值
+   * @param {*} type 选项类型
+   * @return {*}
+   */
+  const handleOptions = async (type: string) => {
+    if (type === 'static') {
+      options.value = props.formItem.props.options.map((item) => {
+        return {
+          label: item,
+          value: item,
+        };
+      });
+    } else if (type === 'dict') {
+      const dataList = getDictDataList(appStore.dictList, props.formItem.props.dictType);
+      options.value = dataList.map((item) => {
+        return {
+          label: item.dictLabel,
+          value: item.dictValue,
+        };
+      });
+    } else if (type === 'dynamic') {
+      await getDynamicOptions();
+    } else {
+      options.value = [];
+    }
+  };
+
+  // 监听选项类型变化
   watch(
     () => props.formItem.props.type,
-    async (val: string) => {
-      if (val === 'static') {
-        options.value = props.formItem.props.options.map((item) => {
-          return {
-            label: item,
-            value: item,
-          };
-        });
-      } else if (val === 'dict') {
-        const dataList = getDictDataList(appStore.dictList, props.formItem.props.dictType);
-        options.value = dataList.map((item) => {
-          return {
-            label: item.dictLabel,
-            value: item.dictValue,
-          };
-        });
-      } else if (val === 'dynamic') {
-        await getDynamicOptions();
-      } else {
-        options.value = [];
-      }
+    async (type: string) => {
+      // 根据选项类型获取选项值
+      await handleOptions(type);
     },
     { immediate: true, deep: true },
   );
+
+  // 设计阶段监听组件默认值的变化
+  const _formItem = computed(() => {
+    if (workFlowStore.selectFormItem && workFlowStore.selectFormItem.id === props.formItem.id) {
+      // 默认值变化时，根据选项类型重新获取选项值
+      handleOptions(workFlowStore.selectFormItem.props.type);
+      return workFlowStore.selectFormItem;
+    } else {
+      return props.formItem;
+    }
+  });
 
   /**
    * @description: 组件值
