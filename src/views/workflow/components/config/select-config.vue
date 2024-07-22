@@ -140,7 +140,7 @@
     options.value = dataList.map((item) => {
       return {
         label: item.dictLabel,
-        value: item.dictValue,
+        value: item.dictLabel,
       };
     });
   };
@@ -242,7 +242,7 @@
               const fieldId = _formItem.value.props.dynamic.value[2];
               const label = item[fieldId];
               return {
-                value: item.procInstId + '.' + fieldId,
+                value: label,
                 label: label,
               };
             });

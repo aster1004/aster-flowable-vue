@@ -170,7 +170,7 @@
               const fieldId = props.formItem.props.dynamic.value[2];
               const label = item[fieldId];
               return {
-                value: item.procInstId + '.' + fieldId,
+                value: label,
                 label: label,
               };
             });
@@ -204,7 +204,7 @@
       options.value = dataList.map((item) => {
         return {
           label: item.dictLabel,
-          value: item.dictValue,
+          value: item.dictLabel,
         };
       });
     } else if (type === 'dynamic') {
@@ -253,13 +253,7 @@
   const _label = computed(() => {
     let label = '';
     if (isNotEmpty(_value.value)) {
-      _value.value.forEach((val) => {
-        options.value.forEach((item) => {
-          if (item.value === val) {
-            label += item.label + ' ';
-          }
-        });
-      });
+      label = _value.value.join(',');
     }
     return label;
   });

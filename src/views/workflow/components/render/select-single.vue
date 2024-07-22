@@ -101,7 +101,7 @@
       </el-form-item>
     </template>
     <template v-else>
-      {{ _label }}
+      {{ _value }}
     </template>
   </div>
 </template>
@@ -197,7 +197,7 @@
               const fieldId = props.formItem.props.dynamic.value[2];
               const label = item[fieldId];
               return {
-                value: item.procInstId + '.' + fieldId,
+                value: label,
                 label: label,
               };
             });
@@ -231,7 +231,7 @@
       options.value = dataList.map((item) => {
         return {
           label: item.dictLabel,
-          value: item.dictValue,
+          value: item.dictLabel,
         };
       });
     } else if (type === 'dynamic') {
@@ -272,21 +272,6 @@
     set(val) {
       emit('update:value', val);
     },
-  });
-
-  /**
-   * @description: 标签
-   */
-  const _label = computed(() => {
-    let label = '';
-    if (isNotEmpty(_value.value)) {
-      options.value.forEach((item) => {
-        if (item.value === _value.value) {
-          label = item.label;
-        }
-      });
-    }
-    return label;
   });
 
   /**
