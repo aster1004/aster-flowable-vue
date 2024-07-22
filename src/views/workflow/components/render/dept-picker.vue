@@ -61,7 +61,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, onMounted, PropType, ref } from 'vue';
+  import { computed, onMounted, PropType, ref, watchEffect } from 'vue';
   import mittBus from '@/utils/mittBus';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { ResultEnum } from '@/enums/httpEnum';
@@ -182,11 +182,21 @@
    */
   const _value = computed({
     get() {
+      console.log(props.value);
       return props.value;
     },
     set(val) {
       emit('update:value', val);
     },
+  });
+
+  /**
+   *  @description: 确保 selectedDepts 的值和_value.value 的值保持同步
+   */
+  watchEffect(() => {
+    if (isNotEmpty(_value.value)) {
+      selectDeptsByIds(_value.value);
+    }
   });
 
   /**
