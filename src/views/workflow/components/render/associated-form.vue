@@ -19,7 +19,7 @@
       <el-input placeholder="请选择" readonly />
     </template>
     <template v-else-if="mode === 'form'">
-      <el-select
+      <!-- <el-select
         v-model="_value"
         :multiple="false"
         :clearable="true"
@@ -34,7 +34,43 @@
         >
           {{ item.label }}
         </el-option>
-      </el-select>
+      </el-select> -->
+      <el-popover :visible="popoverVisible" placement="bottom" :width="minWidth" trigger="click">
+        <template #reference>
+          <el-input
+            ref="popoverInputRef"
+            :model-value="_value?.label"
+            clearable
+            @click="popoverClick"
+            @clear="clearPopover"
+          />
+        </template>
+        <div
+          ref="selectRef"
+          class="el-select-dropdown"
+          v-click-outside:="hidePopover"
+          @mouseleave="hidePopover"
+        >
+          <div class="el-scrollbar">
+            <div
+              class="el-select-dropdown__wrap el-scrollbar__wrap el-scrollbar__wrap--hidden-default"
+            >
+            </div>
+          </div>
+          <ul class="el-scrollbar__view el-select-dropdown__list">
+            <li
+              v-for="(item, index) in associatedOptions"
+              :key="index"
+              :class="['el-select-dropdown__item', isActive(item.value) ? 'is-hovering' : '']"
+              @mouseenter="hoverItem(item.value, true)"
+              @mouseleave="hoverItem(item.value, false)"
+              @click.stop="selectOptionClick(item)"
+            >
+              <span>{{ item.label }}</span>
+            </li>
+          </ul>
+        </div>
+      </el-popover>
     </template>
     <template v-else-if="mode === 'search'">
       <el-select
@@ -42,7 +78,6 @@
         :multiple="false"
         :clearable="true"
         :disabled="formItem.props.readonly"
-        @change="handleChange"
       >
         <el-option
           v-for="(item, i) in associatedOptions"
@@ -107,10 +142,76 @@
 
   // 注册组件
   const associatedFormDetailRef = ref();
+  // 显示弹窗
+  const popoverVisible = ref(false);
   // 关联表单的流程实例
   const associatedList = ref<Process.InstanceInfo[]>([]);
   // 关联表单的流程实例选项
   const associatedOptions = ref<any[]>([]);
+  // 活动选项
+  const activeItem = ref('');
+  // 最小宽度
+  const minWidth = ref(200);
+  const popoverInputRef = ref();
+
+  /**
+   * @description: 隐藏弹窗
+   * @return {*}
+   */
+  const hidePopover = () => {
+    popoverVisible.value = false;
+  };
+
+  /**
+   * @description: 点击选项
+   * @return {*}
+   */
+  const selectOptionClick = (item: WorkComponent.TreeNode) => {
+    _value.value = item;
+    handleChange(item);
+    popoverVisible.value = false;
+  };
+
+  /**
+   * @description: 鼠标移入移出
+   * @return {*}
+   */
+  const hoverItem = (val: string, active: boolean) => {
+    if (active) {
+      activeItem.value = val;
+    } else {
+      activeItem.value = '';
+    }
+  };
+
+  /**
+   * @description: 是否是活动选项
+   * @return {*}
+   */
+  const isActive = (val: string) => {
+    return activeItem.value === val;
+  };
+
+  /**
+   * @description: 点击输入框
+   * @return {*}
+   */
+  const popoverClick = () => {
+    popoverVisible.value = !popoverVisible.value;
+    popoverWidth();
+  };
+
+  /**
+   * @description: 弹窗宽度
+   * @return {*}
+   */
+  const popoverWidth = () => {
+    minWidth.value = popoverInputRef.value.$el.offsetWidth;
+  };
+
+  const clearPopover = () => {
+    _value.value = { label: '', value: '' };
+  };
 
   // 键
   const formItemProp = computed(() => {
