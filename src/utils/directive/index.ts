@@ -13,6 +13,7 @@ import throttle from './modules/throttle';
 import longpress from './modules/longpress';
 import lazy from './modules/lazy';
 import waterMarker from './modules/waterMarker';
+import ClickOutside from './modules/clickOutside';
 
 // 全局注册 directive
 export function setupDirective(app: App<Element>) {
@@ -30,4 +31,6 @@ export function setupDirective(app: App<Element>) {
   app.directive('lazy', lazy);
   // 水印指令
   app.directive('waterMarker', waterMarker);
+  // 点击元素外触发
+  app.directive('click-outside', ClickOutside);
 }
