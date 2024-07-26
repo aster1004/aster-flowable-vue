@@ -139,6 +139,44 @@ declare namespace WorkForm {
   }
 
   /**
+   * @description: 列表设置信息
+   */
+  export interface FormProcess {
+    tableId: string;
+    directorMaxLevel: number;
+    flowPermission: [];
+    formPermission: [];
+    workFlowDef: {};
+    nodeConfig: {
+      nodeName: string;
+      type: 0;
+      priorityLevel: string;
+      settype: string;
+      selectMode: string;
+      selectRange: string;
+      directorLevel: string;
+      examineMode: string;
+      noHanderAction: string;
+      examineEndDirectorLevel: string;
+      ccSelfSelectFlag: string;
+      mode: string; //规则类型，后续可能扩装逻辑表达式，http请求、js解析等，
+      js: null; // mode 为js解析时对应的js表达式
+      expression: string; // mode 逻辑表达式时对应的逻辑表达式
+      http: {}; // mode 为http请求时对应的http请求配置
+      groupType: string; // 组之间的，逻辑类型，OR-或，AND-与
+      conditionGroups: [
+        {
+          groupType: string;
+          conditionList: [];
+        },
+      ];
+      nodeUserList: [];
+      childNode: {};
+      conditionNodes: [];
+    };
+  }
+
+  /**
    * @description: 表单信息
    */
   export interface FormModel extends BaseInfo {
@@ -149,7 +187,7 @@ declare namespace WorkForm {
     // 表单项
     formItems: WorkComponent.ComponentConfig[];
     // 流程
-    process?: object;
+    process: FormProcess;
     // 流程配置
     processConfig?: string;
     // 列表配置

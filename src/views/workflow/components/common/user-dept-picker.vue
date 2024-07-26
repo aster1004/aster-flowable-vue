@@ -519,7 +519,7 @@
     }
 
     userPageApi(queryParams).then(async ({ data }) => {
-      console.log('过滤用户id', userIds.value);
+      // console.log('过滤用户id', userIds.value);
       dataList.value = [];
       // 如果是设计模式，则此限制不生效，任然显示全量数据，方便做配置
       if (userIds.value.length > 0 && props.mode !== 'design') {
@@ -692,6 +692,7 @@
     if (row && row.id) {
       val.push({
         id: row.id,
+        type: props.type,
         realName: row.realName, // 用户名称
         orgName: row.orgName, // 部门名称
         roleName: row.roleName, // 角色名称
@@ -701,6 +702,7 @@
       val = selectedList.value?.map((item: any) => {
         return {
           id: item.id,
+          type: props.type,
           realName: item.realName,
           orgName: item.orgName,
           roleName: item.roleName,
@@ -814,7 +816,6 @@
    * @return {*}
    */
   const init = async (selectedInfo: UserOrDept[]) => {
-    console.log(selectedInfo);
     dialogVisible.value = true;
     if (selectedInfo.length > 0) {
       submitList.value = JSON.parse(JSON.stringify(selectedInfo));

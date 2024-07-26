@@ -81,16 +81,36 @@
             nodeName: '条件1',
             error: true,
             type: 3,
+            // mode: 'rule', //规则类型，后续可能扩装逻辑表达式，http请求、js解析等，
+            // js: null, // mode 为js解析时对应的js表达式
+            // expression: '', // mode 逻辑表达式时对应的逻辑表达式
+            // http: {}, // mode 为http请求时对应的http请求配置
+            groupType: 'AND', // 组之间的，逻辑类型，OR-或，AND-与
+            conditionGroups: [
+              {
+                groupType: 'AND', // 组内之间逻辑类型，OR-或，AND-与
+                conditionList: [],
+              },
+            ], // 条件组,里边为conditionList
             priorityLevel: 1,
-            conditionList: [],
             nodeUserList: [],
             childNode: props.childNodeP,
           },
           {
             nodeName: '条件2',
             type: 3,
+            // mode: 'rule', //规则类型，后续可能扩装逻辑表达式，http请求、js解析等，
+            // js: null, // mode 为js解析时对应的js表达式
+            // expression: '', // mode 逻辑表达式时对应的逻辑表达式
+            // http: {}, // mode 为http请求时对应的http请求配置
+            groupType: 'AND', // 组之间的，逻辑类型，OR-或，AND-与
+            conditionGroups: [
+              {
+                groupType: 'AND', // 组内之间逻辑类型，OR-或，AND-与
+                conditionList: [],
+              },
+            ], // 条件组,里边为conditionList
             priorityLevel: 2,
-            conditionList: [],
             nodeUserList: [],
             childNode: null,
           },

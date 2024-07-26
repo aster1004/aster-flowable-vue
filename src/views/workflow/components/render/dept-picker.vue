@@ -182,7 +182,6 @@
    */
   const _value = computed({
     get() {
-      console.log(props.value);
       return props.value;
     },
     set(val) {

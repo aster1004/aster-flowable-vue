@@ -114,6 +114,30 @@ export const formulaItemTree = (
 };
 
 /**
+ * @description: 获取表单组件列表,不获取明细表组件,用于流程设计的条件分支
+ * @param items
+ * @param nodes
+ */
+export const formItemList = (
+  items: WorkComponent.ComponentConfig[],
+  nodes: WorkComponent.ComponentConfig[],
+) => {
+  items.forEach((item) => {
+    // 若是一行多列则遍历items,取子组件
+    if (item.name === 'GridLayout') {
+      item.props.items.forEach((col) => {
+        formItemList(col, nodes);
+      });
+    } else if (item.name === 'GridTitle') {
+      // 若是分组标题则取子组件
+      formItemList(item.props.items, nodes);
+    } else if (excludeComponent(item)) {
+      // 排除不需要的组件
+      nodes.push(item);
+    }
+  });
+};
+/**
  * @description: 获取公式中的字段
  * @param {string} formula 公式
  * @return {*}

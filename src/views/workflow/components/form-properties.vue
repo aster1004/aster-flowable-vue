@@ -101,7 +101,17 @@
     icon: [{ required: true, message: '请选择图标', trigger: 'blur' }],
     dataTitle: [{ required: true, message: '请选择数据标题', trigger: 'blur' }],
   };
-
+  // 校验表单
+  const validate = async () => {
+    return new Promise((resolve, reject) => {
+      formRef.value
+        .validate()
+        .then(() => resolve())
+        .catch((err) => {
+          reject(Object.keys(err).map((v) => err[v][0].message));
+        });
+    });
+  };
   /**
    * @description: 表单数据
    */
@@ -138,6 +148,7 @@
   onMounted(() => {
     showIconSelect.value = true;
   });
+  defineExpose({ validate });
 </script>
 <style scoped lang="scss">
   .properties {

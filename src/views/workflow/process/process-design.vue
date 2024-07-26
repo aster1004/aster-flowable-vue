@@ -5,7 +5,8 @@
         <div class="fd-nav-back" @click="toReturn">
           <i class="anticon anticon-left"></i>
         </div>
-        <div class="fd-nav-title">{{ workFlowDef.name }}</div>
+        <!--        <div class="fd-nav-title">{{ workFlowDef.name }}</div>-->
+        <div class="fd-nav-title">嘻嘻嘻</div>
       </div>
       <div class="fd-nav-right">
         <button type="button" class="ant-btn button-publish" @click="saveSet">
@@ -21,7 +22,11 @@
           <div class="zoom-in" :class="nowVal == 300 && 'disabled'" @click="zoomSize(2)"></div>
         </div>
         <div class="box-scale" :style="`transform: scale(${nowVal / 100});`">
-          <nodeWrap v-model:nodeConfig="nodeConfig" v-model:flowPermission="flowPermission" />
+          <nodeWrap
+            v-if="isNotEmpty(_process)"
+            v-model:nodeConfig="_process.nodeConfig"
+            v-model:flowPermission="_process.flowPermission"
+          />
           <div class="end-node">
             <div class="end-node-circle"></div>
             <div class="end-node-text">流程结束</div>
@@ -31,72 +36,51 @@
     </div>
     <errorDialog v-model:visible="tipVisible" :list="tipList" />
     <promoterDrawer />
-    <approverDrawer :directorMaxLevel="directorMaxLevel" />
+    <approverDrawer :directorMaxLevel="_process.directorMaxLevel" />
     <copyerDrawer />
-    <conditionDrawer />
+    <conditionDrawer ref="conditionRef" />
   </div>
 </template>
 
-<script setup>
-  import { ref, onMounted } from 'vue';
+<script setup lang="ts">
+  import { ref, onMounted, computed } from 'vue';
   import { useRoute } from 'vue-router';
-  import { ElMessage } from 'element-plus';
-  import { getWorkFlowData, setWorkFlowData } from '@/api/workflow/index';
+  import { getWorkFlowData } from '@/api/workflow/index';
   import { useStore } from '@/stores/index';
   import errorDialog from '@/views/workflow/components/process/dialog/errorDialog.vue';
   import promoterDrawer from '@/views/workflow/components/process/drawer/promoterDrawer.vue';
   import approverDrawer from '@/views/workflow/components/process/drawer/approverDrawer.vue';
   import copyerDrawer from '@/views/workflow/components/process/drawer/copyerDrawer.vue';
   import conditionDrawer from '@/views/workflow/components/process/drawer/conditionDrawer.vue';
-  import { isDef, isNotEmpty } from '@/utils';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import processData from '@/data/process.json';
+  import { isNotEmpty } from '@/utils';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 
-  let { setTableId, setIsTried } = useStore();
+  const { setIsTried } = useStore();
 
-  let tipList = ref([]);
-  let tipVisible = ref(false);
-  let nowVal = ref(100);
-  const processConfig = ref({});
-  let nodeConfig = ref({});
-  let workFlowDef = ref({});
-  let flowPermission = ref([]);
-  let directorMaxLevel = ref(0);
+  const tipList = ref([]);
+  const tipVisible = ref(false);
+  const nowVal = ref(100);
+  const processConfig = ref<WorkForm.FormProcess>();
+  const nodeConfig = ref({});
+  const workFlowDef = ref({});
+  const flowPermission = ref([]);
+  const directorMaxLevel = ref(0);
+  const conditionRef = ref();
+  //
+
+  const _process = computed(() => {
+    return workFlowStore.design?.process || {};
+  });
+
   onMounted(async () => {
-    let route = useRoute();
-    console.info(route);
-    let appId = route.query.appId;
-    let id = route.query.id;
-    let { data } = await getWorkFlowData({ workFlowDefId: route.query.workFlowDefId });
-    console.info('流程设计json：', data);
-    if (isDef(id) && isNotEmpty(id)) {
-      console.info('修改流程设计：', id);
-    } else {
-      console.info('初始化流程设计');
-      workFlowStore.design.process = processData;
-      console.info('process', JSON.stringify(workFlowStore.design.process));
-      processConfig.value = data;
-      nodeConfig.value = processData.nodeConfig;
-
-      /* let {
-        nodeConfig: nodes,
-        flowPermission: flows,
-        directorMaxLevel: directors,
-        workFlowDef: works,
-        tableId,
-      } = data;
-      console.info(nodes); */
-      /* nodes.childNode = [];
-      nodeConfig.value = nodes;
-      flowPermission.value = [];
-      directorMaxLevel.value = 0;
-      workFlowDef.value = works; */
-      //1 directorMaxLevel.value = [];
-      //1 setTableId(tableId);
-    }
+    // processConfig.value = _process.value;
+    // nodeConfig.value = _process.value?.nodeConfig;
+    // flowPermission.value = _process.value?.flowPermission;
+    // directorMaxLevel.value = _process.value?.directorMaxLevel;
+    // workFlowDef.value = _process.value?.workFlowDef;
   });
   const toReturn = () => {
     //window.location.href = ""
@@ -127,25 +111,25 @@
       childNode = null;
     }
   };
-  const saveSet = async () => {
-    setIsTried(true);
-    tipList.value = [];
-    reErr(nodeConfig.value);
-    if (tipList.value.length != 0) {
-      tipVisible.value = true;
-      return;
-    }
-    processConfig.value.flowPermission = flowPermission.value;
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(processConfig.value));
-    /* let res = await setWorkFlowData(processConfig.value);
-    if (res.code == 200) {
-      ElMessage.success('设置成功');
-      setTimeout(function () {
-        window.location.href = '';
-      }, 200);
-    } */
+  const validate = async () => {
+    return new Promise(async (resolve, reject) => {
+      const errs = []; // 校验未通过时要呈现的err说明
+      nodeConfig.value = _process.value.nodeConfig;
+      setIsTried(true);
+      conditionRef.value.validate(nodeConfig.value, errs); // 校验条件节点中的条件组、条件表达式是否完善
+      tipList.value = [];
+      reErr(nodeConfig.value);
+      if (tipList.value.length == 0 && errs.length == 0) {
+        resolve();
+      } else {
+        tipList.value.forEach((v) => {
+          errs.push(v.name + '节点- ' + v.type + ' 未设置');
+        });
+        reject(errs);
+      }
+    });
   };
+
   const zoomSize = (type) => {
     if (type == 1) {
       if (nowVal.value == 50) {
@@ -161,13 +145,13 @@
   };
 
   const jsonValue = () => {
-    console.log(JSON.stringify(nodeConfig.value));
     workFlowStore.design.process = nodeConfig.value;
     // console.log(JSON.stringify(processConfig.value));
   };
 
   defineExpose({
     jsonValue,
+    validate,
   });
 </script>
 <style>

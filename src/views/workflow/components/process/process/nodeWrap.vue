@@ -41,7 +41,7 @@
         <i class="iconfont icon-xiangyou"></i>
       </div>
       <div class="error_tip" v-if="isTried && nodeConfig.error">
-        <i class="anticon anticon-exclamation-circle"></i>
+        <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
       </div>
     </div>
     <addNode v-model:childNodeP="nodeConfig.childNode" />
@@ -81,10 +81,10 @@
                   >&gt;</div
                 >
                 <div class="content" @click="setPerson(item.priorityLevel)">{{
-                  $func.conditionStr(nodeConfig, index)
+                  conditionStr(nodeConfig, index)
                 }}</div>
                 <div class="error_tip" v-if="isTried && item.error">
-                  <i class="anticon anticon-exclamation-circle"></i>
+                  <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
                 </div>
               </div>
               <addNode v-model:childNodeP="item.childNode" />
@@ -109,6 +109,7 @@
 <script setup>
   import { onMounted, ref, watch, getCurrentInstance, computed } from 'vue';
   import $func from '@/utils/fun';
+  import { conditionStr } from '@/utils/ConditionCompare';
   import { useStore } from '@/stores/index';
   import { bgColors, placeholderList } from '@/utils/const';
   let _uid = getCurrentInstance().uid;
@@ -136,9 +137,11 @@
   let isInputList = ref([]);
   let isInput = ref(false);
   const resetConditionNodesErr = () => {
+    console.log(props.nodeConfig);
     for (var i = 0; i < props.nodeConfig.conditionNodes.length; i++) {
+      console.log('=========', props.nodeConfig.conditionNodes[i]);
       props.nodeConfig.conditionNodes[i].error =
-        $func.conditionStr(props.nodeConfig, i) == '请设置条件' &&
+        conditionStr(props.nodeConfig, i) == '请设置条件' &&
         i != props.nodeConfig.conditionNodes.length - 1;
     }
   };
@@ -215,7 +218,17 @@
       nodeName: '条件' + len,
       type: 3,
       priorityLevel: len,
-      conditionList: [],
+      mode: 'rule', //规则类型，后续可能扩装逻辑表达式，http请求、js解析等，
+      js: null, // mode 为js解析时对应的js表达式
+      expression: '', // mode 逻辑表达式时对应的逻辑表达式
+      http: {}, // mode 为http请求时对应的http请求配置
+      groupType: 'OR', // 组之间的，逻辑类型，OR-或，AND-与
+      conditionGroups: [
+        {
+          groupType: 'AND', // 组内之间逻辑类型，OR-或，AND-与
+          conditionList: [],
+        },
+      ], // 条件组,里边为conditionList
       nodeUserList: [],
       childNode: null,
     });
