@@ -65,6 +65,7 @@
   import conditionGroup from '@/views/workflow/components/common/condition-group.vue';
   import { ElMessage } from 'element-plus';
   import { conditionStr } from '@/utils/ConditionCompare';
+  import { isEmpty } from '@/utils/index';
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   /**
@@ -95,7 +96,6 @@
     },
   });
   watch(conditionsConfig1, (val) => {
-    console.log(val.priorityLevel);
     conditionsConfig.value = val.value;
     PriorityLevel.value = val.priorityLevel;
     conditionConfig.value = val.priorityLevel
@@ -141,48 +141,56 @@
     }
     conditionConfig.value.conditionGroups.splice(index, 1);
   };
-  const errInfo = ref(null);
-
   // 递归校验条件组条件是否符合
   const handleError = ({ childNode }, errs) => {
     if (childNode) {
-      let { type, conditionNodes } = childNode;
-      console.log(childNode);
+      let { type, typeName, conditionNodes } = childNode;
       // 递归处理条件节点
       if (type == 4) {
         if (conditionNodes.length > 0) {
           for (let i = 0; i < conditionNodes.length; i++) {
             handleError(conditionNodes[i], errs); //处理节点内的
             const conditionNode = conditionNodes[i];
-            if (conditionNode.conditionGroups.length === 0) {
-              errInfo.value = '请添加条件组';
-              errs.push(`条件 ${conditionNode.nodeName}未添加条件组`);
-              // return;
-            } else {
-              for (let k = 0; k < conditionNode.conditionGroups.length; k++) {
-                const conditionList = conditionNode.conditionGroups[k].conditionList;
-                if (conditionList.length === 0) {
-                  errInfo.value = '请给条件组设置条件';
-                  errs.push(`${conditionNode.nodeName}-条件组 ${k + 1} 未添加条件`);
-                  // return;
-                }
-                for (let i = 0; i < conditionList.length; i++) {
-                  const cd = conditionList[i];
-                  if (!cd.compare || hasEmpty(cd.compareVal || [])) {
-                    errInfo.value = `请完善条件项: ${cd.title}`;
-                    errs.push(
-                      `${conditionNode.nodeName}-条件组 ${k + 1} 内条件未完善，请完善条件项: ${cd.title}`,
-                    );
+            const isDefault = conditionNode.isDefault; // 是否为默认条件
+            conditionNode.error = false;
+            if (typeName == 'Exclusive' || typeName == 'Inclusive') {
+              // 排除默认条件的校验
+              if (conditionNode.conditionGroups.length === 0 && !isDefault) {
+                conditionNode.error = true;
+                errs.push(`条件 ${conditionNode.nodeName}未添加条件组`);
+                // return;
+              } else {
+                for (let k = 0; k < conditionNode.conditionGroups.length; k++) {
+                  const conditionList = conditionNode.conditionGroups[k].conditionList;
+                  if (conditionList.length === 0) {
+                    conditionNode.error = true;
+                    errs.push(`${conditionNode.nodeName}-条件组 ${k + 1} 未添加条件`);
                     // return;
+                  }
+                  for (let i = 0; i < conditionList.length; i++) {
+                    const cd = conditionList[i];
+                    if (!cd.compare || hasEmpty(cd.compareVal || [])) {
+                      conditionNode.error = true;
+                      errs.push(
+                        `${conditionNode.nodeName}-条件组 ${k + 1} 内条件未完善，请完善条件项: ${cd.title}`,
+                      );
+                      // return;
+                    }
                   }
                 }
               }
+            } else if (typeName == 'Parallel') {
+              // 处理并行网关校验
+            }
+            //校验下方节点， 排除默认条件的校验
+            if (isEmpty(conditionNode.childNode) && !isDefault) {
+              conditionNode.error = true;
+              errs.push(`${conditionNode.nodeName} 下方分支未配置流程节点`);
             }
           }
         }
-      } else {
-        handleError(childNode, errs);
       }
+      handleError(childNode, errs);
     } else {
       childNode = null;
     }
@@ -192,6 +200,7 @@
    * @return {*}
    */
   const validate = (node, errs) => {
+    console.log('-----流程设计-网关条件校验-----');
     handleError(node, errs);
   };
   const hasEmpty = (arr) => {

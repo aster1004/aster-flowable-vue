@@ -1,19 +1,5 @@
 <template>
   <div>
-    <div class="fd-nav">
-      <div class="fd-nav-left">
-        <div class="fd-nav-back" @click="toReturn">
-          <i class="anticon anticon-left"></i>
-        </div>
-        <!--        <div class="fd-nav-title">{{ workFlowDef.name }}</div>-->
-        <div class="fd-nav-title">嘻嘻嘻</div>
-      </div>
-      <div class="fd-nav-right">
-        <button type="button" class="ant-btn button-publish" @click="saveSet">
-          <span>发 布</span>
-        </button>
-      </div>
-    </div>
     <div class="fd-nav-content">
       <section class="dingflow-design">
         <div class="zoom">
@@ -43,9 +29,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue';
-  import { useRoute } from 'vue-router';
-  import { getWorkFlowData } from '@/api/workflow/index';
+  import { ref, computed } from 'vue';
   import { useStore } from '@/stores/index';
   import errorDialog from '@/views/workflow/components/process/dialog/errorDialog.vue';
   import promoterDrawer from '@/views/workflow/components/process/drawer/promoterDrawer.vue';
@@ -60,14 +44,10 @@
 
   const { setIsTried } = useStore();
 
-  const tipList = ref([]);
+  const tipList = ref<any>([]);
   const tipVisible = ref(false);
   const nowVal = ref(100);
-  const processConfig = ref<WorkForm.FormProcess>();
   const nodeConfig = ref({});
-  const workFlowDef = ref({});
-  const flowPermission = ref([]);
-  const directorMaxLevel = ref(0);
   const conditionRef = ref();
   //
 
@@ -75,17 +55,7 @@
     return workFlowStore.design?.process || {};
   });
 
-  onMounted(async () => {
-    // processConfig.value = _process.value;
-    // nodeConfig.value = _process.value?.nodeConfig;
-    // flowPermission.value = _process.value?.flowPermission;
-    // directorMaxLevel.value = _process.value?.directorMaxLevel;
-    // workFlowDef.value = _process.value?.workFlowDef;
-  });
-  const toReturn = () => {
-    //window.location.href = ""
-  };
-  const reErr = ({ childNode }) => {
+  const reErr = ({ childNode }: any) => {
     if (childNode) {
       let { type, error, nodeName, conditionNodes } = childNode;
       if (type == 1 || type == 2) {
@@ -100,9 +70,16 @@
         reErr(childNode);
       } else if (type == 4) {
         reErr(childNode);
-        for (var i = 0; i < conditionNodes.length; i++) {
-          if (conditionNodes[i].error) {
-            tipList.value.push({ name: conditionNodes[i].nodeName, type: '条件' });
+        for (let i = 0; i < conditionNodes.length; i++) {
+          // 目前只有排他网关需要校验
+          if (childNode.typeName == 'Exclusive') {
+            if (conditionNodes[i].error) {
+              tipList.value.push({ name: conditionNodes[i].nodeName, type: '条件' });
+            } else if (childNode.typeName == 'Parallel') {
+              // 暂时不需要处理
+            } else if (childNode.typeName == 'Inclusive') {
+              // 暂时不需要处理
+            }
           }
           reErr(conditionNodes[i]);
         }
@@ -111,16 +88,19 @@
       childNode = null;
     }
   };
+  /**
+   * @description: 校验流程设计是否完善
+   */
   const validate = async () => {
     return new Promise(async (resolve, reject) => {
-      const errs = []; // 校验未通过时要呈现的err说明
+      const errs: any[] = []; // 校验未通过时要呈现的err说明
       nodeConfig.value = _process.value.nodeConfig;
       setIsTried(true);
       conditionRef.value.validate(nodeConfig.value, errs); // 校验条件节点中的条件组、条件表达式是否完善
       tipList.value = [];
       reErr(nodeConfig.value);
       if (tipList.value.length == 0 && errs.length == 0) {
-        resolve();
+        resolve('ok');
       } else {
         tipList.value.forEach((v) => {
           errs.push(v.name + '节点- ' + v.type + ' 未设置');
@@ -145,7 +125,7 @@
   };
 
   const jsonValue = () => {
-    workFlowStore.design.process = nodeConfig.value;
+    // workFlowStore.design.process = nodeConfig.value;
     // console.log(JSON.stringify(processConfig.value));
   };
 

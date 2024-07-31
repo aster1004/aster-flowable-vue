@@ -168,36 +168,46 @@ export const ProcessCondition = {
  * @returns {string|string}
  */
 export const conditionStr = (nodeConfig, index) => {
-  const { conditionNodes } = nodeConfig;
-  const currentConditions = conditionNodes[index]?.conditionGroups || [];
+  try {
+    const { conditionNodes } = nodeConfig;
+    const conditionType = conditionNodes[index]?.type; // 3-排他网关，5-并行网关，6-包容网关
+    // 如果是排他网关
+    if ((conditionType && conditionType === 3) || conditionType === 6) {
+      const currentConditions = conditionNodes[index]?.conditionGroups || [];
 
-  // Handle the case where there are no conditions defined.
-  if (currentConditions.length === 0) {
-    return index === conditionNodes.length - 1 && conditionNodes[0].conditionGroups.length !== 0
-      ? '其他条件进入此流程'
-      : '请设置条件';
-  }
+      // Handle the case where there are no conditions defined.
+      if (currentConditions.length === 0) {
+        return index === conditionNodes.length - 1 && conditionNodes[0].conditionGroups.length !== 0
+          ? '其他条件进入此流程'
+          : '请设置条件';
+      }
 
-  // Early return for empty condition groups.
-  if (!currentConditions.some((group) => group.conditionList.length > 0)) {
-    return '请设置条件';
-  }
+      // Early return for empty condition groups.
+      if (!currentConditions.some((group) => group.conditionList.length > 0)) {
+        return '请设置条件';
+      }
 
-  // Generate description based on conditions.
-  const desc = currentConditions
-    .filter((group) => group.conditionList.length > 0)
-    .map((group) => {
-      const hasMore = currentConditions.length > 1;
-      const conditionsDesc = group.conditionList
-        .map((cd) => {
-          const handler = ProcessCondition[cd.valueType]?.[cd.name];
-          return handler ? handler.desc(cd) : '未配置条件';
+      // Generate description based on conditions.
+      const desc = currentConditions
+        .filter((group) => group.conditionList.length > 0)
+        .map((group) => {
+          const hasMore = currentConditions.length > 1;
+          const conditionsDesc = group.conditionList
+            .map((cd) => {
+              const handler = ProcessCondition[cd.valueType]?.[cd.name];
+              return handler ? handler.desc(cd) : '未配置条件';
+            })
+            .join(` ${group.groupType === 'AND' ? '且' : '或'} `);
+
+          return `${hasMore ? '[' : ''}${conditionsDesc}${hasMore ? ']' : ''}`;
         })
-        .join(` ${group.groupType === 'AND' ? '且' : '或'} `);
-
-      return `${hasMore ? '[' : ''}${conditionsDesc}${hasMore ? ']' : ''}`;
-    })
-    .join(` ${conditionNodes[index].groupType === 'AND' ? '且' : '或'} `);
-  console.log(desc);
-  return desc;
+        .join(` ${conditionNodes[index].groupType === 'AND' ? '且' : '或'} `);
+      console.log(desc);
+      return desc;
+    } else if (conditionType && conditionType === 5) {
+      return '并行流程分支';
+    }
+  } catch (e) {
+    console.log(e);
+  }
 };

@@ -72,13 +72,13 @@
   import { useI18n } from 'vue-i18n';
   import { WarningFilled, Loading } from '@element-plus/icons-vue';
   const { t } = useI18n();
-
+  //获取当前组件实例对象数组
+  const currentInstances: any = getCurrentInstance();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 路由
   const route = useRoute();
-  //获取当前组件实例对象数组
-  const currentInstances = getCurrentInstance();
+
   // 活动菜单
   const activeMenu = ref('formDesign');
   // 表单设计ref
@@ -90,7 +90,7 @@
 
   const validateVisible = ref(false);
   //校验结果
-  const validateResult = ref({});
+  const validateResult = ref<any>({});
   const validIcon = computed(() => {
     if (!validateResult.value.finished) {
       return 'info';
@@ -123,7 +123,7 @@
     //   processDesignRef.value.jsonValue();
     // });
   };
-  const reloadValidResult = (isSuccess) => {
+  const reloadValidResult = (isSuccess: boolean) => {
     validateResult.value.finished = true;
     validateResult.value.success = isSuccess;
     validateResult.value.desc = '';
@@ -139,9 +139,11 @@
     validate()
       .then(() => {
         reloadValidResult(true);
+        //流程设计json
+        console.log('流程设计json', workFlowStore.design);
       })
       .catch((errs) => {
-        console.log('发布校验errs-----', errs);
+        console.log('发布校验未通过errs-----', errs);
         reloadValidResult(false);
         validateRefs.value[validateIndex.value].status = 'error';
         if (Array.isArray(errs)) {
@@ -166,8 +168,8 @@
     for (let i = 0; i < validateRefs.value.length; i++) {
       validateIndex.value = i;
       await new Promise((resolve) => setTimeout(resolve, 500));
-      // 获取当前的ref对象调用validate方法进行校验
-      await currentInstances.refs[validateRefs.value[validateIndex.value]._ref].validate();
+      let currentRef = validateRefs.value[validateIndex.value]._ref;
+      await currentInstances.refs[currentRef].validate();
       validateRefs.value[validateIndex.value].status = 'success';
     }
   };

@@ -256,7 +256,7 @@
   const formPropertiesRef = ref();
   // 校验表单
   const validate = async () => {
-    console.log('来了老弟。。。');
+    console.log('-----表单属性校验-----');
     return formPropertiesRef.value.validate();
   };
   onMounted(() => {

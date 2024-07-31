@@ -155,7 +155,12 @@
   const sureCondition = () => {
     checkedValue.value.forEach((item: WorkComponent.ComponentConfig) => {
       _value.value.conditionList.push({
-        ...item, //表单属性
+        id: item.id,
+        name: item.name,
+        title: item.title,
+        value: item.value,
+        valueType: item.valueType,
+        props: item.props,
         compareVal: [], //目标值
         compare: '', //比较符
       });
