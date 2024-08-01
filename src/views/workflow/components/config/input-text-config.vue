@@ -50,8 +50,7 @@
   // 注册组件
   const defaultValueRef = ref();
   const dataLinkageRef = ref();
-  // 默认值
-  const defaultValue = ref<string>('');
+  // 默认值类型
   const valueType = ref<string>('formula');
 
   /**

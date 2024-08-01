@@ -146,6 +146,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         placeholder: '',
         // 行数
         rows: 2,
+        // 默认值配置
+        default: {
+          // 类型: 计算公式formula和数据联动data-linkage
+          type: 'formula',
+          value: '',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {
@@ -164,6 +178,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         readonly: false,
         // 精确度
         precision: 0,
+        // 默认值配置
+        default: {
+          // 类型: 计算公式formula和数据联动data-linkage
+          type: 'formula',
+          value: '',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {
@@ -184,6 +212,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         precision: 0,
         // 展示大写
         showChinese: false,
+        // 默认值配置
+        default: {
+          // 类型: 计算公式formula和数据联动data-linkage
+          type: 'formula',
+          value: '',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {

@@ -39,7 +39,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, onMounted, PropType, watch } from 'vue';
+  import { computed, PropType, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import { instanceInfoByCustomParamsApi } from '@/api/workflow/instance';
