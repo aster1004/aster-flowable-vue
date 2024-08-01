@@ -45,6 +45,12 @@
   const emits = defineEmits(['update:value']);
 
   const props = defineProps({
+    headerConfig: {
+      type: Object,
+      default: () => {
+        return [];
+      },
+    },
     value: {
       type: Array,
       default: () => {
@@ -62,27 +68,21 @@
     },
   });
 
-  // 表单属性表格配置
-  const headerConfig = ref({
-    required: false,
-    edit: false,
-    hidden: false,
-    readonly: false,
-  });
-
   /**
    * 选中所有
    */
   const checkedAll = (field: string) => {
-    for (let key in headerConfig.value) {
-      if (headerConfig.value[field]) {
+    let headerConfig = props.headerConfig;
+    for (let key in headerConfig) {
+      console.info('key：', key);
+      if (headerConfig[field]) {
         if (key !== field) {
-          headerConfig.value[key] = false;
+          headerConfig[key] = false;
         }
       }
     }
     _value.value.forEach((formField: any) => {
-      formField.operation = headerConfig.value[field] ? [field] : [];
+      formField.operation = headerConfig[field] ? [field] : [];
     });
   };
 

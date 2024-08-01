@@ -60,7 +60,10 @@
           </el-form-item>
         </el-tab-pane>
         <el-tab-pane label="表单权限" name="formPermission">
-          <form-permission v-model:value="approverConfig.value.formPermission" />
+          <form-permission
+            v-model:value="approverConfig.value.formPermission"
+            :headerConfig="headerConfig"
+          />
         </el-tab-pane>
         <el-tab-pane label="操作按钮" name="buttonPermission">
           <button-permission v-model:value="approverConfig.value.buttonPermission" />
@@ -141,6 +144,12 @@
       editFlag.value = false;
       approverConfig.value = JSON.parse(JSON.stringify(val));
       approverConfig.value.id = val.value.id;
+      headerConfig.value = {
+        required: false,
+        edit: false,
+        hidden: false,
+        readonly: false,
+      };
       let formField = getFormFieldData(val);
       approverConfig.value.value.formPermission = JSON.parse(JSON.stringify(formField));
       let buttonData = getButtonData(val);
@@ -253,6 +262,9 @@
       status: true,
     },
   ]);
+
+  // 表单属性表格配置
+  const headerConfig = ref({});
 
   // 操作按钮数据
   const getButtonData = (val: any) => {
