@@ -91,7 +91,7 @@
             <form-component-properties />
           </el-tab-pane>
           <el-tab-pane label="表单属性" name="form">
-            <form-properties />
+            <form-properties ref="formPropertiesRef" />
           </el-tab-pane>
         </el-tabs>
       </el-scrollbar>
@@ -211,6 +211,7 @@
    * @description: 已绘制的表单
    */
   const formItems = computed(() => {
+    console.log('--------------->', workFlowStore.design.process);
     return workFlowStore.design.formItems;
   });
 
@@ -252,11 +253,17 @@
   const preview = () => {
     formPreviewRef.value.init();
   };
-
+  const formPropertiesRef = ref();
+  // 校验表单
+  const validate = async () => {
+    console.log('-----表单属性校验-----');
+    return formPropertiesRef.value.validate();
+  };
   onMounted(() => {
     // 默认选中表单属性
     rightActiveTab.value = 'form';
   });
+  defineExpose({ validate });
 </script>
 <style scoped lang="scss">
   .el-container .el-aside {
