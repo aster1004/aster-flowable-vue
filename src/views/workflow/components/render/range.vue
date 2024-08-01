@@ -94,8 +94,10 @@
   import { selectUsersByDeptIdsApi } from '@/api/sys/user';
   import { isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
-
+  import { valueEquals } from 'element-plus';
+  // 回调函数
   const emit = defineEmits(['closeRange', 'submit']);
+  // 属性
   const props = defineProps({
     title: {
       type: String,
@@ -106,16 +108,14 @@
       default: () => [],
     },
   });
-
+  // 是否展示
   const visible = ref(false);
-
   // 部门树ref
   const deptTreeRef = ref();
-
+  // tab选中
   const activeName = ref<string>('user');
-
+  // 选中的标签
   const selectedTags = ref<Array<any>>([]);
-
   // 人员的值
   const users = ref<Array<any>>([]);
   // 人员树数据
@@ -138,7 +138,7 @@
   /**
    * 查询部门树数据
    */
-  const queryDeptTree = () => {
+  const queryDeptTree = async () => {
     deptListApi({ status: '0', pageNum: 1, pageSize: 500 }).then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
         let deptData = res.data;
@@ -274,8 +274,20 @@
     visible.value = false;
   };
 
-  onMounted(() => {
-    queryDeptTree();
+  onMounted(async () => {
+    await queryDeptTree();
+    users.value = [];
+    depts.value = [];
+    if (isNotEmpty(props.value)) {
+      selectedTags.value = props.value;
+      selectedTags.value.forEach((item) => {
+        if (item.type === 'user') {
+          users.value.push(item.id);
+        } else if (item.type === 'dept') {
+          depts.value.push(item.id);
+        }
+      });
+    }
     visible.value = true;
   });
 

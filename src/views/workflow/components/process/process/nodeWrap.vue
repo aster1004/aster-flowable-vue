@@ -41,7 +41,7 @@
         <i class="iconfont icon-xiangyou"></i>
       </div>
       <div class="error_tip" v-if="isTried && nodeConfig.error">
-        <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
+        <i class="anticon anticon-exclamation-circle"></i>
       </div>
     </div>
     <addNode v-model:childNodeP="nodeConfig.childNode" />
@@ -49,7 +49,7 @@
   <div class="branch-wrap" v-if="nodeConfig.type == 4">
     <div class="branch-box-wrap">
       <div class="branch-box">
-        <button class="add-branch" @click="addTerm(nodeConfig.typeName)">添加条件</button>
+        <button class="add-branch" @click="addTerm">添加条件</button>
         <div class="col-box" v-for="(item, index) in nodeConfig.conditionNodes" :key="index">
           <div class="condition-node">
             <div class="condition-node-box">
@@ -65,18 +65,13 @@
                     @blur="blurEvent(index)"
                     v-model="item.nodeName"
                   />
-
-                  <span v-else class="editable-title" @click="clickEvent(index)">
-                    <span :class="item.icon"></span>{{ item.nodeName }}</span
-                  >
+                  <span v-else class="editable-title" @click="clickEvent(index)">{{
+                    item.nodeName
+                  }}</span>
                   <span class="priority-title" @click="setPerson(item.priorityLevel)"
                     >优先级{{ item.priorityLevel }}</span
                   >
-                  <i
-                    class="iconfont icon-close condition-node-close"
-                    v-if="!item.isDefault"
-                    @click="delTerm(index)"
-                  ></i>
+                  <i class="iconfont icon-close condition-node-close" @click="delTerm(index)"></i>
                   <!-- <i class="anticon anticon-close close" @click="delTerm(index)"></i> -->
                 </div>
                 <div
@@ -85,11 +80,11 @@
                   @click="arrTransfer(index)"
                   >&gt;</div
                 >
-                <div class="content" @click="setPerson(item.priorityLevel, item.isDefault)">{{
-                  conditionStr(nodeConfig, index)
+                <div class="content" @click="setPerson(item.priorityLevel)">{{
+                  $func.conditionStr(nodeConfig, index)
                 }}</div>
                 <div class="error_tip" v-if="isTried && item.error">
-                  <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
+                  <i class="anticon anticon-exclamation-circle"></i>
                 </div>
               </div>
               <addNode v-model:childNodeP="item.childNode" />
@@ -114,10 +109,8 @@
 <script setup>
   import { onMounted, ref, watch, getCurrentInstance, computed } from 'vue';
   import $func from '@/utils/fun';
-  import { conditionStr } from '@/utils/ConditionCompare';
   import { useStore } from '@/stores/index';
   import { bgColors, placeholderList } from '@/utils/const';
-  import { Lock } from '@element-plus/icons-vue';
   let _uid = getCurrentInstance().uid;
 
   let props = defineProps({
@@ -130,12 +123,8 @@
       default: () => [],
     },
   });
-  let defaultText2 = computed(() => {
-    console.log(props.nodeConfig.type);
-    return props.nodeConfig.type;
-  });
+
   let defaultText = computed(() => {
-    console.log(props.nodeConfig);
     return placeholderList[props.nodeConfig.type];
   });
   let showText = computed(() => {
@@ -147,11 +136,9 @@
   let isInputList = ref([]);
   let isInput = ref(false);
   const resetConditionNodesErr = () => {
-    console.log(props.nodeConfig);
     for (var i = 0; i < props.nodeConfig.conditionNodes.length; i++) {
-      console.log('=========', props.nodeConfig.conditionNodes[i]);
       props.nodeConfig.conditionNodes[i].error =
-        conditionStr(props.nodeConfig, i) == '请设置条件' &&
+        $func.conditionStr(props.nodeConfig, i) == '请设置条件' &&
         i != props.nodeConfig.conditionNodes.length - 1;
     }
   };
@@ -161,7 +148,6 @@
     } else if (props.nodeConfig.type == 2) {
       props.nodeConfig.error = !$func.copyerStr(props.nodeConfig);
     } else if (props.nodeConfig.type == 4) {
-      console.log(props.nodeConfig.conditionNodes.length);
       resetConditionNodesErr();
     }
   });
@@ -179,7 +165,8 @@
   } = store;
   let isTried = computed(() => store.isTried);
   let flowPermission1 = computed(() => store.flowPermission1);
-  let approverConfig1 = computed(() => store.approverConfig1);
+  let approverConfig1 = computed(() => JSON.parse(JSON.stringify(store.approverConfig1)));
+  // let approverConfig1 = computed(() => store.approverConfig1);
   let copyerConfig1 = computed(() => store.copyerConfig1);
   let conditionsConfig1 = computed(() => store.conditionsConfig1);
   watch(flowPermission1, (flow) => {
@@ -187,11 +174,17 @@
       emits('update:flowPermission', flow.value);
     }
   });
-  watch(approverConfig1, (approver) => {
-    if (approver.flag && approver.id === _uid) {
-      emits('update:nodeConfig', approver.value);
-    }
-  });
+
+  watch(
+    () => approverConfig1.value,
+    (approver) => {
+      if (approver.flag && approver.id === props.nodeConfig.id) {
+        console.info('NodeWrap保存【' + approver.id + '】节点的值', JSON.stringify(approver.value));
+        emits('update:nodeConfig', approver.value);
+      }
+    },
+  );
+
   watch(copyerConfig1, (copyer) => {
     if (copyer.flag && copyer.id === _uid) {
       emits('update:nodeConfig', copyer.value);
@@ -223,84 +216,24 @@
   const delNode = () => {
     emits('update:nodeConfig', props.nodeConfig.childNode);
   };
-  /**
-   * 添加条件,根据typeName类型处理
-   * @param typeName，Exclusive：排他网关，Parallel：并行网关，Inclusive：包容网关
-   */
-  const addTerm = (typeName) => {
-    let len = props.nodeConfig.conditionNodes.length;
-    switch (typeName) {
-      case 'Exclusive':
-        // 插入到默认节点的前边
-        props.nodeConfig.conditionNodes.splice(len - 1, 0, {
-          nodeName: '条件' + len,
-          type: 3,
-          priorityLevel: len,
-          groupType: 'OR', // 组之间的，逻辑类型，OR-或，AND-与
-          isDefault: false,
-          conditionGroups: [
-            {
-              groupType: 'AND', // 组内之间逻辑类型，OR-或，AND-与
-              conditionList: [],
-            },
-          ],
-          nodeUserList: [],
-          childNode: null,
-        });
-        console.log(props.nodeConfig.conditionNodes);
-        //同事更新默认节点的优先级
-        props.nodeConfig.conditionNodes[len].priorityLevel = len + 1;
-        break;
-      case 'Parallel':
-        // 并行分支无默认节点，正常push即可
-        props.nodeConfig.conditionNodes.push({
-          nodeName: '并行分支' + len,
-          isDefault: false,
-          type: 5,
-          priorityLevel: len,
-          childNode: null,
-        });
-        break;
-      case 'Inclusive':
-        // 插入到默认节点的前边
-        props.nodeConfig.conditionNodes.splice(len - 1, 0, {
-          nodeName: '包容分支' + len,
-          type: 6,
-          priorityLevel: len,
-          groupType: 'OR', // 组之间的，逻辑类型，OR-或，AND-与
-          isDefault: false,
-          conditionGroups: [
-            {
-              groupType: 'AND', // 组内之间逻辑类型，OR-或，AND-与
-              conditionList: [],
-            },
-          ],
-          nodeUserList: [],
-          childNode: null,
-        });
-        props.nodeConfig.conditionNodes[len].priorityLevel = len + 1;
-        break;
-    }
-
+  const addTerm = () => {
+    let len = props.nodeConfig.conditionNodes.length + 1;
+    props.nodeConfig.conditionNodes.push({
+      nodeName: '条件' + len,
+      type: 3,
+      priorityLevel: len,
+      conditionList: [],
+      nodeUserList: [],
+      childNode: null,
+    });
     resetConditionNodesErr();
     emits('update:nodeConfig', props.nodeConfig);
   };
   const delTerm = (index) => {
-    const { typeName } = props.nodeConfig;
     props.nodeConfig.conditionNodes.splice(index, 1);
-    let conditionTitle = '条件';
-    if (typeName == 'Parallel') {
-      conditionTitle = '并行分支';
-    } else if (typeName === 'Inclusive') {
-      conditionTitle = '包容分支';
-    }
     props.nodeConfig.conditionNodes.map((item, index) => {
       item.priorityLevel = index + 1;
-      item.nodeName = conditionTitle + (index + 1);
-      // 如果是默认节点
-      if (item.isDefault) {
-        item.nodeName = '默认节点';
-      }
+      item.nodeName = `条件${index + 1}`;
     });
     resetConditionNodesErr();
     emits('update:nodeConfig', props.nodeConfig);
@@ -322,10 +255,9 @@
       reData(data.childNode, addData);
     }
   };
-  const setPerson = (priorityLevel, isDefault = false) => {
-    const { type, typeName } = props.nodeConfig;
-    console.info('nodeConfig：', props.nodeConfig);
-    console.info('type：', type);
+  const setPerson = (priorityLevel) => {
+    var { type } = props.nodeConfig;
+    // console.info('审批节点信息：', props.nodeConfig);
     if (type == 0) {
       setPromoter(true);
       setFlowPermission({
@@ -341,7 +273,7 @@
           ...{ settype: props.nodeConfig.settype ? props.nodeConfig.settype : 1 },
         },
         flag: false,
-        id: _uid,
+        id: props.nodeConfig.id,
       });
     } else if (type == 2) {
       setCopyer(true);
@@ -351,22 +283,13 @@
         id: _uid,
       });
     } else {
-      // 排他网关和包容网关
-      if (typeName === 'Exclusive' || typeName === 'Inclusive') {
-        //判断是否为默认节点，如果是默认节点则不能进行条件配置
-        if (!isDefault) {
-          setCondition(true);
-          setConditionsConfig({
-            value: JSON.parse(JSON.stringify(props.nodeConfig)),
-            priorityLevel,
-            flag: false,
-            id: _uid,
-          });
-        }
-      } else if (typeName == 'Parallel') {
-        // 并行网关
-        ElMessage.warning('该节点无需配置！');
-      }
+      setCondition(true);
+      setConditionsConfig({
+        value: JSON.parse(JSON.stringify(props.nodeConfig)),
+        priorityLevel,
+        flag: false,
+        id: _uid,
+      });
     }
   };
   const arrTransfer = (index, type = 1) => {

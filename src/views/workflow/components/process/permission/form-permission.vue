@@ -1,0 +1,97 @@
+<template>
+  <div class="permission-container">
+    <el-table :data="_value" style="width: 100%">
+      <el-table-column prop="title" label="属性" />
+      <el-table-column prop="edit" label="编辑" header-align="center" align="center">
+        <template #header>
+          <el-checkbox label="编辑" v-model="headerConfig.edit" @change="checkedAll('edit')" />
+        </template>
+        <template #default="scope">
+          <el-checkbox-group v-model="scope.row.operation" :max="1">
+            <el-checkbox value="edit" />
+          </el-checkbox-group>
+        </template>
+      </el-table-column>
+      <el-table-column prop="readonly" label="只读" header-align="center" align="center">
+        <template #header>
+          <el-checkbox
+            label="只读"
+            v-model="headerConfig.readonly"
+            @change="checkedAll('readonly')"
+          />
+        </template>
+        <template #default="scope">
+          <el-checkbox-group v-model="scope.row.operation" :max="1">
+            <el-checkbox value="readonly" />
+          </el-checkbox-group>
+        </template>
+      </el-table-column>
+      <el-table-column prop="hidden" label="隐藏" header-align="center" align="center">
+        <template #header>
+          <el-checkbox label="隐藏" v-model="headerConfig.hidden" @change="checkedAll('hidden')" />
+        </template>
+        <template #default="scope">
+          <el-checkbox-group v-model="scope.row.operation" :max="1">
+            <el-checkbox value="hidden" />
+          </el-checkbox-group>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+</template>
+<script setup lang="ts">
+  import { ref, computed, onMounted } from 'vue';
+
+  const emits = defineEmits(['update:value']);
+
+  const props = defineProps({
+    value: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+  });
+
+  const _value = computed({
+    get() {
+      return props.value;
+    },
+    set(value) {
+      emits('update:value', value);
+    },
+  });
+
+  // 表单属性表格配置
+  const headerConfig = ref({
+    required: false,
+    edit: false,
+    hidden: false,
+    readonly: false,
+  });
+
+  /**
+   * 选中所有
+   */
+  const checkedAll = (field: string) => {
+    for (let key in headerConfig.value) {
+      if (headerConfig.value[field]) {
+        if (key !== field) {
+          headerConfig.value[key] = false;
+        }
+      }
+    }
+    _value.value.forEach((formField: any) => {
+      formField.operation = headerConfig.value[field] ? [field] : [];
+    });
+  };
+
+  onMounted(() => {});
+
+  defineExpose({});
+</script>
+<style lang="scss">
+  .permission-container {
+    width: 100%;
+  }
+</style>
