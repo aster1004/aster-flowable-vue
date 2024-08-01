@@ -43,9 +43,11 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType } from 'vue';
+  import { computed, PropType, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
+  import { instanceInfoByCustomParamsApi } from '@/api/workflow/instance';
+  import { ResultEnum } from '@/enums/httpEnum';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -144,6 +146,74 @@
     }
     return r;
   });
+
+  /**
+   * @description: 监听表单数据变化
+   */
+  const _formData = computed(() => {
+    return JSON.parse(JSON.stringify(props.formData));
+  });
+
+  /**
+   * @description: 监听表单数据变化
+   */
+  watch(
+    () => _formData.value,
+    async (nval, oval) => {
+      if (nval && props.mode === 'form' && props.formItem && props.formItem.props.default) {
+        // 默认值-计算公式
+        const defaultConfig = props.formItem.props.default;
+        if (defaultConfig.type === 'formula' && isNotEmpty(defaultConfig.value)) {
+          Object.keys(nval).forEach((key) => {
+            if (
+              defaultConfig.value.indexOf(key) != -1 &&
+              oval != undefined &&
+              nval[key] != oval[key]
+            ) {
+              _value.value = evaluateFormula(defaultConfig.value, nval) + '';
+            }
+          });
+        }
+        // 默认值-数据联动
+        if (
+          defaultConfig.type === 'linkage' &&
+          isNotEmpty(defaultConfig.linkage.formCode) &&
+          isNotEmpty(defaultConfig.linkage.conditions) &&
+          isNotEmpty(defaultConfig.linkage.dataFill)
+        ) {
+          const conditionStr = JSON.stringify(defaultConfig.linkage.conditions);
+          Object.keys(nval).forEach(async (key) => {
+            // 判断联动条件中的当前表单的字段的值是否有变动，如有则重新赋值
+            if (conditionStr.indexOf(key) != -1 && oval != undefined && nval[key] != oval[key]) {
+              const targetCode = defaultConfig.linkage.formCode[1];
+              let targetParams = {};
+              defaultConfig.linkage.conditions.forEach((item) => {
+                if (isNotEmpty(item.currentFieldId) && isNotEmpty(item.associatedFieldId)) {
+                  targetParams[item.associatedFieldId] = nval[item.currentFieldId];
+                }
+              });
+              // 根据条件查询目标表单的流程实例
+              await instanceInfoByCustomParamsApi(targetCode, targetParams).then((res) => {
+                if (res.code == ResultEnum.SUCCESS) {
+                  if (res.data) {
+                    const dataFill = defaultConfig.linkage.dataFill;
+                    // 如果目标表单中存在该填充字段，则赋值
+                    if (res.data.hasOwnProperty(dataFill)) {
+                      _value.value = res.data[dataFill];
+                    }
+                  } else {
+                    // 流程实例不存在则重置为空
+                    _value.value = props.formItem.value;
+                  }
+                }
+              });
+            }
+          });
+        }
+      }
+    },
+    { immediate: true, deep: true },
+  );
 
   defineExpose({
     _hidden,
