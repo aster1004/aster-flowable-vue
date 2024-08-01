@@ -83,14 +83,21 @@
     formRenderRef.value.validate();
   };
 
+  /**
+   * @description: 表单数据
+   */
+  const _formData = computed(() => {
+    return JSON.parse(JSON.stringify(formData.value));
+  });
+
   watch(
-    () => formData.value,
-    (val) => {
+    () => _formData.value,
+    (val, oval) => {
       console.log('preview--->formData');
-      console.log(val);
+      console.log(val, oval);
     },
     {
-      immediate: true,
+      // immediate: true,
       deep: true,
     },
   );

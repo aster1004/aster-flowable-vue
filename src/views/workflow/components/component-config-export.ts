@@ -112,6 +112,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         readonly: false,
         // 提示语
         placeholder: '',
+        // 默认值配置
+        default: {
+          // 类型: 计算公式formula和数据联动data-linkage
+          type: 'formula',
+          value: '',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {

@@ -331,9 +331,11 @@ export const dataFillOptionsByFormItems = (
   let options: WorkComponent.DataFillOption[] = [];
   items
     .filter((item: WorkComponent.ComponentConfig) => {
+      // 根据条件判断是否排除明细表
       if (item.name === 'TableList') {
         return showTableList;
       } else if (item.name === 'AssociatedForm') {
+        // 排除关联表单
         return false;
       } else {
         return true;
@@ -364,7 +366,7 @@ export const dataFillOptionsByFormItems = (
 };
 
 /**
- * @description: 筛选数据填充项
+ * @description: 筛选数据填充项,将filter的值填充给target
  * @param {string} filterType 过滤类型
  * @param {string} filterName 过滤名称
  * @param {string} targetType 目标类型
@@ -651,4 +653,35 @@ export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: 
   } else {
     return value;
   }
+};
+
+/**
+ * @description: 是否可以将源组件的值转为目标组件的值
+ * @param {WorkComponent.ComponentConfig} source 源组件
+ * @param {WorkComponent.ComponentConfig} target 目标组件
+ * @return {*}
+ */
+export const isConvertItemValue = (
+  source: WorkComponent.ComponentConfig,
+  target: WorkComponent.ComponentConfig,
+) => {
+  if (target.name === source.name) {
+    return true;
+  }
+  if (target.name === 'TableList' || source.name === 'TableList') {
+    return false;
+  }
+  if (target.valueType === ValueType.string) {
+    return source.valueType != ValueType.user && source.valueType != ValueType.dept;
+  }
+  if (target.valueType === ValueType.number) {
+    return source.valueType === ValueType.number;
+  }
+  if (target.valueType === ValueType.date) {
+    return source.valueType === ValueType.date;
+  }
+  if (target.valueType === ValueType.dateRange) {
+    return source.valueType === ValueType.dateRange;
+  }
+  return false;
 };

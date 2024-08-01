@@ -62,7 +62,7 @@
       </div>
       <div>
         <el-button type="primary" link @click="addRule()">
-          <i class="el-icon-plus"></i>添加规则
+          <i class="iconfont icon-plus pr-5px"></i>添加规则
         </el-button>
       </div>
     </div>

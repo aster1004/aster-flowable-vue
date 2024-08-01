@@ -53,6 +53,25 @@ export const instanceInfoByInstanceIdApi = (code: string, instanceId: string) =>
 };
 
 /**
+ * @description: 根据自定义参数获取流程实例
+ * @param {String} code 表单code
+ * @param {object} params 自定义参数
+ * @return {*}
+ */
+export const instanceInfoByCustomParamsApi = (code: string, params: object) => {
+  return request.post<Process.InstanceInfo>(
+    PORT5 + `/process/instance/info/query`,
+    {
+      code: code,
+      customParams: params,
+    },
+    {
+      noLoading: false,
+    },
+  );
+};
+
+/**
  * @description: 根据code获取流程实例
  * @param {String} code 表单code
  * @return {*}
