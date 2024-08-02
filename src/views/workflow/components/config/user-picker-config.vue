@@ -24,7 +24,7 @@
         <el-option label="固定值" value="fixed" />
         <el-option label="数据联动" value="linkage" />
       </el-select>
-      <el-input @click="showDefaultValue">
+      <el-input @click="showDefaultValue" readonly>
         <template #suffix>
           <i class="iconfont icon-xinzeng" style="color: var(--el-color-primary)" />
         </template>
@@ -116,14 +116,24 @@
       ElMessage.warning('该控件的配置信息已更改，如要设置默认值需删除后重新拖入表单');
       return;
     }
+    // 默认值类型
+    _formItem.value.props.default.type = valueType.value;
     if (valueType.value === 'fixed') {
+      // 清空数据联动配置
+      _formItem.value.props.default.linkage = {
+        // 联动目标表单编码
+        formCode: [],
+        // 联动条件
+        conditions: [],
+        // 联动填充
+        dataFill: '',
+      };
       userDeptDefaultPickerRef.value.init(defaultInfos.value);
     }
     if (valueType.value === 'linkage') {
+      // 清空固定值配置
+      _formItem.value.value = [];
       dataLinkageRef.value.init();
-    }
-    if (_formItem.value && _formItem.value.props.hasOwnProperty('default')) {
-      _formItem.value.props.default.type = valueType.value;
     }
   };
 
@@ -191,11 +201,11 @@
    */
   const _defaultValue = computed({
     get() {
-      return _formItem.value?.props?.default.value || [];
+      return _formItem.value?.value || [];
     },
     set(val) {
-      if (_formItem.value && _formItem.value.props.default) {
-        _formItem.value.props.default.value = val;
+      if (_formItem.value) {
+        _formItem.value.value = val;
       }
     },
   });
@@ -212,7 +222,6 @@
    *  @return ‘张三,李四,xxx...’
    */
   const _selectedInfos = computed(() => {
-    console.log('canselected', selectedInfos.value);
     // 根据不通类型，获取不通的名称，如user 获取realName，dept 获取deptName，role 获取roleName
     return (selectedInfos.value || []).map((item: any) => getLabel(item));
   });

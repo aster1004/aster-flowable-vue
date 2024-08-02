@@ -395,7 +395,6 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         default: {
           // 类型: 固定值fixed和数据联动data-linkage
           type: 'fixed',
-          value: [],
           linkage: {
             // 联动目标表单编码
             formCode: [],
@@ -434,7 +433,6 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         default: {
           // 类型: 固定值fixed和数据联动data-linkage
           type: 'fixed',
-          value: [],
           linkage: {
             // 联动目标表单编码
             formCode: [],

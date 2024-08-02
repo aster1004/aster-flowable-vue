@@ -276,12 +276,9 @@
                     // 如果目标表单中存在该填充字段，则赋值
                     if (res.data.hasOwnProperty(dataFill) && isNotEmpty(res.data[dataFill])) {
                       const associatedValue = res.data[dataFill];
-                      console.log('w--->', associatedValue);
                       if (isArray(associatedValue)) {
-                        console.log('1');
                         _value.value = associatedValue;
                       } else {
-                        console.log('2');
                         _value.value =
                           associatedValue.indexOf('[') != -1 ? JSON.parse(associatedValue) : [];
                       }
@@ -303,13 +300,7 @@
   );
 
   onMounted(async () => {
-    if (props.mode === 'form' && props.formItem && props.formItem.props.default) {
-      // 默认值-固定值
-      const defaultConfig = props.formItem.props.default;
-      if (defaultConfig.type === 'fixed' && isNotEmpty(defaultConfig.value)) {
-        _value.value = defaultConfig.value;
-      }
-    }
+    await selectUsersByIds(_value.value);
   });
 
   defineExpose({
