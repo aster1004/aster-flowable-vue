@@ -49,7 +49,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { computed, ref } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import DefaultValueFormula from '../common/default-value-formula.vue';
   import DataLinkage from '../common/data-linkage.vue';
   import { ElMessage } from 'element-plus';
@@ -84,6 +84,15 @@
   // 选中的组件
   const _formItem = computed(() => {
     return workFlowStore.selectFormItem;
+  });
+
+  // 打开组件时，获取默认值类型
+  onMounted(() => {
+    if (_formItem.value && _formItem.value.props.default) {
+      valueType.value = _formItem.value.props.default.type;
+    } else {
+      valueType.value = 'formula';
+    }
   });
 </script>
 <style scoped lang="scss">
