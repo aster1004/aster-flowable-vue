@@ -27,17 +27,10 @@
     </el-form-item>
     <el-form-item label="默认值">
       <el-select v-model="valueType">
-        <el-option label="计算公式" value="formula" />
-        <el-option label="数据联动" value="data" />
+        <el-option label="固定值" value="fixed" />
+        <el-option label="数据联动" value="linkage" />
       </el-select>
-      <el-input @click="showDefaultValue">
-        <template #suffix>
-          <i class="iconfont icon-xinzeng" style="color: var(--el-color-primary)" />
-        </template>
-      </el-input>
-    </el-form-item>
-    <el-form-item label="设置默认值">
-      <el-input @click="setDefaultDialog" readonly v-model="_defaultInfos">
+      <el-input @click="showDefaultValue" readonly>
         <template #suffix>
           <i class="iconfont icon-xinzeng" style="color: var(--el-color-primary)" />
         </template>
@@ -75,7 +68,8 @@
       mode="design"
       @success="handleDefaultSuccess"
     />
-    <formula ref="defaultValueRef" title="默认值" v-model:formula="defaultValue" />
+    <!-- 数据联动 -->
+    <data-linkage ref="dataLinkageRef" />
   </div>
 </template>
 <script setup lang="ts">
@@ -85,27 +79,33 @@
   import { selectDeptsByIdsApi } from '@/api/sys/dept';
   import { ResultEnum } from '@/enums/httpEnum';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
-  import Formula from '@/views/workflow/components/common/formula.vue';
-  const valueType = ref<string>('formula');
+  import DataLinkage from '../common/data-linkage.vue';
+  import { ElMessage } from 'element-plus';
+
   // 工作流store
   const workFlowStore = useWorkFlowStore();
-  // 默认值
-  const defaultValue = ref<string>('');
+  // 默认值类型
+  const valueType = ref<string>('fixed');
   // 注册组件
-  const defaultValueRef = ref();
+  const userDeptDefaultPickerRef = ref();
+  const dataLinkageRef = ref();
   // 定义一个联合类型
   type UserDeptRole = User.UserInfo | Dept.DeptInfo | Role.RoleInfo;
   // 选人选部门组件
   const userDeptPickerRef = ref();
   // 选选部门组件，设置默认值
-  const userDeptDefaultPickerRef = ref();
   const selectedInfos = ref<UserDeptRole[]>([]);
   const defaultInfos = ref<UserDeptRole[]>([]);
+
   // 选中的组件
   const _formItem = computed(() => {
     return workFlowStore.selectFormItem;
   });
-  const _default = computed({
+
+  /**
+   * @description: 默认值,id数组
+   */
+  const _defaultValue = computed({
     get() {
       return _formItem.value?.value || [];
     },
@@ -128,20 +128,39 @@
       }
     },
   });
+
   const _selectedInfos = computed(() => {
     // 根据不通类型，获取不通的名称，如user 获取realName，dept 获取deptName，role 获取roleName
     return (selectedInfos.value || []).map((item: any) => item?.orgName);
   });
 
-  const _defaultInfos = computed(() => {
-    // 根据不通类型，获取不通的名称，如user 获取realName，dept 获取deptName，role 获取roleName
-    return (defaultInfos.value || []).map((item: any) => item?.orgName);
-  });
   /**
    * @description: 显示默认值
    */
   const showDefaultValue = () => {
-    defaultValueRef.value.init();
+    if (!_formItem.value || !_formItem.value.props.hasOwnProperty('default')) {
+      ElMessage.warning('该控件的配置信息已更改，如要设置默认值需删除后重新拖入表单');
+      return;
+    }
+    // 默认值类型
+    _formItem.value.props.default.type = valueType.value;
+    if (valueType.value === 'fixed') {
+      // 清空数据联动配置
+      _formItem.value.props.default.linkage = {
+        // 联动目标表单编码
+        formCode: [],
+        // 联动条件
+        conditions: [],
+        // 联动填充
+        dataFill: '',
+      };
+      userDeptDefaultPickerRef.value.init(defaultInfos.value);
+    }
+    if (valueType.value === 'linkage') {
+      // 清空固定值配置
+      _formItem.value.value = [];
+      dataLinkageRef.value.init();
+    }
   };
 
   /**
@@ -150,12 +169,7 @@
   const showSelectedDialog = () => {
     userDeptPickerRef.value.init(selectedInfos.value);
   };
-  /**
-   * @description: 设置默认值
-   */
-  const setDefaultDialog = () => {
-    userDeptDefaultPickerRef.value.init(defaultInfos.value);
-  };
+
   /**
    * @description: 选人选部门组件回调
    * @param {*} val 选中人员
@@ -187,7 +201,7 @@
         item.id && deptIds.value.push(item.id);
       });
     }
-    _default.value = deptIds.value;
+    _defaultValue.value = deptIds.value;
   };
 
   /**
@@ -231,7 +245,16 @@
 
   watchEffect(() => {
     selectDeptsByIds(_canselected.value.ids);
-    selectDeptsDefaultByIds(_default.value);
+    selectDeptsDefaultByIds(_defaultValue.value);
+  });
+
+  // 打开组件时，获取默认值类型
+  onMounted(() => {
+    if (_formItem.value && _formItem.value.props.default) {
+      valueType.value = _formItem.value.props.default.type;
+    } else {
+      valueType.value = 'fixed';
+    }
   });
 </script>
 <style scoped lang="scss"></style>
