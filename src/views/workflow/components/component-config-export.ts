@@ -391,6 +391,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
           type: 'user', // 可选类型，user（选人) | dept(选部门) | sysRole(系统角色) | flowRole(流程角色)
           ids: [], // 对应类型的ids
         },
+        // 默认值配置
+        default: {
+          // 类型: 固定值fixed和数据联动data-linkage
+          type: 'fixed',
+          value: [],
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {
@@ -415,6 +429,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         canselected: {
           type: 'dept', // 可选类型,固定位dept
           ids: [],
+        },
+        // 默认值配置
+        default: {
+          // 类型: 固定值fixed和数据联动data-linkage
+          type: 'fixed',
+          value: [],
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
         },
       },
     },

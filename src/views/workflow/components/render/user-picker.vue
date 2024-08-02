@@ -2,7 +2,7 @@
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-05-15 18:13:48
  * @FilePath: \aster-flowable-vue\src\views\workflow\components\render\user-picker.vue
- * @Description: 用户
+ * @Description: 人员
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
@@ -62,12 +62,13 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, onMounted, PropType, ref, watchEffect } from 'vue';
+  import { computed, onMounted, PropType, ref, watch, watchEffect } from 'vue';
   import mittBus from '@/utils/mittBus';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { selectUsersByIdsApi } from '@/api/sys/user';
+  import { instanceInfoByCustomParamsApi } from '@/api/workflow/instance';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { isNotEmpty } from '@/utils';
+  import { isArray, isNotEmpty } from '@/utils';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -215,13 +216,6 @@
   });
 
   /**
-   * @description: 监听_value值变化,获取对象全量信息，用于表单回显
-   */
-  onMounted(async () => {
-    await selectUsersByIds(_value.value);
-  });
-
-  /**
    * @description: 是否隐藏, true-隐藏
    */
   const _hidden = computed(() => {
@@ -239,6 +233,83 @@
       });
     }
     return r;
+  });
+
+  /**
+   * @description: 监听表单数据变化
+   */
+  const _formData = computed(() => {
+    return JSON.parse(JSON.stringify(props.formData));
+  });
+
+  /**
+   * @description: 监听表单数据变化
+   */
+  watch(
+    () => _formData.value,
+    async (nval, oval) => {
+      if (nval && props.mode === 'form' && props.formItem && props.formItem.props.default) {
+        // 默认值-数据联动
+        const defaultConfig = props.formItem.props.default;
+        if (
+          defaultConfig.type === 'linkage' &&
+          isNotEmpty(defaultConfig.linkage.formCode) &&
+          isNotEmpty(defaultConfig.linkage.conditions) &&
+          isNotEmpty(defaultConfig.linkage.dataFill)
+        ) {
+          const conditionStr = JSON.stringify(defaultConfig.linkage.conditions);
+          Object.keys(nval).forEach(async (key) => {
+            // 判断联动条件中的当前表单的字段的值是否有变动，如有则重新赋值
+            if (conditionStr.indexOf(key) != -1 && oval != undefined && nval[key] != oval[key]) {
+              const targetCode = defaultConfig.linkage.formCode[1];
+              let targetParams = {};
+              defaultConfig.linkage.conditions.forEach((item) => {
+                if (isNotEmpty(item.currentFieldId) && isNotEmpty(item.associatedFieldId)) {
+                  targetParams[item.associatedFieldId] = nval[item.currentFieldId];
+                }
+              });
+              // 根据条件查询目标表单的流程实例
+              await instanceInfoByCustomParamsApi(targetCode, targetParams).then((res) => {
+                if (res.code == ResultEnum.SUCCESS) {
+                  if (res.data) {
+                    const dataFill = defaultConfig.linkage.dataFill;
+                    // 如果目标表单中存在该填充字段，则赋值
+                    if (res.data.hasOwnProperty(dataFill) && isNotEmpty(res.data[dataFill])) {
+                      const associatedValue = res.data[dataFill];
+                      console.log('w--->', associatedValue);
+                      if (isArray(associatedValue)) {
+                        console.log('1');
+                        _value.value = associatedValue;
+                      } else {
+                        console.log('2');
+                        _value.value =
+                          associatedValue.indexOf('[') != -1 ? JSON.parse(associatedValue) : [];
+                      }
+                    } else {
+                      _value.value = props.formItem.value;
+                    }
+                  } else {
+                    // 流程实例不存在则重置为空
+                    _value.value = props.formItem.value;
+                  }
+                }
+              });
+            }
+          });
+        }
+      }
+    },
+    { immediate: true, deep: true },
+  );
+
+  onMounted(async () => {
+    if (props.mode === 'form' && props.formItem && props.formItem.props.default) {
+      // 默认值-固定值
+      const defaultConfig = props.formItem.props.default;
+      if (defaultConfig.type === 'fixed' && isNotEmpty(defaultConfig.value)) {
+        _value.value = defaultConfig.value;
+      }
+    }
   });
 
   defineExpose({

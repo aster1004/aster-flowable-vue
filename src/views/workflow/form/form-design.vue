@@ -117,6 +117,7 @@
 
   // 注册组件
   const formPreviewRef = ref();
+  const formPropertiesRef = ref();
 
   /** 拖拽中 */
   const leftDrag = ref<boolean>(false);
@@ -211,7 +212,6 @@
    * @description: 已绘制的表单
    */
   const formItems = computed(() => {
-    console.log('--------------->', workFlowStore.design.process);
     return workFlowStore.design.formItems;
   });
 
@@ -253,16 +253,17 @@
   const preview = () => {
     formPreviewRef.value.init();
   };
-  const formPropertiesRef = ref();
+
   // 校验表单
   const validate = async () => {
-    console.log('-----表单属性校验-----');
     return formPropertiesRef.value.validate();
   };
+
   onMounted(() => {
     // 默认选中表单属性
     rightActiveTab.value = 'form';
   });
+
   defineExpose({ validate });
 </script>
 <style scoped lang="scss">
