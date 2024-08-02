@@ -55,6 +55,8 @@ export const useWorkFlowStore = defineStore({
           flowPermission: [],
           formPermission: [],
           nodeConfig: {
+            id: 'root',
+            parentId: null,
             nodeName: '发起人', //节点名称
             type: 0, // 0 发起人 1审批 2抄送 3条件 4路由
             priorityLevel: '', // 条件优先级
@@ -66,7 +68,6 @@ export const useWorkFlowStore = defineStore({
             noHanderAction: '', //审批人为空时 1自动审批通过/不允许发起 2转交给审核管理员
             examineEndDirectorLevel: '', //审批终点 第n层主管
             ccSelfSelectFlag: '', //允许发起人自选抄送人
-            conditionList: [], //当审批单同时满足以下条件时进入此流程
             nodeUserList: [], //操作人
             childNode: {},
             conditionNodes: [],

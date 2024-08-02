@@ -146,8 +146,9 @@ declare namespace WorkForm {
     directorMaxLevel: number;
     flowPermission: [];
     formPermission: [];
-    workFlowDef: {};
     nodeConfig: {
+      id: string;
+      parentId: string | null;
       nodeName: string;
       type: 0;
       priorityLevel: string;
@@ -159,17 +160,6 @@ declare namespace WorkForm {
       noHanderAction: string;
       examineEndDirectorLevel: string;
       ccSelfSelectFlag: string;
-      mode: string; //规则类型，后续可能扩装逻辑表达式，http请求、js解析等，
-      js: null; // mode 为js解析时对应的js表达式
-      expression: string; // mode 逻辑表达式时对应的逻辑表达式
-      http: {}; // mode 为http请求时对应的http请求配置
-      groupType: string; // 组之间的，逻辑类型，OR-或，AND-与
-      conditionGroups: [
-        {
-          groupType: string;
-          conditionList: [];
-        },
-      ];
       nodeUserList: [];
       childNode: {};
       conditionNodes: [];

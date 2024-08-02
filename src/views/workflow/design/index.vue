@@ -136,11 +136,11 @@
    */
   const publish = () => {
     console.log('publish');
+    //流程设计json
+    console.log('流程设计json', workFlowStore.design);
     validate()
       .then(() => {
         reloadValidResult(true);
-        //流程设计json
-        console.log('流程设计json', workFlowStore.design);
       })
       .catch((errs) => {
         console.log('发布校验未通过errs-----', errs);
