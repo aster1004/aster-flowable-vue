@@ -43,8 +43,12 @@
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
 
-    <default-value-formula ref="defaultValueRef" v-model:formula="_formItem.props.default.value" />
-    <data-linkage ref="dataLinkageRef" />
+    <default-value-formula
+      ref="defaultValueRef"
+      v-if="valueType === 'formula' && _formItem.props.default"
+      v-model:formula="_formItem.props.default.value"
+    />
+    <data-linkage ref="dataLinkageRef" v-if="valueType === 'linkage' && _formItem.props.default" />
   </div>
 </template>
 <script setup lang="ts">
