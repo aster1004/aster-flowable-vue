@@ -51,50 +51,18 @@
       <div class="branch-box">
         <button class="add-branch" @click="addTerm(nodeConfig.typeName)">添加条件</button>
         <div class="col-box" v-for="(item, index) in nodeConfig.conditionNodes" :key="index">
-          <div class="condition-node">
-            <div class="condition-node-box">
-              <div class="auto-judge" :class="isTried && item.error ? 'error active' : ''">
-                <div class="sort-left" v-if="index != 0" @click="arrTransfer(index, -1)">&lt;</div>
-                <div class="title-wrapper">
-                  <!-- @focus="$event.currentTarget.select()"
-                    v-focus -->
-                  <input
-                    v-if="isInputList[index]"
-                    type="text"
-                    class="ant-input editable-title-input"
-                    @blur="blurEvent(index)"
-                    v-model="item.nodeName"
-                  />
+          <condition-node
+            :isTried="isTried"
+            :conditionNode="item"
+            :typeName="nodeConfig.typeName"
+            :index="index"
+            :content="conditionStr(nodeConfig, index)"
+            :nodeCount="nodeConfig.conditionNodes.length"
+            @setPerson="setPerson"
+            @delTerm="delTerm"
+            @arrTransfer="arrTransfer"
+          />
 
-                  <span v-else class="editable-title" @click="clickEvent(index)">
-                    <span :class="item.icon"></span>{{ item.nodeName }}</span
-                  >
-                  <span class="priority-title" @click="setPerson(item.priorityLevel)"
-                    >优先级{{ item.priorityLevel }}</span
-                  >
-                  <i
-                    class="iconfont icon-close condition-node-close"
-                    v-if="!item.isDefault"
-                    @click="delTerm(index)"
-                  ></i>
-                  <!-- <i class="anticon anticon-close close" @click="delTerm(index)"></i> -->
-                </div>
-                <div
-                  class="sort-right"
-                  v-if="index != nodeConfig.conditionNodes.length - 1"
-                  @click="arrTransfer(index)"
-                  >&gt;</div
-                >
-                <div class="content" @click="setPerson(item.priorityLevel, item.isDefault)">{{
-                  conditionStr(nodeConfig, index)
-                }}</div>
-                <div class="error_tip" v-if="isTried && item.error">
-                  <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
-                </div>
-              </div>
-              <addNode v-model:childNodeP="item.childNode" />
-            </div>
-          </div>
           <nodeWrap v-if="item.childNode" v-model:nodeConfig="item.childNode" />
           <template v-if="index == 0">
             <div class="top-left-cover-line"></div>
@@ -117,57 +85,10 @@
   import { conditionStr } from '@/utils/ConditionCompare';
   import { useStore } from '@/stores/index';
   import { bgColors, placeholderList } from '@/utils/const';
-  import { Lock } from '@element-plus/icons-vue';
-  let _uid = getCurrentInstance().uid;
-
-  let props = defineProps({
-    nodeConfig: {
-      type: Object,
-      default: () => ({}),
-    },
-    flowPermission: {
-      type: Object,
-      default: () => [],
-    },
-  });
-  let defaultText2 = computed(() => {
-    console.log(props.nodeConfig.type);
-    return props.nodeConfig.type;
-  });
-  let defaultText = computed(() => {
-    console.log(props.nodeConfig);
-    return placeholderList[props.nodeConfig.type];
-  });
-  let showText = computed(() => {
-    if (props.nodeConfig.type == 0) return $func.arrToStr(props.flowPermission) || '所有人';
-    if (props.nodeConfig.type == 1) return $func.setApproverStr(props.nodeConfig);
-    return $func.copyerStr(props.nodeConfig);
-  });
-
-  let isInputList = ref([]);
-  let isInput = ref(false);
-  const resetConditionNodesErr = () => {
-    console.log(props.nodeConfig);
-    for (var i = 0; i < props.nodeConfig.conditionNodes.length; i++) {
-      console.log('=========', props.nodeConfig.conditionNodes[i]);
-      props.nodeConfig.conditionNodes[i].error =
-        conditionStr(props.nodeConfig, i) == '请设置条件' &&
-        i != props.nodeConfig.conditionNodes.length - 1;
-    }
-  };
-  onMounted(() => {
-    if (props.nodeConfig.type == 1) {
-      props.nodeConfig.error = !$func.setApproverStr(props.nodeConfig);
-    } else if (props.nodeConfig.type == 2) {
-      props.nodeConfig.error = !$func.copyerStr(props.nodeConfig);
-    } else if (props.nodeConfig.type == 4) {
-      console.log(props.nodeConfig.conditionNodes.length);
-      resetConditionNodesErr();
-    }
-  });
-  let emits = defineEmits(['update:flowPermission', 'update:nodeConfig']);
-  let store = useStore();
-  let {
+  import ConditionNode from '@/views/workflow/components/process/process/conditionNode.vue';
+  const _uid = getCurrentInstance().uid;
+  const store = useStore();
+  const {
     setPromoter,
     setApprover,
     setCopyer,
@@ -177,12 +98,53 @@
     setCopyerConfig,
     setConditionsConfig,
   } = store;
-  let isTried = computed(() => store.isTried);
-  let flowPermission1 = computed(() => store.flowPermission1);
-  // let approverConfig1 = computed(() => store.approverConfig1);
-  let approverConfig1 = computed(() => JSON.parse(JSON.stringify(store.approverConfig1)));
-  let copyerConfig1 = computed(() => store.copyerConfig1);
-  let conditionsConfig1 = computed(() => store.conditionsConfig1);
+  const emits = defineEmits(['update:flowPermission', 'update:nodeConfig']);
+  const props = defineProps({
+    nodeConfig: {
+      type: Object,
+      default: () => ({}),
+    },
+    flowPermission: {
+      type: Object,
+      default: () => [],
+    },
+  });
+
+  const isInputList = ref([]);
+  const isInput = ref(false);
+
+  const defaultText = computed(() => {
+    return placeholderList[props.nodeConfig.type];
+  });
+  const showText = computed(() => {
+    if (props.nodeConfig.type == 0) return $func.arrToStr(props.flowPermission) || '所有人';
+    if (props.nodeConfig.type == 1) return $func.setApproverStr(props.nodeConfig);
+    return $func.copyerStr(props.nodeConfig);
+  });
+
+  const isTried = computed(() => {
+    store.isTried;
+  });
+  const flowPermission1 = computed(() => {
+    store.flowPermission1;
+  });
+  const approverConfig1 = computed(() => {
+    JSON.parse(JSON.stringify(store.approverConfig1));
+  });
+  const copyerConfig1 = computed(() => {
+    store.copyerConfig1;
+  });
+  const conditionsConfig1 = computed(() => {
+    store.conditionsConfig1;
+  });
+
+  const resetConditionNodesErr = () => {
+    for (let i = 0; i < props.nodeConfig.conditionNodes.length; i++) {
+      props.nodeConfig.conditionNodes[i].error =
+        conditionStr(props.nodeConfig, i) == '请设置条件' &&
+        i != props.nodeConfig.conditionNodes.length - 1;
+    }
+  };
   watch(flowPermission1, (flow) => {
     if (flow.flag && flow.id === _uid) {
       emits('update:flowPermission', flow.value);
@@ -240,6 +202,7 @@
         // 插入到默认节点的前边
         props.nodeConfig.conditionNodes.splice(len - 1, 0, {
           nodeName: '条件' + len,
+          icon: 'iconfont icon-bumen',
           type: 3,
           priorityLevel: len,
           groupType: 'OR', // 组之间的，逻辑类型，OR-或，AND-与
@@ -253,17 +216,17 @@
           nodeUserList: [],
           childNode: null,
         });
-        console.log(props.nodeConfig.conditionNodes);
         //同事更新默认节点的优先级
         props.nodeConfig.conditionNodes[len].priorityLevel = len + 1;
         break;
       case 'Parallel':
         // 并行分支无默认节点，正常push即可
         props.nodeConfig.conditionNodes.push({
-          nodeName: '并行分支' + len,
+          nodeName: '并行分支' + (len + 1),
+          icon: 'iconfont icon-jiekou',
           isDefault: false,
           type: 5,
-          priorityLevel: len,
+          priorityLevel: 1, // 并行分支无优先级，默认都为1
           childNode: null,
         });
         break;
@@ -271,6 +234,7 @@
         // 插入到默认节点的前边
         props.nodeConfig.conditionNodes.splice(len - 1, 0, {
           nodeName: '包容分支' + len,
+          icon: 'iconfont icon-liucheng1',
           type: 6,
           priorityLevel: len,
           groupType: 'OR', // 组之间的，逻辑类型，OR-或，AND-与
@@ -388,6 +352,17 @@
     resetConditionNodesErr();
     emits('update:nodeConfig', props.nodeConfig);
   };
+
+  onMounted(() => {
+    if (props.nodeConfig.type == 1) {
+      props.nodeConfig.error = !$func.setApproverStr(props.nodeConfig);
+    } else if (props.nodeConfig.type == 2) {
+      props.nodeConfig.error = !$func.copyerStr(props.nodeConfig);
+    } else if (props.nodeConfig.type == 4) {
+      // type == 4 网关节点
+      resetConditionNodesErr();
+    }
+  });
 </script>
 <style>
   .error_tip {

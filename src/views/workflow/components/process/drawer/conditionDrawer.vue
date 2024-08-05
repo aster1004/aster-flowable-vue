@@ -18,12 +18,15 @@
     <template #header="{ titleId, titleClass }">
       <h3 :id="titleId" :class="titleClass" style="font-size: 17px">条件设置</h3>
       <el-select v-model="conditionConfig.priorityLevel" class="priority_level">
-        <el-option
-          v-for="item in conditionsConfig.conditionNodes.length"
-          :value="item"
-          :key="item"
-          :label="'优先级' + item"
-        />
+        <!--  默认条件优先级放到最后，故conditionsConfig.conditionNodes.length - 1  -->
+        <template v-if="showPriorityLevel">
+          <el-option
+            v-for="item in conditionsConfig.conditionNodes.length - 1"
+            :value="item"
+            :key="item"
+            :label="'优先级' + item"
+          />
+        </template>
       </el-select>
     </template>
     <el-form>
@@ -87,6 +90,7 @@
   const tableId = computed(() => store.tableId);
   const conditionsConfig1 = computed(() => store.conditionsConfig1);
   const conditionDrawer = computed(() => store.conditionDrawer);
+
   const visible = computed({
     get() {
       return conditionDrawer.value;
@@ -95,6 +99,7 @@
       closeDrawer();
     },
   });
+
   watch(conditionsConfig1, (val) => {
     conditionsConfig.value = val.value;
     PriorityLevel.value = val.priorityLevel;
@@ -102,7 +107,9 @@
       ? conditionsConfig.value.conditionNodes[val.priorityLevel - 1]
       : { nodeUserList: [] };
   });
-
+  const showPriorityLevel = computed(() => {
+    return conditionsConfig.value.conditionNodes?.length > 0;
+  });
   const saveCondition = () => {
     closeDrawer();
     // 调整优先级顺序
