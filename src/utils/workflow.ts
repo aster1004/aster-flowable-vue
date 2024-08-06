@@ -91,7 +91,12 @@ export const loopCallValidate = (
     .forEach((fieldId) => {
       items.forEach((item) => {
         // 如果目标组件的配置中引用了当前组件的id则是循环调用
-        if (item.id === fieldId && JSON.stringify(item.props).indexOf(currentFieldId) > -1) {
+        if (
+          item.id === fieldId &&
+          item.props.default &&
+          item.props.default.type === 'formula' &&
+          item.props.default.value.indexOf(currentFieldId) > -1
+        ) {
           loops.push('`' + item.title + '`');
         }
       });
