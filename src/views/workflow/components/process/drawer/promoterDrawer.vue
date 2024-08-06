@@ -35,13 +35,13 @@
 <script setup>
   import employeesDialog from '../dialog/employeesDialog.vue';
   import $func from '@/utils/fun';
-  import { useStore } from '@/stores/index';
+  import { processStore } from '@/stores/modules/process';
   import { computed, ref, watch } from 'vue';
   let flowPermission = ref([]);
   let promoterVisible = ref(false);
   let checkedList = ref([]);
 
-  let store = useStore();
+  let store = processStore();
   let { setPromoter, setFlowPermission } = store;
   let promoterDrawer = computed(() => store.promoterDrawer);
   let flowPermission1 = computed(() => store.flowPermission1);

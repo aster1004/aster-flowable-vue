@@ -62,7 +62,7 @@
 </template>
 <script setup>
   import { ref, watch, computed } from 'vue';
-  import { useStore } from '@/stores/index';
+  import { processStore } from '@/stores/modules/process';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { Plus } from '@element-plus/icons-vue';
   import conditionGroup from '@/views/workflow/components/common/condition-group.vue';
@@ -85,7 +85,7 @@
   const PriorityLevel = ref('');
   const conditions = ref([]);
 
-  const store = useStore();
+  const store = processStore();
   const { setCondition, setConditionsConfig } = store;
   const tableId = computed(() => store.tableId);
   const conditionsConfig1 = computed(() => store.conditionsConfig1);

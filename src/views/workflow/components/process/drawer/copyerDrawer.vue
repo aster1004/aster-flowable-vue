@@ -50,13 +50,13 @@
 <script setup>
   import employeesRoleDialog from '../dialog/employeesRoleDialog.vue';
   import $func from '@/utils/fun';
-  import { useStore } from '@/stores/index';
+  import { processStore } from '@/stores/modules/process';
   import { ref, watch, computed } from 'vue';
   let copyerConfig = ref({});
   let ccSelfSelectFlag = ref([]);
   let copyerVisible = ref(false);
   let checkedList = ref([]);
-  let store = useStore();
+  let store = processStore();
   let { setCopyerConfig, setCopyer } = store;
   let copyerDrawer = computed(() => store.copyerDrawer);
   let copyerConfig1 = computed(() => store.copyerConfig1);

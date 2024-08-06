@@ -96,7 +96,33 @@
           nodeUserList: [],
           parentId: props.parentId,
           formPermission: [],
-          buttonPermission: [],
+          buttonPermission: [
+            {
+              operation: '同意',
+              name: 'agree',
+              status: true,
+            },
+            {
+              operation: '不同意',
+              name: 'disagree',
+              status: true,
+            },
+            {
+              operation: '撤销',
+              name: 'revoke',
+              status: true,
+            },
+            {
+              operation: '转交',
+              name: 'forward',
+              status: true,
+            },
+            {
+              operation: '加签',
+              name: 'addNode',
+              status: true,
+            },
+          ],
           noUser: 'autoPass',
           approveType: 'togetherCountersign',
         };

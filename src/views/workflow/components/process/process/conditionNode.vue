@@ -90,9 +90,13 @@
           @click="arrTransfer(index)"
           >&gt;</div
         >
-        <div class="content" @click="setPerson(currentNode.priorityLevel, currentNode.isDefault)">{{
-          content
-        }}</div>
+        <el-tooltip effect="light" :content="content" placement="bottom">
+          <div
+            class="content"
+            @click="setPerson(currentNode.priorityLevel, currentNode.isDefault)"
+            >{{ content }}</div
+          >
+        </el-tooltip>
         <div class="error_tip" v-if="isTried && currentNode.error">
           <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
         </div>

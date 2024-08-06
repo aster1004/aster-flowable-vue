@@ -71,7 +71,18 @@ export const useWorkFlowStore = defineStore({
             childNode: {},
             conditionNodes: [],
             formPermission: [],
-            buttonPermission: [],
+            buttonPermission: [
+              {
+                operation: '提交',
+                name: 'submit',
+                status: true,
+              },
+              {
+                operation: '撤销',
+                name: 'revoke',
+                status: true,
+              },
+            ],
           },
         },
       };

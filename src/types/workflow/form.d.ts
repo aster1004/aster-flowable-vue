@@ -163,7 +163,7 @@ declare namespace WorkForm {
       childNode: {};
       conditionNodes: [];
       formPermission?: [];
-      buttonPermission?: [];
+      buttonPermission?: any[];
     };
   }
 

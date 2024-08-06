@@ -47,12 +47,12 @@
   import { onMounted, ref, watch, getCurrentInstance, computed } from 'vue';
   import $func from '@/utils/fun';
   import { conditionStr } from '@/utils/ConditionCompare';
-  import { useStore } from '@/stores/index';
+  import { processStore } from '@/stores/modules/process';
   import { placeholderList } from '@/utils/const';
   import ConditionNode from '@/views/workflow/components/process/process/conditionNode.vue';
   import { isNotEmpty } from '@/utils/index';
   const _uid = getCurrentInstance().uid;
-  const store = useStore();
+  const store = processStore();
   const {
     setPromoter,
     setApprover,

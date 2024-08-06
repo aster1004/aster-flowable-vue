@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 import type { App } from 'vue';
-import { createPinia, defineStore } from 'pinia';
+import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 
 const store = createPinia();
@@ -15,54 +15,5 @@ store.use(piniaPluginPersistedstate);
 export const setupStore = (app: App<Element>) => {
   app.use(store);
 };
-
-export const useStore = defineStore('store', {
-  state: () => ({
-    tableId: '',
-    isTried: false,
-    promoterDrawer: false,
-    flowPermission1: {},
-    approverDrawer: false,
-    approverConfig1: {},
-    copyerDrawer: false,
-    copyerConfig1: {},
-    conditionDrawer: false,
-    conditionsConfig1: {
-      conditionNodes: [],
-    },
-  }),
-  actions: {
-    setTableId(payload) {
-      this.tableId = payload;
-    },
-    setIsTried(payload) {
-      this.isTried = payload;
-    },
-    setPromoter(payload) {
-      this.promoterDrawer = payload;
-    },
-    setFlowPermission(payload) {
-      this.flowPermission1 = payload;
-    },
-    setApprover(payload) {
-      this.approverDrawer = payload;
-    },
-    setApproverConfig(payload) {
-      this.approverConfig1 = payload;
-    },
-    setCopyer(payload) {
-      this.copyerDrawer = payload;
-    },
-    setCopyerConfig(payload) {
-      this.copyerConfig1 = payload;
-    },
-    setCondition(payload) {
-      this.conditionDrawer = payload;
-    },
-    setConditionsConfig(payload) {
-      this.conditionsConfig1 = payload;
-    },
-  },
-});
 
 export { store };

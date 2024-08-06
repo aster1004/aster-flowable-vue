@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
-  import { useStore } from '@/stores/index';
+  import { processStore } from '@/stores/modules/process';
   import errorDialog from '@/views/workflow/components/process/dialog/errorDialog.vue';
   import promoterDrawer from '@/views/workflow/components/process/drawer/promoterDrawer.vue';
   import approverDrawer from '@/views/workflow/components/process/drawer/approverDrawer.vue';
@@ -42,7 +42,7 @@
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 
-  const { setIsTried } = useStore();
+  const { setIsTried } = processStore();
 
   const tipList = ref<any>([]);
   const tipVisible = ref(false);

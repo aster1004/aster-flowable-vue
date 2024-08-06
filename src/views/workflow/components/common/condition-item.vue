@@ -1,7 +1,7 @@
 <!--
  * @Author: lwj
  * @Date: 2024-07-22 09:53:47
- * @FilePath: \aster-flowable-vue\src\views\workflow\components\common\condition-group.vue
+ * @FilePath: \aster-flowable-vue\src\views\workflow\components\common\condition-item.vue
  * @Description: 条件分支组件，条件组【condition-group】的子组件
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
@@ -55,6 +55,7 @@
         filterable
         v-model="_value.compareVal"
         style="width: 65%"
+        allow-create
         placeholder="请输入选项"
       >
         <el-option

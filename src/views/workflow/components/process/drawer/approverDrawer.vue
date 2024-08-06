@@ -86,7 +86,7 @@
 </template>
 <script setup lang="ts">
   import { ref, computed, watch, onMounted } from 'vue';
-  import { useStore } from '@/stores/index';
+  import { processStore } from '@/stores/modules/process';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import Range from '../../render/range.vue';
   import { isNotEmpty } from '@/utils';
@@ -94,7 +94,7 @@
   import ButtonPermission from '../permission/button-permission.vue';
   import { flatFormItems } from '@/utils/workflow';
 
-  let store = useStore();
+  let store = processStore();
   let { setApproverConfig, setApprover } = store;
 
   // 编辑状态
@@ -155,8 +155,8 @@
       };
       let formField = getFormFieldData(val);
       approverConfig.value.value.formPermission = JSON.parse(JSON.stringify(formField));
-      let buttonData = getButtonData(val);
-      approverConfig.value.value.buttonPermission = JSON.parse(JSON.stringify(buttonData));
+      // let buttonData = getButtonData(val);
+      // approverConfig.value.value.buttonPermission = JSON.parse(JSON.stringify(val.value.buttonPermission));
     },
   );
 
@@ -229,7 +229,7 @@
   };
 
   // 按钮数据
-  const nodeButtonData = ref([
+  /* const nodeButtonData = ref([
     {
       operation: '同意',
       name: 'agree',
@@ -255,23 +255,25 @@
       name: 'addNode',
       status: true,
     },
-  ]);
+  ]); */
 
   // 发起节点按钮数据
-  const rootButtonData = ref([
+  /* const rootButtonData = ref([
     {
       operation: '提交',
       name: 'submit',
       status: true,
     },
-  ]);
+  ]); */
 
   // 表单属性表格配置
   const headerConfig = ref({});
 
   // 操作按钮数据
-  const getButtonData = (val: any) => {
+  /* const getButtonData = (val: any) => {
+    console.info('bbbbbbbbbbbbbbbbb', val);
     let buttonPermission = val.value.buttonPermission;
+    console.info('buttonPermission:--------------->', buttonPermission);
     let type = val.value.type;
     if (isNotEmpty(buttonPermission)) {
       if (type == 0) {
@@ -298,7 +300,7 @@
     } else {
       return type == 0 ? rootButtonData.value : nodeButtonData.value;
     }
-  };
+  }; */
 
   /**
    * 保存审批节点信息
