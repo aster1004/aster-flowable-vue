@@ -188,7 +188,7 @@
             ) {
               const r: any = evaluateFormula(defaultConfig.value, nval) + '';
               if (isNumber(r)) {
-                _value.value = r;
+                _value.value = Number(r);
               } else {
                 _value.value = props.formItem.value;
               }
