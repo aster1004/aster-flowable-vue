@@ -101,7 +101,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { deleteFormComponent, generateFieldId } from '@/utils/workflow';
+  import { deleteFormComponent, deleteComponentValidate, generateFieldId } from '@/utils/workflow';
   import { componentConfigExport } from '@/views/workflow/components/component-config-export';
   import FormProperties from '@/views/workflow/components/form-properties.vue';
   import FormComponentProperties from '@/views/workflow/components/form-component-properties.vue';
@@ -181,6 +181,11 @@
    * @return {*}
    */
   const onDeleteComponent = (index: number) => {
+    // 校验其他组件中是否引用了该组件
+    const validateFlag = deleteComponentValidate(formItems.value, formItems.value[index].id);
+    if (!validateFlag) {
+      return;
+    }
     ElMessageBox.confirm(t('header.deleteComp'), t('common.tips'), {
       confirmButtonText: t('button.confirm'),
       cancelButtonText: t('button.cancel'),

@@ -7,6 +7,7 @@
  */
 
 import { ValueType } from '@/views/workflow/components/component-config-export';
+import { ElMessage } from 'element-plus';
 import moment, { Moment } from 'moment';
 import { isEmpty, isNotEmpty, isObject } from '.';
 import { evaluate, parse } from './formula';
@@ -31,6 +32,35 @@ export const generateFieldId = () => {
  */
 export const deleteFormComponent = (formComponents: any[], index: number) => {
   formComponents.splice(index, 1);
+};
+
+/**
+ * @description: 删除表单组件的验证规则
+ * @param {WorkComponent.ComponentConfig[]} formItems 表单组件
+ * @param {string} fieldId 字段id
+ * @return {*} true-可删除,false-不可删除
+ */
+export const deleteComponentValidate = (
+  formItems: WorkComponent.ComponentConfig[],
+  fieldId: string,
+) => {
+  // 获取含有currentId的组件
+  const filterItems = flatFormItems(formItems).filter((item) => {
+    const itemStr = JSON.stringify(item);
+    if (item.id != fieldId && itemStr.indexOf(fieldId) > -1) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  // 若有其他组件含有currentId，则不可删除
+  if (filterItems.length > 0) {
+    const itemTitles = filterItems.map((item) => '`' + item.title + '`').join(',');
+    ElMessage.warning(`${itemTitles}中引用了该控件，不可删除`);
+    return false;
+  } else {
+    return true;
+  }
 };
 
 /**

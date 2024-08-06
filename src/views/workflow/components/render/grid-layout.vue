@@ -53,7 +53,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { deleteFormComponent } from '@/utils/workflow';
+  import { deleteFormComponent, deleteComponentValidate } from '@/utils/workflow';
   import FormDesignRender from '../../form/form-design-render.vue';
   import { ElMessageBox } from 'element-plus';
   import { computed, onBeforeMount, PropType, ref, watch } from 'vue';
@@ -135,6 +135,14 @@
    * @return {*}
    */
   const onDeleteComponent = (draggerIndex: number, index: number) => {
+    // 校验其他组件中是否引用了该组件
+    const validateFlag = deleteComponentValidate(
+      workFlowStore.design.formItems,
+      _items.value[draggerIndex][index].id,
+    );
+    if (!validateFlag) {
+      return;
+    }
     ElMessageBox.confirm(t('header.deleteComp'), t('common.tips'), {
       confirmButtonText: t('button.confirm'),
       cancelButtonText: t('button.cancel'),
