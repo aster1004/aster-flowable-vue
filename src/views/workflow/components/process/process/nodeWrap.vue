@@ -1,51 +1,14 @@
 <template>
-  <div class="node-wrap" v-if="nodeConfig.type < 3">
-    <div
-      class="node-wrap-box"
-      :class="
-        (nodeConfig.type == 0 ? 'start-node ' : '') +
-        (isTried && nodeConfig.error ? 'active error' : '')
-      "
-    >
-      <div class="title" :style="`background: rgb(${bgColors[nodeConfig.type]});`">
-        <span v-if="nodeConfig.type == 0">{{ nodeConfig.nodeName }}</span>
-        <template v-else>
-          <!-- <span class="iconfont">{{ nodeConfig.type == 1 ? '111' : '222' }}</span> -->
-          <i
-            :class="
-              nodeConfig.type == 1
-                ? ['iconfont', 'node-icon', 'icon-shenpi']
-                : ['iconfont', 'node-icon', 'icon-chaosongwode']
-            "
-          ></i>
-          <!-- @focus="$event.currentTarget.select()"
-            v-focus -->
-          <input
-            v-if="isInput"
-            type="text"
-            class="ant-input editable-title-input"
-            @blur="blurEvent()"
-            v-model="nodeConfig.nodeName"
-            :placeholder="defaultText"
-          />
-          <span v-else class="editable-title" @click="clickEvent()">{{ nodeConfig.nodeName }}</span>
-          <i class="iconfont icon-close node-close" @click="delNode"></i>
-          <!-- <i class="anticon anticon-close close" @click="delNode"></i> -->
-        </template>
-      </div>
-      <div class="content" @click="setPerson">
-        <span class="text">
-          <span class="placeholder" v-if="!showText">请选择{{ defaultText }}</span>
-          {{ showText }}
-        </span>
-        <i class="iconfont icon-xiangyou"></i>
-      </div>
-      <div class="error_tip" v-if="isTried && nodeConfig.error">
-        <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
-      </div>
-    </div>
-    <addNode v-model:childNodeP="nodeConfig.childNode" />
-  </div>
+  <template v-if="isNotEmpty(nodeConfig) && nodeConfig.type < 3">
+    <condition-node
+      :isTried="isTried"
+      :currentNode="nodeConfig"
+      :type="nodeConfig.type"
+      :content="showText"
+      @setPerson="setPerson"
+      @delTerm="delNode"
+    />
+  </template>
   <div class="branch-wrap" v-if="nodeConfig.type == 4">
     <div class="branch-box-wrap">
       <div class="branch-box">
@@ -53,7 +16,8 @@
         <div class="col-box" v-for="(item, index) in nodeConfig.conditionNodes" :key="index">
           <condition-node
             :isTried="isTried"
-            :conditionNode="item"
+            :currentNode="item"
+            :type="nodeConfig.type"
             :typeName="nodeConfig.typeName"
             :index="index"
             :content="conditionStr(nodeConfig, index)"
@@ -61,8 +25,8 @@
             @setPerson="setPerson"
             @delTerm="delTerm"
             @arrTransfer="arrTransfer"
+            :key="index"
           />
-
           <nodeWrap v-if="item.childNode" v-model:nodeConfig="item.childNode" />
           <template v-if="index == 0">
             <div class="top-left-cover-line"></div>
@@ -84,8 +48,9 @@
   import $func from '@/utils/fun';
   import { conditionStr } from '@/utils/ConditionCompare';
   import { useStore } from '@/stores/index';
-  import { bgColors, placeholderList } from '@/utils/const';
+  import { placeholderList } from '@/utils/const';
   import ConditionNode from '@/views/workflow/components/process/process/conditionNode.vue';
+  import { isNotEmpty } from '@/utils/index';
   const _uid = getCurrentInstance().uid;
   const store = useStore();
   const {
@@ -119,23 +84,24 @@
   const showText = computed(() => {
     if (props.nodeConfig.type == 0) return $func.arrToStr(props.flowPermission) || '所有人';
     if (props.nodeConfig.type == 1) return $func.setApproverStr(props.nodeConfig);
+
     return $func.copyerStr(props.nodeConfig);
   });
 
   const isTried = computed(() => {
-    store.isTried;
+    return store.isTried;
   });
   const flowPermission1 = computed(() => {
-    store.flowPermission1;
+    return store.flowPermission1;
   });
   const approverConfig1 = computed(() => {
-    JSON.parse(JSON.stringify(store.approverConfig1));
+    return store.approverConfig1;
   });
   const copyerConfig1 = computed(() => {
-    store.copyerConfig1;
+    return store.copyerConfig1;
   });
   const conditionsConfig1 = computed(() => {
-    store.conditionsConfig1;
+    return store.conditionsConfig1;
   });
 
   const resetConditionNodesErr = () => {
@@ -294,8 +260,6 @@
   };
   const setPerson = (priorityLevel, isDefault = false) => {
     const { type, typeName } = props.nodeConfig;
-    console.info('nodeConfig：', props.nodeConfig);
-    console.info('type：', type);
     if (type == 0) {
       setPromoter(true);
       setFlowPermission({

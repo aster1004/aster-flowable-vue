@@ -106,11 +106,13 @@
     conditionConfig.value = val.priorityLevel
       ? conditionsConfig.value.conditionNodes[val.priorityLevel - 1]
       : { nodeUserList: [] };
+    console.log('watch---', conditionConfig.value);
   });
   const showPriorityLevel = computed(() => {
     return conditionsConfig.value.conditionNodes?.length > 0;
   });
   const saveCondition = () => {
+    console.log(conditionsConfig.value.conditionNodes);
     closeDrawer();
     // 调整优先级顺序
     let a = conditionsConfig.value.conditionNodes.splice(PriorityLevel.value - 1, 1); //截取旧下标
@@ -123,11 +125,13 @@
         conditionStr(conditionsConfig.value, i) == '请设置条件' &&
         i != conditionsConfig.value.conditionNodes.length - 1;
     }
+    console.log(conditionsConfig.value);
     setConditionsConfig({
-      value: conditionsConfig.value,
+      value: JSON.parse(JSON.stringify(conditionsConfig.value)),
       flag: true,
       id: conditionsConfig1.value.id,
     });
+    console.log(conditionsConfig1.value);
   };
 
   const closeDrawer = (val) => {
