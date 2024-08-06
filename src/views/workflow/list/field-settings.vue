@@ -132,6 +132,7 @@
   import { flatFormItemsExclude } from '@/utils/workflow';
   import draggable from 'vuedraggable';
   import { defaultComponentConfig } from '../components/component-config-export';
+  import { isNotEmpty } from '@/utils';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
@@ -258,6 +259,12 @@
 
   // 监听查询字段和列表字段
   watchEffect(() => {
+    // 查询字段过滤
+    if (isNotEmpty(queryItems.value)) {
+      queryItems.value = queryItems.value.filter((query) => {
+        return _formItem.value.some((item) => item.id == query.id);
+      });
+    }
     // 将排序好的查询字段同步给选中的id
     queryCheckedIds.value = queryItems.value.map((item) => item.id);
     // 查询选中状态
