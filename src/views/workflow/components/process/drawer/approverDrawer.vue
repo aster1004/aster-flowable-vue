@@ -103,7 +103,10 @@
   // 人员选择
   const rangeVisible = ref<boolean>(false);
 
+  // 当前审核节点的配置
   const approverConfig = ref<any>({});
+
+  // store中的审核节点配置
   const approverConfig1 = computed(() => store.approverConfig1);
 
   // 审核节点标题
@@ -314,6 +317,10 @@
     closeDrawer();
   };
 
+  /**
+   * 获取表单字段数据权限
+   * @param val
+   */
   const getFormFieldData = (val: any) => {
     let formItems = flatFormItems(workFlowStore.design.formItems);
     formItems.forEach((formItem: any) => {

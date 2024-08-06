@@ -14,11 +14,11 @@
             v-for="(tagItem, tagIndex) in selectedTags"
             :key="tagIndex"
             closable
-            type="danger"
+            type="primary"
             @close="removeTag(tagItem)"
           >
-            <i class="iconfont icon-yonghu" v-if="tagItem.type == 'user'"></i>
-            <i class="iconfont icon-jigou1" v-if="tagItem.type == 'dept'"></i>
+            <i class="iconfont icon-yonghu icon-primary" v-if="tagItem.type == 'user'"></i>
+            <i class="iconfont icon-jigou1 icon-primary" v-if="tagItem.type == 'dept'"></i>
             &nbsp;{{ tagItem.name }}
           </el-tag>
           <!-- <el-tag type="danger" class="select-tag" closable><i class="iconfont icon-yonghu"></i>&nbsp;张三</el-tag>

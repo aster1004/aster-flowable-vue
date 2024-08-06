@@ -53,7 +53,6 @@ export const useWorkFlowStore = defineStore({
           tableId: '',
           directorMaxLevel: 4,
           flowPermission: [],
-          formPermission: [],
           nodeConfig: {
             id: 'root',
             parentId: null,
@@ -71,6 +70,8 @@ export const useWorkFlowStore = defineStore({
             nodeUserList: [], //操作人
             childNode: {},
             conditionNodes: [],
+            formPermission: [],
+            buttonPermission: [],
           },
         },
       };

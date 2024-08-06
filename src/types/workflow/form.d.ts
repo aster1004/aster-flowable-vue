@@ -145,7 +145,6 @@ declare namespace WorkForm {
     tableId: string;
     directorMaxLevel: number;
     flowPermission: [];
-    formPermission: [];
     nodeConfig: {
       id: string;
       parentId: string | null;
@@ -163,6 +162,8 @@ declare namespace WorkForm {
       nodeUserList: [];
       childNode: {};
       conditionNodes: [];
+      formPermission?: [];
+      buttonPermission?: [];
     };
   }
 
