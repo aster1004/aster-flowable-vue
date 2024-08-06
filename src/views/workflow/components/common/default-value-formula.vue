@@ -96,6 +96,7 @@
     restorationFormula,
     flatFormItemsExclude,
     isConvertItemValue,
+    loopCallValidate,
   } from '@/utils/workflow';
   import { doc as functionList } from '@/utils/formula/doc';
   import CodeMirror from './code-mirror.vue';
@@ -232,6 +233,13 @@
     const analysisResult = formulaValidate(value);
     console.log('---公式解析结果：', analysisResult);
     if (analysisResult === true) {
+      // 校验控件是否循环调用
+      const validate =
+        selectFormItem.value &&
+        loopCallValidate(value, selectFormItem.value.id, workFlowStore.design.formItems);
+      if (!validate) {
+        return;
+      }
       visible.value = false;
       emits('update:formula', value);
     } else {
