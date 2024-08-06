@@ -50,7 +50,7 @@
   import { evaluateFormula } from '@/utils/workflow';
   import { computed, PropType, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
-  import { isNotEmpty, isNumber } from '@/utils';
+  import { isNotEmpty, isNumber, isString } from '@/utils';
   import { instanceInfoByCustomParamsApi } from '@/api/workflow/instance';
   import { ResultEnum } from '@/enums/httpEnum';
 
@@ -177,7 +177,7 @@
             ) {
               const r: any = evaluateFormula(defaultConfig.value, nval) + '';
               if (isNumber(r)) {
-                _value.value = r;
+                _value.value = Number(r);
               } else {
                 _value.value = props.formItem.value;
               }

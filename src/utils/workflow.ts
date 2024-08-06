@@ -64,6 +64,53 @@ export const deleteComponentValidate = (
 };
 
 /**
+ * @description: 循环调用验证
+ * @param {string} formula 公式字符串
+ * @param {string} currentFieldId 当前字段id
+ * @param {WorkComponent.ComponentConfig[]} formItems 表单组件
+ * @return {*}
+ */
+export const loopCallValidate = (
+  formula: string,
+  currentFieldId: string,
+  formItems: WorkComponent.ComponentConfig[],
+) => {
+  // 正则表达式匹配字段id(field+13位数字)
+  const regex = /field\d{13}/g;
+  const matches: string[] | null = formula.match(regex);
+  // 若没有匹配到，则直接返回true
+  if (!matches || matches.length === 0) {
+    return true;
+  }
+  // 循环调用组件的标题
+  const loops: string[] = [];
+  // 若有匹配则需判断是否循环调用
+  const items = flatFormItems(formItems);
+  matches
+    .filter((fieldId, index) => fieldId != currentFieldId && matches.indexOf(fieldId) === index)
+    .forEach((fieldId) => {
+      items.forEach((item) => {
+        // 如果目标组件的配置中引用了当前组件的id则是循环调用
+        if (
+          item.id === fieldId &&
+          item.props.default &&
+          item.props.default.type === 'formula' &&
+          item.props.default.value.indexOf(currentFieldId) > -1
+        ) {
+          loops.push('`' + item.title + '`');
+        }
+      });
+    });
+
+  if (isNotEmpty(loops)) {
+    ElMessage.warning(`${loops.join(',')}中引用了该控件，不可循环调用`);
+    return false;
+  } else {
+    return true;
+  }
+};
+
+/**
  * @ description: 置空数组当前下标对应的内容
  * @param formComponents
  * @param index
