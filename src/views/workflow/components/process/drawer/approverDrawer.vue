@@ -3,7 +3,7 @@
     :append-to-body="true"
     v-model="visible"
     :show-close="false"
-    :size="400"
+    :size="550"
     :before-close="saveApprover"
   >
     <template #header>
