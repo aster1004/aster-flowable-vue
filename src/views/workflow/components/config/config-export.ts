@@ -22,7 +22,7 @@ import AssociatedForm from './associated-form-config.vue';
 import GeoLocation from './geo-location-config.vue';
 import Area from './area-config.vue';
 import Signature from './signature-config.vue';
-import AssociatedProcess from './associated-process-config.vue';
+import AssociatedProperty from './associated-property-config.vue';
 import CalcFormula from './calc-formula-config.vue';
 import SummaryFormula from './summary-formula-config.vue';
 
@@ -58,7 +58,7 @@ export default {
   GeoLocation,
   Area,
   Signature,
-  AssociatedProcess,
+  AssociatedProperty,
   CalcFormula,
   SummaryFormula,
   // ------------高级控件-结束------------

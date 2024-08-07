@@ -120,7 +120,7 @@
       'GeoLocation', //地理位置
       'Area', //行政区划
       'Signature', //手写签名
-      'AssociatedProcess', //关联流程
+      'AssociatedProperty', //关联属性
     ].includes(node.name);
   };
   /**

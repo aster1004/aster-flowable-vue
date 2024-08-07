@@ -510,6 +510,28 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       id: '',
+      title: '签名',
+      name: 'Signature',
+      icon: 'iconfont icon-qianming',
+      value: '',
+      valueType: ValueType.string,
+      props: {
+        // 必填
+        required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
+        // 显示线宽
+        showLineWidth: false,
+        // 显示颜色
+        showLineColor: false,
+        // 显示本地签名
+        showLocal: false,
+      },
+    },
+    {
+      id: '',
       title: '关联表单',
       name: 'AssociatedForm',
       icon: 'iconfont icon-guanlianbiaodan',
@@ -534,6 +556,31 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         },
         // 显示字段
         displayField: [],
+      },
+    },
+    {
+      id: '',
+      title: '关联属性',
+      name: 'AssociatedProperty',
+      icon: 'iconfont icon-guanlianliucheng',
+      value: '',
+      valueType: ValueType.string,
+      props: {
+        // 必填
+        required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
+        // 关联表单
+        associatedForm: {
+          // 表单控件的fieldId
+          fieldId: '',
+          // 表单控件配置的关联表单的编码
+          formCode: '',
+        },
+        // 关联字段
+        associatedField: '',
       },
     },
     {
@@ -572,45 +619,6 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         level: 3,
         // 提示文字
         placeholder: '请选择地区',
-      },
-    },
-    {
-      id: '',
-      title: '签名',
-      name: 'Signature',
-      icon: 'iconfont icon-qianming',
-      value: '',
-      valueType: ValueType.string,
-      props: {
-        // 必填
-        required: false,
-        // 隐藏
-        hidden: '',
-        // 只读
-        readonly: false,
-        // 显示线宽
-        showLineWidth: false,
-        // 显示颜色
-        showLineColor: false,
-        // 显示本地签名
-        showLocal: false,
-      },
-    },
-    {
-      id: '',
-      title: '关联流程',
-      name: 'AssociatedProcess',
-      icon: 'iconfont icon-guanlianliucheng',
-      value: [],
-      valueType: ValueType.array,
-      props: {
-        // 必填
-        required: false,
-        // 隐藏
-        hidden: '',
-        // 只读
-        readonly: false,
-        processCode: null,
       },
     },
     {
