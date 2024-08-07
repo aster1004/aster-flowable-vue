@@ -134,7 +134,7 @@ const excludeComponent = (item: WorkComponent.ComponentConfig) => {
     item.name !== 'UploadFile' &&
     item.name !== 'GeoLocation' &&
     item.name !== 'Signature' &&
-    item.name !== 'AssociatedProcess' &&
+    item.name !== 'AssociatedProperty' &&
     item.name !== 'CalcFormula' &&
     item.name !== 'SummaryFormula'
   );

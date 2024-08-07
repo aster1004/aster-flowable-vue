@@ -67,7 +67,7 @@
               >
                 <template #item="{ element, index }">
                   <div
-                    class="main-component w-form-item"
+                    class="main-component"
                     @click.stop="onSelectComponent(element)"
                     :style="onSelectedComponentStyle(element)"
                   >
@@ -371,8 +371,11 @@
 
       .main-component {
         position: relative;
-        padding-left: 10px;
-        padding-right: 20px;
+        padding: 15px 25px 15px 15px;
+        margin: 5px 2px;
+        border: 1px dashed white;
+        background: #fbfcfd;
+
         .close {
           position: absolute;
           top: 0px;
@@ -388,23 +391,17 @@
             }
           }
         }
+
+        ::v-deep(.el-form-item--default) {
+          margin-bottom: 0px;
+        }
+        ::v-deep(.el-form-item) {
+          margin-bottom: 0px;
+        }
       }
       .main-component:hover {
         border: 1px dashed var(--el-menu-active-color);
         background: var(--el-menu-active-bg-color);
-      }
-      .w-form-item {
-        position: relative;
-        padding: 15px 25px 15px 15px;
-        margin: 5px 2px;
-        border: 1px dashed white;
-        background: #fbfcfd;
-        .el-form-item--default {
-          margin-bottom: 0px;
-        }
-        .el-form-item {
-          margin-bottom: 0px;
-        }
       }
     }
   }
