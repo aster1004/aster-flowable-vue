@@ -176,7 +176,6 @@
         isNotEmpty(props.formItem.props.associatedField.id)
       ) {
         const code = props.formItem.props.associatedForm.formCode;
-        console.log('v--->', val);
         let instance;
         if (isObject(val)) {
           instance = val;
