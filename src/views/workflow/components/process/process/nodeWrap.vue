@@ -42,6 +42,14 @@
     </div>
   </div>
   <nodeWrap v-if="nodeConfig.childNode" v-model:nodeConfig="nodeConfig.childNode" />
+  <root-drawer
+    v-if="rootVisible"
+    :visible="rootVisible"
+    :value="rootValue"
+    :append-to-body="true"
+    title="发起人"
+    @beforeClose="rootBeforeClose"
+  />
 </template>
 <script setup>
   import { onMounted, ref, watch, getCurrentInstance, computed } from 'vue';
@@ -51,6 +59,8 @@
   import { placeholderList } from '@/utils/const';
   import ConditionNode from '@/views/workflow/components/process/process/conditionNode.vue';
   import { isNotEmpty } from '@/utils/index';
+  import RootDrawer from '../drawer/rootDrawer.vue';
+
   const _uid = getCurrentInstance().uid;
   const store = processStore();
   const {
@@ -75,6 +85,12 @@
     },
   });
 
+  // root节点Drawer展示
+  const rootVisible = ref(false);
+
+  // root节点值
+  const rootValue = ref({});
+
   const isInputList = ref([]);
   const isInput = ref(false);
 
@@ -82,9 +98,8 @@
     return placeholderList[props.nodeConfig.type];
   });
   const showText = computed(() => {
-    if (props.nodeConfig.type == 0) return $func.arrToStr(props.flowPermission) || '所有人';
+    if (props.nodeConfig.type == 0) return '所有人';
     if (props.nodeConfig.type == 1) return $func.setApproverStr(props.nodeConfig);
-
     return $func.copyerStr(props.nodeConfig);
   });
 
@@ -111,11 +126,18 @@
         i != props.nodeConfig.conditionNodes.length - 1;
     }
   };
-  watch(flowPermission1, (flow) => {
-    if (flow.flag && flow.id === _uid) {
-      emits('update:flowPermission', flow.value);
-    }
-  });
+
+  watch(
+    () => flowPermission1.value,
+    (flow) => {
+      if (flow.flag && flow.id === _uid) {
+        console.info('---------------------------------------------------------------');
+        console.info('NodeWrap保存【root】节点的值', JSON.stringify(flow.value));
+        emits('update:nodeConfig', flow.value);
+      }
+    },
+  );
+
   watch(
     () => approverConfig1.value,
     (approver) => {
@@ -258,12 +280,24 @@
       reData(data.childNode, addData);
     }
   };
+
+  const rootBeforeClose = (val) => {
+    console.info('nodeWrap：', val);
+    rootVisible.value = false;
+  };
+
   const setPerson = (priorityLevel, isDefault = false) => {
     const { type, typeName } = props.nodeConfig;
+    console.info('nodeWrap初始化加载：', JSON.stringify(props.nodeConfig));
     if (type == 0) {
+      // rootVisible.value = true;
+      // let formField = getFormFieldData(val);
+      // rootValue.value = JSON.parse(JSON.stringify(props.nodeConfig));
+      /* let flowPermission = JSON.parse(JSON.stringify(props.nodeConfig));
+      props.flowPermission = flowPermission */
       setPromoter(true);
       setFlowPermission({
-        value: props.flowPermission,
+        value: JSON.parse(JSON.stringify(props.nodeConfig)),
         flag: false,
         id: _uid,
       });
@@ -275,7 +309,7 @@
           ...{ settype: props.nodeConfig.settype ? props.nodeConfig.settype : 1 },
         },
         flag: false,
-        id: _uid,
+        id: props.nodeConfig.id,
       });
     } else if (type == 2) {
       setCopyer(true);
