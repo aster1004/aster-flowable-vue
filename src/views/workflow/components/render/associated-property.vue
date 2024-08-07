@@ -33,10 +33,10 @@
         <form-design-render
           v-if="
             isNotEmpty(formItem.props.associatedForm.formCode) &&
-            isNotEmpty(formItem.props.associatedField.id)
+            isNotEmpty(formItem.props.associatedField)
           "
           v-model:value="_value"
-          :form-item="formItem.props.associatedField"
+          :form-item="_associatedFormItem"
           :form-data="_associatedFormData"
           :mode="mode"
           :show-label="false"
@@ -48,10 +48,10 @@
       <form-design-render
         v-if="
           isNotEmpty(formItem.props.associatedForm.formCode) &&
-          isNotEmpty(formItem.props.associatedField.id)
+          isNotEmpty(formItem.props.associatedField)
         "
         v-model:value="_value"
-        :form-item="formItem.props.associatedField"
+        :form-item="_associatedFormItem"
         :form-data="_associatedFormData"
         :mode="mode"
         :show-label="false"
@@ -60,7 +60,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { evaluateFormula } from '@/utils/workflow';
+  import { evaluateFormula, flatFormItems } from '@/utils/workflow';
   import { computed, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty, isObject } from '@/utils';
@@ -103,6 +103,7 @@
   // 值
   const _value = ref<any>();
   const _associatedFormData = ref({});
+  const _associatedFormItem = ref<WorkComponent.ComponentConfig>();
 
   // 键
   const formItemProp = computed(() => {
@@ -173,7 +174,7 @@
         val &&
         isNotEmpty(val) &&
         isNotEmpty(val.value) &&
-        isNotEmpty(props.formItem.props.associatedField.id)
+        isNotEmpty(props.formItem.props.associatedField)
       ) {
         const code = props.formItem.props.associatedForm.formCode;
         let instance;
@@ -186,15 +187,20 @@
         await instanceInfoByInstanceIdApi(code, instance.value).then((res) => {
           if (res.code === ResultEnum.SUCCESS) {
             _associatedFormData.value = res.data.instanceInfo;
-            _value.value = _associatedFormData.value[props.formItem.props.associatedField.id];
+            _value.value = _associatedFormData.value[props.formItem.props.associatedField];
+            _associatedFormItem.value = flatFormItems(res.data.formInfo.formItems).find(
+              (item) => item.id === props.formItem.props.associatedField,
+            );
           } else {
             _associatedFormData.value = {};
             _value.value = undefined;
+            _associatedFormItem.value = undefined;
           }
         });
       } else {
         _associatedFormData.value = {};
         _value.value = undefined;
+        _associatedFormItem.value = undefined;
       }
     },
     { immediate: true, deep: true },

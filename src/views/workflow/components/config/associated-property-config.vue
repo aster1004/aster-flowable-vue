@@ -29,7 +29,7 @@
           {{ item.title }}
         </el-option>
       </el-select>
-      <el-select v-model="associateFieldId" :clearable="true">
+      <el-select v-model="_formItem.props.associatedField" :clearable="true">
         <el-option v-for="(item, i) in fieldOptions" :key="i" :label="item.title" :value="item.id">
           {{ item.title }}
         </el-option>
@@ -53,8 +53,6 @@
   const workFlowStore = useWorkFlowStore();
   // 关联表单字段选项
   const fieldOptions = ref<WorkComponent.ComponentConfig[]>([]);
-  // 关联表单字段id
-  const associateFieldId = ref('');
 
   // 关联表单选项
   const _formOptions = computed(() => {
@@ -113,33 +111,6 @@
           }
         } else {
           _formItem.value.props.associatedForm.formCode = '';
-        }
-      }
-    },
-    { immediate: true, deep: true },
-  );
-
-  // 监听关联字段id变化
-  watch(
-    () => associateFieldId.value,
-    (val: string) => {
-      if (_formItem.value) {
-        if (val && isNotEmpty(val)) {
-          _formItem.value.props.associatedField = fieldOptions.value.find(
-            (item) => item.id === val,
-          );
-          _formItem.value.props.associatedField.props.required = false;
-          _formItem.value.props.associatedField.props.readonly = true;
-        } else {
-          _formItem.value.props.associatedField = {
-            id: '',
-            title: '',
-            name: '',
-            icon: '',
-            value: '',
-            valueType: '',
-            props: {},
-          };
         }
       }
     },

@@ -580,15 +580,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
           formCode: '',
         },
         // 关联字段
-        associatedField: {
-          id: '',
-          title: '',
-          name: '',
-          icon: '',
-          value: '',
-          valueType: '',
-          props: {},
-        },
+        associatedField: '',
       },
     },
     {
