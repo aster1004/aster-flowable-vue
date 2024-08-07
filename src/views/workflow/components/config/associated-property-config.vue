@@ -29,7 +29,7 @@
           {{ item.title }}
         </el-option>
       </el-select>
-      <el-select v-model="_formItem.props.associatedField" :clearable="true">
+      <el-select v-model="_formItem.props.associatedField" :clearable="true" class="pt-5px">
         <el-option v-for="(item, i) in fieldOptions" :key="i" :label="item.title" :value="item.id">
           {{ item.title }}
         </el-option>
