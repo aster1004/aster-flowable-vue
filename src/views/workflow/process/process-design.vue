@@ -71,15 +71,13 @@
       } else if (type == 4) {
         reErr(childNode);
         for (let i = 0; i < conditionNodes.length; i++) {
-          // 目前只有排他网关需要校验
-          if (childNode.typeName == 'Exclusive') {
+          // 目前只有排他网关和包容网关需要校验
+          if (childNode.typeName === 'Exclusive' || childNode.typeName === 'Inclusive') {
             if (conditionNodes[i].error) {
               tipList.value.push({ name: conditionNodes[i].nodeName, type: '条件' });
-            } else if (childNode.typeName == 'Parallel') {
-              // 暂时不需要处理
-            } else if (childNode.typeName == 'Inclusive') {
-              // 暂时不需要处理
             }
+          } else if (childNode.typeName === 'Parallel') {
+            // 并行网关不需要设置条件，不需要校验
           }
           reErr(conditionNodes[i]);
         }
