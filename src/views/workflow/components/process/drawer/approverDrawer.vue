@@ -87,12 +87,11 @@
 <script setup lang="ts">
   import { ref, computed, watch, onMounted } from 'vue';
   import { processStore } from '@/stores/modules/process';
-  import { useWorkFlowStore } from '@/stores/modules/workflow';
   import Range from '../../render/range.vue';
   import { isNotEmpty } from '@/utils';
   import FormPermission from '../permission/form-permission.vue';
   import ButtonPermission from '../permission/button-permission.vue';
-  import { flatFormItems } from '@/utils/workflow';
+  import { getFormFieldData } from '@/utils/process/process';
 
   let store = processStore();
   let { setApproverConfig, setApprover } = store;
@@ -161,9 +160,6 @@
   );
 
   let approverDrawer = computed(() => store.approverDrawer);
-
-  // 工作流store
-  const workFlowStore = useWorkFlowStore();
 
   // 没有人时节点处理方式
   const noUserOption = ref<Array<any>>([
@@ -317,33 +313,6 @@
       id: approverConfig1.value.value.id,
     });
     closeDrawer();
-  };
-
-  /**
-   * 获取表单字段数据权限
-   * @param val
-   */
-  const getFormFieldData = (val: any) => {
-    let formItems = flatFormItems(workFlowStore.design.formItems);
-    formItems.forEach((formItem: any) => {
-      if (val.type === 0) {
-        formItem.operation = ['edit'];
-      } else {
-        formItem.operation = ['readonly'];
-      }
-    });
-    let formPermissionData = val.value.formPermission;
-    if (isNotEmpty(formPermissionData)) {
-      formItems.forEach((formItem: any) => {
-        for (let i = 0; i < formPermissionData.length; i++) {
-          let permission: any = formPermissionData[i];
-          if (formItem.id == permission.id) {
-            formItem.operation = permission.operation;
-          }
-        }
-      });
-    }
-    return formItems;
   };
 
   /**

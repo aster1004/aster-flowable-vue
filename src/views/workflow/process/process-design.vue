@@ -52,7 +52,7 @@
   //
 
   const _process = computed(() => {
-    return workFlowStore.design?.process || {};
+    return workFlowStore.design.process;
   });
 
   const reErr = ({ childNode }: any) => {
