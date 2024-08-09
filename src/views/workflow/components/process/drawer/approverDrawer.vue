@@ -65,7 +65,7 @@
             :headerConfig="headerConfig"
           />
         </el-tab-pane>
-        <el-tab-pane label="操作按钮" name="buttonPermission">
+        <el-tab-pane label="操作权限" name="buttonPermission">
           <button-permission v-model:value="approverConfig.value.buttonPermission" />
         </el-tab-pane>
       </el-tabs>

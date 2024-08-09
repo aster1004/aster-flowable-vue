@@ -35,14 +35,23 @@
         </template>
       </div>
       <div class="content" @click="setPerson">
-        <span class="text">
-          <span class="placeholder" v-if="!content">请选择{{ defaultText }} </span>
-          {{ content }}
-        </span>
+        <el-tooltip effect="light" :content="content" placement="bottom">
+          <span class="text">
+            <span class="placeholder" v-if="!content">请选择{{ defaultText }} </span>
+            {{ content }}
+          </span>
+        </el-tooltip>
         <i class="iconfont icon-xiangyou"></i>
       </div>
       <div class="error_tip" v-if="isTried && currentNode.error">
-        <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
+        <el-tooltip
+          effect="dark"
+          :content="currentNode.errorTip"
+          placement="right-start"
+          raw-content
+        >
+          <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
+        </el-tooltip>
       </div>
     </div>
     <addNode v-model:childNodeP="currentNode.childNode" />
@@ -98,7 +107,14 @@
           >
         </el-tooltip>
         <div class="error_tip" v-if="isTried && currentNode.error">
-          <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
+          <el-tooltip
+            effect="dark"
+            :content="currentNode.errorTip"
+            placement="right-start"
+            raw-content
+          >
+            <i class="iconfont icon-cuowutishi" style="color: #f25643; font-size: 24px"></i>
+          </el-tooltip>
         </div>
       </div>
       <addNode v-model:childNodeP="currentNode.childNode" />

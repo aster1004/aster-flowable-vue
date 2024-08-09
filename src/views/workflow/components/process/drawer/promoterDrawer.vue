@@ -1,7 +1,7 @@
 <!--
  * @Date: 2022-08-25 14:05:59
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-08-07 17:46:27
+ * @LastEditTime: 2024-08-09 14:17:09
  * @FilePath: \aster-flowable-vue\src\views\workflow\components\process\drawer\promoterDrawer.vue
 -->
 <template>
@@ -23,7 +23,7 @@
       <el-tab-pane label="表单权限" name="formPermission">
         <form-permission v-model:value="rootNode.formPermission" :headerConfig="headerConfig" />
       </el-tab-pane>
-      <el-tab-pane label="操作按钮" name="buttonPermission">
+      <el-tab-pane label="操作权限" name="buttonPermission">
         <button-permission v-model:value="rootNode.buttonPermission" />
       </el-tab-pane>
     </el-tabs>

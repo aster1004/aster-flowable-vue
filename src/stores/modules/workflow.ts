@@ -68,6 +68,8 @@ export const useWorkFlowStore = defineStore({
             examineEndDirectorLevel: '', //审批终点 第n层主管
             ccSelfSelectFlag: '', //允许发起人自选抄送人
             nodeUserList: [], //操作人
+            error: false,
+            errorTip: '',
             childNode: {},
             conditionNodes: [],
             formPermission: [],

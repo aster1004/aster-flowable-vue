@@ -164,6 +164,8 @@ declare namespace WorkForm {
       conditionNodes: [];
       formPermission?: [];
       buttonPermission?: any[];
+      error?: boolean;
+      errorTip: string;
     };
   }
 

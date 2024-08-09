@@ -121,9 +121,13 @@
 
   const resetConditionNodesErr = () => {
     for (let i = 0; i < props.nodeConfig.conditionNodes.length; i++) {
-      props.nodeConfig.conditionNodes[i].error =
+      let conditionNode = props.nodeConfig.conditionNodes[i];
+      conditionNode.error =
         conditionStr(props.nodeConfig, i) == '请设置条件' &&
         i != props.nodeConfig.conditionNodes.length - 1;
+      if (conditionNode.error) {
+        conditionNode.errorTip = '请设置条件';
+      }
     }
   };
 
@@ -203,6 +207,8 @@
           ],
           nodeUserList: [],
           childNode: null,
+          error: false,
+          errorTip: '',
         });
         //同事更新默认节点的优先级
         props.nodeConfig.conditionNodes[len].priorityLevel = len + 1;
@@ -216,6 +222,8 @@
           type: 5,
           priorityLevel: 1, // 并行分支无优先级，默认都为1
           childNode: null,
+          error: false,
+          errorTip: '',
         });
         break;
       case 'Inclusive':
@@ -235,11 +243,12 @@
           ],
           nodeUserList: [],
           childNode: null,
+          error: false,
+          errorTip: '',
         });
         props.nodeConfig.conditionNodes[len].priorityLevel = len + 1;
         break;
     }
-
     resetConditionNodesErr();
     emits('update:nodeConfig', props.nodeConfig);
   };

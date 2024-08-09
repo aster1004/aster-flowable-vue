@@ -1,8 +1,8 @@
 <!--
  * @Date: 2023-03-15 14:44:17
- * @LastEditors: StavinLi 495727881@qq.com
- * @LastEditTime: 2023-05-24 15:20:48
- * @FilePath: /Workflow-Vue3/src/components/drawer/conditionDrawer.vue
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-08-09 17:25:43
+ * @FilePath: \aster-flowable-vue\src\views\workflow\components\process\drawer\conditionDrawer.vue
 -->
 
 <template>
@@ -155,11 +155,13 @@
   // 递归校验条件组条件是否符合
   const handleError = ({ childNode }, errs) => {
     if (childNode) {
+      console.info('childNode', JSON.stringify(childNode));
       let { type, typeName, conditionNodes } = childNode;
       // 递归处理条件节点
       if (type == 4) {
         if (conditionNodes.length > 0) {
           for (let i = 0; i < conditionNodes.length; i++) {
+            let nodeError = [];
             handleError(conditionNodes[i], errs); //处理节点内的
             const conditionNode = conditionNodes[i];
             const isDefault = conditionNode.isDefault; // 是否为默认条件
@@ -168,23 +170,27 @@
               // 排除默认条件的校验
               if (conditionNode.conditionGroups.length === 0 && !isDefault) {
                 conditionNode.error = true;
-                errs.push(`条件 ${conditionNode.nodeName}未添加条件组`);
+                let errorMsg = `条件 ${conditionNode.nodeName}未添加条件组`;
+                errs.push(errorMsg);
+                nodeError.push(errorMsg);
                 // return;
               } else {
                 for (let k = 0; k < conditionNode.conditionGroups.length; k++) {
                   const conditionList = conditionNode.conditionGroups[k].conditionList;
                   if (conditionList.length === 0) {
                     conditionNode.error = true;
-                    errs.push(`${conditionNode.nodeName}-条件组 ${k + 1} 未添加条件`);
+                    let errorMsg = `${conditionNode.nodeName}-条件组 ${k + 1} 未添加条件`;
+                    errs.push(errorMsg);
+                    nodeError.push(errorMsg);
                     // return;
                   }
                   for (let i = 0; i < conditionList.length; i++) {
                     const cd = conditionList[i];
                     if (!cd.compare || hasEmpty(cd.compareVal || [])) {
                       conditionNode.error = true;
-                      errs.push(
-                        `${conditionNode.nodeName}-条件组 ${k + 1} 内条件未完善，请完善条件项: ${cd.title}`,
-                      );
+                      let errorMsg = `${conditionNode.nodeName}-条件组 ${k + 1} 内条件未完善，请完善条件项: ${cd.title}`;
+                      errs.push(errorMsg);
+                      nodeError.push(errorMsg);
                       // return;
                     }
                   }
@@ -196,8 +202,12 @@
             //校验下方节点， 排除默认条件的校验
             if (isEmpty(conditionNode.childNode) && !isDefault) {
               conditionNode.error = true;
-              errs.push(`${conditionNode.nodeName} 下方分支未配置流程节点`);
+              let errorMsg = `${conditionNode.nodeName} 下方分支未配置流程节点`;
+              errs.push(errorMsg);
+              nodeError.push(errorMsg);
             }
+            conditionNode.errorTip = '';
+            conditionNode.errorTip = nodeError.join('<br/>');
           }
         }
       }
