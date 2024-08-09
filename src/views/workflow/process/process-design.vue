@@ -37,7 +37,9 @@
   import copyerDrawer from '@/views/workflow/components/process/drawer/copyerDrawer.vue';
   import conditionDrawer from '@/views/workflow/components/process/drawer/conditionDrawer.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { isNotEmpty } from '@/utils';
+  import { isNotEmpty, isEmpty } from '@/utils';
+  import { ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
+  import { setAllNodeFormPermission, getProcessNodesByType } from '@/utils/process/process';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
@@ -58,7 +60,7 @@
   const reErr = ({ childNode }: any) => {
     if (childNode) {
       let { type, error, nodeName, conditionNodes } = childNode;
-      if (type == 1 || type == 2) {
+      /* if (type == 1 || type == 2) {
         if (error) {
           tipList.value.push({
             name: nodeName,
@@ -66,7 +68,8 @@
           });
         }
         reErr(childNode);
-      } else if (type == 3) {
+      } else  */
+      if (type == 3) {
         reErr(childNode);
       } else if (type == 4) {
         reErr(childNode);
@@ -88,14 +91,59 @@
       childNode = null;
     }
   };
+
+  const validateRootAndApprove = async (errs: string[]) => {
+    setAllNodeFormPermission();
+    let nodes = getProcessNodesByType([ProcessNodeTypeEnum.ROOT, ProcessNodeTypeEnum.APPROVE]);
+    if (isNotEmpty(nodes)) {
+      nodes.forEach((node: any) => {
+        node.error = false;
+        node['errorTip'] = '';
+        // 表单权限
+        let nodeFormPermission = node.formPermission.filter((formField: any) => {
+          return formField.operation.length > 0;
+        });
+        if (isEmpty(nodeFormPermission)) {
+          node.error = true;
+          let errorMsg = node.nodeName + '节点表单权限未配置';
+          errs.push(errorMsg);
+          node.errorTip += errorMsg + '<br/>';
+        }
+        let nodeButtonPermission = node.buttonPermission.filter((buttonItem: any) => {
+          return buttonItem.status == true;
+        });
+        if (isEmpty(nodeButtonPermission)) {
+          node.error = true;
+          let errorMsg = node.nodeName + '节点表操作权限未配置';
+          errs.push(errorMsg);
+          node.errorTip += errorMsg + '<br/>';
+        }
+        if (node.type != ProcessNodeTypeEnum.ROOT && isEmpty(node.nodeUserList)) {
+          node.error = true;
+          let errorMsg = node.nodeName + '节点';
+          if (node.type == ProcessNodeTypeEnum.APPROVE) {
+            errorMsg += '审批人未配置';
+          } else if (node.type == ProcessNodeTypeEnum.SEND) {
+            errorMsg += '抄送人未配置';
+          } else {
+            errorMsg += '操作人未配置';
+          }
+          errs.push(errorMsg);
+          node.errorTip += errorMsg + '<br/>';
+        }
+      });
+    }
+  };
+
   /**
    * @description: 校验流程设计是否完善
    */
   const validate = async () => {
     return new Promise(async (resolve, reject) => {
-      const errs: any[] = []; // 校验未通过时要呈现的err说明
+      const errs: string[] = []; // 校验未通过时要呈现的err说明
       nodeConfig.value = _process.value.nodeConfig;
       setIsTried(true);
+      validateRootAndApprove(errs);
       conditionRef.value.validate(nodeConfig.value, errs); // 校验条件节点中的条件组、条件表达式是否完善
       tipList.value = [];
       reErr(nodeConfig.value);
