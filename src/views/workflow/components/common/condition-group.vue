@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-  import { defineProps, ref, computed, defineEmits } from 'vue';
+  import { ref, computed, defineEmits } from 'vue';
   const emit = defineEmits(['update:conditionGroup', 'delete']);
   import ConditionItem from '@/views/workflow/components/common/condition-item.vue';
   import { formItemList } from '@/utils/workflow';

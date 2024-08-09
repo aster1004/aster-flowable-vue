@@ -17,9 +17,12 @@
       />
     </el-header>
     <el-main class="design-main">
+      <!-- 表单设计 -->
       <form-design ref="formDesignRef" v-show="activeMenu === 'formDesign'" />
+      <!-- 流程设计 -->
       <process-design ref="processDesignRef" v-show="activeMenu === 'processDesign'" />
-      <list-design ref="listDesignRef" v-show="activeMenu == 'listDesign'" />
+      <!-- 列表设计(必须使用v-if) -->
+      <list-design ref="listDesignRef" v-if="activeMenu == 'listDesign'" />
     </el-main>
     <!--  校验弹框  -->
     <el-dialog v-model="validateVisible" title="表单流程设计校验" width="550">
