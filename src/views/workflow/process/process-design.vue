@@ -145,6 +145,7 @@
       conditionRef.value.validate(nodeConfig.value, errs); // 校验条件节点中的条件组、条件表达式是否完善
       tipList.value = [];
       reErr(nodeConfig.value);
+      rectifyNodeId(nodeConfig.value); //递归设置节点的parentId，保证父子节点id正确
       if (tipList.value.length == 0 && errs.length == 0) {
         resolve('ok');
       } else {
@@ -156,6 +157,33 @@
     });
   };
 
+  /**
+   * @description: 发布前，递归设置节点的parentId，保证父子节点id正确
+   * @param childNode
+   * @param parentId
+   */
+  const rectifyNodeId = ({ childNode }: any, parentId = null) => {
+    if (isNotEmpty(childNode)) {
+      let { id, type, conditionNodes } = childNode;
+      childNode.parentId = parentId;
+      if (type <= 3) {
+        rectifyNodeId(childNode, id);
+      } else if (type == 4) {
+        if (conditionNodes) {
+          for (let i = 0; i < conditionNodes.length; i++) {
+            rectifyNodeId(conditionNodes[i], conditionNodes[i].id);
+            //继续遍历下方节点
+            if (isNotEmpty(conditionNodes[i].childNode)) {
+              rectifyNodeId(conditionNodes[i].childNode, conditionNodes[i].childNode.id);
+            }
+          }
+        }
+        rectifyNodeId(childNode, id);
+      }
+    } else {
+      childNode = null;
+    }
+  };
   const zoomSize = (type) => {
     if (type == 1) {
       if (nowVal.value == 50) {
@@ -170,13 +198,7 @@
     }
   };
 
-  const jsonValue = () => {
-    // workFlowStore.design.process = nodeConfig.value;
-    // console.log(JSON.stringify(processConfig.value));
-  };
-
   defineExpose({
-    jsonValue,
     validate,
   });
 </script>

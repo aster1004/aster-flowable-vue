@@ -83,7 +83,6 @@
         return {
           id: generateUniqueId(),
           nodeName: '审核人',
-          error: true,
           type: 1,
           settype: 1,
           selectMode: 0,
@@ -153,13 +152,13 @@
   const createRouterData = (typeName) => {
     switch (typeName) {
       case 'Exclusive':
-        let exclusiveId = generateUniqueId();
+        let exclusiveId = generateUniqueId() + '_exclusive';
         return {
           id: exclusiveId,
           parentId: props.parentId,
           nodeName: '路由',
           type: TYPE_ROUTER,
-          childNode: null,
+          childNode: props.childNodeP,
           typeName: 'Exclusive',
           conditionNodes: [
             {
@@ -200,13 +199,13 @@
           ],
         };
       case 'Parallel':
-        let parallelId = generateUniqueId();
+        let parallelId = generateUniqueId() + '_parallel';
         return {
           id: parallelId,
           parentId: props.parentId,
           nodeName: '路由',
           type: TYPE_ROUTER,
-          childNode: null,
+          childNode: props.childNodeP,
           typeName: 'Parallel',
           conditionNodes: [
             {
@@ -240,7 +239,7 @@
           ],
         };
       case 'Inclusive':
-        let inclusiveId = generateUniqueId();
+        let inclusiveId = generateUniqueId() + '_inclusive';
         return {
           id: inclusiveId,
           parentId: props.parentId,

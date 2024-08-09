@@ -9,7 +9,7 @@
       @delTerm="delNode"
     />
   </template>
-  <div class="branch-wrap" v-if="nodeConfig.type == 4">
+  <div class="branch-wrap" v-if="nodeConfig.type === 4">
     <div class="branch-box-wrap">
       <div class="branch-box">
         <button class="add-branch" @click="addTerm(nodeConfig.typeName)">添加条件</button>
@@ -28,11 +28,11 @@
             :key="index"
           />
           <nodeWrap v-if="item.childNode" v-model:nodeConfig="item.childNode" />
-          <template v-if="index == 0">
+          <template v-if="index === 0">
             <div class="top-left-cover-line"></div>
             <div class="bottom-left-cover-line"></div>
           </template>
-          <template v-if="index == nodeConfig.conditionNodes.length - 1">
+          <template v-if="index === nodeConfig.conditionNodes.length - 1">
             <div class="top-right-cover-line"></div>
             <div class="bottom-right-cover-line"></div>
           </template>
@@ -193,6 +193,8 @@
       case 'Exclusive':
         // 插入到默认节点的前边
         props.nodeConfig.conditionNodes.splice(len - 1, 0, {
+          id: 'node_' + new Date().getTime(),
+          parentId: props.nodeConfig.id,
           nodeName: '条件' + len,
           icon: 'iconfont icon-bumen',
           type: 3,
@@ -216,6 +218,8 @@
       case 'Parallel':
         // 并行分支无默认节点，正常push即可
         props.nodeConfig.conditionNodes.push({
+          id: 'node_' + new Date().getTime(),
+          parentId: props.nodeConfig.id,
           nodeName: '并行分支' + (len + 1),
           icon: 'iconfont icon-jiekou',
           isDefault: false,
@@ -229,6 +233,8 @@
       case 'Inclusive':
         // 插入到默认节点的前边
         props.nodeConfig.conditionNodes.splice(len - 1, 0, {
+          id: 'node_' + new Date().getTime(),
+          parentId: props.nodeConfig.id,
           nodeName: '包容分支' + len,
           icon: 'iconfont icon-liucheng1',
           type: 6,
@@ -256,7 +262,7 @@
     const { typeName } = props.nodeConfig;
     props.nodeConfig.conditionNodes.splice(index, 1);
     let conditionTitle = '条件';
-    if (typeName == 'Parallel') {
+    if (typeName === 'Parallel') {
       conditionTitle = '并行分支';
     } else if (typeName === 'Inclusive') {
       conditionTitle = '包容分支';
@@ -271,7 +277,7 @@
     });
     resetConditionNodesErr();
     emits('update:nodeConfig', props.nodeConfig);
-    if (props.nodeConfig.conditionNodes.length == 1) {
+    if (props.nodeConfig.conditionNodes.length === 1) {
       if (props.nodeConfig.childNode) {
         if (props.nodeConfig.conditionNodes[0].childNode) {
           reData(props.nodeConfig.conditionNodes[0].childNode, props.nodeConfig.childNode);
@@ -298,7 +304,7 @@
   const setPerson = (priorityLevel, isDefault = false) => {
     const { type, typeName } = props.nodeConfig;
     console.info('nodeWrap初始化加载：', JSON.stringify(props.nodeConfig));
-    if (type == 0) {
+    if (type === 0) {
       // rootVisible.value = true;
       // let formField = getFormFieldData(val);
       // rootValue.value = JSON.parse(JSON.stringify(props.nodeConfig));
@@ -310,7 +316,7 @@
         flag: false,
         id: _uid,
       });
-    } else if (type == 1) {
+    } else if (type === 1) {
       setApprover(true);
       setApproverConfig({
         value: {
@@ -320,7 +326,7 @@
         flag: false,
         id: props.nodeConfig.id,
       });
-    } else if (type == 2) {
+    } else if (type === 2) {
       setCopyer(true);
       setCopyerConfig({
         value: JSON.parse(JSON.stringify(props.nodeConfig)),
@@ -340,7 +346,7 @@
             id: _uid,
           });
         }
-      } else if (typeName == 'Parallel') {
+      } else if (typeName === 'Parallel') {
         // 并行网关
         ElMessage.warning('该节点无需配置！');
       }
