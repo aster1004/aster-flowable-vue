@@ -84,4 +84,20 @@ declare namespace WorkComponent {
     type: string;
     name: string;
   }
+
+  /**
+   * @description: 流水号规则
+   */
+  export interface SerialNumberRule {
+    // 规则id
+    id: string;
+    // 规则类型
+    type: string;
+    // 规则名称
+    name: string;
+    // 规则值
+    value: any;
+    // 是否重置
+    isRest?: boolean;
+  }
 }

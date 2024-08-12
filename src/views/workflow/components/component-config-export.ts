@@ -504,7 +504,10 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 隐藏
         hidden: '',
         // 只读
-        readonly: false,
+        readonly: true,
+        // 提示文字
+        placeholder: '系统自动生成',
+        // 规则
         rules: [],
       },
     },
