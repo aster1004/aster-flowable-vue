@@ -68,8 +68,10 @@
     },
   });
 
+  /**
+   * 监听修改表单权限
+   */
   const changeOperation = (field: any) => {
-    console.info(field);
     if (field.operation.length > 1) {
       field.operation = [field.operation[field.operation.length - 1]];
     }
