@@ -53,10 +53,10 @@ export const setAllNodeFormPermission = () => {
       ) != -1
     ) {
       node.formPermission = setNodeFormPermission(node.type, node.formPermission);
-      console.info(
-        node.type + '->' + node.nodeName + '表单权限：',
-        JSON.stringify(node.formPermission),
-      );
+      // console.info(
+      //   node.type + '->' + node.nodeName + '表单权限：',
+      //   JSON.stringify(node.formPermission),
+      // );
     }
   });
 };
@@ -79,7 +79,7 @@ const setNodeFormPermission = (type: number, formPermissionData: any[]) => {
       formItem.operation = ['readonly'];
     }
   });
-  if (isNotEmpty(formPermissionData)) {
+  if (formPermissionData && isNotEmpty(formPermissionData)) {
     formItems.forEach((formItem: any) => {
       for (let i = 0; i < formPermissionData.length; i++) {
         let permission: any = formPermissionData[i];
@@ -98,7 +98,7 @@ const setNodeFormPermission = (type: number, formPermissionData: any[]) => {
  */
 export const getAllNode = () => {
   let process = workFlowStore.design.process.nodeConfig;
-  console.info('process：', JSON.stringify(process));
+  // console.info('process：', JSON.stringify(process));
   return revertNode(process, []);
 };
 

@@ -59,7 +59,7 @@
 
   const reErr = ({ childNode }: any) => {
     if (childNode) {
-      let { type, error, nodeName, conditionNodes } = childNode;
+      let { type, /*error, nodeName, */ conditionNodes } = childNode;
       /* if (type == 1 || type == 2) {
         if (error) {
           tipList.value.push({
@@ -141,11 +141,12 @@
       const errs: string[] = []; // 校验未通过时要呈现的err说明
       nodeConfig.value = _process.value.nodeConfig;
       setIsTried(true);
-      validateRootAndApprove(errs);
+      await validateRootAndApprove(errs);
       conditionRef.value.validate(nodeConfig.value, errs); // 校验条件节点中的条件组、条件表达式是否完善
       tipList.value = [];
       reErr(nodeConfig.value);
-      rectifyNodeId(nodeConfig.value); //递归设置节点的parentId，保证父子节点id正确
+      //递归设置节点的parentId，保证父子节点id正确,第一次parentId，传root，确保第一层子节点不丢失parentId
+      rectifyNodeId(nodeConfig.value, 'root');
       if (tipList.value.length == 0 && errs.length == 0) {
         resolve('ok');
       } else {
@@ -162,7 +163,7 @@
    * @param childNode
    * @param parentId
    */
-  const rectifyNodeId = ({ childNode }: any, parentId = null) => {
+  const rectifyNodeId = ({ childNode }: any, parentId = '') => {
     if (isNotEmpty(childNode)) {
       let { id, type, conditionNodes } = childNode;
       childNode.parentId = parentId;
@@ -184,7 +185,7 @@
       childNode = null;
     }
   };
-  const zoomSize = (type) => {
+  const zoomSize = (type: number) => {
     if (type == 1) {
       if (nowVal.value == 50) {
         return;

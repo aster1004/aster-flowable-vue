@@ -155,10 +155,9 @@
   // 递归校验条件组条件是否符合
   const handleError = ({ childNode }, errs) => {
     if (childNode) {
-      console.info('childNode', JSON.stringify(childNode));
       let { type, typeName, conditionNodes } = childNode;
       // 递归处理条件节点
-      if (type == 4) {
+      if (type === 4) {
         if (conditionNodes.length > 0) {
           for (let i = 0; i < conditionNodes.length; i++) {
             let nodeError = [];
@@ -166,7 +165,7 @@
             const conditionNode = conditionNodes[i];
             const isDefault = conditionNode.isDefault; // 是否为默认条件
             conditionNode.error = false;
-            if (typeName == 'Exclusive' || typeName == 'Inclusive') {
+            if (typeName === 'Exclusive' || typeName === 'Inclusive') {
               // 排除默认条件的校验
               if (conditionNode.conditionGroups.length === 0 && !isDefault) {
                 conditionNode.error = true;
@@ -196,7 +195,7 @@
                   }
                 }
               }
-            } else if (typeName == 'Parallel') {
+            } else if (typeName === 'Parallel') {
               // 处理并行网关校验
             }
             //校验下方节点， 排除默认条件的校验
