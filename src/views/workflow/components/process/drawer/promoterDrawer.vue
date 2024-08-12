@@ -1,7 +1,7 @@
 <!--
  * @Date: 2022-08-25 14:05:59
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-08-09 14:17:09
+ * @LastEditTime: 2024-08-12 10:33:25
  * @FilePath: \aster-flowable-vue\src\views\workflow\components\process\drawer\promoterDrawer.vue
 -->
 <template>
@@ -27,22 +27,6 @@
         <button-permission v-model:value="rootNode.buttonPermission" />
       </el-tab-pane>
     </el-tabs>
-    <!-- <div class="demo-drawer__content">
-      <div class="promoter_content drawer_content">
-        <p>{{ $func.arrToStr(flowPermission) || '所有人' }}</p>
-        <el-button type="primary" @click="addPromoter">添加/修改发起人</el-button>
-      </div>
-      <employees-dialog
-        :isDepartment="true"
-        v-model:visible="promoterVisible"
-        :data="checkedList"
-        @change="surePromoter"
-      />
-    </div>
-    <template #footer>
-      <el-button type="primary" @click="savePromoter">确 定</el-button>
-      <el-button @click="closeDrawer">取 消</el-button>
-    </template> -->
   </el-drawer>
 </template>
 <script setup lang="ts">
@@ -79,15 +63,17 @@
   });
 
   watch(flowPermission1, (val) => {
-    console.info('初始化加载发起人：', JSON.stringify(val));
+    // console.info('初始化加载发起人：', JSON.stringify(val));
     activeName.value = 'nodeProps';
     rootNode.value = JSON.parse(JSON.stringify(val.value));
+    // 表单权限头信息
     headerConfig.value = {
       required: false,
       edit: false,
       hidden: false,
       readonly: false,
     };
+    // 获取表单属性数据
     let formField = getFormFieldData(val);
     rootNode.value.formPermission = JSON.parse(JSON.stringify(formField));
   });
@@ -96,7 +82,7 @@
    * 保存发起节点至store中
    */
   const savePromoter = () => {
-    console.info('保存发起人节点信息：', JSON.stringify(rootNode.value));
+    // console.info('保存发起人节点信息：', JSON.stringify(rootNode.value));
     setFlowPermission({
       value: rootNode.value,
       flag: true,

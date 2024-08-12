@@ -135,8 +135,8 @@
     () => flowPermission1.value,
     (flow) => {
       if (flow.flag && flow.id === _uid) {
-        console.info('---------------------------------------------------------------');
-        console.info('NodeWrap保存【root】节点的值', JSON.stringify(flow.value));
+        // console.info('---------------------------------------------------------------');
+        // console.info('NodeWrap保存【root】节点的值', JSON.stringify(flow.value));
         emits('update:nodeConfig', flow.value);
       }
     },
@@ -297,13 +297,13 @@
   };
 
   const rootBeforeClose = (val) => {
-    console.info('nodeWrap：', val);
+    // console.info('nodeWrap：', val);
     rootVisible.value = false;
   };
 
   const setPerson = (priorityLevel, isDefault = false) => {
     const { type, typeName } = props.nodeConfig;
-    console.info('nodeWrap初始化加载：', JSON.stringify(props.nodeConfig));
+    // console.info('nodeWrap初始化加载：', JSON.stringify(props.nodeConfig));
     if (type === 0) {
       // rootVisible.value = true;
       // let formField = getFormFieldData(val);

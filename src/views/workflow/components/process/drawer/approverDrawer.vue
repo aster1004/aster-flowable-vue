@@ -141,7 +141,7 @@
   watch(
     () => approverConfig1.value,
     (val) => {
-      console.info('初始化：', JSON.stringify(val));
+      // console.info('初始化：', JSON.stringify(val));
       activeName.value = 'nodeProps';
       editFlag.value = false;
       approverConfig.value = JSON.parse(JSON.stringify(val));
@@ -206,10 +206,10 @@
    * @param val
    */
   const handleRange = (val: any) => {
-    let expression = '';
+    /* let expression = '';
     if (isNotEmpty(val)) {
       expression = val
-        .map((v) => {
+        .map((v: any) => {
           if (v.type === 'user') {
             return '{用户：' + v.name + '}';
           } else if (v.type === 'dept') {
@@ -219,84 +219,13 @@
           }
         })
         .join(',');
-    }
-    console.info('选中人的文本：', expression);
+    } */
+    // console.info('选中人的文本：', expression);
     approverConfig.value.value.nodeUserList = val;
   };
 
-  // 按钮数据
-  /* const nodeButtonData = ref([
-    {
-      operation: '同意',
-      name: 'agree',
-      status: true,
-    },
-    {
-      operation: '不同意',
-      name: 'disagree',
-      status: true,
-    },
-    {
-      operation: '撤销',
-      name: 'revoke',
-      status: true,
-    },
-    {
-      operation: '转交',
-      name: 'forward',
-      status: true,
-    },
-    {
-      operation: '加签',
-      name: 'addNode',
-      status: true,
-    },
-  ]); */
-
-  // 发起节点按钮数据
-  /* const rootButtonData = ref([
-    {
-      operation: '提交',
-      name: 'submit',
-      status: true,
-    },
-  ]); */
-
   // 表单属性表格配置
   const headerConfig = ref({});
-
-  // 操作按钮数据
-  /* const getButtonData = (val: any) => {
-    console.info('bbbbbbbbbbbbbbbbb', val);
-    let buttonPermission = val.value.buttonPermission;
-    console.info('buttonPermission:--------------->', buttonPermission);
-    let type = val.value.type;
-    if (isNotEmpty(buttonPermission)) {
-      if (type == 0) {
-        rootButtonData.value.forEach((buttonItem: any) => {
-          for (let i = 0; i < buttonPermission.length; i++) {
-            let item: any = buttonPermission[i];
-            if (buttonItem.name == item.name) {
-              buttonItem.status = item.status;
-            }
-          }
-        });
-        return rootButtonData.value;
-      } else {
-        nodeButtonData.value.forEach((buttonItem: any) => {
-          for (let i = 0; i < buttonPermission.length; i++) {
-            let item: any = buttonPermission[i];
-            if (buttonItem.name == item.name) {
-              buttonItem.status = item.status;
-            }
-          }
-        });
-        return nodeButtonData.value;
-      }
-    } else {
-      return type == 0 ? rootButtonData.value : nodeButtonData.value;
-    }
-  }; */
 
   /**
    * 保存审批节点信息
@@ -306,7 +235,8 @@
     // 是否会签, 会签是2, 非会签是1
     approverConfig.value.value.examineMode =
       isNotEmpty(nodeUserList) && nodeUserList.length > 1 ? 2 : 1;
-    console.info('保存审批节点信息：', JSON.stringify(approverConfig.value.value));
+    // console.info('保存审批节点信息：', JSON.stringify(approverConfig.value.value));
+    // 保存审批节点信息
     setApproverConfig({
       value: JSON.parse(JSON.stringify(approverConfig.value.value)),
       flag: true,

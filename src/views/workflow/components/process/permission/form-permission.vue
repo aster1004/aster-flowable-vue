@@ -40,7 +40,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
+  import { computed, onMounted } from 'vue';
 
   const emits = defineEmits(['update:value']);
 
@@ -74,7 +74,7 @@
   const checkedAll = (field: string) => {
     let headerConfig = props.headerConfig;
     for (let key in headerConfig) {
-      console.info('key：', key);
+      // console.info('key：', key);
       if (headerConfig[field]) {
         if (key !== field) {
           headerConfig[key] = false;
