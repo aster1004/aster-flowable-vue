@@ -7,8 +7,8 @@
           <el-checkbox label="编辑" v-model="headerConfig.edit" @change="checkedAll('edit')" />
         </template>
         <template #default="scope">
-          <el-checkbox-group v-model="scope.row.operation" :max="1">
-            <el-checkbox value="edit" />
+          <el-checkbox-group v-model="scope.row.operation">
+            <el-checkbox value="edit" @change="changeOperation(scope.row)" />
           </el-checkbox-group>
         </template>
       </el-table-column>
@@ -21,8 +21,8 @@
           />
         </template>
         <template #default="scope">
-          <el-checkbox-group v-model="scope.row.operation" :max="1">
-            <el-checkbox value="readonly" />
+          <el-checkbox-group v-model="scope.row.operation">
+            <el-checkbox value="readonly" @change="changeOperation(scope.row)" />
           </el-checkbox-group>
         </template>
       </el-table-column>
@@ -31,8 +31,8 @@
           <el-checkbox label="隐藏" v-model="headerConfig.hidden" @change="checkedAll('hidden')" />
         </template>
         <template #default="scope">
-          <el-checkbox-group v-model="scope.row.operation" :max="1">
-            <el-checkbox value="hidden" />
+          <el-checkbox-group v-model="scope.row.operation">
+            <el-checkbox value="hidden" @change="changeOperation(scope.row)" />
           </el-checkbox-group>
         </template>
       </el-table-column>
@@ -67,6 +67,13 @@
       emits('update:value', value);
     },
   });
+
+  const changeOperation = (field: any) => {
+    console.info(field);
+    if (field.operation.length > 1) {
+      field.operation = [field.operation[field.operation.length - 1]];
+    }
+  };
 
   /**
    * 选中所有
