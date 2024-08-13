@@ -207,7 +207,6 @@
   }
 
   .home-card {
-    background-color: rgb(255, 255, 255, 0.85);
     margin: 10px;
     h2 {
       font-size: 24px;

@@ -7,7 +7,13 @@
 -->
 <template>
   <div class="main-box">
-    <app-tree-filter @change="changeApp" />
+    <tree-filter
+      title="应用信息"
+      label="name"
+      :request-api="appListApi"
+      :default-value="queryParams.appId"
+      @change="changeApp"
+    />
     <div class="table-box">
       <div class="card table-search" v-show="showSearch">
         <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
@@ -160,10 +166,11 @@
   </div>
 </template>
 <script setup lang="ts">
+  import TreeFilter from '@/components/tree/tree-filter.vue';
   import { useRouter } from 'vue-router';
-  import AppTreeFilter from '../app/app-tree-filter.vue';
   import { onMounted, reactive, ref } from 'vue';
   import { formPageApi, formDeleteApi, deploymentApi } from '@/api/workflow/form';
+  import { appListApi } from '@/api/workflow/app';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useI18n } from 'vue-i18n';
@@ -298,9 +305,8 @@
   /**
    * 切换应用
    */
-  const changeApp = (appInfo: WorkApp.AppInfo) => {
-    console.info(appInfo);
-    queryParams.appId = appInfo.id;
+  const changeApp = (appId: string) => {
+    queryParams.appId = appId;
     handleQuery();
   };
 

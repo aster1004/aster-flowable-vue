@@ -309,7 +309,6 @@
    * @return {*}
    */
   const handleQuery = async () => {
-    console.log('handleQuery');
     if (isNotEmpty(props.code) && !readonly.value) {
       queryParams.code = props.code;
       // 自定义查询配置
@@ -565,7 +564,6 @@
    * @return {*}
    */
   const loadFormInfoByCode = async (code: string) => {
-    console.log('loadFormInfoByCode');
     await formInfoByCodeApi(code).then(async (res) => {
       if (res.code == ResultEnum.SUCCESS) {
         formInfo.value = res.data;
@@ -601,15 +599,23 @@
   watch(
     () => props.code,
     (val: string) => {
+      console.log('code--->', val);
       // 默认显示查询条件并折叠
       showSearch.value = true;
       searchCollapsed.value = true;
       // 如果是列表模式，则加载表单信息
-      if (props.type == 'list' && isNotEmpty(val)) {
-        console.log('watch');
-        readonly.value = false;
-        // 根据code获取表单信息
-        loadFormInfoByCode(val);
+      if (props.type == 'list') {
+        if (isNotEmpty(val)) {
+          readonly.value = false;
+          // 根据code获取表单信息
+          loadFormInfoByCode(val);
+        } else {
+          readonly.value = false;
+          tableColumns.value = [];
+          columnCheckedIds.value = [];
+          dataList.value = [];
+          total.value = 0;
+        }
       }
     },
     { immediate: true, deep: true },
