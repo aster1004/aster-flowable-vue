@@ -77,7 +77,7 @@
   });
 
   // 节点树
-  const treeData = ref<WorkComponent.AreaNode[]>([]);
+  const treeData = ref<WorkComponent.TreeNode[]>([]);
 
   /**
    * @description: 加载节点数据
@@ -92,7 +92,7 @@
 
     // 遍历省列表
     Object.keys(provinceList).forEach((provinceKey) => {
-      const province: WorkComponent.AreaNode = {
+      const province: WorkComponent.TreeNode = {
         label: provinceList[provinceKey],
         value: provinceList[provinceKey],
         children: [],
@@ -104,7 +104,7 @@
         Object.keys(cityList).forEach((cityKey) => {
           const cityDistance = Number(cityKey) - Number(provinceKey);
           if (cityDistance > 0 && cityDistance < 10000) {
-            const city: WorkComponent.AreaNode = {
+            const city: WorkComponent.TreeNode = {
               label: cityList[cityKey],
               value: cityList[cityKey],
               children: [],
@@ -113,7 +113,7 @@
               Object.keys(countyList).forEach((countyKey) => {
                 const countyDistance = Number(countyKey) - Number(cityKey);
                 if (countyDistance > 0 && countyDistance < 100) {
-                  const county: WorkComponent.AreaNode = {
+                  const county: WorkComponent.TreeNode = {
                     label: countyList[countyKey],
                     value: countyList[countyKey],
                   };

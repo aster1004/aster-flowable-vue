@@ -29,6 +29,9 @@ declare namespace Process {
     customItems: WorkComponent.ComponentConfig[];
   }
 
+  /**
+   * 流程实例查询参数
+   */
   export interface InstanceQueryParams {
     // 主键
     id?: string;
@@ -60,8 +63,12 @@ declare namespace Process {
     [key: string]: any;
   }
 
+  /**
+   * 流程实例详情
+   */
   export interface InstanceDetail {
     instanceInfo: InstanceInfo;
     formInfo: WorkForm.FormModel;
+    processInfo?: string;
   }
 }

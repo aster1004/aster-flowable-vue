@@ -51,12 +51,10 @@
    */
   const init = () => {
     visible.value = true;
-    console.log(JSON.stringify(formData.value));
-    // formData.value = workFlowStore.design.formItems.reduce(
-    //   (acc, cur) => ({ ...acc, [cur.id]: cur.value }),
-    //   {},
-    // );
-    console.log(JSON.stringify(formData.value));
+    formData.value = workFlowStore.design.formItems.reduce(
+      (acc, cur) => ({ ...acc, [cur.id]: cur.value }),
+      {},
+    );
   };
 
   const _formItems = computed(() => {
@@ -79,15 +77,20 @@
    * @description: 验证表单
    */
   const validateForm = () => {
-    console.log(_formItems.value);
     formRenderRef.value.validate();
   };
 
+  /**
+   * @description: 表单数据
+   */
+  const _formData = computed(() => {
+    return JSON.parse(JSON.stringify(formData.value));
+  });
+
   watch(
-    () => formData.value,
-    (val) => {
-      console.log('preview--->formData');
-      console.log(val);
+    () => _formData.value,
+    (val, oval) => {
+      console.log('preview--->', val, oval);
     },
     {
       immediate: true,

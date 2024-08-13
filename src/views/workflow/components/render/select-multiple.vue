@@ -13,11 +13,11 @@
     :show-message="showMessage"
   >
     <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
+      <span v-show="showLabel">{{ _formItem.title }}</span>
     </template>
     <template v-if="mode === 'design'">
-      <template v-if="formItem.props.expand">
-        <el-checkbox-group :model-value="formItem.value" readonly>
+      <template v-if="_formItem.props.expand">
+        <el-checkbox-group :model-value="_formItem.value" readonly>
           <el-checkbox
             v-for="(item, i) in options"
             :key="i"
@@ -27,7 +27,16 @@
         </el-checkbox-group>
       </template>
       <template v-else>
-        <el-input :model-value="formItem.value" readonly />
+        <el-select
+          :model-value="_formItem.value"
+          :multiple="true"
+          :clearable="true"
+          :disabled="true"
+        >
+          <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
+            {{ item.label }}
+          </el-option>
+        </el-select>
       </template>
     </template>
 
@@ -72,9 +81,12 @@
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, onMounted, PropType } from 'vue';
+  import { computed, onMounted, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { getDictDataList, isNotEmpty } from '@/utils';
+  import { instanceListByCodeApi } from '@/api/workflow/instance';
+  import { ResultEnum } from '@/enums/httpEnum';
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -108,8 +120,12 @@
     },
   });
 
+  // 工作流store
+  const workFlowStore = useWorkFlowStore();
   // 字典
   const appStore = useAppStore();
+  // 选项
+  const options = ref<any[]>([]);
 
   // 键
   const formItemProp = computed(() => {
@@ -139,28 +155,84 @@
   });
 
   /**
-   * @description: 选项
+   * @description: 获取动态选项
+   * @return {*}
    */
-  const options = computed(() => {
-    if (props.formItem.props.type === 'static') {
-      return props.formItem.props.options.map((item) => {
+  const getDynamicOptions = async () => {
+    if (
+      isNotEmpty(props.formItem.props.dynamic.value) &&
+      props.formItem.props.dynamic.value.length == 3
+    ) {
+      await instanceListByCodeApi(props.formItem.props.dynamic.value[1], '9').then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          if (res.data && res.data.length > 0) {
+            options.value = res.data.map((item: Process.InstanceInfo) => {
+              const fieldId = props.formItem.props.dynamic.value[2];
+              const label = item[fieldId];
+              return {
+                value: label,
+                label: label,
+              };
+            });
+          } else {
+            options.value = [];
+          }
+        } else {
+          options.value = [];
+        }
+      });
+    } else {
+      options.value = [];
+    }
+  };
+
+  /**
+   * @description: 根据选项类型获取选项值
+   * @param {*} type 选项类型
+   * @return {*}
+   */
+  const handleOptions = async (type: string) => {
+    if (type === 'static') {
+      options.value = props.formItem.props.options.map((item) => {
         return {
           label: item,
           value: item,
         };
       });
-    } else if (props.formItem.props.type === 'dict') {
+    } else if (type === 'dict') {
       const dataList = getDictDataList(appStore.dictList, props.formItem.props.dictType);
-      return dataList.map((item) => {
+      options.value = dataList.map((item) => {
         return {
           label: item.dictLabel,
-          value: item.dictValue,
+          value: item.dictLabel,
         };
       });
-    } else if (props.formItem.props.type === 'dynamic') {
-      //TODO 动态查询待实现
+    } else if (type === 'dynamic') {
+      await getDynamicOptions();
+    } else {
+      options.value = [];
     }
-    return [];
+  };
+
+  // 监听选项类型变化
+  watch(
+    () => props.formItem.props.type,
+    async (type: string) => {
+      // 根据选项类型获取选项值
+      await handleOptions(type);
+    },
+    { immediate: true, deep: true },
+  );
+
+  // 设计阶段监听组件默认值的变化
+  const _formItem = computed(() => {
+    if (workFlowStore.selectFormItem && workFlowStore.selectFormItem.id === props.formItem.id) {
+      // 默认值变化时，根据选项类型重新获取选项值
+      handleOptions(workFlowStore.selectFormItem.props.type);
+      return workFlowStore.selectFormItem;
+    } else {
+      return props.formItem;
+    }
   });
 
   /**
@@ -181,13 +253,7 @@
   const _label = computed(() => {
     let label = '';
     if (isNotEmpty(_value.value)) {
-      _value.value.forEach((val) => {
-        options.value.forEach((item) => {
-          if (item.value === val) {
-            label += item.label + ' ';
-          }
-        });
-      });
+      label = _value.value.join(',');
     }
     return label;
   });

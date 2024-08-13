@@ -230,7 +230,7 @@
    * @description: 表单组件
    * @return {*}
    */
-  const formItems = computed(() => {
+  const _formItems = computed(() => {
     return workFlowStore.design.formItems;
   });
 
@@ -256,7 +256,7 @@
    */
   const tableColumnIds = computed(() => {
     let columnIds: string[] = [];
-    formItems.value.forEach((item) => {
+    _formItems.value.forEach((item) => {
       if (item.name === 'TableList') {
         item.props.columns.forEach((col) => {
           columnIds.push(col.id);
@@ -298,7 +298,7 @@
         isTableList = tableColumnIds.value.indexOf(selectedItemId.value) != -1;
       }
     }
-    formulaItemTree(formItems.value, nodes, isTableList);
+    formulaItemTree(_formItems.value, nodes, isTableList);
     flatFormData.value = isTableList ? flatNodes(nodes) : nodes;
     // 排除自身组件，防止循环引用
     if (isDef(selectedItemId)) {

@@ -1,136 +1,193 @@
 <template>
   <el-drawer
     :append-to-body="true"
-    :title="approverConfig.nodeName"
     v-model="visible"
     :show-close="false"
-    :size="450"
+    :size="550"
     :before-close="saveApprover"
   >
+    <template #header>
+      <el-input
+        v-if="editFlag"
+        v-model="approverConfig.value.nodeName"
+        placeholder="请输入节点名称"
+        @blur="editFlag = false"
+      />
+      <div class="custom-title" v-else>
+        <div>{{ _nodeName }}</div>
+        <i class="iconfont icon-bianji icon-primary" @click="editFlag = true"></i>
+      </div>
+    </template>
     <el-form
       ref="nodeFormRef"
       style="max-width: 600px"
       :rules="[]"
       label-width="auto"
-      class="demo-ruleForm"
+      label-position="top"
       status-icon
     >
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="节点属性" name="nodeProps">
-          <el-form-item label="节点ID" prop="nodeId">
+          <el-form-item label="节点ID" prop="id">
             <el-input readonly v-model="approverConfig.id" />
           </el-form-item>
-          <el-form-item label="审核人" prop="nodeId">
-            <el-input v-model="nodeForm.nodeId" readonly>
+          <el-form-item label="审核人" prop="approveUser">
+            <el-input :value="approveUserText" readonly @click="openUserSelect">
               <template #suffix>
-                <i class="iconfont icon-xinzeng icon-primary" />
+                <i class="iconfont icon-xinzeng icon-primary" @click="openUserSelect" />
               </template>
             </el-input>
           </el-form-item>
+          <el-form-item label="审批人为空时">
+            <el-select v-model="approverConfig.value.noUser" placeholder="请选择">
+              <el-option
+                v-for="item in noUserOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="多人审批时审批方式">
+            <el-select v-model="approverConfig.value.approveType" placeholder="请选择">
+              <el-option
+                v-for="item in approveTypeOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
         </el-tab-pane>
         <el-tab-pane label="表单权限" name="formPermission">
-          <el-table :data="formFieldData" style="width: 100%">
-            <el-table-column prop="title" label="属性" />
-            <el-table-column prop="edit" label="编辑" header-align="center" align="center">
-              <template #header>
-                <el-checkbox
-                  label="编辑"
-                  v-model="headerConfig.edit"
-                  @change="checkedAll('edit')"
-                />
-              </template>
-              <template #default="scope">
-                <el-checkbox-group v-model="scope.row.operation" :max="1">
-                  <el-checkbox value="edit" />
-                </el-checkbox-group>
-              </template>
-            </el-table-column>
-            <el-table-column prop="readonly" label="只读" header-align="center" align="center">
-              <template #header>
-                <el-checkbox
-                  label="只读"
-                  v-model="headerConfig.readonly"
-                  @change="checkedAll('readonly')"
-                />
-              </template>
-              <template #default="scope">
-                <el-checkbox-group v-model="scope.row.operation" :max="1">
-                  <el-checkbox value="readonly" />
-                </el-checkbox-group>
-              </template>
-            </el-table-column>
-            <el-table-column prop="hidden" label="隐藏" header-align="center" align="center">
-              <template #header>
-                <el-checkbox
-                  label="隐藏"
-                  v-model="headerConfig.hidden"
-                  @change="checkedAll('hidden')"
-                />
-              </template>
-              <template #default="scope">
-                <el-checkbox-group v-model="scope.row.operation" :max="1">
-                  <el-checkbox value="hiddden" />
-                </el-checkbox-group>
-              </template>
-            </el-table-column>
-          </el-table>
+          <form-permission
+            v-model:value="approverConfig.value.formPermission"
+            :headerConfig="headerConfig"
+          />
+        </el-tab-pane>
+        <el-tab-pane label="操作权限" name="buttonPermission">
+          <button-permission v-model:value="approverConfig.value.buttonPermission" />
         </el-tab-pane>
       </el-tabs>
     </el-form>
-    <template #footer>
+    <!-- <template #footer>
       <el-button type="primary" @click="saveApprover">确 定</el-button>
       <el-button @click="closeDrawer">取 消</el-button>
-    </template>
+    </template> -->
+    <range
+      title="选择审批人"
+      :visible="rangeVisible"
+      v-if="rangeVisible"
+      @submit="handleRange"
+      @closeRange="closeRange"
+      :value="approverConfig.value.nodeUserList"
+    />
   </el-drawer>
 </template>
 <script setup lang="ts">
   import { ref, computed, watch, onMounted } from 'vue';
-  import { useStore } from '@/stores/index';
-  import type { TabsPaneContext } from 'element-plus';
-  import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { flatFormItems } from '@/utils/workflow';
+  import { processStore } from '@/stores/modules/process';
+  import Range from '../../render/range.vue';
+  import { isNotEmpty } from '@/utils';
+  import FormPermission from '../permission/form-permission.vue';
+  import ButtonPermission from '../permission/button-permission.vue';
+  import { getFormFieldData } from '@/utils/process/process';
 
-  let store = useStore();
-  let { setApprover } = store;
+  let store = processStore();
+  let { setApproverConfig, setApprover } = store;
 
-  // let approverConfig = ref({});
+  // 编辑状态
+  const editFlag = ref<boolean>(false);
 
+  // 人员选择
+  const rangeVisible = ref<boolean>(false);
+
+  // 当前审核节点的配置
   const approverConfig = ref<any>({});
+
+  // store中的审核节点配置
   const approverConfig1 = computed(() => store.approverConfig1);
 
-  watch(approverConfig1, (val) => {
-    console.info('approverConfig:', val);
-    approverConfig.value = val;
+  // 审核节点标题
+  const _nodeName = computed(() => {
+    const config = JSON.parse(JSON.stringify(store.approverConfig1));
+    if (config && config.value) {
+      return config.value.nodeName;
+    }
+    return '';
   });
+
+  // 审批人文本
+  const approveUserText = computed(() => {
+    let expression = '';
+    let val = approverConfig.value.value.nodeUserList;
+    if (isNotEmpty(val)) {
+      expression = val
+        .map((v: any) => {
+          if (v.type === 'user') {
+            return '{用户：' + v.name + '}';
+          } else if (v.type === 'dept') {
+            return '{部门：' + v.name + '}';
+          } else {
+            return '';
+          }
+        })
+        .join(',');
+    }
+    return expression;
+  });
+
+  // 监听审核节点配置
+  watch(
+    () => approverConfig1.value,
+    (val) => {
+      // console.info('初始化：', JSON.stringify(val));
+      activeName.value = 'nodeProps';
+      editFlag.value = false;
+      approverConfig.value = JSON.parse(JSON.stringify(val));
+      approverConfig.value.id = val.value.id;
+      headerConfig.value = {
+        required: false,
+        edit: false,
+        hidden: false,
+        readonly: false,
+      };
+      let formField = getFormFieldData(val);
+      approverConfig.value.value.formPermission = JSON.parse(JSON.stringify(formField));
+      // let buttonData = getButtonData(val);
+      // approverConfig.value.value.buttonPermission = JSON.parse(JSON.stringify(val.value.buttonPermission));
+    },
+  );
 
   let approverDrawer = computed(() => store.approverDrawer);
 
-  const headerConfig = ref({
-    required: false,
-    edit: false,
-    hidden: false,
-    readonly: false,
-  });
+  // 没有人时节点处理方式
+  const noUserOption = ref<Array<any>>([
+    {
+      value: 'autoPass',
+      label: '自动通过',
+    },
+    {
+      value: 'autoReject',
+      label: '自动驳回',
+    },
+  ]);
 
-  /* const formFieldData = ref<any[]>([
-     { fieldName: '原因', operation: ['edit'] },
-     { fieldName: '日期', operation: ['hiddden'] },
-   ]);
-  */
-  // 工作流store
-  const workFlowStore = useWorkFlowStore();
-
-  const formFieldData = computed(() => {
-    let formItems = flatFormItems(workFlowStore.design.formItems);
-    formItems.forEach((formItem: any) => {
-      formItem.operation = ['edit'];
-    });
-    return formItems;
-  });
-
-  const nodeForm = ref({
-    nodeId: '',
-  });
+  // 多人签批方式
+  const approveTypeOption = ref<Array<any>>([
+    {
+      value: 'togetherCountersign',
+      label: '会签(可同时审批，须全部同意)',
+    },
+    {
+      value: 'orderCountersign',
+      label: '会签(按选择顺序审批，须全部同意，不支持加签)',
+    },
+    {
+      value: 'orSign',
+      label: '或签(有一人同意即可)',
+    },
+  ]);
 
   let visible = computed({
     get() {
@@ -144,35 +201,79 @@
   // 选中的tab
   const activeName = ref<string>('nodeProps');
 
-  const checkedAll = (field: string) => {
-    console.info(field, headerConfig.value[field]);
-    for (let key in headerConfig.value) {
-      if (headerConfig.value[field]) {
-        if (key !== field) {
-          headerConfig.value[key] = false;
-        }
-      }
-    }
-    formFieldData.value.forEach((formField: any) => {
-      formField.operation = headerConfig.value[field] ? [field] : [];
-    });
+  /**
+   * 获取选中的审批人
+   * @param val
+   */
+  const handleRange = (val: any) => {
+    /* let expression = '';
+    if (isNotEmpty(val)) {
+      expression = val
+        .map((v: any) => {
+          if (v.type === 'user') {
+            return '{用户：' + v.name + '}';
+          } else if (v.type === 'dept') {
+            return '{部门：' + v.name + '}';
+          } else {
+            return '';
+          }
+        })
+        .join(',');
+    } */
+    // console.info('选中人的文本：', expression);
+    approverConfig.value.value.nodeUserList = val;
   };
 
-  const handleClick = (tab: TabsPaneContext, event: Event) => {
-    console.log(tab, event);
-  };
+  // 表单属性表格配置
+  const headerConfig = ref({});
 
+  /**
+   * 保存审批节点信息
+   */
   const saveApprover = () => {
-    // 权限
-    approverConfig.value.formPermission = formFieldData.value;
-    console.info(formFieldData.value);
-    console.info(approverConfig.value);
-    // closeDrawer();
+    let nodeUserList = approverConfig.value.value.nodeUserList;
+    // 是否会签, 会签是2, 非会签是1
+    approverConfig.value.value.examineMode =
+      isNotEmpty(nodeUserList) && nodeUserList.length > 1 ? 2 : 1;
+    // console.info('保存审批节点信息：', JSON.stringify(approverConfig.value.value));
+    // 保存审批节点信息
+    setApproverConfig({
+      value: JSON.parse(JSON.stringify(approverConfig.value.value)),
+      flag: true,
+      id: approverConfig1.value.value.id,
+    });
+    closeDrawer();
   };
+
+  /**
+   * 关闭抽屉
+   */
   const closeDrawer = () => {
     setApprover(false);
   };
 
+  /**
+   * 打开选择审批人
+   */
+  const openUserSelect = () => {
+    rangeVisible.value = true;
+  };
+
+  /**
+   * 关闭审批人
+   */
+  const closeRange = () => {
+    rangeVisible.value = false;
+  };
+
   onMounted(() => {});
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+  .custom-title {
+    display: flex;
+    justify-content: space-between;
+  }
+  .icon-bianji {
+    cursor: pointer;
+  }
+</style>

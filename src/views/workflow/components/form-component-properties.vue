@@ -6,13 +6,13 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div class="form-component-properties" v-if="formItem">
+  <div class="form-component-properties" v-if="_formItem">
     <el-form label-position="top">
       <el-form-item label="控件编码">
-        <el-input v-model="formItem.id" readonly />
+        <el-input v-model="_formItem.id" readonly />
       </el-form-item>
-      <component :is="formItem.name" :ref="formItem?.id + 'ConfigRef'" />
-      <el-form-item v-if="formItem.props.hasOwnProperty('hidden')">
+      <component :is="_formItem.name" :ref="_formItem?.id + 'ConfigRef'" />
+      <el-form-item v-if="_formItem.props.hasOwnProperty('hidden')">
         <template #label>
           <span>隐藏条件</span>
           <el-tooltip content="隐藏条件，满足条件时隐藏控件" placement="top">
@@ -23,7 +23,7 @@
       </el-form-item>
     </el-form>
 
-    <formula ref="formulaRef" title="隐藏条件" v-model:formula="formItem.props.hidden" />
+    <formula ref="formulaRef" title="隐藏条件" v-model:formula="_formItem.props.hidden" />
   </div>
 </template>
 <script lang="ts">
@@ -51,7 +51,7 @@
   };
 
   // 选中的组件
-  const formItem = computed(() => {
+  const _formItem = computed(() => {
     return workFlowStore.selectFormItem;
   });
 </script>

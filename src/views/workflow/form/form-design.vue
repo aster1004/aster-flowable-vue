@@ -67,7 +67,7 @@
               >
                 <template #item="{ element, index }">
                   <div
-                    class="main-component w-form-item"
+                    class="main-component"
                     @click.stop="onSelectComponent(element)"
                     :style="onSelectedComponentStyle(element)"
                   >
@@ -91,7 +91,7 @@
             <form-component-properties />
           </el-tab-pane>
           <el-tab-pane label="表单属性" name="form">
-            <form-properties />
+            <form-properties ref="formPropertiesRef" />
           </el-tab-pane>
         </el-tabs>
       </el-scrollbar>
@@ -101,7 +101,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { deleteFormComponent, generateFieldId } from '@/utils/workflow';
+  import { deleteFormComponent, deleteComponentValidate, generateFieldId } from '@/utils/workflow';
   import { componentConfigExport } from '@/views/workflow/components/component-config-export';
   import FormProperties from '@/views/workflow/components/form-properties.vue';
   import FormComponentProperties from '@/views/workflow/components/form-component-properties.vue';
@@ -117,6 +117,7 @@
 
   // 注册组件
   const formPreviewRef = ref();
+  const formPropertiesRef = ref();
 
   /** 拖拽中 */
   const leftDrag = ref<boolean>(false);
@@ -180,6 +181,11 @@
    * @return {*}
    */
   const onDeleteComponent = (index: number) => {
+    // 校验其他组件中是否引用了该组件
+    const validateFlag = deleteComponentValidate(formItems.value, formItems.value[index].id);
+    if (!validateFlag) {
+      return;
+    }
     ElMessageBox.confirm(t('header.deleteComp'), t('common.tips'), {
       confirmButtonText: t('button.confirm'),
       cancelButtonText: t('button.cancel'),
@@ -253,10 +259,17 @@
     formPreviewRef.value.init();
   };
 
+  // 校验表单
+  const validate = async () => {
+    return formPropertiesRef.value.validate();
+  };
+
   onMounted(() => {
     // 默认选中表单属性
     rightActiveTab.value = 'form';
   });
+
+  defineExpose({ validate });
 </script>
 <style scoped lang="scss">
   .el-container .el-aside {
@@ -358,8 +371,11 @@
 
       .main-component {
         position: relative;
-        padding-left: 10px;
-        padding-right: 20px;
+        padding: 15px 25px 15px 15px;
+        margin: 5px 2px;
+        border: 1px dashed white;
+        background: #fbfcfd;
+
         .close {
           position: absolute;
           top: 0px;
@@ -375,23 +391,17 @@
             }
           }
         }
+
+        ::v-deep(.el-form-item--default) {
+          margin-bottom: 0px;
+        }
+        ::v-deep(.el-form-item) {
+          margin-bottom: 0px;
+        }
       }
       .main-component:hover {
         border: 1px dashed var(--el-menu-active-color);
         background: var(--el-menu-active-bg-color);
-      }
-      .w-form-item {
-        position: relative;
-        padding: 15px 25px 15px 15px;
-        margin: 5px 2px;
-        border: 1px dashed white;
-        background: #fbfcfd;
-        .el-form-item--default {
-          margin-bottom: 0px;
-        }
-        .el-form-item {
-          margin-bottom: 0px;
-        }
       }
     }
   }

@@ -8,9 +8,9 @@
 
 export const ValueType = {
   string: 'String',
+  number: 'Number',
   object: 'Object',
   array: 'Array',
-  number: 'Number',
   date: 'Date',
   user: 'User',
   dept: 'Dept',
@@ -112,6 +112,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         readonly: false,
         // 提示语
         placeholder: '',
+        // 默认值配置
+        default: {
+          // 类型: 计算公式formula和数据联动data-linkage
+          type: 'formula',
+          value: '',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {
@@ -132,6 +146,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         placeholder: '',
         // 行数
         rows: 2,
+        // 默认值配置
+        default: {
+          // 类型: 计算公式formula和数据联动data-linkage
+          type: 'formula',
+          value: '',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {
@@ -150,6 +178,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         readonly: false,
         // 精确度
         precision: 0,
+        // 默认值配置
+        default: {
+          // 类型: 计算公式formula和数据联动data-linkage
+          type: 'formula',
+          value: '',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {
@@ -170,6 +212,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         precision: 0,
         // 展示大写
         showChinese: false,
+        // 默认值配置
+        default: {
+          // 类型: 计算公式formula和数据联动data-linkage
+          type: 'formula',
+          value: '',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {
@@ -197,7 +253,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 动态配置
         dynamic: {
           label: '',
-          value: '',
+          value: [],
         },
       },
     },
@@ -226,7 +282,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 动态配置
         dynamic: {
           label: '',
-          value: '',
+          value: [],
         },
       },
     },
@@ -246,6 +302,20 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         readonly: false,
         // 日期格式
         format: 'YYYY-MM-DD',
+        // 默认值配置
+        default: {
+          // 类型: 计算公式formula和数据联动data-linkage
+          type: 'formula',
+          value: '',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {
@@ -335,6 +405,19 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
           type: 'user', // 可选类型，user（选人) | dept(选部门) | sysRole(系统角色) | flowRole(流程角色)
           ids: [], // 对应类型的ids
         },
+        // 默认值配置
+        default: {
+          // 类型: 固定值fixed和数据联动data-linkage
+          type: 'fixed',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
+        },
       },
     },
     {
@@ -359,6 +442,19 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         canselected: {
           type: 'dept', // 可选类型,固定位dept
           ids: [],
+        },
+        // 默认值配置
+        default: {
+          // 类型: 固定值fixed和数据联动data-linkage
+          type: 'fixed',
+          linkage: {
+            // 联动目标表单编码
+            formCode: [],
+            // 联动条件
+            conditions: [],
+            // 联动填充
+            dataFill: '',
+          },
         },
       },
     },
@@ -408,8 +504,33 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 隐藏
         hidden: '',
         // 只读
-        readonly: false,
+        readonly: true,
+        // 提示文字
+        placeholder: '系统自动生成',
+        // 规则
         rules: [],
+      },
+    },
+    {
+      id: '',
+      title: '签名',
+      name: 'Signature',
+      icon: 'iconfont icon-qianming',
+      value: '',
+      valueType: ValueType.string,
+      props: {
+        // 必填
+        required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
+        // 显示线宽
+        showLineWidth: false,
+        // 显示颜色
+        showLineColor: false,
+        // 显示本地签名
+        showLocal: false,
       },
     },
     {
@@ -417,7 +538,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       title: '关联表单',
       name: 'AssociatedForm',
       icon: 'iconfont icon-guanlianbiaodan',
-      value: {},
+      value: { label: '', value: '' },
       valueType: ValueType.object,
       props: {
         // 必填
@@ -426,14 +547,43 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         hidden: '',
         // 只读
         readonly: false,
-        // 关联流程
-        dynamicData: [],
-        dynamicName: [],
-        rules: [],
-        filters: {
-          showFormula: '', //回显用，因为包含表单字段的时候会出现表单名称
-          calcFormula: '', //解析用，表单名称对应为formData.fieldxxxx
+        // 关联表单
+        formCode: [],
+        formName: '',
+        // 数据填充规则
+        dataFill: [],
+        // 数据范围限定
+        dataScope: {
+          label: '', // 公式回显用
+          value: '', // 公式解析用
         },
+        // 显示字段
+        displayField: [],
+      },
+    },
+    {
+      id: '',
+      title: '关联属性',
+      name: 'AssociatedProperty',
+      icon: 'iconfont icon-guanlianliucheng',
+      value: '',
+      valueType: ValueType.string,
+      props: {
+        // 必填
+        required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
+        // 关联表单
+        associatedForm: {
+          // 表单控件的fieldId
+          fieldId: '',
+          // 表单控件配置的关联表单的编码
+          formCode: '',
+        },
+        // 关联字段
+        associatedField: '',
       },
     },
     {
@@ -472,45 +622,6 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
         level: 3,
         // 提示文字
         placeholder: '请选择地区',
-      },
-    },
-    {
-      id: '',
-      title: '签名',
-      name: 'Signature',
-      icon: 'iconfont icon-qianming',
-      value: '',
-      valueType: ValueType.string,
-      props: {
-        // 必填
-        required: false,
-        // 隐藏
-        hidden: '',
-        // 只读
-        readonly: false,
-        // 显示线宽
-        showLineWidth: false,
-        // 显示颜色
-        showLineColor: false,
-        // 显示本地签名
-        showLocal: false,
-      },
-    },
-    {
-      id: '',
-      title: '关联流程',
-      name: 'AssociatedProcess',
-      icon: 'iconfont icon-guanlianliucheng',
-      value: [],
-      valueType: ValueType.array,
-      props: {
-        // 必填
-        required: false,
-        // 隐藏
-        hidden: '',
-        // 只读
-        readonly: false,
-        processCode: null,
       },
     },
     {
@@ -591,7 +702,7 @@ export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
     name: 'UserPicker',
     icon: 'iconfont icon-yonghu',
     value: [],
-    valueType: 'User',
+    valueType: ValueType.user,
     props: {
       // 必填
       required: false,
@@ -603,6 +714,11 @@ export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
       expansion: false,
       options: [],
       placeholder: '请选择人员',
+      // 可被可被选择的人员
+      canselected: {
+        type: 'user', // 可选类型，user（选人) | dept(选部门) | sysRole(系统角色) | flowRole(流程角色)
+        ids: [], // 对应类型的ids
+      },
     },
   },
   {

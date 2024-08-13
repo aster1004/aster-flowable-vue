@@ -2,7 +2,6 @@
   "tableId": "",
   "directorMaxLevel": 4,
   "flowPermission": [],
-  "formPermission": [],
   "nodeConfig": {
     "nodeName": "发起人",
     "type": 0,
@@ -18,6 +17,10 @@
     "conditionList": [],
     "nodeUserList": [],
     "childNode": {},
-    "conditionNodes": []
+    "conditionNodes": [],
+    "formPermission": [],
+    "buttonPermission": [],
+    "noUser": "autoPass",
+    "approveType": "togetherCountersign"
   }
 }

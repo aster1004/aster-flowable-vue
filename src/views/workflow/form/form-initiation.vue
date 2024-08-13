@@ -185,7 +185,6 @@
    * @return {*}
    */
   const init = async (formId: string, instanceId?: string) => {
-    visible.value = true;
     // 加载表单信息
     await workFlowStore.loadFormInfo(formId);
     formData.value.formId = formId;
@@ -201,6 +200,7 @@
       // 标题
       drawerTitle.value = _formInfo.value.formName + '-新增';
     }
+    visible.value = true;
   };
 
   defineExpose({ init });
