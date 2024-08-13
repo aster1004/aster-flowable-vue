@@ -73,7 +73,12 @@ All.prototype = {
         if (nodeConfig.examineMode == 1) {
           return this.arrToStr(nodeConfig.nodeUserList);
         } else if (nodeConfig.examineMode == 2) {
-          return nodeConfig.nodeUserList.length + '人会签';
+          return nodeConfig.nodeUserList
+            .map((item) => {
+              return item.name;
+            })
+            .join(',');
+          // return nodeConfig.nodeUserList.length + '人会签';
         }
       }
     } else if (nodeConfig.settype == 2) {

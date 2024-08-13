@@ -1,18 +1,5 @@
 <template>
   <div>
-    <div class="fd-nav">
-      <div class="fd-nav-left">
-        <div class="fd-nav-back" @click="toReturn">
-          <i class="anticon anticon-left"></i>
-        </div>
-        <div class="fd-nav-title">{{ workFlowDef.name }}</div>
-      </div>
-      <div class="fd-nav-right">
-        <button type="button" class="ant-btn button-publish" @click="saveSet">
-          <span>发 布</span>
-        </button>
-      </div>
-    </div>
     <div class="fd-nav-content">
       <section class="dingflow-design">
         <div class="zoom">
@@ -21,7 +8,11 @@
           <div class="zoom-in" :class="nowVal == 300 && 'disabled'" @click="zoomSize(2)"></div>
         </div>
         <div class="box-scale" :style="`transform: scale(${nowVal / 100});`">
-          <nodeWrap v-model:nodeConfig="nodeConfig" v-model:flowPermission="flowPermission" />
+          <nodeWrap
+            v-if="isNotEmpty(_process)"
+            v-model:nodeConfig="_process.nodeConfig"
+            v-model:flowPermission="_process.flowPermission"
+          />
           <div class="end-node">
             <div class="end-node-circle"></div>
             <div class="end-node-text">流程结束</div>
@@ -31,80 +22,45 @@
     </div>
     <errorDialog v-model:visible="tipVisible" :list="tipList" />
     <promoterDrawer />
-    <approverDrawer :directorMaxLevel="directorMaxLevel" />
+    <approverDrawer :directorMaxLevel="_process.directorMaxLevel" />
     <copyerDrawer />
-    <conditionDrawer />
+    <conditionDrawer ref="conditionRef" />
   </div>
 </template>
 
-<script setup>
-  import { ref, onMounted } from 'vue';
-  import { useRoute } from 'vue-router';
-  import { ElMessage } from 'element-plus';
-  import { getWorkFlowData, setWorkFlowData } from '@/api/workflow/index';
-  import { useStore } from '@/stores/index';
+<script setup lang="ts">
+  import { ref, computed } from 'vue';
+  import { processStore } from '@/stores/modules/process';
   import errorDialog from '@/views/workflow/components/process/dialog/errorDialog.vue';
   import promoterDrawer from '@/views/workflow/components/process/drawer/promoterDrawer.vue';
   import approverDrawer from '@/views/workflow/components/process/drawer/approverDrawer.vue';
   import copyerDrawer from '@/views/workflow/components/process/drawer/copyerDrawer.vue';
   import conditionDrawer from '@/views/workflow/components/process/drawer/conditionDrawer.vue';
-  import { isDef, isNotEmpty } from '@/utils';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import processData from '@/data/process.json';
+  import { isNotEmpty, isEmpty } from '@/utils';
+  import { ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
+  import { setAllNodeFormPermission, getProcessNodesByType } from '@/utils/process/process';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 
-  let { setTableId, setIsTried } = useStore();
+  const { setIsTried } = processStore();
 
-  let tipList = ref([]);
-  let tipVisible = ref(false);
-  let nowVal = ref(100);
-  const processConfig = ref({});
-  let nodeConfig = ref({});
-  let workFlowDef = ref({});
-  let flowPermission = ref([]);
-  let directorMaxLevel = ref(0);
-  onMounted(async () => {
-    let route = useRoute();
-    console.info(route);
-    let appId = route.query.appId;
-    let id = route.query.id;
-    let { data } = await getWorkFlowData({ workFlowDefId: route.query.workFlowDefId });
-    console.info('流程设计json：', data);
-    if (isDef(id) && isNotEmpty(id)) {
-      console.info('修改流程设计：', id);
-    } else {
-      console.info('初始化流程设计');
-      workFlowStore.design.process = processData;
-      console.info('process', JSON.stringify(workFlowStore.design.process));
-      processConfig.value = data;
-      nodeConfig.value = processData.nodeConfig;
+  const tipList = ref<any>([]);
+  const tipVisible = ref(false);
+  const nowVal = ref(100);
+  const nodeConfig = ref({});
+  const conditionRef = ref();
+  //
 
-      /* let {
-        nodeConfig: nodes,
-        flowPermission: flows,
-        directorMaxLevel: directors,
-        workFlowDef: works,
-        tableId,
-      } = data;
-      console.info(nodes); */
-      /* nodes.childNode = [];
-      nodeConfig.value = nodes;
-      flowPermission.value = [];
-      directorMaxLevel.value = 0;
-      workFlowDef.value = works; */
-      //1 directorMaxLevel.value = [];
-      //1 setTableId(tableId);
-    }
+  const _process = computed(() => {
+    return workFlowStore.design.process;
   });
-  const toReturn = () => {
-    //window.location.href = ""
-  };
-  const reErr = ({ childNode }) => {
+
+  const reErr = ({ childNode }: any) => {
     if (childNode) {
-      let { type, error, nodeName, conditionNodes } = childNode;
-      if (type == 1 || type == 2) {
+      let { type, /*error, nodeName, */ conditionNodes } = childNode;
+      /* if (type == 1 || type == 2) {
         if (error) {
           tipList.value.push({
             name: nodeName,
@@ -112,13 +68,19 @@
           });
         }
         reErr(childNode);
-      } else if (type == 3) {
+      } else  */
+      if (type == 3) {
         reErr(childNode);
       } else if (type == 4) {
         reErr(childNode);
-        for (var i = 0; i < conditionNodes.length; i++) {
-          if (conditionNodes[i].error) {
-            tipList.value.push({ name: conditionNodes[i].nodeName, type: '条件' });
+        for (let i = 0; i < conditionNodes.length; i++) {
+          // 目前只有排他网关和包容网关需要校验
+          if (childNode.typeName === 'Exclusive' || childNode.typeName === 'Inclusive') {
+            if (conditionNodes[i].error) {
+              tipList.value.push({ name: conditionNodes[i].nodeName, type: '条件' });
+            }
+          } else if (childNode.typeName === 'Parallel') {
+            // 并行网关不需要设置条件，不需要校验
           }
           reErr(conditionNodes[i]);
         }
@@ -127,26 +89,103 @@
       childNode = null;
     }
   };
-  const saveSet = async () => {
-    setIsTried(true);
-    tipList.value = [];
-    reErr(nodeConfig.value);
-    if (tipList.value.length != 0) {
-      tipVisible.value = true;
-      return;
+
+  const validateRootAndApprove = async (errs: string[]) => {
+    setAllNodeFormPermission();
+    let nodes = getProcessNodesByType([ProcessNodeTypeEnum.ROOT, ProcessNodeTypeEnum.APPROVE]);
+    if (isNotEmpty(nodes)) {
+      nodes.forEach((node: any) => {
+        node.error = false;
+        node['errorTip'] = '';
+        // 表单权限
+        let nodeFormPermission = node.formPermission.filter((formField: any) => {
+          return formField.operation.length > 0;
+        });
+        if (isEmpty(nodeFormPermission)) {
+          node.error = true;
+          let errorMsg = node.nodeName + '节点表单权限未配置';
+          errs.push(errorMsg);
+          node.errorTip += errorMsg + '<br/>';
+        }
+        let nodeButtonPermission = node.buttonPermission.filter((buttonItem: any) => {
+          return buttonItem.status == true;
+        });
+        if (isEmpty(nodeButtonPermission)) {
+          node.error = true;
+          let errorMsg = node.nodeName + '节点表操作权限未配置';
+          errs.push(errorMsg);
+          node.errorTip += errorMsg + '<br/>';
+        }
+        if (node.type != ProcessNodeTypeEnum.ROOT && isEmpty(node.nodeUserList)) {
+          node.error = true;
+          let errorMsg = node.nodeName + '节点';
+          if (node.type == ProcessNodeTypeEnum.APPROVE) {
+            errorMsg += '审批人未配置';
+          } else if (node.type == ProcessNodeTypeEnum.SEND) {
+            errorMsg += '抄送人未配置';
+          } else {
+            errorMsg += '操作人未配置';
+          }
+          errs.push(errorMsg);
+          node.errorTip += errorMsg + '<br/>';
+        }
+      });
     }
-    processConfig.value.flowPermission = flowPermission.value;
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(processConfig.value));
-    /* let res = await setWorkFlowData(processConfig.value);
-    if (res.code == 200) {
-      ElMessage.success('设置成功');
-      setTimeout(function () {
-        window.location.href = '';
-      }, 200);
-    } */
   };
-  const zoomSize = (type) => {
+
+  /**
+   * @description: 校验流程设计是否完善
+   */
+  const validate = async () => {
+    return new Promise(async (resolve, reject) => {
+      const errs: string[] = []; // 校验未通过时要呈现的err说明
+      nodeConfig.value = _process.value.nodeConfig;
+      setIsTried(true);
+      await validateRootAndApprove(errs);
+      conditionRef.value.validate(nodeConfig.value, errs); // 校验条件节点中的条件组、条件表达式是否完善
+      tipList.value = [];
+      reErr(nodeConfig.value);
+      //递归设置节点的parentId，保证父子节点id正确,第一次parentId，传root，确保第一层子节点不丢失parentId
+      rectifyNodeId(nodeConfig.value, 'root');
+      if (tipList.value.length == 0 && errs.length == 0) {
+        resolve('ok');
+      } else {
+        tipList.value.forEach((v) => {
+          errs.push(v.name + '节点- ' + v.type + ' 未设置');
+        });
+        reject(errs);
+      }
+    });
+  };
+
+  /**
+   * @description: 发布前，递归设置节点的parentId，保证父子节点id正确
+   * @param childNode
+   * @param parentId
+   */
+  const rectifyNodeId = ({ childNode }: any, parentId = '') => {
+    if (isNotEmpty(childNode)) {
+      let { id, type, conditionNodes } = childNode;
+      childNode.parentId = parentId;
+      if (type <= 3) {
+        rectifyNodeId(childNode, id);
+      } else if (type == 4) {
+        if (conditionNodes) {
+          for (let i = 0; i < conditionNodes.length; i++) {
+            rectifyNodeId(conditionNodes[i], conditionNodes[i].id);
+            //继续遍历下方节点
+            if (isNotEmpty(conditionNodes[i].childNode)) {
+              rectifyNodeId(conditionNodes[i].childNode, conditionNodes[i].childNode.id);
+            }
+          }
+        }
+        rectifyNodeId(childNode, id);
+      }
+    } else {
+      childNode = null;
+    }
+  };
+  const zoomSize = (type: number) => {
     if (type == 1) {
       if (nowVal.value == 50) {
         return;
@@ -160,14 +199,8 @@
     }
   };
 
-  const jsonValue = () => {
-    console.log(JSON.stringify(nodeConfig.value));
-    workFlowStore.design.process = nodeConfig.value;
-    // console.log(JSON.stringify(processConfig.value));
-  };
-
   defineExpose({
-    jsonValue,
+    validate,
   });
 </script>
 <style>

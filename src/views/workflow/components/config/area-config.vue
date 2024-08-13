@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div v-if="_formItem">
+  <div style="width: 100%" v-if="_formItem">
     <el-form-item label="控件名称">
       <template #label>
         <div class="flex justify-between items-center">

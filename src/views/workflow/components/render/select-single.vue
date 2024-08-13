@@ -6,26 +6,41 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div>
+  <div class="el-form-item">
     <template v-if="mode === 'design'">
       <el-form-item
         v-if="!_hidden"
         :prop="formItemProp"
         :label-width="labelWidth"
         :show-message="showMessage"
+        style="width: 100%"
       >
         <template #label>
-          <span v-show="showLabel">{{ formItem.title }}</span>
+          <span v-show="showLabel">{{ _formItem.title }}</span>
         </template>
-        <template v-if="formItem.props.expand">
-          <el-radio-group :model-value="formItem.value" readonly>
+        <template v-if="_formItem.props.expand">
+          <el-radio-group :model-value="_formItem.value" readonly>
             <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
               {{ item.label }}
             </el-radio>
           </el-radio-group>
         </template>
         <template v-else>
-          <el-input :model-value="formItem.value" readonly />
+          <el-select
+            :model-value="_formItem.value"
+            :multiple="false"
+            :clearable="true"
+            :disabled="true"
+          >
+            <el-option
+              v-for="(item, i) in options"
+              :key="i"
+              :label="item.label"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </el-option>
+          </el-select>
         </template>
       </el-form-item>
     </template>
@@ -36,6 +51,7 @@
         :prop="formItemProp"
         :label-width="labelWidth"
         :show-message="showMessage"
+        style="width: 100%"
       >
         <template #label>
           <span v-show="showLabel">{{ formItem.title }}</span>
@@ -72,6 +88,7 @@
         :prop="formItemProp"
         :label-width="labelWidth"
         :show-message="showMessage"
+        style="width: 100%"
       >
         <template #label>
           <span v-show="showLabel">{{ formItem.title }}</span>
@@ -84,16 +101,19 @@
       </el-form-item>
     </template>
     <template v-else>
-      {{ _label }}
+      {{ _value }}
     </template>
   </div>
 </template>
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, onMounted, PropType } from 'vue';
+  import { computed, onMounted, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { getDictDataList, isNotEmpty } from '@/utils';
+  import { instanceListByCodeApi } from '@/api/workflow/instance';
+  import { ResultEnum } from '@/enums/httpEnum';
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -127,8 +147,12 @@
     },
   });
 
+  // 工作流store
+  const workFlowStore = useWorkFlowStore();
   // 字典
   const appStore = useAppStore();
+  // 选项
+  const options = ref<any[]>([]);
 
   // 键
   const formItemProp = computed(() => {
@@ -158,28 +182,84 @@
   });
 
   /**
-   * @description: 选项
+   * @description: 获取动态选项
+   * @return {*}
    */
-  const options = computed(() => {
-    if (props.formItem.props.type === 'static') {
-      return props.formItem.props.options.map((item) => {
+  const getDynamicOptions = async () => {
+    if (
+      isNotEmpty(props.formItem.props.dynamic.value) &&
+      props.formItem.props.dynamic.value.length == 3
+    ) {
+      await instanceListByCodeApi(props.formItem.props.dynamic.value[1], '9').then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          if (res.data && res.data.length > 0) {
+            options.value = res.data.map((item: Process.InstanceInfo) => {
+              const fieldId = props.formItem.props.dynamic.value[2];
+              const label = item[fieldId];
+              return {
+                value: label,
+                label: label,
+              };
+            });
+          } else {
+            options.value = [];
+          }
+        } else {
+          options.value = [];
+        }
+      });
+    } else {
+      options.value = [];
+    }
+  };
+
+  /**
+   * @description: 根据选项类型获取选项值
+   * @param {*} type 选项类型
+   * @return {*}
+   */
+  const handleOptions = async (type: string) => {
+    if (type === 'static') {
+      options.value = props.formItem.props.options.map((item) => {
         return {
           label: item,
           value: item,
         };
       });
-    } else if (props.formItem.props.type === 'dict') {
+    } else if (type === 'dict') {
       const dataList = getDictDataList(appStore.dictList, props.formItem.props.dictType);
-      return dataList.map((item) => {
+      options.value = dataList.map((item) => {
         return {
           label: item.dictLabel,
-          value: item.dictValue,
+          value: item.dictLabel,
         };
       });
-    } else if (props.formItem.props.type === 'dynamic') {
-      //TODO 动态选项
+    } else if (type === 'dynamic') {
+      await getDynamicOptions();
+    } else {
+      options.value = [];
     }
-    return [];
+  };
+
+  // 监听选项类型变化
+  watch(
+    () => props.formItem.props.type,
+    async (type: string) => {
+      // 根据选项类型获取选项值
+      await handleOptions(type);
+    },
+    { immediate: true, deep: true },
+  );
+
+  // 设计阶段监听组件默认值的变化
+  const _formItem = computed(() => {
+    if (workFlowStore.selectFormItem && workFlowStore.selectFormItem.id === props.formItem.id) {
+      // 默认值变化时，根据选项类型重新获取选项值
+      handleOptions(workFlowStore.selectFormItem.props.type);
+      return workFlowStore.selectFormItem;
+    } else {
+      return props.formItem;
+    }
   });
 
   /**
@@ -192,21 +272,6 @@
     set(val) {
       emit('update:value', val);
     },
-  });
-
-  /**
-   * @description: 标签
-   */
-  const _label = computed(() => {
-    let label = '';
-    if (isNotEmpty(_value.value)) {
-      options.value.forEach((item) => {
-        if (item.value === _value.value) {
-          label = item.label;
-        }
-      });
-    }
-    return label;
   });
 
   /**

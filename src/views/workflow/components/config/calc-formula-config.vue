@@ -29,9 +29,7 @@
       <el-input-number v-model="_formItem.props.precision" :min="0" :max="10" />
     </el-form-item>
     <el-form-item label="公式配置">
-      <el-button style="width: 100%" size="mini" :icon="Setting" @click="showFormula"
-        >设置公式</el-button
-      >
+      <el-button style="width: 100%" :icon="Setting" @click="showFormula">设置公式</el-button>
       <div class="calc-preview" v-if="_formItem.props.formula">
         <code-mirror
           ref="codeMirrorRef"

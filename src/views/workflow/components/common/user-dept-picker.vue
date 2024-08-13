@@ -124,8 +124,8 @@
         <!-- 表格 -->
         <el-table :data="submitList" :border="true" row-key="id" style="width: 100%">
           <el-table-column
-            prop="username"
-            :label="$t('label.user.username')"
+            prop="realName"
+            :label="$t('label.user.realName')"
             width="100"
             header-align="center"
             align="center"
@@ -391,9 +391,10 @@
 
   const emits = defineEmits(['success']);
   const props = defineProps({
+    // 判断是否为设计模式，默认为form。
     mode: {
-      type: Boolean,
-      default: true,
+      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      default: 'form',
     },
     title: {
       type: String,
@@ -518,9 +519,10 @@
     }
 
     userPageApi(queryParams).then(async ({ data }) => {
-      console.log('过滤用户id', userIds.value);
+      // console.log('过滤用户id', userIds.value);
       dataList.value = [];
-      if (userIds.value.length > 0) {
+      // 如果是设计模式，则此限制不生效，任然显示全量数据，方便做配置
+      if (userIds.value.length > 0 && props.mode !== 'design') {
         // 通过totalPages 计算总页码
         const totalPages = Math.ceil(data.total / queryParams.pageSize);
         //处理超过一页的情况，循环totalPages，获取每一页的数据，然后进行过滤
@@ -591,7 +593,8 @@
     const ids = _canselected.value?.ids;
     dataList.value = [];
     getDeptAndSubDeptById(queryDeptParams).then(async ({ data }) => {
-      if (ids && ids.length > 0) {
+      // 如果是设计模式，则此限制不生效，任然显示全量数据，方便做配置
+      if (ids && ids.length > 0 && props.mode !== 'design') {
         // 通过totalPages 计算总页码
         const totalPages = Math.ceil(data.total / queryDeptParams.pageSize);
         //处理超过一页的情况，循环totalPages，获取每一页的数据，然后进行过滤
@@ -689,7 +692,8 @@
     if (row && row.id) {
       val.push({
         id: row.id,
-        username: row.username, // 用户名称
+        type: props.type,
+        realName: row.realName, // 用户名称
         orgName: row.orgName, // 部门名称
         roleName: row.roleName, // 角色名称
       });
@@ -698,7 +702,8 @@
       val = selectedList.value?.map((item: any) => {
         return {
           id: item.id,
-          username: item.username,
+          type: props.type,
+          realName: item.realName,
           orgName: item.orgName,
           roleName: item.roleName,
         };

@@ -7,6 +7,7 @@
  */
 
 import { ValueType } from '@/views/workflow/components/component-config-export';
+import { ElMessage } from 'element-plus';
 import moment, { Moment } from 'moment';
 import { isEmpty, isNotEmpty, isObject } from '.';
 import { evaluate, parse } from './formula';
@@ -34,6 +35,82 @@ export const deleteFormComponent = (formComponents: any[], index: number) => {
 };
 
 /**
+ * @description: 删除表单组件的验证规则
+ * @param {WorkComponent.ComponentConfig[]} formItems 表单组件
+ * @param {string} fieldId 字段id
+ * @return {*} true-可删除,false-不可删除
+ */
+export const deleteComponentValidate = (
+  formItems: WorkComponent.ComponentConfig[],
+  fieldId: string,
+) => {
+  // 获取含有currentId的组件
+  const filterItems = flatFormItems(formItems).filter((item) => {
+    const itemStr = JSON.stringify(item);
+    if (item.id != fieldId && itemStr.indexOf(fieldId) > -1) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  // 若有其他组件含有currentId，则不可删除
+  if (filterItems.length > 0) {
+    const itemTitles = filterItems.map((item) => '`' + item.title + '`').join(',');
+    ElMessage.warning(`${itemTitles}中引用了该控件，不可删除`);
+    return false;
+  } else {
+    return true;
+  }
+};
+
+/**
+ * @description: 循环调用验证
+ * @param {string} formula 公式字符串
+ * @param {string} currentFieldId 当前字段id
+ * @param {WorkComponent.ComponentConfig[]} formItems 表单组件
+ * @return {*}
+ */
+export const loopCallValidate = (
+  formula: string,
+  currentFieldId: string,
+  formItems: WorkComponent.ComponentConfig[],
+) => {
+  // 正则表达式匹配字段id(field+13位数字)
+  const regex = /field\d{13}/g;
+  const matches: string[] | null = formula.match(regex);
+  // 若没有匹配到，则直接返回true
+  if (!matches || matches.length === 0) {
+    return true;
+  }
+  // 循环调用组件的标题
+  const loops: string[] = [];
+  // 若有匹配则需判断是否循环调用
+  const items = flatFormItems(formItems);
+  matches
+    .filter((fieldId, index) => fieldId != currentFieldId && matches.indexOf(fieldId) === index)
+    .forEach((fieldId) => {
+      items.forEach((item) => {
+        // 如果目标组件的配置中引用了当前组件的id则是循环调用
+        if (
+          item.id === fieldId &&
+          item.props.default &&
+          item.props.default.type === 'formula' &&
+          item.props.default.value.indexOf(currentFieldId) > -1
+        ) {
+          loops.push('`' + item.title + '`');
+        }
+      });
+    });
+
+  if (isNotEmpty(loops)) {
+    ElMessage.warning(`${loops.join(',')}中引用了该控件，不可循环调用`);
+    return false;
+  } else {
+    return true;
+  }
+};
+
+/**
  * @ description: 置空数组当前下标对应的内容
  * @param formComponents
  * @param index
@@ -57,9 +134,9 @@ const excludeComponent = (item: WorkComponent.ComponentConfig) => {
     item.name !== 'UploadFile' &&
     item.name !== 'GeoLocation' &&
     item.name !== 'Signature' &&
-    item.name !== 'AssociatedProcess' &&
+    item.name !== 'AssociatedProperty' &&
     item.name !== 'CalcFormula' &&
-    item.name !== 'CalcFormulaAdvanced'
+    item.name !== 'SummaryFormula'
   );
 };
 
@@ -113,6 +190,30 @@ export const formulaItemTree = (
   });
 };
 
+/**
+ * @description: 获取表单组件列表,不获取明细表组件,用于流程设计的条件分支
+ * @param items
+ * @param nodes
+ */
+export const formItemList = (
+  items: WorkComponent.ComponentConfig[],
+  nodes: WorkComponent.ComponentConfig[],
+) => {
+  items.forEach((item) => {
+    // 若是一行多列则遍历items,取子组件
+    if (item.name === 'GridLayout') {
+      item.props.items.forEach((col) => {
+        formItemList(col, nodes);
+      });
+    } else if (item.name === 'GridTitle') {
+      // 若是分组标题则取子组件
+      formItemList(item.props.items, nodes);
+    } else if (excludeComponent(item)) {
+      // 排除不需要的组件
+      nodes.push(item);
+    }
+  });
+};
 /**
  * @description: 获取公式中的字段
  * @param {string} formula 公式
@@ -277,7 +378,7 @@ export const selectFormItemByFieldId = (
   fieldId: string,
   formItems: WorkComponent.ComponentConfig[],
 ) => {
-  const items = flatFormItemsExclude(formItems);
+  const items = flatFormItems(formItems);
   return items.find((item) => {
     return item.id === fieldId;
   });
@@ -314,6 +415,88 @@ export const setDefaultValue = (
       }
     }
   });
+};
+
+/**
+ * @description: 获取数据填充的表单项
+ * @param {WorkComponent.ComponentConfig[]} formItems 表单项
+ * @param {boolean} showTableList 是否显示明细表
+ * @return {*}
+ */
+export const dataFillOptionsByFormItems = (
+  formItems: WorkComponent.ComponentConfig[],
+  showTableList: boolean = false,
+) => {
+  // 先排除布局控件
+  const items = flatFormItems(formItems);
+  let options: WorkComponent.DataFillOption[] = [];
+  items
+    .filter((item: WorkComponent.ComponentConfig) => {
+      // 根据条件判断是否排除明细表
+      if (item.name === 'TableList') {
+        return showTableList;
+      } else if (item.name === 'AssociatedForm') {
+        // 排除关联表单
+        return false;
+      } else {
+        return true;
+      }
+    })
+    .map((item: WorkComponent.ComponentConfig) => {
+      if (item.name === 'TableList') {
+        item.props.columns.forEach((column) => {
+          options.push({
+            label: item.title + '.' + column.title,
+            value: item.id + '.' + column.id,
+            disabled: false,
+            type: column.valueType,
+            name: column.name,
+          });
+        });
+      } else {
+        options.push({
+          label: item.title,
+          value: item.id,
+          disabled: false,
+          type: item.valueType,
+          name: item.name,
+        });
+      }
+    });
+  return options;
+};
+
+/**
+ * @description: 筛选数据填充项,将filter的值填充给target
+ * @param {string} filterType 过滤类型
+ * @param {string} filterName 过滤名称
+ * @param {string} targetType 目标类型
+ * @param {string} targetName 目标名称
+ * @return {*}
+ */
+export const filterDataFillOptionsFilter = (
+  filterType: string,
+  filterName: string,
+  targetType: string,
+  targetName: string,
+) => {
+  if (filterType === ValueType.string) {
+    return targetType === ValueType.string;
+  } else if (
+    filterType === ValueType.number ||
+    filterType === ValueType.date ||
+    filterType == ValueType.dateRange
+  ) {
+    return (
+      targetType === filterType || targetName === 'InputText' || targetName === 'InputTextarea'
+    );
+  } else if (filterType === ValueType.array || filterType === ValueType.object) {
+    return targetName == filterName || targetName === 'InputText' || targetName === 'InputTextarea';
+  } else if (filterType === ValueType.user || filterType === ValueType.dept) {
+    return targetName == filterName;
+  } else {
+    return false;
+  }
 };
 
 /**
@@ -518,13 +701,34 @@ export const getDateLength = (val: string[], format: string): string => {
 
 /**
  * @description: 转换值类型
+ * @param {WorkComponent.ComponentConfig[]} formItems 配置项
+ * @param {string} key 字段id
+ * @param {any} value 值
+ * @return {*}
+ */
+export const convertDataTypes = (
+  formItems: WorkComponent.ComponentConfig[],
+  key: string,
+  value: any,
+) => {
+  const formItem = selectFormItemByFieldId(key, formItems);
+  if (formItem == undefined) return value;
+  return convertDataType(formItem, value);
+};
+
+/**
+ * @description: 转换值类型
  * @param {WorkComponent} formItem 配置项
  * @param {any} value 值
  * @return {*}
  */
 export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: any) => {
   if (value == undefined) {
-    return '';
+    return formItem.value;
+  }
+  // 特殊处理创建人员
+  if (formItem.id === 'create_by') {
+    return Array.isArray(value) ? value : [value];
   }
   if (formItem.valueType === ValueType.string) {
     return value;
@@ -550,4 +754,35 @@ export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: 
   } else {
     return value;
   }
+};
+
+/**
+ * @description: 是否可以将源组件的值转为目标组件的值
+ * @param {WorkComponent.ComponentConfig} source 源组件
+ * @param {WorkComponent.ComponentConfig} target 目标组件
+ * @return {*}
+ */
+export const isConvertItemValue = (
+  source: WorkComponent.ComponentConfig,
+  target: WorkComponent.ComponentConfig,
+) => {
+  if (target.name === source.name) {
+    return true;
+  }
+  if (target.name === 'TableList' || source.name === 'TableList') {
+    return false;
+  }
+  if (target.valueType === ValueType.string) {
+    return source.valueType != ValueType.user && source.valueType != ValueType.dept;
+  }
+  if (target.valueType === ValueType.number) {
+    return source.valueType === ValueType.number;
+  }
+  if (target.valueType === ValueType.date) {
+    return source.valueType === ValueType.date;
+  }
+  if (target.valueType === ValueType.dateRange) {
+    return source.valueType === ValueType.dateRange;
+  }
+  return false;
 };

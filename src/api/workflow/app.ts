@@ -46,3 +46,11 @@ export const appSaveApi = (info: WorkApp.AppInfo) => {
 export const appDeleteApi = (ids: any) => {
   return request.post<string>(PORT5 + `/app/delete`, ids, { noLoading: true });
 };
+
+/**
+ * @description: 应用表单树
+ * @return {*}
+ */
+export const appFormTreeApi = () => {
+  return request.get<WorkComponent.TreeNode[]>(PORT5 + `/app/tree`, { noLoading: true });
+};

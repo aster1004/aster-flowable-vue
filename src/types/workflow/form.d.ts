@@ -139,6 +139,37 @@ declare namespace WorkForm {
   }
 
   /**
+   * @description: 列表设置信息
+   */
+  export interface FormProcess {
+    tableId: string;
+    directorMaxLevel: number;
+    flowPermission: [];
+    nodeConfig: {
+      id: string;
+      parentId: string | null;
+      nodeName: string;
+      type: 0;
+      priorityLevel: string;
+      settype: string;
+      selectMode: string;
+      selectRange: string;
+      directorLevel: string;
+      examineMode: string;
+      noHanderAction: string;
+      examineEndDirectorLevel: string;
+      ccSelfSelectFlag: string;
+      nodeUserList: [];
+      childNode: {};
+      conditionNodes: [];
+      formPermission?: [];
+      buttonPermission?: any[];
+      error?: boolean;
+      errorTip: string;
+    };
+  }
+
+  /**
    * @description: 表单信息
    */
   export interface FormModel extends BaseInfo {
@@ -149,7 +180,7 @@ declare namespace WorkForm {
     // 表单项
     formItems: WorkComponent.ComponentConfig[];
     // 流程
-    process?: object;
+    process: FormProcess;
     // 流程配置
     processConfig?: string;
     // 列表配置
