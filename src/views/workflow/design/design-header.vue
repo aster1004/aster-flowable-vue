@@ -30,11 +30,11 @@
       </div>
     </el-col>
     <el-col :span="12" class="header-center">
-      <el-menu :default-active="value" @select="handleSelect" mode="horizontal">
+      <el-menu :default-active="modelValue" @select="handleSelect" mode="horizontal">
         <el-menu-item index="formDesign">表单设计</el-menu-item>
         <el-menu-item index="processDesign">流程设计</el-menu-item>
         <el-menu-item index="listDesign">列表设计</el-menu-item>
-        <el-menu-item index="formSetting">表单设置</el-menu-item>
+        <el-menu-item index="formSettings">表单设置</el-menu-item>
       </el-menu>
     </el-col>
     <el-col :span="6" class="header-right">
@@ -68,8 +68,8 @@
 
   // props
   const props = defineProps({
-    value: {
-      type: String as PropType<'formDesign' | 'processDesign' | 'listDesign' | 'formSetting'>,
+    modelValue: {
+      type: String as PropType<'formDesign' | 'processDesign' | 'listDesign' | 'formSettings'>,
       default: () => 'formDesign',
     },
   });
