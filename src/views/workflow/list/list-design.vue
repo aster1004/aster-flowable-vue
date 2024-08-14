@@ -47,9 +47,10 @@
     }
 
     .list-aside {
-      background-color: #ffffff;
       margin: 0 5px;
       border-radius: 6px;
+      background-color: var(--el-bg-color);
+      border: 1px solid var(--el-aside-border-color);
     }
 
     ::v-deep(.el-tabs__header) {

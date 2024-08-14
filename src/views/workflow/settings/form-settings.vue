@@ -63,14 +63,13 @@
 <style scoped lang="scss">
   .el-container {
     height: 100%;
-    padding: 0px 50px;
+    margin: 0px 50px;
   }
 
   .el-container .el-aside {
     width: 200px;
     overflow: hidden;
-    background-color: #f2f3f5;
-    border-right: 0px;
+    background-color: var(--el-bg-color);
 
     .el-menu {
       background-color: var(--el-menu-bg-color);
@@ -123,9 +122,10 @@
   .settings-left {
     margin: 0 5px;
     border-radius: 6px;
+    border: 1px solid var(--el-aside-border-color);
 
     .left-container {
-      background-color: #fff;
+      background-color: var(--el-bg-color);
       padding: 10px;
       height: 100%;
     }
@@ -134,9 +134,10 @@
   .settings-main {
     margin: 0 5px;
     border-radius: 6px;
+    border: 1px solid var(--el-aside-border-color);
 
     .main-container {
-      background-color: #fff;
+      background-color: var(--el-bg-color);
       margin-bottom: 5px;
       height: 100%;
       padding: 0px 10px;

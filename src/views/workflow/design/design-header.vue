@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-row class="design-header">
+  <el-row class="header-container" :style="headerStyle">
     <el-col :span="6" class="header-left">
       <div class="p-10px">
         <el-button @click="back()" circle>
@@ -59,9 +59,11 @@
   import { computed, onMounted, PropType, ref } from 'vue';
   import IconSelect from '@/components/icon/icon-select.vue';
   import { isNotEmpty } from '@/utils';
+  import { useGlobalStore } from '@/stores/modules/global';
 
   const workFlowStore = useWorkFlowStore();
   const router = useRouter();
+  const globalStore = useGlobalStore();
 
   // 事件
   const emits = defineEmits(['update:modelValue', 'save', 'publish']);
@@ -92,6 +94,18 @@
       return { color: '#fff', backgroundColor: formInfo.value.iconColor };
     } else {
       return {};
+    }
+  });
+
+  // 页面头部背景图
+  const headerStyle = computed(() => {
+    if (globalStore.isDark || globalStore.isGrey || globalStore.isWeak) {
+      return { background: 'var(--el-menu-bg-color)' };
+    } else {
+      const bgImage = new URL(`../../../assets/images/header_bg.png`, import.meta.url).href;
+      return {
+        backgroundImage: `url(${bgImage})`,
+      };
     }
   });
 
@@ -129,13 +143,12 @@
   });
 </script>
 <style scoped lang="scss">
-  .design-header {
+  .header-container {
     height: 100%;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-image: url(../../../assets/images/header_bg.png);
     background-size: 100% 100%;
     background-repeat: no-repeat;
   }

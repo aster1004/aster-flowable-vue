@@ -353,7 +353,7 @@
     .fun-example {
       height: 30px;
       padding: 5px 15px;
-      background-color: #f7f8fa;
+      background-color: var(--el-fill-color-light);
       word-break: break-word;
       color: var(--el-color-primary);
     }

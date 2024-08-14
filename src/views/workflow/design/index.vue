@@ -227,12 +227,13 @@
 <style scoped lang="scss">
   .design-container {
     height: 100%;
-    background-color: #f2f3f5;
+    background-color: var(--el-bg-color-page);
   }
 
   .design-header {
     height: 60px;
     padding: 0 !important;
+    border-bottom: 1px solid var(--el-border-color-light);
   }
 
   .design-main {
