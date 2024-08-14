@@ -99,7 +99,12 @@
 
   // 页面头部背景图
   const headerStyle = computed(() => {
-    if (globalStore.isDark || globalStore.isGrey || globalStore.isWeak) {
+    if (globalStore.isDark) {
+      const bgImage = new URL(`../../../assets/images/header_bg2.png`, import.meta.url).href;
+      return {
+        backgroundImage: `url(${bgImage})`,
+      };
+    } else if (globalStore.isGrey || globalStore.isWeak) {
       return { background: 'var(--el-menu-bg-color)' };
     } else {
       const bgImage = new URL(`../../../assets/images/header_bg.png`, import.meta.url).href;
@@ -156,7 +161,7 @@
   .header-left {
     display: flex;
     align-items: center;
-    height: var(--el-menu-horizontal-height);
+    height: 55px;
     padding-left: 20px;
 
     .el-divider--vertical {
@@ -196,6 +201,7 @@
       display: flex;
       justify-content: center;
       background: none;
+      height: 55px;
     }
     .el-menu--horizontal.el-menu {
       border: none;

@@ -22,7 +22,7 @@
     </el-main>
 
     <!--  校验弹框  -->
-    <el-dialog v-model="validateVisible" title="表单流程设计校验" width="550" :lock-scroll="false">
+    <el-dialog v-model="validateVisible" title="校验" width="550" :lock-scroll="false">
       <el-steps align-center :active="validateIndex" finish-status="success">
         <el-step
           v-for="(step, i) in validateRefs"
@@ -231,7 +231,7 @@
   }
 
   .design-header {
-    height: 60px;
+    height: 55px;
     padding: 0 !important;
     border-bottom: 1px solid var(--el-border-color-light);
   }
