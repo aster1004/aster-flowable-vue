@@ -154,7 +154,7 @@
       });
   };
 
-  //分步校验流程表单设计
+  // 分步校验流程表单设计
   const validate = async () => {
     validateVisible.value = true;
     validateIndex.value = 0;

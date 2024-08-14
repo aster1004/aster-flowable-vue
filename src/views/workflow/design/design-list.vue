@@ -10,8 +10,9 @@
     <tree-filter
       title="应用信息"
       label="name"
-      :request-api="appListApi"
-      :default-value="queryParams.appId"
+      :data="appList"
+      :default-value="appList[0]?.id"
+      :show-all="false"
       @change="changeApp"
     />
     <div class="table-box">
@@ -168,7 +169,7 @@
 <script setup lang="ts">
   import TreeFilter from '@/components/tree/tree-filter.vue';
   import { useRouter } from 'vue-router';
-  import { onMounted, reactive, ref } from 'vue';
+  import { onBeforeMount, onMounted, reactive, ref } from 'vue';
   import { formPageApi, formDeleteApi, deploymentApi } from '@/api/workflow/form';
   import { appListApi } from '@/api/workflow/app';
   import { ElMessage, ElMessageBox } from 'element-plus';
@@ -191,6 +192,8 @@
     pageNum: 1,
     pageSize: 10,
   });
+  /** 应用列表 */
+  const appList = ref<WorkApp.AppInfo[]>([]);
   /** 数据列表 */
   const dataList = ref<WorkForm.FormModel[]>([]);
   /** 总数 */
@@ -317,10 +320,18 @@
   };
 
   /**
-   * 初始化加载
+   * 渲染DOM前加载
    */
-  onMounted(() => {
-    handleQuery();
+  onBeforeMount(() => {
+    appListApi({}).then((res) => {
+      if (res.code == ResultEnum.SUCCESS) {
+        appList.value = res.data;
+        queryParams.appId = res.data[0].id;
+        handleQuery();
+      } else {
+        ElMessage.error(res.message);
+      }
+    });
   });
 </script>
 <style lang="scss" scoped>
