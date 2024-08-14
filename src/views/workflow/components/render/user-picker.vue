@@ -192,12 +192,17 @@
     },
   });
 
+  // 用于深度监听值的变化
+  const __value = computed(() => {
+    return JSON.stringify(_value.value);
+  });
+
   /**
    *  @description: 确保selectedUsers 和_value.value 的值保持同步
    */
   watchEffect(() => {
-    if (isNotEmpty(_value.value)) {
-      selectUsersByIds(_value.value);
+    if (isNotEmpty(__value.value)) {
+      selectUsersByIds(JSON.parse(__value.value));
     }
   });
 
