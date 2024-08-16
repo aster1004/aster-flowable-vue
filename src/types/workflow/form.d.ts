@@ -33,6 +33,13 @@ declare namespace WorkForm {
       title?: string;
       types?: string[];
     };
+    // 提交校验
+    submitValidate?: {
+      // 错误提示
+      errorMessage: '';
+      // 公式
+      formula: '';
+    };
   }
 
   /**

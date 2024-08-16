@@ -94,7 +94,7 @@
   import { selectUsersByDeptIdsApi } from '@/api/sys/user';
   import { isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { valueEquals } from 'element-plus';
+
   // 回调函数
   const emit = defineEmits(['closeRange', 'submit']);
   // 属性

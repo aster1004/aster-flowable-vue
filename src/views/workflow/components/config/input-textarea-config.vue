@@ -37,10 +37,12 @@
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
 
-    <default-value-formula
+    <formula
       ref="defaultValueRef"
       v-if="valueType === 'formula' && _formItem.props.default"
       v-model:formula="_formItem.props.default.value"
+      type="assignment"
+      :header-title="`${_formItem.title}的值=`"
     />
     <data-linkage ref="dataLinkageRef" v-if="valueType === 'linkage' && _formItem.props.default" />
   </div>
@@ -48,7 +50,7 @@
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, onMounted, ref } from 'vue';
-  import DefaultValueFormula from '../common/default-value-formula.vue';
+  import Formula from '../common/formula.vue';
   import DataLinkage from '../common/data-linkage.vue';
   import { ElMessage } from 'element-plus';
 

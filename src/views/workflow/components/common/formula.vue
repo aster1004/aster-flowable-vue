@@ -9,6 +9,7 @@
   <el-dialog
     v-model="visible"
     width="60%"
+    style="min-width: 720px"
     :title="title"
     :close-on-click-modal="false"
     :lock-scroll="false"
@@ -28,63 +29,77 @@
               @node-click="handleNodeClick"
             />
           </el-collapse-item>
-          <el-collapse-item name="function" title="函数列表">
-            <el-input
-              v-model="filterText"
-              placeholder="输入关键字进行过滤"
-              suffix-icon="el-icon-search"
-              clearable
-              size="small"
-            />
-            <el-scrollbar>
-              <el-tree
-                ref="treeFunRef"
-                node-key="name"
-                style="height: 150px"
-                :default-expanded-keys="['逻辑函数']"
-                :data="functionList"
-                :props="{ children: 'children', label: 'name' }"
-                :filter-node-method="filterNode"
-                :expand-on-click-node="false"
-                :highlight-current="true"
-                @node-click="handleNodeClick($event, 'fun')"
-              >
-                <template #default="{ node, data }">
-                  <span style="width: 100%" @mouseover="mouseover(data)" @mouseleave="mouseleave">
-                    {{ node.label }}
-                  </span>
-                </template>
-              </el-tree>
-            </el-scrollbar>
-          </el-collapse-item>
         </el-collapse>
       </div>
       <div class="formula-main">
+        <div class="formula-title" v-if="isNotEmpty(headerTitle)">
+          {{ headerTitle }}
+        </div>
         <code-mirror ref="codeMirrorRef" :placeholder="placeholder"></code-mirror>
-        <div class="formula-fun" v-if="currentFunction">
-          <div class="fun-title">{{ currentFunction.name }}</div>
-          <div class="fun-content">
+        <div class="formula-btn">
+          <el-button type="primary" size="small" plain @click="functionVisible = !functionVisible">
+            插入函数
+          </el-button>
+        </div>
+        <div class="formula-fun">
+          <template v-if="currentFunction">
             <div class="fun-example">{{ currentFunction.example }}</div>
             <div class="fun-desc">{{ currentFunction.description }}</div>
-          </div>
+          </template>
+          <template v-else>
+            <ul class="fun-tips">
+              <li> 请从左侧面板选择字段或选项 </li>
+              <li> 支持英文模式下运算符(+、-、*、/、&gt、&lt、==、!=、&lt=、&gt=)及函数 </li>
+              <li>
+                参考场景: <br />
+                根据输入的数量和单价,自动计算出金额,则可将计算公式设置为:数量*单价
+              </li>
+            </ul>
+          </template>
         </div>
       </div>
     </div>
+    <div class="el-dialog function-content" v-if="functionVisible">
+      <el-input v-model="filterText" placeholder="输入关键字过滤" clearable class="p-10px" />
+      <el-scrollbar class="pb-10px" style="height: calc(100% - 55px)">
+        <el-tree
+          ref="treeFunRef"
+          node-key="name"
+          style="min-height: 400px"
+          :default-expanded-keys="['逻辑函数']"
+          :data="functionList"
+          :props="{ children: 'children', label: 'name' }"
+          :filter-node-method="filterNode"
+          :expand-on-click-node="false"
+          :highlight-current="true"
+          @node-click="handleNodeClick($event, 'fun')"
+        >
+          <template #default="{ node, data }">
+            <span style="width: 100%" @mouseover="mouseover(data)" @mouseleave="mouseleave">
+              {{ node.label }}
+            </span>
+          </template>
+        </el-tree>
+      </el-scrollbar>
+    </div>
     <template #footer>
-      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
       <el-button type="primary" @click="onSubmit">{{ $t('button.confirm') }}</el-button>
+      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
     </template>
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { computed, ref, watchEffect } from 'vue';
+  import { computed, PropType, ref, watchEffect } from 'vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { isDef, isNotEmpty } from '@/utils';
   import {
     analysisFormula,
     formulaValidate,
-    formulaItemTree,
     restorationFormula,
+    flatFormItemsExclude,
+    isConvertItemValue,
+    loopCallValidate,
+    formulaItemTree,
   } from '@/utils/workflow';
   import { doc as functionList } from '@/utils/formula/doc';
   import CodeMirror from './code-mirror.vue';
@@ -97,16 +112,25 @@
   const props = defineProps({
     title: {
       type: String,
-      default: '计算公式',
+      default: () => '计算公式',
+    },
+    type: {
+      // 类型：赋值 | 条件
+      type: String as PropType<'assignment' | 'condition'>,
+      default: () => 'condition',
     },
     formula: {
       type: String,
-      default: '',
+      default: () => '',
+    },
+    headerTitle: {
+      type: String,
+      default: () => '',
     },
     placeholder: {
       type: String,
       required: false,
-      default: () => '当表达式值解析为true时，当前表单域隐藏',
+      default: () => '例：数量 * 单价',
     },
   });
 
@@ -125,6 +149,8 @@
   const filterText = ref('');
   // 扁平化表单组件
   const flatFormData = ref<WorkComponent.formulaNode[]>([]);
+  // 显示函数
+  const functionVisible = ref(false);
 
   /**
    * @description: 过滤函数
@@ -219,6 +245,13 @@
     const analysisResult = formulaValidate(value);
     console.log('---公式解析结果：', analysisResult);
     if (analysisResult === true) {
+      // 校验控件是否循环调用
+      const validate =
+        selectFormItem.value &&
+        loopCallValidate(value, selectFormItem.value.id, workFlowStore.design.formItems);
+      if (!validate) {
+        return;
+      }
       visible.value = false;
       emits('update:formula', value);
     } else {
@@ -235,19 +268,11 @@
   });
 
   /**
-   * @description: 选中的组件id
+   * @description: 选中的组件
    * @return {*}
    */
-  const selectedItemId = computed(() => {
-    return workFlowStore.selectFormItem?.id;
-  });
-
-  /**
-   * @description: 选中的组件类型，CalcFormula
-   * @return {*}
-   */
-  const selectedItemName = computed(() => {
-    return workFlowStore.selectFormItem?.name;
+  const selectFormItem = computed(() => {
+    return workFlowStore.selectFormItem;
   });
 
   /**
@@ -289,21 +314,44 @@
    */
   const treeData = computed(() => {
     let nodes: WorkComponent.formulaNode[] = [];
-    let isTableList = false;
-    if (isDef(selectedItemId.value)) {
-      // 如果是汇总计算，则显示明细表变量
-      if (selectedItemName.value === 'SummaryFormula') {
-        isTableList = true;
-      } else {
-        isTableList = tableColumnIds.value.indexOf(selectedItemId.value) != -1;
+    if (props.type === 'assignment') {
+      // 表单项扁平化
+      const flatItems = flatFormItemsExclude(_formItems.value);
+      flatItems
+        .filter((item) => {
+          // 先排除自身组件
+          return selectFormItem.value && item.id != selectFormItem.value.id;
+        })
+        .filter((item) => {
+          // 排除值类型无法转换的组件
+          return selectFormItem.value && isConvertItemValue(item, selectFormItem.value);
+        })
+        .forEach((item) => {
+          nodes.push({
+            fieldId: item.id,
+            label: item.title,
+            value: item.id,
+          });
+        });
+      flatFormData.value = nodes;
+    } else {
+      let isTableList = false;
+      if (selectFormItem.value) {
+        // 如果是汇总计算，则显示明细表变量
+        if (selectFormItem.value.name && selectFormItem.value.name === 'SummaryFormula') {
+          isTableList = true;
+        } else {
+          isTableList =
+            isDef(selectFormItem.value.id) &&
+            tableColumnIds.value.indexOf(selectFormItem.value.id) != -1;
+        }
       }
-    }
-    formulaItemTree(_formItems.value, nodes, isTableList);
-    flatFormData.value = isTableList ? flatNodes(nodes) : nodes;
-    // 排除自身组件，防止循环引用
-    if (isDef(selectedItemId)) {
+      // 获取表单组件的公式树
+      formulaItemTree(_formItems.value, nodes, isTableList);
+      flatFormData.value = isTableList ? flatNodes(nodes) : nodes;
+      // 排除自身组件，防止循环引用
       nodes = nodes.filter((node) => {
-        return node.fieldId !== selectedItemId.value;
+        return selectFormItem.value && node.fieldId !== selectFormItem.value.id;
       });
     }
     return nodes;
@@ -331,11 +379,10 @@
     display: flex;
     flex-direction: row;
     height: 360px;
-    border-bottom: 1px solid var(--el-border-color-lighter);
+    border: 1px solid var(--el-border-color-lighter);
 
     .formula-aside {
       width: 200px;
-      overflow: auto;
     }
 
     .formula-main {
@@ -346,44 +393,96 @@
     }
   }
 
+  .formula-title {
+    padding: 5px;
+    color: var(--el-text-color-regular);
+    background: var(--el-color-primary-light-9);
+  }
+
+  .formula-btn {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
   .formula-fun {
-    border-radius: 6px;
-    border: 1px solid #e8e9eb;
-    z-index: 9999;
-    bottom: 100px;
-    left: 250px;
-    position: absolute;
+    border-top: 1px solid var(--el-border-color-lighter);
+    height: 120px;
 
-    .fun-title {
-      background-color: #fafafa;
-      height: 30px;
-      line-height: 30px;
-      padding-left: 10px;
-      border-radius: 4px 4px 0 0;
-      border-bottom: none;
-    }
-    .fun-content {
-      max-width: 500px;
-      max-height: 120px;
-      overflow: auto;
+    ul.fun-tips {
+      list-style-type: disc;
+      padding: 20px 25px;
+      height: 120px;
       font-size: 13px;
-
-      .fun-example {
-        margin-top: 5px;
-        padding: 5px 15px;
-        background-color: #f7f8fa;
-        word-break: break-word;
-        color: var(--el-color-primary);
-      }
-      .fun-desc {
-        padding: 5px 15px;
-        line-height: 1.5;
-      }
     }
+
+    .fun-example {
+      height: 30px;
+      padding: 5px 15px;
+      background-color: var(--el-fill-color-light);
+      word-break: break-word;
+      color: var(--el-color-primary);
+    }
+
+    .fun-desc {
+      height: 90px;
+      padding: 5px 15px;
+      line-height: 1.5;
+      font-size: 13px;
+      overflow: auto;
+    }
+  }
+
+  .function-content {
+    width: 170px;
+    position: absolute;
+    bottom: -50px;
+    right: -172px;
+    height: 100%;
   }
 
   ::v-deep(.el-collapse) {
     width: 100%;
     max-height: 360px;
+    border-bottom: none;
+    border-top: none;
+  }
+
+  ::v-deep(.el-collapse-item__header) {
+    padding-left: 15px;
+    font-size: 14px;
+    color: var(--el-text-color-regular);
+  }
+
+  ::v-deep(.el-collapse-item__content) {
+    overflow-y: auto;
+    // height: 215px;
+    height: 310px;
+  }
+
+  /* 定义滚动条宽度和背景颜色 */
+  ::v-deep(.el-collapse-item__content::-webkit-scrollbar) {
+    width: 6px; /* 对于水平滚动条的高度 */
+    height: 6px; /* 对于垂直滚动条的宽度 */
+    background-color: #f9f9f9;
+  }
+  /* 定义滚动条滑块的样式 */
+  ::v-deep(.el-collapse-item__content::-webkit-scrollbar-thumb) {
+    border-radius: 4px;
+    background-color: #dddee0;
+  }
+
+  /* 定义滚动条滑块hover样式 */
+  ::v-deep(.el-collapse-item__content::-webkit-scrollbar-thumb:hover) {
+    background-color: #c7c9cc;
+  }
+
+  /* 定义滚动条轨道的样式 */
+  ::v-deep(.el-collapse-item__content::-webkit-scrollbar-track) {
+    background-color: #ffffff;
+  }
+
+  ::v-deep(.el-collapse-item__content::-webkit-scrollbar-button) {
+    display: none; /* 通常情况下不显示滚动条按钮 */
   }
 </style>
