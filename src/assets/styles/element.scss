@@ -308,8 +308,8 @@
   }
 }
 
-.right-tabs,
-.el-tabs__header,
-.el-tabs__nav-wrap {
-  flex: none !important;
+.right-tabs {
+  .el-tabs__nav-wrap {
+    flex: none !important;
+  }
 }

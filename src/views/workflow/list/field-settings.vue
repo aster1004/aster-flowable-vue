@@ -65,7 +65,7 @@
           <template #item="{ element }">
             <div class="field-query-item">
               <el-row>
-                <el-col :span="3" class="flex justify-center items-center">
+                <el-col :span="3" class="!flex justify-center items-center">
                   <i class="iconfont icon-tuozhuai !text-lg field-query-icon"></i>
                 </el-col>
                 <el-col :span="17">
@@ -108,7 +108,7 @@
             <template #item="{ element }">
               <div class="field-list-item">
                 <el-row>
-                  <el-col :span="3" class="flex justify-center items-center">
+                  <el-col :span="3" class="!flex justify-center items-center">
                     <i class="iconfont icon-tuozhuai !text-lg field-list-icon"></i>
                   </el-col>
                   <el-col :span="17" class="field-list-title">

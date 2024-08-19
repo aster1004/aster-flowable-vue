@@ -33,13 +33,11 @@
 
     <el-main class="settings-main">
       <div class="main-container">
-        <el-scrollbar style="height: 100%">
-          <submit-validate ref="submitValidateRef" v-if="activeMenu == 'submitValidate'" />
-          <business-rule ref="businessRuleRef" v-if="activeMenu == 'businessRule'" />
-          <message-reminder ref="messageReminderRef" v-if="activeMenu == 'messageReminder'" />
-          <association-list ref="associationListRef" v-if="activeMenu == 'associationList'" />
-          <print-template ref="printTemplateRef" v-if="activeMenu == 'printTemplate'" />
-        </el-scrollbar>
+        <submit-validate ref="submitValidateRef" v-if="activeMenu == 'submitValidate'" />
+        <business-rule ref="businessRuleRef" v-if="activeMenu == 'businessRule'" />
+        <message-reminder ref="messageReminderRef" v-if="activeMenu == 'messageReminder'" />
+        <association-list ref="associationListRef" v-if="activeMenu == 'associationList'" />
+        <print-template ref="printTemplateRef" v-if="activeMenu == 'printTemplate'" />
       </div>
     </el-main>
   </el-container>
@@ -63,7 +61,7 @@
 <style scoped lang="scss">
   .el-container {
     height: 100%;
-    margin: 0px 50px;
+    padding: 0px 50px;
   }
 
   .el-container .el-aside {
