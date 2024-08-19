@@ -227,7 +227,7 @@
     padding: 16px 20px;
     margin-bottom: 0;
     border-bottom: 1px solid var(--el-border-color-lighter);
-    
+
     .el-drawer__title {
       font-size: 17px;
       line-height: 17px;
@@ -237,7 +237,7 @@
 
   .el-drawer__body {
     margin-right: 5px;
-    padding: 15px 15px 15px 20px;;
+    padding: 15px 15px 15px 20px;
     overflow: auto;
   }
 
@@ -306,4 +306,10 @@
   .el-dialog__footer {
     padding: 15px 20px;
   }
+}
+
+.right-tabs,
+.el-tabs__header,
+.el-tabs__nav-wrap {
+  flex: none !important;
 }
