@@ -59,6 +59,21 @@
         </div>
       </div>
     </div>
+    <div class="error-message" v-if="type === 'validate'">
+      <el-row>
+        <el-col :span="4" class="!flex justify-center items-center">
+          校验错误提示 <span style="color: red">*</span>
+        </el-col>
+        <el-col :span="20">
+          <el-input
+            v-model="submitValidate.errorMessage"
+            placeholder="当表单不能提交时弹出的提示信息内容"
+            clearable
+            style="width: 100%"
+          />
+        </el-col>
+      </el-row>
+    </div>
     <div class="el-dialog function-content" v-if="functionVisible">
       <el-input v-model="filterText" placeholder="输入关键字过滤" clearable class="p-10px" />
       <el-scrollbar class="pb-10px" style="height: calc(100% - 55px)">
@@ -91,7 +106,7 @@
 <script setup lang="ts">
   import { computed, PropType, ref, watchEffect } from 'vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { isDef, isNotEmpty } from '@/utils';
+  import { isDef, isEmpty, isNotEmpty } from '@/utils';
   import {
     analysisFormula,
     formulaValidate,
@@ -105,9 +120,7 @@
   import CodeMirror from './code-mirror.vue';
   import { ElMessage } from 'element-plus';
 
-  const emits = defineEmits<{
-    'update:formula': [value: string];
-  }>();
+  const emits = defineEmits(['update:formula', 'callback']);
 
   const props = defineProps({
     title: {
@@ -116,7 +129,7 @@
     },
     type: {
       // 类型：赋值 | 条件
-      type: String as PropType<'assignment' | 'condition'>,
+      type: String as PropType<'assignment' | 'condition' | 'validate'>,
       default: () => 'condition',
     },
     formula: {
@@ -151,6 +164,13 @@
   const flatFormData = ref<WorkComponent.formulaNode[]>([]);
   // 显示函数
   const functionVisible = ref(false);
+  // 校验信息
+  const submitValidate = ref<WorkForm.SubmitValidate>({
+    id: '',
+    formula: '',
+    errorMessage: '',
+    enable: true,
+  });
 
   /**
    * @description: 过滤函数
@@ -229,7 +249,10 @@
    * @description: 初始化
    * @return {*}
    */
-  const init = () => {
+  const init = (validate?: WorkForm.SubmitValidate) => {
+    if (props.type === 'validate' && validate) {
+      submitValidate.value = validate;
+    }
     visible.value = true;
   };
 
@@ -238,6 +261,11 @@
    * @return {*}
    */
   const onSubmit = () => {
+    if (props.type === 'validate' && isEmpty(submitValidate.value.errorMessage)) {
+      ElMessage.warning('校验错误提示不能为空');
+      return;
+    }
+
     const editorValue = codeMirrorRef.value.getValue();
     const value = analysisFormula(editorValue, flatFormData.value);
     console.log('---公式为：', value);
@@ -245,15 +273,24 @@
     const analysisResult = formulaValidate(value);
     console.log('---公式解析结果：', analysisResult);
     if (analysisResult === true) {
-      // 校验控件是否循环调用
-      const validate =
-        selectFormItem.value &&
-        loopCallValidate(value, selectFormItem.value.id, workFlowStore.design.formItems);
-      if (!validate) {
-        return;
+      if (props.type === 'assignment') {
+        // 校验控件是否循环调用
+        const validate =
+          selectFormItem.value &&
+          loopCallValidate(value, selectFormItem.value.id, workFlowStore.design.formItems);
+        if (!validate) {
+          return;
+        }
       }
       visible.value = false;
-      emits('update:formula', value);
+      if (props.type === 'validate') {
+        submitValidate.value.formula = value;
+        // 更新校验信息
+        emits('callback', submitValidate.value);
+      } else {
+        // 更新公式
+        emits('update:formula', value);
+      }
     } else {
       ElMessage.warning('公式校验失败：' + analysisResult);
     }
@@ -349,10 +386,12 @@
       // 获取表单组件的公式树
       formulaItemTree(_formItems.value, nodes, isTableList);
       flatFormData.value = isTableList ? flatNodes(nodes) : nodes;
-      // 排除自身组件，防止循环引用
-      nodes = nodes.filter((node) => {
-        return selectFormItem.value && node.fieldId !== selectFormItem.value.id;
-      });
+      if (props.type === 'condition') {
+        // 排除自身组件，防止循环引用
+        nodes = nodes.filter((node) => {
+          return selectFormItem.value && node.fieldId !== selectFormItem.value.id;
+        });
+      }
     }
     return nodes;
   });
@@ -439,6 +478,10 @@
     bottom: -50px;
     right: -172px;
     height: 100%;
+  }
+
+  .error-message {
+    padding-top: 5px;
   }
 
   ::v-deep(.el-collapse) {

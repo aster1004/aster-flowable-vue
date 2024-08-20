@@ -19,6 +19,19 @@ declare namespace WorkForm {
   };
 
   /**
+   * @description: 表单提交校验
+   */
+  export interface SubmitValidate {
+    id: string;
+    // 校验规则
+    formula: string;
+    // 错误提示
+    errorMessage: string;
+    // 是否启用
+    enable: boolean;
+  }
+
+  /**
    * @description: 表单扩展信息
    */
   export interface FormSettings {
@@ -34,12 +47,7 @@ declare namespace WorkForm {
       types?: string[];
     };
     // 提交校验
-    submitValidate?: {
-      // 错误提示
-      errorMessage: '';
-      // 公式
-      formula: '';
-    };
+    submitValidates?: SubmitValidate[];
   }
 
   /**
