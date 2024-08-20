@@ -46,6 +46,7 @@
 <script setup>
   import { ref } from 'vue';
   import { isNotEmpty } from '@/utils/index';
+  import { getRandomId } from '@/utils/workflow';
   let props = defineProps({
     childNodeP: {
       type: Object,
@@ -59,18 +60,12 @@
 
   let emits = defineEmits(['update:childNodeP']);
   let visible = ref(false);
-  // 定义常量以提高代码的可读性和易于维护
-  const NODE_PREFIX = 'node_';
   const TYPE_AUDITOR = 1; // 审核人
   const TYPE_COPY = 2; // 抄送人
   const TYPE_EXCLUSIVE_CONDITION = 3; //路由 条件分支
   const TYPE_ROUTER = 4; //路由 条件分支
   const TYPE_PARALLEL_CONDITION = 5; // 并行分支
   const TYPE_INCLUSIVE_GATEWAY = 6; // 包容网关
-  // 一个辅助函数，用于生成唯一的ID
-  const generateUniqueId = () => {
-    return NODE_PREFIX + new Date().getTime();
-  };
 
   /**
    * 创建审核人和抄送人节点
@@ -81,7 +76,7 @@
     switch (type) {
       case TYPE_AUDITOR:
         return {
-          id: generateUniqueId(),
+          id: getRandomId(),
           nodeName: '审核人',
           type: 1,
           settype: 1,
@@ -129,7 +124,7 @@
         };
       case TYPE_COPY:
         return {
-          id: generateUniqueId(),
+          id: getRandomId(),
           nodeName: '抄送人',
           type: TYPE_COPY,
           error: false,
@@ -152,7 +147,7 @@
   const createRouterData = (typeName) => {
     switch (typeName) {
       case 'Exclusive':
-        let exclusiveId = generateUniqueId() + '_exclusive';
+        let exclusiveId = getRandomId() + '_exclusive';
         return {
           id: exclusiveId,
           parentId: props.parentId,
@@ -162,7 +157,7 @@
           typeName: 'Exclusive',
           conditionNodes: [
             {
-              id: generateUniqueId(),
+              id: getRandomId(),
               parentId: exclusiveId,
               nodeName: '条件1',
               icon: 'iconfont icon-bumen',
@@ -182,7 +177,7 @@
               childNode: props.childNodeP,
             },
             {
-              id: generateUniqueId(),
+              id: getRandomId(),
               parentId: exclusiveId,
               nodeName: '默认条件',
               error: false,
@@ -199,7 +194,7 @@
           ],
         };
       case 'Parallel':
-        let parallelId = generateUniqueId() + '_parallel';
+        let parallelId = getRandomId() + '_parallel';
         return {
           id: parallelId,
           parentId: props.parentId,
@@ -209,7 +204,7 @@
           typeName: 'Parallel',
           conditionNodes: [
             {
-              id: generateUniqueId(),
+              id: getRandomId(),
               parentId: parallelId,
               nodeName: '并行分支1',
               icon: 'iconfont icon-jiekou',
@@ -223,7 +218,7 @@
               // 其他属性...看，
             },
             {
-              id: generateUniqueId(),
+              id: getRandomId(),
               parentId: parallelId,
               nodeName: '并行分支2',
               icon: 'iconfont icon-jiekou',
@@ -239,7 +234,7 @@
           ],
         };
       case 'Inclusive':
-        let inclusiveId = generateUniqueId() + '_inclusive';
+        let inclusiveId = getRandomId() + '_inclusive';
         return {
           id: inclusiveId,
           parentId: props.parentId,
@@ -249,7 +244,7 @@
           typeName: 'Inclusive',
           conditionNodes: [
             {
-              id: generateUniqueId(),
+              id: getRandomId(),
               parentId: inclusiveId,
               nodeName: '包容分支1',
               icon: 'iconfont icon-liucheng1',
@@ -269,7 +264,7 @@
               childNode: props.childNodeP,
             },
             {
-              id: generateUniqueId(),
+              id: getRandomId(),
               parentId: inclusiveId,
               nodeName: '默认条件',
               icon: 'iconfont icon-liucheng1',

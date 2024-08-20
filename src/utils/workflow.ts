@@ -25,6 +25,16 @@ export const generateFieldId = (prefix = 'field') => {
 };
 
 /**
+ * @description: 生成流程图节点id
+ * @return {*} 点id
+ */
+export const getRandomId = () => {
+  return `node_${new Date().getTime().toString().substring(5)}${Math.round(
+    Math.random() * 9000 + 1000,
+  )}`;
+};
+
+/**
  * @description: 删除表单组件
  * @param {any[]} formComponents 表单组件
  * @param {number} index 索引
