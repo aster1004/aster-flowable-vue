@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="home">
-    <el-row :gutter="20" class="flex justify-between w-full h-full mt-4">
+    <el-row :gutter="20" class="!flex justify-between w-full h-full mt-4">
       <el-col :span="weatherVisible ? 16 : 24">
         <el-card class="home-card" style="height: 345px">
           <h2>介绍</h2>

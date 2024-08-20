@@ -31,7 +31,7 @@
         <template #item="{ element, index }">
           <div class="serial-number-item">
             <el-row>
-              <el-col :span="2" class="flex justify-start items-center">
+              <el-col :span="2" class="!flex justify-start items-center">
                 <i class="iconfont icon-tuozhuai !text-lg serial-number-icon"></i>
               </el-col>
               <el-col :span="20">
@@ -83,7 +83,7 @@
                   </el-input>
                 </template>
               </el-col>
-              <el-col :span="2" class="flex justify-end items-center">
+              <el-col :span="2" class="!flex justify-end items-center">
                 <i class="iconfont icon-shanchu !text-sm" @click="handleRemove(index)"></i>
               </el-col>
             </el-row>
@@ -154,7 +154,7 @@
   const handleCommand = (command: string) => {
     const rule = ruleConfigs.find((r) => r.type === command);
     if (rule) {
-      const ruleId = generateFieldId().replace('field', 'rule');
+      const ruleId = generateFieldId('rule');
       rules.value.push({ id: ruleId, ...rule });
     }
   };
