@@ -51,7 +51,7 @@
   import { ref } from 'vue';
 
   // 活动菜单
-  const activeMenu = ref('');
+  const activeMenu = ref('submitValidate');
 
   // 选中菜单
   const handleSelect = (key: string) => {

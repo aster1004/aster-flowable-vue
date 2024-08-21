@@ -48,6 +48,8 @@ declare namespace WorkForm {
     };
     // 提交校验
     submitValidates?: SubmitValidate[];
+    // 关联列表
+    associationList?: WorkComponent.TreeNode[];
   }
 
   /**
