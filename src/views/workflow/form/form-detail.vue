@@ -12,7 +12,6 @@
     :lock-scroll="false"
     :size="drawerSize"
     :append-to-body="true"
-    style="background-color: #f5f7fa !important"
   >
     <template #header="{ close }">
       <div class="form-header">
@@ -45,49 +44,39 @@
         </div>
       </div>
     </template>
-    <div class="form-body">
-      <div class="form-detail-render">
-        <el-scrollbar>
-          <div style="position: relative">
-            <form-render
-              ref="formRenderRef"
-              v-model:form-data="formData"
-              :form-items="formInfo.formItems"
-              :form-info="_baseFormInfo"
-              style="margin: 8px"
-            />
-            <div class="form-complete" v-if="formStatus === '9'">
-              <img src="@/assets/images/process-complete.png" alt="审批通过" />
-            </div>
-          </div>
-        </el-scrollbar>
-      </div>
 
-      <div class="form-detail-process">
-        <div class="vertical-menu" v-if="isCollapse">
-          <div @click="handleShowTabs('log')">
-            <i class="iconfont icon-shenpi"></i>
-            <span>流程日志</span>
-          </div>
-          <div @click="handleShowTabs('comment')">
-            <i class="iconfont icon-xinxi"></i>
-            <span>评论</span>
-          </div>
-        </div>
-        <div class="process-content" v-else>
-          <el-tabs v-model="processActiveName" class="process-tabs">
-            <el-tab-pane label="流程日志" name="log">User</el-tab-pane>
-            <el-tab-pane label="评论" name="comment">Config</el-tab-pane>
-          </el-tabs>
-        </div>
-        <div class="menu-collapse">
-          <div class="ico-button" @click="isCollapse = !isCollapse">
-            <i v-if="isCollapse" class="iconfont icon-zuozhijiantou !text-10px"></i>
-            <i v-else class="iconfont icon-youzhijiantou !text-10px"></i>
-          </div>
-        </div>
-      </div>
-    </div>
+    <el-tabs
+      v-model="activeTab"
+      style="height: 100%; width: 100%"
+      v-if="isShowAssociationList"
+      @tab-change="handleTabChange"
+    >
+      <el-tab-pane label="详情" name="formDetail" style="height: 100%; width: 100%">
+        <form-info
+          ref="formInfoRef"
+          v-model:form-data="formData"
+          :form-items="formInfo.formItems"
+          :form-info="_baseFormInfo"
+          :form-status="formStatus"
+        />
+      </el-tab-pane>
+      <el-tab-pane
+        v-for="(item, index) in associationList"
+        :key="index"
+        :label="item.label"
+        :name="item.value"
+      >
+        <list-association :ref="(el) => setComponentRefs(el, index)" />
+      </el-tab-pane>
+    </el-tabs>
+    <form-info
+      v-else
+      ref="formInfoRef"
+      v-model:form-data="formData"
+      :form-items="formInfo.formItems"
+      :form-info="_baseFormInfo"
+      :form-status="formStatus"
+    />
     <template #footer v-if="isFooter">
       <el-button type="primary" @click="submit">{{ $t('button.confirm') }}</el-button>
       <el-button @click="cancel">{{ $t('button.cancel') }}</el-button>
@@ -95,17 +84,16 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-  import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/instance';
+  import { associationListInstanceNumberApi } from '@/api/workflow/assocaition';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isEmpty, isNotEmpty } from '@/utils';
   import { computed, reactive, ref } from 'vue';
-  import FormRender from './form-render.vue';
   import DictTag from '@/components/dict/dict-tag.vue';
-  import { ElMessage } from 'element-plus';
+  import { ElMessage, TabPaneName } from 'element-plus';
   import { convertDataTypes } from '@/utils/workflow';
-
-  const workFlowStore = useWorkFlowStore();
+  import FormInfo from './form-info.vue';
+  import ListAssociation from '../list/list-association.vue';
 
   // 显示抽屉
   const visible = ref(false);
@@ -115,6 +103,8 @@
   const formData = ref<WorkForm.FormDataModel>({});
   // 表单状态
   const formStatus = ref<string>('');
+  // 表单实例
+  const formInstanceId = ref<string>('');
   // 表单信息
   const formInfo = ref<WorkForm.FormModel>({
     icon: 'iconfont icon-gengduo',
@@ -132,18 +122,28 @@
       actions: [],
     },
   });
-  // 折叠状态
-  const isCollapse = ref<boolean>(true);
-  // 活动标签
-  const processActiveName = ref<string>('log');
   // 显示footer
   const isFooter = ref<boolean>(false);
-
+  // 活动页签
+  const activeTab = ref<string>('formDetail');
+  // 关联表单
+  const associationList = ref<WorkComponent.TreeNode[]>([]);
+  // 注册组件
+  const associationListRefs: any[] = [];
   // 查询参数
   const queryParams = reactive<Process.InstanceQueryParams>({
     id: '',
     code: '',
     procDefId: '',
+  });
+
+  // 是否显示关联表单
+  const isShowAssociationList = computed(() => {
+    return (
+      formInfo.value.settings &&
+      formInfo.value.settings.associationList &&
+      formInfo.value.settings.associationList.length > 0
+    );
   });
 
   /**
@@ -171,14 +171,23 @@
     return isFullScreen.value ? 'iconfont icon-suoxiao' : 'iconfont icon-quanping';
   });
 
+  // 设置组件refs
+  const setComponentRefs = (el: any, index: number) => {
+    if (el) {
+      associationListRefs[index] = el;
+    }
+  };
+
   /**
-   * @description: 打开流程页签
-   * @param {*} activeName 页签name
+   * @description: 点击tab页签
    * @return {*}
    */
-  const handleShowTabs = (activeName: string) => {
-    isCollapse.value = false;
-    processActiveName.value = activeName;
+  const handleTabChange = (name: TabPaneName) => {
+    if (name != 'formDetail') {
+      const associationCode = formInfo.value.code ? formInfo.value.code : '';
+      const index = associationList.value.findIndex((item) => item.value === name);
+      associationListRefs[index].init(name, associationCode, formInstanceId.value);
+    }
   };
 
   /**
@@ -207,6 +216,49 @@
   };
 
   /**
+   * @description: 获取关联表单
+   * @param {string} instanceId 流程实例ID
+   * @return {*}
+   */
+  const getAssociationList = async (instanceId: string) => {
+    if (isShowAssociationList.value) {
+      // 当前表单的编码
+      const associationCode = formInfo.value.code ? formInfo.value.code : '';
+      // 当前实例ID
+      formInstanceId.value = instanceId;
+
+      // 需要显示的关联表单的code
+      const associations =
+        formInfo.value.settings && formInfo.value.settings.associationList
+          ? formInfo.value.settings.associationList.map((item) => item.value)
+          : [];
+
+      associationList.value = [];
+      await associationListInstanceNumberApi({
+        associationCode: associationCode,
+        associationInstanceId: instanceId,
+        codes: associations,
+      }).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          res.data.forEach((item) => {
+            const associate = formInfo.value.settings?.associationList?.find(
+              (associate) => associate.value === item.code,
+            );
+            if (associate && associate.value === item.code) {
+              associationList.value.push({
+                label: associate.label + '(' + item.instanceNumber + ')',
+                value: item.code,
+              });
+            }
+          });
+        } else {
+          ElMessage.error(res.message);
+        }
+      });
+    }
+  };
+
+  /**
    * @description: 获取表单信息
    * @param {string} id
    * @param {string} code
@@ -228,6 +280,8 @@
         const formDesignInfo = res.data.formInfo;
         if (isNotEmpty(formDesignInfo)) {
           formInfo.value = formDesignInfo;
+          // 查询关联表单信息
+          getAssociationList(res.data.instanceInfo['proc_inst_id']);
         }
         // 表单数据
         const instanceInfo = res.data.instanceInfo;
@@ -272,6 +326,8 @@
         const formDesignInfo = res.data.formInfo;
         if (isNotEmpty(formDesignInfo)) {
           formInfo.value = formDesignInfo;
+          // 查询关联表单信息
+          getAssociationList(procInstId);
         }
         // 表单数据
         const instanceInfo = res.data.instanceInfo;
@@ -328,7 +384,7 @@
   .form-header {
     width: 100%;
     margin: 0;
-    color: #304265;
+    color: var(--el-text-color-primary);
     font-weight: 500;
     font-size: 16px;
     line-height: 22px;
@@ -345,7 +401,7 @@
         .form-header-title {
           display: inline-block;
           font-size: 18px;
-          color: #304265;
+          color: var(--el-text-color-primary);
           font-weight: 700;
         }
 
@@ -364,14 +420,14 @@
           margin-right: 12px;
           padding: 0 8px;
           font-size: 14px;
-          color: #8893a7;
+          color: var(--el-text-color-disabled);
           height: 32px;
           max-width: 180px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
           line-height: 32px;
-          background: #f5f7fa;
+          background: var(--el-bg-color-page);
           border-radius: 4px;
           cursor: pointer;
         }
@@ -381,7 +437,7 @@
 
   .form-body {
     display: flex;
-    background: #f5f7fa;
+    background: var(--el-bg-color-page);
     height: 100%;
     padding-bottom: 0;
 
@@ -389,7 +445,7 @@
       height: 100%;
       flex-grow: 1;
       flex-shrink: 1;
-      background: #fff;
+      background: var(--el-bg-color);
       margin-right: 4px;
       overflow: auto;
 
@@ -418,7 +474,7 @@
         width: 64px;
         height: 100%;
         margin-left: 4px;
-        background: #fff;
+        background: var(--el-bg-color);
         div {
           display: flex;
           flex-direction: column;
@@ -430,10 +486,10 @@
             PingFangSC-Regular,
             PingFang SC;
           font-weight: 400;
-          color: #304265;
+          color: var(--el-text-color-primary);
         }
         div:hover {
-          background: #f4f8fc;
+          background: var(--el-fill-color-light);
         }
       }
 
@@ -446,7 +502,7 @@
         line-height: 40px;
         border-radius: 0 2px 2px 0;
         transform: translateY(-50%);
-        background: #e0e3e9;
+        background: var(--el-fill-color-dark);
         opacity: 0.6;
         .ico-button {
           height: 100%;
@@ -457,7 +513,7 @@
 
       .process-content {
         width: 400px;
-        background: #fff;
+        background: var(--el-bg-color);
         height: 100%;
         .process-tabs {
           padding: 8px 15px;

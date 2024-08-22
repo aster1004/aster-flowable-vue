@@ -22,3 +22,18 @@ export const assocaitionListApi = (code: string) => {
     },
   );
 };
+
+/**
+ * 查询关联表单的实例数量
+ * @param code 关联的表单编码
+ * @returns
+ */
+export const associationListInstanceNumberApi = (params: WorkForm.AssocaitionListQuery) => {
+  return request.post<WorkForm.AssocaitionListModel[]>(
+    PORT5 + `/assocaition/instanceNumber`,
+    params,
+    {
+      noLoading: true,
+    },
+  );
+};

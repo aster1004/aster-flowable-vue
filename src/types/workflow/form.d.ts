@@ -225,4 +225,19 @@ declare namespace WorkForm {
     // 区域编码
     adcode?: string;
   }
+
+  export interface AssocaitionListModel {
+    id?: string;
+    code?: string;
+    fieldId?: string;
+    associationCode?: string;
+    instanceNumber?: number;
+  }
+
+  export interface AssocaitionListQuery {
+    associationCode?: string;
+    associationInstanceId?: string;
+    code?: string;
+    codes?: string[];
+  }
 }
