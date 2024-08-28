@@ -1,0 +1,221 @@
+.print-container {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 0;
+}
+
+.print-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  font-size: 1.5em;
+  font-weight: 600;
+  height: 50px;
+}
+
+.print-body {
+  height: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  background: var(--el-bg-color);
+  margin-right: 4px;
+  overflow: auto;
+}
+
+.form-complete {
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.form-complete img {
+  opacity: 0.6;
+}
+
+.print-table {
+  border: 1px solid var(--el-border-color);
+
+  .print-row {
+    border-bottom: 1px solid var(--el-border-color);
+
+    .print-cell {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      min-height: 32px;
+
+      .print-cell-label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px 10px;
+        width: 100px;
+        min-height: 32px;
+      }
+
+      .print-cell-value {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 5px 10px;
+        width: calc(100% - 100px);
+        min-height: 32px;
+        border-left: 1px solid var(--el-border-color);
+      }
+    }
+
+    .print-title {
+      display: flex;
+      align-items: center;
+      height: 48px;
+      padding: 0px 10px;
+      border-bottom: 1px solid var(--el-border-color);
+    }
+
+    .print-layout {
+      display: flex;
+      flex-wrap: wrap;
+
+      .print-w-12 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+      .print-w-8 {
+        flex: 0 0 33.3333333333%;
+        max-width: 33.3333333333%;
+      }
+      .print-w-6 {
+        flex: 0 0 25%;
+        max-width: 25%;
+      }
+    }
+
+    .print-description {
+      width: 100%;
+      padding: 15px 10px;
+    }
+
+    .print-image {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      min-height: 100px;
+
+      .print-image-label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px 10px;
+        width: 100px;
+        min-height: 100px;
+      }
+
+      .print-image-value {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 5px 10px;
+        width: calc(100% - 100px);
+        min-height: 100px;
+        border-left: 1px solid var(--el-border-color);
+      }
+    }
+
+    .print-file {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      min-height: 32px;
+
+      .print-file-label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px 10px;
+        width: 100px;
+        min-height: 32px;
+      }
+
+      .print-file-value {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        width: calc(100% - 100px);
+        padding: 5px 10px;
+        min-height: 32px;
+        border-left: 1px solid var(--el-border-color);
+
+        .print-image {
+          width: 100px;
+          height: 100px;
+          margin: 5px 10px;
+        }
+      }
+    }
+  }
+}
+
+.print-border-top {
+  border-top: 1px solid var(--el-border-color);
+}
+
+.print-border-bottom {
+  border-bottom: 1px solid var(--el-border-color);
+}
+
+.print-border-left {
+  border-left: 1px solid var(--el-border-color);
+}
+
+.print-border-right {
+  border-left: 1px solid var(--el-border-color);
+}
+
+.print-table-list {
+  width: 100%;
+
+  .print-table-list-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .print-cell-label {
+    width: 0px !important;
+    padding: 0px !important;
+  }
+  .print-cell-value {
+    width: 100% !important;
+    border-left: none !important;
+  }
+
+  table {
+    width: 100%;
+
+    thead {
+      border-top: 1px solid var(--el-border-color);
+      tr {
+        th {
+          padding: 5px;
+          font-weight: 600;
+          color: var(--el-color-info);
+        }
+      }
+    }
+    tbody {
+      tr {
+        border-top: 1px solid var(--el-border-color);
+        td {
+          padding: 5px;
+        }
+      }
+    }
+  }
+}

@@ -44,6 +44,18 @@
         <span v-else></span>
       </el-form-item>
     </template>
+    <template v-else-if="mode == 'print'">
+      <form-design-render
+        v-if="
+          isNotEmpty(formItem.props.associatedForm.formCode) &&
+          isNotEmpty(formItem.props.associatedField)
+        "
+        v-model:value="_value"
+        :form-item="_associatedFormItem"
+        :form-data="_associatedFormData"
+        :mode="mode"
+      />
+    </template>
     <template v-else>
       <form-design-render
         v-if="
@@ -75,7 +87,7 @@
       default: '',
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -191,6 +203,11 @@
             _associatedFormItem.value = flatFormItems(res.data.formInfo.formItems).find(
               (item) => item.id === props.formItem.props.associatedField,
             );
+            if (_associatedFormItem.value) {
+              _associatedFormItem.value.props.required = false;
+              _associatedFormItem.value.props.readonly = true;
+              _associatedFormItem.value.title = props.formItem.title;
+            }
           } else {
             _associatedFormData.value = {};
             _value.value = undefined;
@@ -211,6 +228,7 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
   .label-tip {
     color: var(--el-text-color-placeholder);
   }
@@ -222,11 +240,16 @@
   ::v-deep(.el-form-item__content > .el-form-item--default > .el-form-item__label) {
     width: 0px !important;
     padding: 0px !important;
+    height: 0px !important;
+    line-height: 0px !important;
+  }
 
-    // &:before {
-    //   color: #fff !important;
-    //   content: '' !important;
-    //   margin-right: 0px !important;
-    // }
+  ::v-deep(.el-form-item__content) {
+    .el-form-item--default .el-form-item__label {
+      width: 0px !important;
+      padding: 0px !important;
+      height: 0px !important;
+      line-height: 0px !important;
+    }
   }
 </style>

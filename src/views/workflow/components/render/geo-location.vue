@@ -6,44 +6,54 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
-    </template>
-    <div v-if="mode === 'design'" class="geo-design">
-      <span>
-        <i class="iconfont icon-dingwei !text-sm"></i>
-        {{ formItem.props.placeholder }}
+  <div v-if="!_hidden">
+    <el-form-item
+      v-if="mode != 'print'"
+      :prop="formItemProp"
+      :label-width="labelWidth"
+      :show-message="showMessage"
+    >
+      <template #label>
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </template>
+      <div v-if="mode === 'design'" class="geo-design">
+        <span>
+          <i class="iconfont icon-dingwei !text-sm"></i>
+          {{ formItem.props.placeholder }}
+        </span>
+      </div>
+      <div v-else-if="mode === 'form'">
+        <el-input
+          :model-value="_value.address"
+          :placeholder="formItem.props.placeholder"
+          :readonly="formItem.props.readonly"
+        >
+          <template #append>
+            <i v-if="formItem.props.readonly" class="iconfont icon-dingwei"></i>
+            <el-button v-else text @click="showAmap">
+              <i class="iconfont icon-dingwei"></i>
+            </el-button>
+          </template>
+        </el-input>
+      </div>
+      <div v-else-if="mode === 'search'">
+        <el-input v-model="_value" />
+      </div>
+      <span v-else>
+        {{ _value.address }}
       </span>
-    </div>
-    <div v-else-if="mode === 'form'">
-      <el-input
-        :model-value="_value.address"
-        :placeholder="formItem.props.placeholder"
-        :readonly="formItem.props.readonly"
-      >
-        <template #append>
-          <i v-if="formItem.props.readonly" class="iconfont icon-dingwei"></i>
-          <el-button v-else text @click="showAmap">
-            <i class="iconfont icon-dingwei"></i>
-          </el-button>
-        </template>
-      </el-input>
-    </div>
-    <div v-else-if="mode === 'search'">
-      <el-input v-model="_value" />
-    </div>
-    <span v-else>
-      {{ _value.address }}
-    </span>
 
-    <amap-marker ref="amapRef" :form="_value" @address="address"></amap-marker>
-  </el-form-item>
+      <amap-marker ref="amapRef" :form="_value" @address="address"></amap-marker>
+    </el-form-item>
+    <div v-else class="print-cell">
+      <div class="print-cell-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-cell-value">
+        <span>{{ _value ? _value.address : '' }}</span>
+      </div>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
@@ -59,7 +69,7 @@
       default: {},
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -176,6 +186,7 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
   .geo-design {
     color: #606266;
   }

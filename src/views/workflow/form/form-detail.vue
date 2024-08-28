@@ -36,6 +36,11 @@
               </el-tooltip>
             </div>
             <div class="form-header-action">
+              <el-tooltip content="打印" placement="bottom">
+                <i class="iconfont icon-dayinji" @click="printFormInfo"></i>
+              </el-tooltip>
+            </div>
+            <div class="form-header-action">
               <el-tooltip content="关闭" placement="bottom">
                 <i class="iconfont icon-close" @click="close"></i>
               </el-tooltip>
@@ -77,6 +82,14 @@
       :form-info="_baseFormInfo"
       :form-status="formStatus"
     />
+
+    <print-template
+      ref="printTemplateRef"
+      :form-data="formData"
+      :form-items="formInfo.formItems"
+      :form-info="_baseFormInfo"
+      :form-status="formStatus"
+    />
     <template #footer v-if="isFooter">
       <el-button type="primary" @click="submit">{{ $t('button.confirm') }}</el-button>
       <el-button @click="cancel">{{ $t('button.cancel') }}</el-button>
@@ -94,6 +107,7 @@
   import { convertDataTypes } from '@/utils/workflow';
   import FormInfo from './form-info.vue';
   import ListAssociation from '../list/list-association.vue';
+  import PrintTemplate from '../settings/print-template.vue';
 
   // 显示抽屉
   const visible = ref(false);
@@ -130,6 +144,7 @@
   const associationList = ref<WorkComponent.TreeNode[]>([]);
   // 注册组件
   const associationListRefs: any[] = [];
+  const printTemplateRef = ref();
   // 查询参数
   const queryParams = reactive<Process.InstanceQueryParams>({
     id: '',
@@ -204,6 +219,14 @@
    */
   const submit = () => {
     console.log('submit');
+  };
+
+  /**
+   * @description: 打印
+   * @return {*}
+   */
+  const printFormInfo = () => {
+    printTemplateRef.value.init();
   };
 
   /**

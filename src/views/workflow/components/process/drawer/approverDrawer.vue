@@ -87,7 +87,7 @@
 <script setup lang="ts">
   import { ref, computed, watch, onMounted } from 'vue';
   import { processStore } from '@/stores/modules/process';
-  import Range from '../../render/range.vue';
+  import Range from '../../process/range.vue';
   import { isNotEmpty } from '@/utils';
   import FormPermission from '../permission/form-permission.vue';
   import ButtonPermission from '../permission/button-permission.vue';

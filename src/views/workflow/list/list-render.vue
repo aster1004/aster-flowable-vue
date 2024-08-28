@@ -91,7 +91,7 @@
         </div>
       </div>
       <el-table ref="listTableRef" :data="dataList" :border="true" row-key="id">
-        <el-table-column fixed type="index" width="50" />
+        <el-table-column fixed type="index" width="50" align="center" />
         <template v-if="type === 'design'">
           <el-table-column
             prop="dataTitle"
@@ -99,7 +99,7 @@
             fixed
             header-align="center"
             align="center"
-            width="180"
+            min-width="180"
           />
           <el-table-column
             v-for="(item, index) in tableColumns"
@@ -108,7 +108,7 @@
             :label="item.title"
             header-align="center"
             align="center"
-            width="180"
+            min-width="180"
           />
         </template>
         <template v-else>
@@ -118,7 +118,7 @@
             fixed
             header-align="center"
             align="center"
-            width="180"
+            min-width="180"
             show-overflow-tooltip
           >
             <template #default="scope">
@@ -142,7 +142,7 @@
             :label="item.title"
             header-align="center"
             align="center"
-            width="180"
+            min-width="180"
           >
             <template #default="scope">
               <div class="table-component">

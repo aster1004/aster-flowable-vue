@@ -6,55 +6,69 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
-    </template>
-    <div v-if="mode === 'design'">
-      <div class="file-empty">
-        <el-button disabled> <i class="iconfont icon-fujian pr-5px"></i>点击上传附件 </el-button>
+  <div v-if="!_hidden">
+    <el-form-item
+      v-if="mode != 'print'"
+      :prop="formItemProp"
+      :label-width="labelWidth"
+      :show-message="showMessage"
+    >
+      <template #label>
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </template>
+      <div v-if="mode === 'design'">
+        <div class="file-empty">
+          <el-button disabled> <i class="iconfont icon-fujian pr-5px"></i>点击上传附件 </el-button>
+        </div>
       </div>
-    </div>
-    <div v-else-if="mode === 'form'" style="width: 100%">
-      <el-upload
-        v-if="!formItem.props.readonly"
-        list-type="text"
-        :file-list="fileList"
-        :action="ImageUpload.url"
-        :accept="acceptList"
-        :limit="formItem.props.maxNumber"
-        :multipl="formItem.props.maxNumber > 1"
-        :on-exceed="handleExceed"
-        :on-success="handleSuccess"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
-        :on-error="handleError"
-        :before-upload="handleBeforeUpload"
-      >
-        <el-button> <i class="iconfont icon-fujian pr-5px"></i>点击上传附件 </el-button>
-      </el-upload>
-      <div v-else class="file-readonly">
-        <el-row v-for="(item, index) in _value" :key="index">
-          <el-col :span="24">
-            <span :title="item.name">{{ item.name }}</span>
-          </el-col>
-        </el-row>
+      <div v-else-if="mode === 'form'" style="width: 100%">
+        <el-upload
+          v-if="!formItem.props.readonly"
+          list-type="text"
+          :file-list="fileList"
+          :action="ImageUpload.url"
+          :accept="acceptList"
+          :limit="formItem.props.maxNumber"
+          :multipl="formItem.props.maxNumber > 1"
+          :on-exceed="handleExceed"
+          :on-success="handleSuccess"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :on-error="handleError"
+          :before-upload="handleBeforeUpload"
+        >
+          <el-button> <i class="iconfont icon-fujian pr-5px"></i>点击上传附件 </el-button>
+        </el-upload>
+        <div v-else class="file-readonly">
+          <el-row v-for="(item, index) in _value" :key="index">
+            <el-col :span="24">
+              <span :title="item.name">{{ item.name }}</span>
+            </el-col>
+          </el-row>
+        </div>
       </div>
-    </div>
-    <div v-else-if="mode === 'search'" style="width: 100%">
-      <el-input v-model="_value[0]" />
-    </div>
-    <div v-else>
-      <span v-for="(item, index) in _value" :key="index">
-        <p>
-          {{ item.name }}
-        </p>
-      </span>
+      <div v-else-if="mode === 'search'" style="width: 100%">
+        <el-input v-model="_value[0]" />
+      </div>
+      <div v-else>
+        <span v-for="(item, index) in _value" :key="index">
+          <p>
+            {{ item.name }}
+          </p>
+        </span>
+      </div>
+    </el-form-item>
+    <div v-else class="print-file">
+      <div class="print-file-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-file-value">
+        <div v-for="(item, index) in _value" :key="index">
+          <p>
+            {{ item.name }}
+          </p>
+        </div>
+      </div>
     </div>
 
     <el-dialog v-model="previewImageVisible" :title="'预览-' + previewFile.name">
@@ -66,7 +80,7 @@
         <el-button type="primary" @click="handleDownload">{{ $t('button.download') }}</el-button>
       </template>
     </el-dialog>
-  </el-form-item>
+  </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
@@ -86,7 +100,7 @@
       default: () => [],
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -316,6 +330,7 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
   .file-empty {
     color: #909399;
   }

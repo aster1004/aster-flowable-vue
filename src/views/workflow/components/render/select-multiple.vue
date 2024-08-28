@@ -6,77 +6,98 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ _formItem.title }}</span>
-    </template>
-    <template v-if="mode === 'design'">
-      <template v-if="_formItem.props.expand">
-        <el-checkbox-group :model-value="_formItem.value" readonly>
-          <el-checkbox
-            v-for="(item, i) in options"
-            :key="i"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-checkbox-group>
+  <div v-if="!_hidden">
+    <el-form-item
+      v-if="mode != 'print'"
+      :prop="formItemProp"
+      :label-width="labelWidth"
+      :show-message="showMessage"
+    >
+      <template #label>
+        <span v-show="showLabel">{{ _formItem.title }}</span>
       </template>
-      <template v-else>
-        <el-select
-          :model-value="_formItem.value"
-          :multiple="true"
-          :clearable="true"
-          :disabled="true"
-        >
+      <template v-if="mode === 'design'">
+        <template v-if="_formItem.props.expand">
+          <el-checkbox-group :model-value="_formItem.value" readonly>
+            <el-checkbox
+              v-for="(item, i) in options"
+              :key="i"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-checkbox-group>
+        </template>
+        <template v-else>
+          <el-select
+            :model-value="_formItem.value"
+            :multiple="true"
+            :clearable="true"
+            :disabled="true"
+          >
+            <el-option
+              v-for="(item, i) in options"
+              :key="i"
+              :label="item.label"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </el-option>
+          </el-select>
+        </template>
+      </template>
+
+      <template v-else-if="mode === 'form'">
+        <template v-if="formItem.props.expand">
+          <el-checkbox-group v-model="_value" :disabled="formItem.props.readonly">
+            <el-checkbox
+              v-for="(item, i) in options"
+              :key="i"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-checkbox-group>
+        </template>
+        <template v-else>
+          <el-select
+            v-model="_value"
+            :multiple="true"
+            :clearable="true"
+            :disabled="formItem.props.readonly"
+          >
+            <el-option
+              v-for="(item, i) in options"
+              :key="i"
+              :label="item.label"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </el-option>
+          </el-select>
+        </template>
+      </template>
+
+      <template v-else-if="mode === 'search'">
+        <el-select v-model="_value" :multiple="false" :clearable="true">
           <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
             {{ item.label }}
           </el-option>
         </el-select>
       </template>
-    </template>
 
-    <template v-else-if="mode === 'form'">
-      <template v-if="formItem.props.expand">
-        <el-checkbox-group v-model="_value" :disabled="formItem.props.readonly">
-          <el-checkbox
-            v-for="(item, i) in options"
-            :key="i"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-checkbox-group>
-      </template>
       <template v-else>
-        <el-select
-          v-model="_value"
-          :multiple="true"
-          :clearable="true"
-          :disabled="formItem.props.readonly"
-        >
-          <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
-            {{ item.label }}
-          </el-option>
-        </el-select>
+        {{ _label }}
       </template>
-    </template>
+    </el-form-item>
 
-    <template v-else-if="mode === 'search'">
-      <el-select v-model="_value" :multiple="false" :clearable="true">
-        <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
-          {{ item.label }}
-        </el-option>
-      </el-select>
-    </template>
-
-    <template v-else>
-      {{ _label }}
-    </template>
-  </el-form-item>
+    <div v-else class="print-cell">
+      <div class="print-cell-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-cell-value">
+        <span>{{ _label }}</span>
+      </div>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
@@ -95,7 +116,7 @@
       default: () => [],
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -296,4 +317,6 @@
     _hidden,
   });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  @import url(../print/print.scss);
+</style>

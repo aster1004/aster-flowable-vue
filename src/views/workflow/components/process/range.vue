@@ -2,7 +2,7 @@
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-05-23 11:05:49
  * @FilePath: \aster-flowable-vue\src\views\workflow\components\render\range.vue
- * @Description: 评分
+ * @Description: 人员部门角色选择
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>

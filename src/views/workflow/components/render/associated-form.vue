@@ -6,96 +6,90 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
-    </template>
-    <template v-if="mode === 'design'">
-      <el-input placeholder="请选择" readonly />
-    </template>
-    <template v-else-if="mode === 'form'">
-      <!-- <el-select
-        v-model="_value"
-        :multiple="false"
-        :clearable="true"
-        :disabled="formItem.props.readonly"
-        @change="handleChange"
-      >
-        <el-option
-          v-for="(item, i) in associatedOptions"
-          :key="i"
-          :label="item.label"
-          :value="item"
-        >
-          {{ item.label }}
-        </el-option>
-      </el-select> -->
-      <el-popover :visible="popoverVisible" placement="bottom" :width="minWidth" trigger="click">
-        <template #reference>
-          <el-input
-            ref="popoverInputRef"
-            :model-value="_value?.label"
-            clearable
-            @click="popoverClick"
-            @clear="clearPopover"
-          />
-        </template>
-        <div
-          ref="selectRef"
-          class="el-select-dropdown"
-          v-click-outside:="hidePopover"
-          @mouseleave="hidePopover"
-        >
-          <div class="el-scrollbar">
-            <div
-              class="el-select-dropdown__wrap el-scrollbar__wrap el-scrollbar__wrap--hidden-default"
-            >
+  <div v-if="!_hidden">
+    <el-form-item
+      v-if="mode != 'print'"
+      :prop="formItemProp"
+      :label-width="labelWidth"
+      :show-message="showMessage"
+    >
+      <template #label>
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </template>
+      <template v-if="mode === 'design'">
+        <el-input placeholder="请选择" readonly />
+      </template>
+      <template v-else-if="mode === 'form'">
+        <el-popover :visible="popoverVisible" placement="bottom" :width="minWidth" trigger="click">
+          <template #reference>
+            <el-input
+              ref="popoverInputRef"
+              :model-value="_value?.label"
+              clearable
+              @click="popoverClick"
+              @clear="clearPopover"
+            />
+          </template>
+          <div
+            ref="selectRef"
+            class="el-select-dropdown"
+            v-click-outside:="hidePopover"
+            @mouseleave="hidePopover"
+          >
+            <div class="el-scrollbar">
+              <div
+                class="el-select-dropdown__wrap el-scrollbar__wrap el-scrollbar__wrap--hidden-default"
+              >
+              </div>
             </div>
+            <ul class="el-scrollbar__view el-select-dropdown__list">
+              <li
+                v-for="(item, index) in associatedOptions"
+                :key="index"
+                :class="['el-select-dropdown__item', isActive(item.value) ? 'is-hovering' : '']"
+                @mouseenter="hoverItem(item.value, true)"
+                @mouseleave="hoverItem(item.value, false)"
+                @click.stop="selectOptionClick(item)"
+              >
+                <span>{{ item.label }}</span>
+              </li>
+            </ul>
           </div>
-          <ul class="el-scrollbar__view el-select-dropdown__list">
-            <li
-              v-for="(item, index) in associatedOptions"
-              :key="index"
-              :class="['el-select-dropdown__item', isActive(item.value) ? 'is-hovering' : '']"
-              @mouseenter="hoverItem(item.value, true)"
-              @mouseleave="hoverItem(item.value, false)"
-              @click.stop="selectOptionClick(item)"
-            >
-              <span>{{ item.label }}</span>
-            </li>
-          </ul>
-        </div>
-      </el-popover>
-    </template>
-    <template v-else-if="mode === 'search'">
-      <el-select
-        v-model="_value"
-        :multiple="false"
-        :clearable="true"
-        :disabled="formItem.props.readonly"
-      >
-        <el-option
-          v-for="(item, i) in associatedOptions"
-          :key="i"
-          :label="item.label"
-          :value="item"
+        </el-popover>
+      </template>
+      <template v-else-if="mode === 'search'">
+        <el-select
+          v-model="_value"
+          :multiple="false"
+          :clearable="true"
+          :disabled="formItem.props.readonly"
         >
-          {{ item.label }}
-        </el-option>
-      </el-select>
-    </template>
-    <template v-else>
-      <el-button class="flex" type="primary" link @click="handleAssociatedForm(_value.value)">
-        {{ _value.label }}
-      </el-button>
-    </template>
-    <form-detail ref="associatedFormDetailRef" />
-  </el-form-item>
+          <el-option
+            v-for="(item, i) in associatedOptions"
+            :key="i"
+            :label="item.label"
+            :value="item"
+          >
+            {{ item.label }}
+          </el-option>
+        </el-select>
+      </template>
+      <template v-else>
+        <el-button class="flex" type="primary" link @click="handleAssociatedForm(_value.value)">
+          {{ _value ? _value.label : '' }}
+        </el-button>
+      </template>
+      <form-detail ref="associatedFormDetailRef" />
+    </el-form-item>
+    <div v-else class="print-cell">
+      <div class="print-cell-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-cell-value">
+        <span>{{ _value ? _value.label : '' }}</span>
+      </div>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
@@ -115,7 +109,7 @@
       },
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -376,4 +370,6 @@
     _hidden,
   });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  @import url(../print/print.scss);
+</style>
