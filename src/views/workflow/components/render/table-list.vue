@@ -210,7 +210,7 @@
       <table>
         <thead>
           <tr>
-            <th style="width: 80px"> 序号 </th>
+            <th> 序号 </th>
             <th v-for="(item, index) in _columns" :key="index" class="print-border-left">{{
               item.title
             }}</th>
