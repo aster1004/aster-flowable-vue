@@ -38,7 +38,7 @@
           </template>
         </div>
       </div>
-      <addNode v-model:childNodeP="nodeConfig.childNode" />
+      <addNode v-model:childNodeP="nodeConfig.childNode.childNode" />
     </div>
   </div>
   <nodeWrap v-if="nodeConfig.childNode" v-model:nodeConfig="nodeConfig.childNode" />
@@ -259,6 +259,7 @@
     emits('update:nodeConfig', props.nodeConfig);
   };
   const delTerm = (index) => {
+    console.log(index);
     const { typeName } = props.nodeConfig;
     props.nodeConfig.conditionNodes.splice(index, 1);
     let conditionTitle = '条件';

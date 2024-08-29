@@ -180,6 +180,10 @@
           }
         }
         rectifyNodeId(childNode, id);
+        // 继续遍历下方节点
+        if (isDef(childNode.childNode) && isNotEmpty(childNode.childNode)) {
+          rectifyNodeId(childNode.childNode, childNode.childNode.id);
+        }
       }
     } else {
       childNode = null;

@@ -86,7 +86,7 @@
           examineMode: 1,
           noHanderAction: 1,
           examineEndDirectorLevel: 0,
-          childNode: props.childNodeP,
+          childNode: null,
           nodeUserList: [],
           parentId: props.parentId,
           error: false,
@@ -153,8 +153,14 @@
           parentId: props.parentId,
           nodeName: '路由',
           type: TYPE_ROUTER,
-          childNode: props.childNodeP,
-          typeName: 'Exclusive',
+          childNode: {
+            id: getRandomId(),
+            parentId: exclusiveId,
+            typeName: typeName,
+            nodeName: '空节点',
+            type: '7',
+          },
+          typeName: typeName,
           conditionNodes: [
             {
               id: getRandomId(),
@@ -174,7 +180,7 @@
               ],
               priorityLevel: 1,
               nodeUserList: [],
-              childNode: props.childNodeP,
+              childNode: null,
             },
             {
               id: getRandomId(),
@@ -200,8 +206,14 @@
           parentId: props.parentId,
           nodeName: '路由',
           type: TYPE_ROUTER,
-          childNode: props.childNodeP,
-          typeName: 'Parallel',
+          childNode: {
+            id: getRandomId(),
+            parentId: parallelId,
+            typeName: typeName,
+            nodeName: '空节点',
+            type: '7',
+          },
+          typeName: typeName,
           conditionNodes: [
             {
               id: getRandomId(),
@@ -214,7 +226,7 @@
               nodeUserList: [],
               isDefault: false,
               priorityLevel: 1,
-              childNode: props.childNodeP,
+              childNode: null,
               // 其他属性...看，
             },
             {
@@ -240,8 +252,14 @@
           parentId: props.parentId,
           nodeName: '包容网关',
           type: TYPE_ROUTER,
-          childNode: props.childNodeP,
-          typeName: 'Inclusive',
+          childNode: {
+            id: getRandomId(),
+            parentId: inclusiveId,
+            typeName: typeName,
+            nodeName: '空节点',
+            type: '7',
+          },
+          typeName: typeName,
           conditionNodes: [
             {
               id: getRandomId(),
@@ -261,7 +279,7 @@
               ],
               priorityLevel: 1,
               nodeUserList: [],
-              childNode: props.childNodeP,
+              childNode: null,
             },
             {
               id: getRandomId(),
