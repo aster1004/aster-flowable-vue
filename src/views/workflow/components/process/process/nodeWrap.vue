@@ -259,9 +259,10 @@
     emits('update:nodeConfig', props.nodeConfig);
   };
   const delTerm = (index) => {
-    console.log(index);
+    console.log(props.nodeConfig.conditionNodes);
     const { typeName } = props.nodeConfig;
     props.nodeConfig.conditionNodes.splice(index, 1);
+
     let conditionTitle = '条件';
     if (typeName === 'Parallel') {
       conditionTitle = '并行分支';
@@ -279,6 +280,9 @@
     resetConditionNodesErr();
     emits('update:nodeConfig', props.nodeConfig);
     if (props.nodeConfig.conditionNodes.length === 1) {
+      if (props.nodeConfig.type === 4) {
+        props.nodeConfig.childNode = null;
+      }
       if (props.nodeConfig.childNode) {
         if (props.nodeConfig.conditionNodes[0].childNode) {
           reData(props.nodeConfig.conditionNodes[0].childNode, props.nodeConfig.childNode);
