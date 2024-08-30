@@ -21,12 +21,12 @@
         :placeholder="placeholder"
       >
         <template #append>
-          <span :style="spanStyle">
+          <span :style="spanStyle" class="text-center">
             <i :class="iconValue" :style="iconStyle"></i>
           </span>
         </template>
       </el-input>
-      <span v-else :style="spanStyle">
+      <span v-else :style="spanStyle" class="text-center">
         <i :class="iconValue" :style="[iconStyle, fixedStyle]"></i>
       </span>
     </template>
@@ -110,7 +110,6 @@
   const spanStyle = reactive({
     width: props.size,
     height: props.size,
-    textAlign: 'center',
   });
 
   // 图标样式
