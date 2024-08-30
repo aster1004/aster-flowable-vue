@@ -136,7 +136,7 @@
   import FormInitiation from '../form/form-initiation.vue';
   import { reactive, ref } from 'vue';
   import { formDeleteApi } from '@/api/workflow/form';
-  import { taskPageApi, completeTaskApi } from '@/api/workflow/process';
+  import { taskPageApi, completeTaskApi } from '@/api/workflow/task';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useI18n } from 'vue-i18n';

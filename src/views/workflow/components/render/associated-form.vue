@@ -97,7 +97,7 @@
   import FormDetail from '../../form/form-detail.vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
-  import { instanceListByCodeApi } from '@/api/workflow/instance';
+  import { instanceListByCodeApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
 
   const emit = defineEmits(['update:value']);

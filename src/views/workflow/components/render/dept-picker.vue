@@ -77,7 +77,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { isArray, isNotEmpty } from '@/utils';
   import { selectDeptsByIdsApi } from '@/api/sys/dept';
-  import { instanceInfoByCustomParamsApi } from '@/api/workflow/instance';
+  import { instanceInfoByCustomParamsApi } from '@/api/workflow/process';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({

@@ -97,7 +97,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-  import { instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/instance';
+  import { instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/task';
   import { associationListInstanceNumberApi } from '@/api/workflow/assocaition';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isEmpty, isNotEmpty } from '@/utils';

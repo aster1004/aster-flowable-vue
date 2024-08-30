@@ -234,7 +234,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus';
   import vClickOutside from 'element-plus/es/directives/click-outside/index';
-  import { instancePageApi } from '@/api/workflow/instance';
+  import { instancePageApi } from '@/api/workflow/process';
 
   const props = defineProps({
     type: {

@@ -56,7 +56,7 @@
   import { computed, PropType, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
-  import { instanceInfoByCustomParamsApi } from '@/api/workflow/instance';
+  import { instanceInfoByCustomParamsApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
 
   const emit = defineEmits(['update:value']);

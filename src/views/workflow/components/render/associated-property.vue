@@ -77,7 +77,7 @@
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty, isObject } from '@/utils';
   import FormDesignRender from '../../form/form-design-render.vue';
-  import { instanceInfoByInstanceIdApi } from '@/api/workflow/instance';
+  import { instanceInfoByInstanceIdApi } from '@/api/workflow/task';
   import { ResultEnum } from '@/enums/httpEnum';
 
   const emit = defineEmits(['update:value']);

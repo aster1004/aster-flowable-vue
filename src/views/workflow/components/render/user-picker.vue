@@ -76,7 +76,7 @@
   import mittBus from '@/utils/mittBus';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { selectUsersByIdsApi } from '@/api/sys/user';
-  import { instanceInfoByCustomParamsApi } from '@/api/workflow/instance';
+  import { instanceInfoByCustomParamsApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isArray, isNotEmpty } from '@/utils';
 
