@@ -91,7 +91,11 @@
             width="180"
             header-align="center"
             align="center"
-          />
+          >
+            <template #default="scope">
+              <span>{{ parseTime(scope.row.taskTime) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="form_status"
             :label="$t('label.status')"
@@ -136,11 +140,11 @@
   import FormInitiation from '../form/form-initiation.vue';
   import { reactive, ref } from 'vue';
   import { formDeleteApi } from '@/api/workflow/form';
-  import { taskPageApi, completeTaskApi } from '@/api/workflow/task';
+  import { completeTaskApi, taskPageApi } from '@/api/workflow/task';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useI18n } from 'vue-i18n';
-  import { isEmpty } from '@/utils';
+  import { isEmpty, parseTime } from '@/utils';
 
   const { t } = useI18n();
   /** 注册组件 */
@@ -237,7 +241,7 @@
    */
   const handle = (taskId: string) => {
     console.info('处理待办：', taskId);
-    completeTaskApi(taskId, {}).then((res) => {
+    completeTaskApi({ taskId: taskId }).then((res) => {
       console.info(res);
     });
   };

@@ -28,12 +28,11 @@ export const taskPageApi = (pageQuery: any) => {
 
 /**
  * @description: 完成任务
- * @param {string} taskId
  * @param {any} formData
  * @return {*}
  */
-export const completeTaskApi = (taskId: string, formData: any) => {
-  return request.post<any>(PORT5 + `/processTask/completeTask/${taskId}`, formData, {
+export const completeTaskApi = (formData: any) => {
+  return request.post<any>(PORT5 + `/processTask/completeTask`, formData, {
     noLoading: true,
   });
 };
