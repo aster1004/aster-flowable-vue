@@ -91,7 +91,7 @@
         />
       </div>
     </div>
-    <el-dialog v-model="previewVisible" :title="'预览-' + previewFile.name">
+    <el-dialog v-model="previewVisible" :title="'预览-' + previewFile.name" :lock-scroll="false">
       <div class="image-preview">
         <img w-full :src="previewFile.url" :alt="previewFile.name" />
       </div>
