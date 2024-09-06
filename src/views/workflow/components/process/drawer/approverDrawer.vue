@@ -75,12 +75,10 @@
       <el-button @click="closeDrawer">取 消</el-button>
     </template> -->
     <member-select
+      ref="memberSelectRef"
       title="选择审批人"
-      :visible="memberVisible"
-      v-if="memberVisible"
-      @submit="handleSubmitMember"
-      @close="closeMemberSelect"
       :value="approverConfig.value.nodeUserList"
+      @submit="handleSubmitMember"
     />
   </el-drawer>
 </template>
@@ -98,10 +96,8 @@
 
   // 编辑状态
   const editFlag = ref<boolean>(false);
-
-  // 人员选择
-  const memberVisible = ref<boolean>(false);
-
+  // 注册组件
+  const memberSelectRef = ref();
   // 当前审核节点的配置
   const approverConfig = ref<any>({});
 
@@ -256,14 +252,7 @@
    * 打开选择审批人
    */
   const openUserSelect = () => {
-    memberVisible.value = true;
-  };
-
-  /**
-   * 关闭审批人
-   */
-  const closeMemberSelect = () => {
-    memberVisible.value = false;
+    memberSelectRef.value.init();
   };
 
   onMounted(() => {});

@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-dialog v-model="visible" :title="props.title" :lock-scroll="false" @closed="close">
+  <el-dialog v-model="visible" :title="props.title" :lock-scroll="false" @closed="visible = false">
     <div class="rang-container">
       <div class="tag-container">
         <el-card shadow="never" style="min-height: 100px">
@@ -19,7 +19,7 @@
           >
             <i class="iconfont icon-yonghu icon-primary" v-if="tagItem.type == 'user'"></i>
             <i class="iconfont icon-jigou1 icon-primary" v-if="tagItem.type == 'dept'"></i>
-            &nbsp;{{ tagItem.name }}
+            &nbsp;{{ tagItem[nodeLabel] }}
           </el-tag>
         </el-card>
       </div>
@@ -87,14 +87,14 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref } from 'vue';
   import { deptListApi } from '@/api/sys/dept';
   import { selectUsersByDeptIdsApi } from '@/api/sys/user';
   import { isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
 
   // 回调函数
-  const emit = defineEmits(['close', 'submit']);
+  const emits = defineEmits(['submit']);
   // 属性
   const props = defineProps({
     title: {
@@ -108,6 +108,14 @@
     type: {
       type: Array<String>,
       default: ['user', 'dept', 'role'],
+    },
+    nodeKey: {
+      type: String,
+      default: 'id',
+    },
+    nodeLabel: {
+      type: String,
+      default: 'name',
     },
   });
   // 是否展示
@@ -202,16 +210,16 @@
   const handleTags = (checkedNodes: Array<any>) => {
     let tagIds = selectedTags.value.map((tagItem) => {
       if (tagItem.type == 'dept') {
-        return tagItem.id;
+        return tagItem[props.nodeKey];
       }
     });
     for (let i = 0; i < checkedNodes.length; i++) {
       if (tagIds.indexOf(checkedNodes[i].id) == -1) {
-        selectedTags.value.push({
-          id: checkedNodes[i].id,
-          name: checkedNodes[i].orgName,
-          type: 'dept',
-        });
+        let node = {};
+        node[props.nodeKey] = checkedNodes[i].id;
+        node[props.nodeLabel] = checkedNodes[i].orgName;
+        node['type'] = 'dept';
+        selectedTags.value.push(node);
       }
     }
 
@@ -220,7 +228,7 @@
     });
 
     selectedTags.value.forEach((item, index) => {
-      if (item.type === 'dept' && nodeIdList.indexOf(item.id) == -1) {
+      if (item.type === 'dept' && nodeIdList.indexOf(item[props.nodeKey]) == -1) {
         selectedTags.value.splice(index, 1);
       }
     });
@@ -234,23 +242,23 @@
     if (isNotEmpty(values)) {
       let userTagIds = selectedTags.value.map((tagItem) => {
         if (tagItem.type === 'user') {
-          return tagItem.id;
+          return tagItem[props.nodeKey];
         }
       });
       values.forEach((userId) => {
         userList.value.forEach((userItem) => {
           if (userItem.id === userId && userTagIds.indexOf(userItem.id) == -1) {
-            selectedTags.value.push({
-              id: userItem.id,
-              name: userItem.realName,
-              type: 'user',
-            });
+            let node = {};
+            node[props.nodeKey] = userItem.id;
+            node[props.nodeLabel] = userItem.realName;
+            node['type'] = 'user';
+            selectedTags.value.push(node);
           }
         });
       });
 
       selectedTags.value.forEach((item, index) => {
-        if (item.type === 'user' && values.indexOf(item.id) == -1) {
+        if (item.type === 'user' && values.indexOf(item[props.nodeKey]) == -1) {
           selectedTags.value.splice(index, 1);
         }
       });
@@ -262,42 +270,46 @@
    */
   const removeTag = (tag: any) => {
     console.info('tag: ', tag);
-    selectedTags.value = selectedTags.value.filter((item) => item.id !== tag.id);
+    selectedTags.value = selectedTags.value.filter(
+      (item) => item[props.nodeKey] !== tag[props.nodeKey],
+    );
   };
 
   /**
    * 提交
    */
   const submit = () => {
-    emit('submit', selectedTags.value);
+    emits('submit', selectedTags.value);
     visible.value = false;
   };
 
   /**
-   * 关闭
+   * 初始化
    */
-  const close = () => {
-    emit('close');
-  };
-
-  onMounted(async () => {
+  const init = async () => {
     await queryDeptTree();
     users.value = [];
     depts.value = [];
+    checkedUsers.value = [];
+    defaultCheckedDept.value = [];
     if (isNotEmpty(props.value)) {
       selectedTags.value = props.value;
       selectedTags.value.forEach((item) => {
         if (item.type === 'user') {
-          users.value.push(item.id);
+          users.value.push(item[props.nodeKey]);
+          checkedUsers.value.push(item[props.nodeKey]);
         } else if (item.type === 'dept') {
-          depts.value.push(item.id);
+          depts.value.push(item[props.nodeKey]);
+          defaultCheckedDept.value.push(item[props.nodeKey]);
         }
       });
     }
     visible.value = true;
-  });
+  };
 
-  defineExpose({});
+  defineExpose({
+    init,
+  });
 </script>
 <style scoped lang="scss">
   .tab-container {

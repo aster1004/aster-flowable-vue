@@ -35,10 +35,21 @@
         </div>
       </div>
     </div>
+
+    <member-select
+      ref="memberSelectRef"
+      title="添加成员"
+      :type="['user']"
+      :value="memberList"
+      node-key="memberId"
+      node-label="memberName"
+      @submit="handleSubmit"
+    />
   </div>
 </template>
 <script setup lang="ts">
-  import { memberListApi } from '@/api/workflow/auth';
+  import MemberSelect from '../components/common/member-select.vue';
+  import { memberDeleteApi, memberListApi, memberSaveApi } from '@/api/workflow/auth';
   import { ResultEnum } from '@/enums/httpEnum';
   import { reactive, ref, watch } from 'vue';
   import { ElMessage, ElMessageBox } from 'element-plus';
@@ -54,6 +65,8 @@
     },
   });
 
+  // 注册组件
+  const memberSelectRef = ref();
   // 成员列表
   const memberList = ref<WorkAuth.MemberInfo[]>([]);
   // 查询参数
@@ -66,7 +79,21 @@
    * @description: 新增成员
    */
   const handleAdd = () => {
-    console.log('add');
+    memberSelectRef.value.init();
+  };
+
+  /**
+   * @description: 处理选择的人员
+   */
+  const handleSubmit = async (members: WorkAuth.MemberInfo[]) => {
+    await memberSaveApi(props.roleId, members).then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        ElMessage.success(t('common.success'));
+        getMemberList(props.roleId);
+      } else {
+        ElMessage.error(res.message);
+      }
+    });
   };
 
   /**
@@ -80,7 +107,16 @@
         type: 'warning',
         lockScroll: false,
       })
-        .then(() => {})
+        .then(() => {
+          memberDeleteApi([id]).then((res) => {
+            if (res.code === ResultEnum.SUCCESS) {
+              ElMessage.success(t('common.success'));
+              getMemberList(props.roleId);
+            } else {
+              ElMessage.error(res.message);
+            }
+          });
+        })
         .catch(() => {});
     }
   };
@@ -136,7 +172,7 @@
       margin-right: 8px;
       margin-bottom: 16px;
       padding: 16px;
-      background: #f7f9fb;
+      background: var(--el-bg-color-page);
       border-radius: 4px;
       border: 1px solid transparent;
 

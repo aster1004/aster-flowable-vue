@@ -65,11 +65,19 @@ export const memberListApi = (params: WorkAuth.MemberParams) => {
 };
 
 /**
- * @description: 保存成员
- * @param {WorkAuth.MemberInfo} member
+ * @description: 批量保存成员
+ * @param {WorkAuth.MemberInfo} members
  */
-export const memberSaveApi = (member: WorkAuth.MemberInfo) => {
-  return request.post<string>(PORT5 + `/auth/member/save`, member, {
+export const memberSaveApi = (roleId: string, members: WorkAuth.MemberInfo[]) => {
+  return request.post<string>(PORT5 + `/auth/member/batchSave/${roleId}`, members, {
     noLoading: true,
   });
+};
+
+/**
+ * @description: 删除成员
+ * @param {any} ids
+ */
+export const memberDeleteApi = (ids: string[]) => {
+  return request.post<string>(PORT5 + `/auth/member/delete`, ids, { noLoading: true });
 };
