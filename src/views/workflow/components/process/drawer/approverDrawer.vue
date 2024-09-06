@@ -74,12 +74,12 @@
       <el-button type="primary" @click="saveApprover">确 定</el-button>
       <el-button @click="closeDrawer">取 消</el-button>
     </template> -->
-    <range
+    <member-select
       title="选择审批人"
-      :visible="rangeVisible"
-      v-if="rangeVisible"
-      @submit="handleRange"
-      @closeRange="closeRange"
+      :visible="memberVisible"
+      v-if="memberVisible"
+      @submit="handleSubmitMember"
+      @close="closeMemberSelect"
       :value="approverConfig.value.nodeUserList"
     />
   </el-drawer>
@@ -87,7 +87,7 @@
 <script setup lang="ts">
   import { ref, computed, watch, onMounted } from 'vue';
   import { processStore } from '@/stores/modules/process';
-  import Range from '../../process/range.vue';
+  import MemberSelect from '../../common/member-select.vue';
   import { isNotEmpty } from '@/utils';
   import FormPermission from '../permission/form-permission.vue';
   import ButtonPermission from '../permission/button-permission.vue';
@@ -100,7 +100,7 @@
   const editFlag = ref<boolean>(false);
 
   // 人员选择
-  const rangeVisible = ref<boolean>(false);
+  const memberVisible = ref<boolean>(false);
 
   // 当前审核节点的配置
   const approverConfig = ref<any>({});
@@ -205,7 +205,7 @@
    * 获取选中的审批人
    * @param val
    */
-  const handleRange = (val: any) => {
+  const handleSubmitMember = (val: any) => {
     /* let expression = '';
     if (isNotEmpty(val)) {
       expression = val
@@ -256,14 +256,14 @@
    * 打开选择审批人
    */
   const openUserSelect = () => {
-    rangeVisible.value = true;
+    memberVisible.value = true;
   };
 
   /**
    * 关闭审批人
    */
-  const closeRange = () => {
-    rangeVisible.value = false;
+  const closeMemberSelect = () => {
+    memberVisible.value = false;
   };
 
   onMounted(() => {});

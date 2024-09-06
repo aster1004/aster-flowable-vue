@@ -1,12 +1,12 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-05-23 11:05:49
- * @FilePath: \aster-flowable-vue\src\views\workflow\components\render\range.vue
+ * @FilePath: \aster-flowable-vue\src\views\workflow\components\common\member-select.vue
  * @Description: 人员部门角色选择
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-dialog v-model="visible" :title="props.title" @closed="closeRange">
+  <el-dialog v-model="visible" :title="props.title" :lock-scroll="false" @closed="close">
     <div class="rang-container">
       <div class="tag-container">
         <el-card shadow="never" style="min-height: 100px">
@@ -21,13 +21,11 @@
             <i class="iconfont icon-jigou1 icon-primary" v-if="tagItem.type == 'dept'"></i>
             &nbsp;{{ tagItem.name }}
           </el-tag>
-          <!-- <el-tag type="danger" class="select-tag" closable><i class="iconfont icon-yonghu"></i>&nbsp;张三</el-tag>
-          <el-tag type="danger" class="select-tag" closable><i class="iconfont icon-jigou1"></i>&nbsp;经管中心</el-tag> -->
         </el-card>
       </div>
       <div class="tab-container">
         <el-tabs v-model="activeName">
-          <el-tab-pane label="用户" name="user">
+          <el-tab-pane label="用户" name="user" v-if="type.indexOf('user') != -1">
             <div class="select-card">
               <el-row>
                 <el-col :span="18">
@@ -56,7 +54,7 @@
               </el-row>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="单位" name="dept">
+          <el-tab-pane label="部门" name="dept" v-if="type.indexOf('dept') != -1">
             <div class="select-card">
               <el-scrollbar>
                 <el-tree
@@ -76,7 +74,7 @@
               </el-scrollbar>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="角色" name="role">
+          <el-tab-pane label="角色" name="role" v-if="type.indexOf('role') != -1">
             <div class="select-card"> </div>
           </el-tab-pane>
         </el-tabs>
@@ -96,7 +94,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
 
   // 回调函数
-  const emit = defineEmits(['closeRange', 'submit']);
+  const emit = defineEmits(['close', 'submit']);
   // 属性
   const props = defineProps({
     title: {
@@ -106,6 +104,10 @@
     value: {
       type: Array,
       default: () => [],
+    },
+    type: {
+      type: Array<String>,
+      default: ['user', 'dept', 'role'],
     },
   });
   // 是否展示
@@ -139,7 +141,7 @@
    * 查询部门树数据
    */
   const queryDeptTree = async () => {
-    deptListApi({ status: '0', pageNum: 1, pageSize: 500 }).then((res) => {
+    await deptListApi({ status: '0', pageNum: 1, pageSize: 5000 }).then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
         let deptData = res.data;
         // 部门树数据
@@ -180,8 +182,8 @@
   /**
    * 点击用户tab栏中的部门树
    */
-  const handleDeptClick = (e: any) => {
-    getUsersByDeptIds([e.id]);
+  const handleDeptClick = async (e: any) => {
+    await getUsersByDeptIds([e.id]);
   };
 
   /**
@@ -225,20 +227,6 @@
   };
 
   /**
-   * 删除已选择
-   */
-  const removeTag = (tag: any) => {
-    console.info('tag：', tag);
-  };
-
-  /**
-   * 关闭
-   */
-  const closeRange = () => {
-    emit('closeRange');
-  };
-
-  /**
    * 处理人员选中
    * @param values 所有选中的人员id集合
    */
@@ -269,9 +257,27 @@
     }
   };
 
+  /**
+   * 删除已选择
+   */
+  const removeTag = (tag: any) => {
+    console.info('tag: ', tag);
+    selectedTags.value = selectedTags.value.filter((item) => item.id !== tag.id);
+  };
+
+  /**
+   * 提交
+   */
   const submit = () => {
     emit('submit', selectedTags.value);
     visible.value = false;
+  };
+
+  /**
+   * 关闭
+   */
+  const close = () => {
+    emit('close');
   };
 
   onMounted(async () => {

@@ -145,6 +145,23 @@
     .el-button {
       margin-bottom: 15px;
     }
+    .header-title {
+      width: 100%;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--el-border-color-light);
+    }
+  }
+
+  .table-body {
+    padding: 15px 10px;
+    flex: 1;
+    overflow: hidden;
+
+    .table-body__desc {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      color: var(--el-text-color-regular);
+    }
   }
 
   // el-table 表格样式
