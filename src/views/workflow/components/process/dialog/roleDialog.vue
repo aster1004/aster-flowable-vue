@@ -9,6 +9,7 @@
     title="选择角色"
     v-model="visibleDialog"
     :width="600"
+    :lock-scroll="false"
     append-to-body
     class="promoter_person"
   >

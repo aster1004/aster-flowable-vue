@@ -24,8 +24,8 @@
       :form-info="_formInfo"
     />
     <template #footer>
-      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
       <el-button type="primary" @click="validateForm">{{ $t('button.confirm') }}</el-button>
+      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
     </template>
   </el-drawer>
 </template>

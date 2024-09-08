@@ -6,42 +6,52 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
-    </template>
-    <div v-if="mode === 'design'">
-      <div class="sign-design">
-        <el-button disabled> <i class="iconfont icon-qianming pr-5px"></i>点击签字 </el-button>
+  <div v-if="!_hidden">
+    <el-form-item
+      v-if="mode != 'print'"
+      :prop="formItemProp"
+      :label-width="labelWidth"
+      :show-message="showMessage"
+    >
+      <template #label>
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </template>
+      <div v-if="mode === 'design'">
+        <div class="sign-design">
+          <el-button disabled> <i class="iconfont icon-qianming pr-5px"></i>点击签字 </el-button>
+        </div>
+      </div>
+      <div v-else-if="mode === 'form'" class="sign-form">
+        <div class="sign-form-btn">
+          <el-button @click="handleClick" v-if="!formItem.props.readonly">
+            {{ isNotEmpty(_value) ? '重新签名' : '点击签名' }}
+          </el-button>
+        </div>
+        <el-image v-if="isNotEmpty(_value)" class="sign-form-image" :src="_value" />
+      </div>
+      <div v-else-if="mode === 'search'" class="sign-form">
+        <el-image v-if="isNotEmpty(_value)" class="sign-form-image" :src="_value" />
+      </div>
+      <span v-else>
+        {{ _value }}
+      </span>
+      <Sign
+        ref="signRef"
+        :show-line-width="formItem.props.showLineWidth"
+        :show-line-color="formItem.props.showLineColor"
+        :show-local="formItem.props.showLocal"
+        @success="handleSuccess"
+      />
+    </el-form-item>
+    <div v-else class="print-image">
+      <div class="print-image-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-image-value">
+        <el-image v-if="isNotEmpty(_value)" style="height: 100px" :src="_value" />
       </div>
     </div>
-    <div v-else-if="mode === 'form'" class="sign-form">
-      <div class="sign-form-btn">
-        <el-button @click="handleClick" v-if="!formItem.props.readonly">
-          {{ isNotEmpty(_value) ? '重新签名' : '点击签名' }}
-        </el-button>
-      </div>
-      <el-image v-if="isNotEmpty(_value)" class="sign-form-image" :src="_value" />
-    </div>
-    <div v-else-if="mode === 'search'" class="sign-form">
-      <el-image v-if="isNotEmpty(_value)" class="sign-form-image" :src="_value" />
-    </div>
-    <span v-else>
-      {{ _value }}
-    </span>
-    <Sign
-      ref="signRef"
-      :show-line-width="formItem.props.showLineWidth"
-      :show-line-color="formItem.props.showLineColor"
-      :show-local="formItem.props.showLocal"
-      @success="handleSuccess"
-    />
-  </el-form-item>
+  </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
@@ -57,7 +67,7 @@
       default: '',
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -164,6 +174,7 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
   .sign-design {
     color: #909399;
   }

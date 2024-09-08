@@ -91,7 +91,7 @@
         </div>
       </div>
       <el-table ref="listTableRef" :data="dataList" :border="true" row-key="id">
-        <el-table-column fixed type="index" width="50" />
+        <el-table-column fixed type="index" width="50" align="center" />
         <template v-if="type === 'design'">
           <el-table-column
             prop="dataTitle"
@@ -99,7 +99,7 @@
             fixed
             header-align="center"
             align="center"
-            width="180"
+            min-width="180"
           />
           <el-table-column
             v-for="(item, index) in tableColumns"
@@ -108,7 +108,7 @@
             :label="item.title"
             header-align="center"
             align="center"
-            width="180"
+            min-width="180"
           />
         </template>
         <template v-else>
@@ -118,7 +118,7 @@
             fixed
             header-align="center"
             align="center"
-            width="180"
+            min-width="180"
             show-overflow-tooltip
           >
             <template #default="scope">
@@ -142,7 +142,7 @@
             :label="item.title"
             header-align="center"
             align="center"
-            width="180"
+            min-width="180"
           >
             <template #default="scope">
               <div class="table-component">
@@ -234,7 +234,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus';
   import vClickOutside from 'element-plus/es/directives/click-outside/index';
-  import { instancePageApi } from '@/api/workflow/instance';
+  import { instancePageApi } from '@/api/workflow/process';
 
   const props = defineProps({
     type: {
@@ -309,7 +309,6 @@
    * @return {*}
    */
   const handleQuery = async () => {
-    console.log('handleQuery');
     if (isNotEmpty(props.code) && !readonly.value) {
       queryParams.code = props.code;
       // 自定义查询配置
@@ -565,7 +564,6 @@
    * @return {*}
    */
   const loadFormInfoByCode = async (code: string) => {
-    console.log('loadFormInfoByCode');
     await formInfoByCodeApi(code).then(async (res) => {
       if (res.code == ResultEnum.SUCCESS) {
         formInfo.value = res.data;
@@ -601,15 +599,23 @@
   watch(
     () => props.code,
     (val: string) => {
+      console.log('code--->', val);
       // 默认显示查询条件并折叠
       showSearch.value = true;
       searchCollapsed.value = true;
       // 如果是列表模式，则加载表单信息
-      if (props.type == 'list' && isNotEmpty(val)) {
-        console.log('watch');
-        readonly.value = false;
-        // 根据code获取表单信息
-        loadFormInfoByCode(val);
+      if (props.type == 'list') {
+        if (isNotEmpty(val)) {
+          readonly.value = false;
+          // 根据code获取表单信息
+          loadFormInfoByCode(val);
+        } else {
+          readonly.value = false;
+          tableColumns.value = [];
+          columnCheckedIds.value = [];
+          dataList.value = [];
+          total.value = 0;
+        }
       }
     },
     { immediate: true, deep: true },

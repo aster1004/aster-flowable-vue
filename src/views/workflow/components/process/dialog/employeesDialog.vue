@@ -4,6 +4,7 @@
     v-model="visibleDialog"
     :width="600"
     append-to-body
+    :lock-scroll="false"
     class="promoter_person"
   >
     <div class="person_body clear">

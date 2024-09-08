@@ -50,6 +50,23 @@
       </el-col>
     </el-row>
   </div>
+  <div v-else-if="mode == 'print'">
+    <div class="print-layout" v-for="(item, index) in _printItems" :key="index">
+      <template v-for="(subItem, i) in item">
+        <form-design-render
+          v-if="isNotEmpty(subItem.id)"
+          v-model:value="_value[subItem.id]"
+          :form-item="subItem"
+          :form-data="_value"
+          :mode="mode"
+          :class="_printClass(index, i)"
+          :key="subItem.id"
+        />
+        <div v-else :class="_printClass(index, i)"> </div>
+      </template>
+    </div>
+  </div>
+  <div v-else></div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
@@ -59,6 +76,7 @@
   import { computed, onBeforeMount, PropType, ref, watch } from 'vue';
   import draggable from 'vuedraggable';
   import { useI18n } from 'vue-i18n';
+  import { isNotEmpty } from '@/utils';
 
   const workFlowStore = useWorkFlowStore();
   const { t } = useI18n();
@@ -70,7 +88,7 @@
       default: {},
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formItem: {
@@ -81,6 +99,8 @@
 
   // 拖拽
   const layoutDrag = ref<boolean>(false);
+  // 打印表单项
+  const _printItems = ref<WorkComponent.ComponentConfig[][]>([]);
 
   /**
    * @description: 拖拽完成后触发
@@ -170,6 +190,64 @@
   };
 
   /**
+   * @description: 计算打印样式
+   * @param {*} index
+   * @return {*}
+   */
+  const _printClass = (index: number, i: number) => {
+    let clazzs: string[] = [];
+    const cols: number[] = props.formItem.props.cols
+      ? props.formItem.props.cols.split(',')
+      : [12, 12];
+    const len = Number(cols[index % cols.length]);
+    if (len == 12) {
+      clazzs.push('print-w-12');
+    } else if (len == 8) {
+      clazzs.push('print-w-8');
+    } else if (len == 6) {
+      clazzs.push('print-w-6');
+    } else {
+      clazzs.push('print-w-6');
+    }
+    if (index > 0) {
+      clazzs.push('print-border-top');
+    }
+    if (i > 0) {
+      clazzs.push('print-border-left');
+    }
+    return clazzs;
+  };
+
+  /**
+   * 计算打印表单项
+   */
+  const getPrintItems = (items: WorkComponent.ComponentConfig[][]) => {
+    if (props.mode === 'print' && items && items.length > 0) {
+      const rows = items.length;
+      const cols = Math.max(...items.map((row) => row.length));
+      _printItems.value = new Array(cols).fill(null).map(() => []);
+      // 遍历原始矩阵，并填充新数组
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+          // 如果当前列存在，则取值；否则填充 null 或其他默认值
+          _printItems.value[j][i] =
+            items[i][j] !== undefined
+              ? items[i][j]
+              : {
+                  id: '',
+                  name: '',
+                  title: '',
+                  icon: '',
+                  value: '',
+                  valueType: '',
+                  props: {},
+                };
+        }
+      }
+    }
+  };
+
+  /**
    * @description: 子组件
    * @return {*}
    */
@@ -225,18 +303,41 @@
     }
   };
 
+  /**
+   * @description: 初始化
+   * @return {*}
+   */
   onBeforeMount(() => {
     refreshSpan();
+    getPrintItems(props.formItem.props.items);
   });
 
+  /**
+   * @description: 监听布局列数变化
+   * @return {*}
+   */
   watch(
     () => props.formItem.props.cols,
     () => {
       refreshSpan();
     },
   );
+
+  /**
+   * @description: 计算打印布局
+   * @return {*}
+   */
+  watch(
+    () => props.formItem.props.items,
+    (val) => {
+      getPrintItems(val);
+    },
+    { immediate: true, deep: true },
+  );
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
+
   .grid-layout {
     min-height: 66px;
     margin-top: 5px;

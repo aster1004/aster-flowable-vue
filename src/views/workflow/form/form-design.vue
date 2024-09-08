@@ -273,7 +273,7 @@
 </script>
 <style scoped lang="scss">
   .el-container .el-aside {
-    background-color: #f2f3f5;
+    background-color: var(--el-bg-color);
     overflow: hidden;
     overflow-y: auto;
   }
@@ -286,26 +286,30 @@
     box-sizing: border-box;
     flex-shrink: 0;
     width: var(--el-aside-width, 280px);
+    border: none;
   }
 
   .form-left {
     margin: 0 5px;
     border-radius: 6px;
+    border: 1px solid var(--el-aside-border-color);
   }
 
   .form-main {
     margin: 0 5px;
     border-radius: 6px;
+    border: 1px solid var(--el-aside-border-color);
   }
 
   .form-right {
     margin: 0 5px;
-    background-color: #fff !important;
+    background-color: var(--el-bg-color) !important;
     border-radius: 6px;
+    border: 1px solid var(--el-aside-border-color);
   }
 
   .left-container {
-    background-color: #fff;
+    background-color: var(--el-bg-color);
     padding: 10px;
     margin-bottom: 5px;
 
@@ -318,7 +322,7 @@
       span {
         font-size: 14px;
         font-weight: 700;
-        color: #304265;
+        color: var(--el-text-color-primary);
       }
     }
     .left-content {
@@ -333,14 +337,14 @@
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      color: #304265;
+      color: var(--el-text-color-primary);
       width: 110px;
       height: 32px;
-      background: #fff;
+      background: var(--el-fill-color-blank);
       border-radius: 5px;
       margin-bottom: 8px;
       padding-left: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--el-border-color);
     }
     .left-component:hover {
       background-color: var(--el-menu-active-bg-color);
@@ -352,7 +356,7 @@
   }
 
   .main-container {
-    background-color: #fff;
+    background-color: var(--el-bg-color);
     margin-bottom: 5px;
     height: 100%;
     padding: 0px 10px;
@@ -373,8 +377,8 @@
         position: relative;
         padding: 15px 25px 15px 15px;
         margin: 5px 2px;
-        border: 1px dashed white;
-        background: #fbfcfd;
+        border: 1px dashed var(--el-fill-color-lighter);
+        background: var(--el-fill-color-extra-light);
 
         .close {
           position: absolute;

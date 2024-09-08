@@ -5,7 +5,7 @@
  * @FilePath: /Workflow-Vue3/src/components/dialog/errorDialog.vue
 -->
 <template>
-  <el-dialog title="提示" v-model="visibleDialog" :width="520">
+  <el-dialog title="提示" v-model="visibleDialog" :lock-scroll="false" :width="520">
     <div class="ant-confirm-body">
       <i class="anticon anticon-close-circle" style="color: #f00"></i>
       <span class="ant-confirm-title">当前无法发布</span>

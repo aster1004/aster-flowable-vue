@@ -34,6 +34,9 @@
     if (params.code && params.id) {
       formCode.value = params.code;
       formId.value = params.id;
+    } else {
+      formCode.value = '';
+      formId.value = '';
     }
   };
 </script>

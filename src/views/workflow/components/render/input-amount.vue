@@ -6,56 +6,66 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
-    </template>
-    <div v-if="mode === 'design'" style="width: 100%">
+  <div v-if="!_hidden">
+    <el-form-item
+      v-if="mode != 'print'"
+      :prop="formItemProp"
+      :label-width="labelWidth"
+      :show-message="showMessage"
+    >
+      <template #label>
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </template>
+      <div v-if="mode === 'design'" style="width: 100%">
+        <el-input-number
+          :model-value="_value"
+          :precision="formItem.props.precision"
+          :placeholder="formItem.props.placeholder"
+          :controls="false"
+          style="width: 100%"
+          readonly
+        />
+      </div>
+      <div v-else-if="mode === 'form'" style="width: 100%">
+        <el-input-number
+          v-model="_value"
+          clearable
+          :precision="formItem.props.precision"
+          :placeholder="formItem.props.placeholder"
+          :readonly="formItem.props.readonly"
+          :controls="false"
+          style="width: 100%"
+        />
+        <div class="amount" v-if="formItem.props.showChinese">
+          {{ chineseAmount }}
+        </div>
+      </div>
       <el-input-number
-        :model-value="_value"
-        :precision="formItem.props.precision"
-        :placeholder="formItem.props.placeholder"
-        :controls="false"
-        style="width: 100%"
-        readonly
-      />
-    </div>
-    <div v-else-if="mode === 'form'" style="width: 100%">
-      <el-input-number
+        v-else-if="mode === 'search'"
         v-model="_value"
         clearable
         :precision="formItem.props.precision"
         :placeholder="formItem.props.placeholder"
-        :readonly="formItem.props.readonly"
-        :controls="false"
         style="width: 100%"
       />
-      <div class="amount" v-if="formItem.props.showChinese">
-        {{ chineseAmount }}
+      <span v-else>{{ _value }}</span>
+    </el-form-item>
+    <div v-else class="print-cell">
+      <div class="print-cell-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-cell-value">
+        <span>{{ _value }}</span>
       </div>
     </div>
-    <el-input-number
-      v-else-if="mode === 'search'"
-      v-model="_value"
-      clearable
-      :precision="formItem.props.precision"
-      :placeholder="formItem.props.placeholder"
-      style="width: 100%"
-    />
-    <span v-else>{{ _value }}</span>
-  </el-form-item>
+  </div>
 </template>
 <script setup lang="ts">
   import { convertToChineseAmount, evaluateFormula } from '@/utils/workflow';
   import { computed, PropType, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty, isNumber } from '@/utils';
-  import { instanceInfoByCustomParamsApi } from '@/api/workflow/instance';
+  import { instanceInfoByCustomParamsApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
 
   const emit = defineEmits(['update:value']);
@@ -65,7 +75,7 @@
       default: 0,
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -245,6 +255,8 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
+
   .amount {
     color: #afadad;
     font-size: smaller;

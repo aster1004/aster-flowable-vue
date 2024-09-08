@@ -8,13 +8,7 @@
 <template>
   <el-container class="design-container">
     <el-header class="design-header">
-      <design-header
-        ref="designHeaderRef"
-        :value="activeMenu"
-        v-model="activeMenu"
-        @save="save"
-        @publish="publish"
-      />
+      <design-header ref="designHeaderRef" v-model="activeMenu" @save="save" @publish="publish" />
     </el-header>
     <el-main class="design-main">
       <!-- 表单设计 -->
@@ -23,9 +17,12 @@
       <process-design ref="processDesignRef" v-show="activeMenu === 'processDesign'" />
       <!-- 列表设计(必须使用v-if) -->
       <list-design ref="listDesignRef" v-if="activeMenu == 'listDesign'" />
+      <!-- 表单设置 -->
+      <form-settings ref="formSettingsRef" v-show="activeMenu === 'formSettings'" />
     </el-main>
+
     <!--  校验弹框  -->
-    <el-dialog v-model="validateVisible" title="表单流程设计校验" width="550">
+    <el-dialog v-model="validateVisible" title="校验" width="550" :lock-scroll="false">
       <el-steps align-center :active="validateIndex" finish-status="success">
         <el-step
           v-for="(step, i) in validateRefs"
@@ -67,6 +64,7 @@
   import FormDesign from '../form/form-design.vue';
   import ProcessDesign from '../process/process-design.vue';
   import ListDesign from '../list/list-design.vue';
+  import FormSettings from '../settings/form-settings.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { formSaveApi } from '@/api/workflow/form';
   import { ResultEnum } from '@/enums/httpEnum';
@@ -74,6 +72,7 @@
   import { useRoute } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { WarningFilled, Loading } from '@element-plus/icons-vue';
+
   const { t } = useI18n();
   //获取当前组件实例对象数组
   const currentInstances: any = getCurrentInstance();
@@ -155,7 +154,7 @@
       });
   };
 
-  //分步校验流程表单设计
+  // 分步校验流程表单设计
   const validate = async () => {
     validateVisible.value = true;
     validateIndex.value = 0;
@@ -228,12 +227,13 @@
 <style scoped lang="scss">
   .design-container {
     height: 100%;
-    background-color: #f2f3f5;
+    background-color: var(--el-bg-color-page);
   }
 
   .design-header {
-    height: 60px;
+    height: 55px;
     padding: 0 !important;
+    border-bottom: 1px solid var(--el-border-color-light);
   }
 
   .design-main {

@@ -38,7 +38,7 @@ export const formListApi = (params: WorkForm.QueryParams) => {
  * @return {*}
  */
 export const formSaveApi = (info: WorkForm.FormModel) => {
-  return request.post<string>(PORT5 + `/form/save`, info, { noLoading: true });
+  return request.post<string>(PORT5 + `/process/publish`, info, { noLoading: true });
 };
 
 /**

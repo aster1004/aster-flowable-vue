@@ -7,7 +7,14 @@
 -->
 <template>
   <div class="main-box">
-    <app-tree-filter @change="changeApp" />
+    <tree-filter
+      title="应用信息"
+      label="name"
+      :data="appList"
+      :default-value="appList[0]?.id"
+      :show-all="false"
+      @change="changeApp"
+    />
     <div class="table-box">
       <div class="card table-search" v-show="showSearch">
         <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
@@ -160,10 +167,11 @@
   </div>
 </template>
 <script setup lang="ts">
+  import TreeFilter from '@/components/tree/tree-filter.vue';
   import { useRouter } from 'vue-router';
-  import AppTreeFilter from '../app/app-tree-filter.vue';
-  import { onMounted, reactive, ref } from 'vue';
+  import { onBeforeMount, onMounted, reactive, ref } from 'vue';
   import { formPageApi, formDeleteApi, deploymentApi } from '@/api/workflow/form';
+  import { appListApi } from '@/api/workflow/app';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useI18n } from 'vue-i18n';
@@ -184,6 +192,8 @@
     pageNum: 1,
     pageSize: 10,
   });
+  /** 应用列表 */
+  const appList = ref<WorkApp.AppInfo[]>([]);
   /** 数据列表 */
   const dataList = ref<WorkForm.FormModel[]>([]);
   /** 总数 */
@@ -298,9 +308,8 @@
   /**
    * 切换应用
    */
-  const changeApp = (appInfo: WorkApp.AppInfo) => {
-    console.info(appInfo);
-    queryParams.appId = appInfo.id;
+  const changeApp = (appId: string) => {
+    queryParams.appId = appId;
     handleQuery();
   };
 
@@ -311,10 +320,18 @@
   };
 
   /**
-   * 初始化加载
+   * 渲染DOM前加载
    */
-  onMounted(() => {
-    handleQuery();
+  onBeforeMount(() => {
+    appListApi({}).then((res) => {
+      if (res.code == ResultEnum.SUCCESS) {
+        appList.value = res.data;
+        queryParams.appId = res.data[0].id;
+        handleQuery();
+      } else {
+        ElMessage.error(res.message);
+      }
+    });
   });
 </script>
 <style lang="scss" scoped>

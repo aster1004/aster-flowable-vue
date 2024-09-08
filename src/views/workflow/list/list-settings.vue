@@ -85,7 +85,7 @@
           <template #item="{ element }">
             <div class="function-button-item">
               <el-row>
-                <el-col :span="3" class="flex justify-center items-center">
+                <el-col :span="3" class="!flex justify-center items-center">
                   <i :class="['!text-lg function-button-icon', element.icon]"></i>
                 </el-col>
                 <el-col :span="17" class="function-button-title">

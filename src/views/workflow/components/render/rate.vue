@@ -6,37 +6,47 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
-    </template>
+  <div v-if="!_hidden">
+    <el-form-item
+      v-if="mode != 'print'"
+      :prop="formItemProp"
+      :label-width="labelWidth"
+      :show-message="showMessage"
+    >
+      <template #label>
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </template>
 
-    <el-rate v-if="mode === 'design'" :max="formItem.props.max" disabled />
-    <el-rate
-      v-else-if="mode === 'form'"
-      v-model="_value"
-      :colors="formItem.props.colors"
-      :max="formItem.props.max"
-      :allow-half="formItem.props.allowHalf"
-      :show-score="formItem.props.showScore"
-      :disabled="formItem.props.readonly"
-    />
-    <el-input-number
-      v-else-if="mode === 'search'"
-      v-model="_value"
-      clearable
-      :controls="false"
-      style="width: 100%"
-    />
-    <span v-else>
-      {{ _value }}
-    </span>
-  </el-form-item>
+      <el-rate v-if="mode === 'design'" :max="formItem.props.max" disabled />
+      <el-rate
+        v-else-if="mode === 'form'"
+        v-model="_value"
+        :colors="formItem.props.colors"
+        :max="formItem.props.max"
+        :allow-half="formItem.props.allowHalf"
+        :show-score="formItem.props.showScore"
+        :disabled="formItem.props.readonly"
+      />
+      <el-input-number
+        v-else-if="mode === 'search'"
+        v-model="_value"
+        clearable
+        :controls="false"
+        style="width: 100%"
+      />
+      <span v-else>
+        {{ _value }}
+      </span>
+    </el-form-item>
+    <div v-else class="print-cell">
+      <div class="print-cell-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-cell-value">
+        <span>{{ _value }}</span>
+      </div>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
@@ -51,7 +61,7 @@
       default: 0,
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -146,4 +156,6 @@
     _hidden,
   });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  @import url(../print/print.scss);
+</style>

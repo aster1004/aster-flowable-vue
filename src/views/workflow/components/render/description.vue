@@ -8,7 +8,7 @@
 <template>
   <div
     v-if="!_hidden"
-    :class="['description', formItem.props.justify]"
+    :class="['description', formItem.props.justify, mode === 'print' ? 'print-description' : '']"
     :style="{ color: props.formItem.props.color }"
   >
     <span class="description-icon">
@@ -26,11 +26,11 @@
   const emit = defineEmits(['update:value']);
   const props = defineProps({
     value: {
-      type: String,
-      default: '',
+      type: Object,
+      default: {},
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -55,6 +55,7 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
   .description {
     display: flex;
     align-items: center;

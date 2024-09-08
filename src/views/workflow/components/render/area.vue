@@ -6,36 +6,46 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
-    </template>
+  <div v-if="!_hidden">
+    <el-form-item
+      v-if="mode != 'print'"
+      :prop="formItemProp"
+      :label-width="labelWidth"
+      :show-message="showMessage"
+    >
+      <template #label>
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </template>
 
-    <div v-if="mode === 'design'" class="area-design">
-      <i class="iconfont icon-diqu !text-sm"></i>
-      {{ formItem.props.placeholder }}
+      <div v-if="mode === 'design'" class="area-design">
+        <i class="iconfont icon-diqu !text-sm"></i>
+        {{ formItem.props.placeholder }}
+      </div>
+      <el-cascader
+        v-else-if="mode === 'form'"
+        v-model="_valueForm"
+        :options="treeData"
+        :disabled="formItem.props.readonly"
+        :placeholder="formItem.props.placeholder"
+        separator="-"
+        clearable
+      />
+      <div v-else-if="mode === 'search'">
+        <el-input v-model="_value" clearable />
+      </div>
+      <span v-else>
+        {{ _value }}
+      </span>
+    </el-form-item>
+    <div v-else class="print-cell">
+      <div class="print-cell-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-cell-value">
+        <span>{{ _value }}</span>
+      </div>
     </div>
-    <el-cascader
-      v-else-if="mode === 'form'"
-      v-model="_valueForm"
-      :options="treeData"
-      :disabled="formItem.props.readonly"
-      :placeholder="formItem.props.placeholder"
-      separator="-"
-      clearable
-    />
-    <div v-else-if="mode === 'search'">
-      <el-input v-model="_value" clearable />
-    </div>
-    <span v-else>
-      {{ _value }}
-    </span>
-  </el-form-item>
+  </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
@@ -51,7 +61,7 @@
       default: '',
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -226,6 +236,7 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
   .area-design {
     color: #606266;
   }

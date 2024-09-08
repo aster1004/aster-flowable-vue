@@ -42,7 +42,7 @@
         </template>
         <div style="width: 100%">
           <el-row
-            class="flex justify-center items-center pb-10px"
+            class="!flex justify-center items-center pb-10px"
             v-for="(item, index) in conditions"
             :key="index"
           >
@@ -61,7 +61,7 @@
                 />
               </el-select>
             </el-col>
-            <el-col :span="3" class="flex justify-center items-center"> 的值等于 </el-col>
+            <el-col :span="3" class="!flex justify-center items-center"> 的值等于 </el-col>
             <el-col :span="10">
               <el-select
                 v-model="item.associatedFieldId"
@@ -96,11 +96,11 @@
         </template>
         <div style="width: 100%">
           <el-row>
-            <el-col :span="10" class="flex items-center">
+            <el-col :span="10" class="!flex items-center">
               <el-input :model-value="_formItem?.title" disabled style="width: 100%" />
             </el-col>
-            <el-col :span="3" class="flex justify-center items-center">的值等于</el-col>
-            <el-col :span="10" class="flex items-center">
+            <el-col :span="3" class="!flex justify-center items-center">的值等于</el-col>
+            <el-col :span="10" class="!flex items-center">
               <el-select
                 v-model="dataFill"
                 :placeholder="associatedPlaceholder"

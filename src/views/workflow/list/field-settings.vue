@@ -65,7 +65,7 @@
           <template #item="{ element }">
             <div class="field-query-item">
               <el-row>
-                <el-col :span="3" class="flex justify-center items-center">
+                <el-col :span="3" class="!flex justify-center items-center">
                   <i class="iconfont icon-tuozhuai !text-lg field-query-icon"></i>
                 </el-col>
                 <el-col :span="17">
@@ -108,7 +108,7 @@
             <template #item="{ element }">
               <div class="field-list-item">
                 <el-row>
-                  <el-col :span="3" class="flex justify-center items-center">
+                  <el-col :span="3" class="!flex justify-center items-center">
                     <i class="iconfont icon-tuozhuai !text-lg field-list-icon"></i>
                   </el-col>
                   <el-col :span="17" class="field-list-title">
@@ -305,7 +305,7 @@
       color: var(--el-text-color-primary);
     }
     .field-query-item:hover {
-      background-color: #f4f7ff;
+      background-color: var(--el-fill-color-light);
       border-left: 5px solid var(--el-color-primary);
     }
     .field-query-icon {
@@ -338,7 +338,7 @@
 
     .query-popover-checkbox-title {
       flex: 1;
-      color: #303133;
+      color: var(--el-text-color-primary);
       text-align: left;
       font-size: 14px;
       overflow: hidden;
@@ -353,7 +353,7 @@
     }
 
     .query-popover-checkbox:hover {
-      background-color: var(--el-color-primary);
+      background-color: var(--el-color-primary-light-4);
     }
 
     .query-popover-checkbox:hover .query-popover-checkbox-title {
@@ -373,7 +373,7 @@
       color: var(--el-text-color-primary);
     }
     .field-list-item:hover {
-      background-color: #f4f7ff;
+      background-color: var(--el-fill-color-light);
       border-left: 5px solid var(--el-color-primary);
     }
     .field-list-icon {
@@ -383,7 +383,7 @@
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      color: #303133;
+      color: var(--el-text-color-primary);
       font-size: 14px;
       overflow: hidden;
       text-overflow: ellipsis;
