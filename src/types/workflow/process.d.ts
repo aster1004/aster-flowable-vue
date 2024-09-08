@@ -27,6 +27,8 @@ declare namespace Process {
     customParams: CustomParams;
     // 自定义查询参数的配置
     customItems: WorkComponent.ComponentConfig[];
+    // 关联表单参数
+    associationParams?: WorkForm.AssocaitionListQuery;
   }
 
   /**

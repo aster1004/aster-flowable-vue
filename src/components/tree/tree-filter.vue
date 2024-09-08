@@ -54,11 +54,13 @@
     label?: string; // 显示的label ==> 非必传，默认为 “label”
     multiple?: boolean; // 是否为多选 ==> 非必传，默认为 false
     defaultValue?: any; // 默认选中的值 ==> 非必传
+    showAll?: boolean; // 是否显示全部 ==> 非必传，默认为 true
   }
   const props = withDefaults(defineProps<TreeFilterProps>(), {
     id: 'id',
     label: 'label',
     multiple: false,
+    showAll: true,
   });
 
   const defaultProps = {
@@ -84,7 +86,7 @@
     if (props.requestApi) {
       const { data } = await props.requestApi!();
       treeData.value = data;
-      treeAllData.value = [{ id: '', [props.label]: '全部' }, ...data];
+      treeAllData.value = props.showAll ? [{ id: '', [props.label]: '全部' }, ...data] : [...data];
     }
   });
 
@@ -100,7 +102,12 @@
     () => {
       if (props.data?.length) {
         treeData.value = props.data;
-        treeAllData.value = [{ id: '', [props.label]: '全部' }, ...props.data];
+        treeAllData.value = props.showAll
+          ? [{ id: '', [props.label]: '全部' }, ...props.data]
+          : [...props.data];
+      } else {
+        treeData.value = [];
+        treeAllData.value = [];
       }
     },
     { deep: true, immediate: true },

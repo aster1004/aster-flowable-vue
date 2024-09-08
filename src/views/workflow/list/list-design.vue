@@ -12,7 +12,7 @@
     </el-main>
     <el-aside class="list-aside">
       <el-scrollbar style="height: 100%">
-        <el-tabs v-model="activeTab">
+        <el-tabs v-model="activeTab" class="right-tabs">
           <el-tab-pane label="字段设置" name="field">
             <field-settings ref="fieldSettingsRef" />
           </el-tab-pane>
@@ -47,9 +47,10 @@
     }
 
     .list-aside {
-      background-color: #ffffff;
       margin: 0 5px;
       border-radius: 6px;
+      background-color: var(--el-bg-color);
+      border: 1px solid var(--el-aside-border-color);
     }
 
     ::v-deep(.el-tabs__header) {

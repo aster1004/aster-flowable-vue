@@ -38,7 +38,7 @@
           </template>
         </div>
       </div>
-      <addNode v-model:childNodeP="nodeConfig.childNode" />
+      <addNode v-model:childNodeP="nodeConfig.childNode.childNode" />
     </div>
   </div>
   <nodeWrap v-if="nodeConfig.childNode" v-model:nodeConfig="nodeConfig.childNode" />
@@ -60,7 +60,7 @@
   import ConditionNode from '@/views/workflow/components/process/process/conditionNode.vue';
   import { isNotEmpty } from '@/utils/index';
   import RootDrawer from '../drawer/rootDrawer.vue';
-
+  import { getRandomId } from '@/utils/workflow';
   const _uid = getCurrentInstance().uid;
   const store = processStore();
   const {
@@ -193,7 +193,7 @@
       case 'Exclusive':
         // 插入到默认节点的前边
         props.nodeConfig.conditionNodes.splice(len - 1, 0, {
-          id: 'node_' + new Date().getTime(),
+          id: getRandomId(),
           parentId: props.nodeConfig.id,
           nodeName: '条件' + len,
           icon: 'iconfont icon-bumen',
@@ -218,7 +218,7 @@
       case 'Parallel':
         // 并行分支无默认节点，正常push即可
         props.nodeConfig.conditionNodes.push({
-          id: 'node_' + new Date().getTime(),
+          id: getRandomId(),
           parentId: props.nodeConfig.id,
           nodeName: '并行分支' + (len + 1),
           icon: 'iconfont icon-jiekou',
@@ -233,7 +233,7 @@
       case 'Inclusive':
         // 插入到默认节点的前边
         props.nodeConfig.conditionNodes.splice(len - 1, 0, {
-          id: 'node_' + new Date().getTime(),
+          id: getRandomId(),
           parentId: props.nodeConfig.id,
           nodeName: '包容分支' + len,
           icon: 'iconfont icon-liucheng1',
@@ -259,8 +259,10 @@
     emits('update:nodeConfig', props.nodeConfig);
   };
   const delTerm = (index) => {
+    console.log(props.nodeConfig.conditionNodes);
     const { typeName } = props.nodeConfig;
     props.nodeConfig.conditionNodes.splice(index, 1);
+
     let conditionTitle = '条件';
     if (typeName === 'Parallel') {
       conditionTitle = '并行分支';
@@ -278,6 +280,9 @@
     resetConditionNodesErr();
     emits('update:nodeConfig', props.nodeConfig);
     if (props.nodeConfig.conditionNodes.length === 1) {
+      if (props.nodeConfig.type === 4) {
+        props.nodeConfig.childNode = null;
+      }
       if (props.nodeConfig.childNode) {
         if (props.nodeConfig.conditionNodes[0].childNode) {
           reData(props.nodeConfig.conditionNodes[0].childNode, props.nodeConfig.childNode);

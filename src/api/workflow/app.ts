@@ -5,10 +5,20 @@ import { PORT5 } from '../config';
  * @description: 分页
  * @return {*}
  */
-export const appPageApi = (params: WorkApp.AppParams) => {
-  return request.get<Page.ResPage<WorkApp.AppInfo>>(PORT5 + `/app/page`, params, {
-    noLoading: true,
-  });
+export const appPageApi = (params?: WorkApp.AppParams) => {
+  if (params) {
+    return request.get<Page.ResPage<WorkApp.AppInfo>>(PORT5 + `/app/page`, params, {
+      noLoading: true,
+    });
+  } else {
+    return request.get<Page.ResPage<WorkApp.AppInfo>>(
+      PORT5 + `/app/page`,
+      {},
+      {
+        noLoading: true,
+      },
+    );
+  }
 };
 
 /**

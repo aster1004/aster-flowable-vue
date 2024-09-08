@@ -191,6 +191,8 @@
   const queryParams = reactive<Dept.DeptParams>({
     orgName: '',
     status: '',
+    pageNum: 1,
+    pageSize: 10,
   });
   /** 列表 */
   const dataList = ref<Dept.DeptInfo[]>();

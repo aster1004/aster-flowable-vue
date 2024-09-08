@@ -82,6 +82,29 @@
       </el-collapse-item>
     </el-collapse>
   </div>
+  <div v-else-if="mode == 'print'">
+    <div :class="['print-title', `${formItem.props.justify}`]" style="width: 100%; color: #606266">
+      <span :class="[formItem.props.fontSize, formItem.props.fontWeight]">
+        {{ formItem.title }}
+      </span>
+    </div>
+    <div v-for="(item, i) in _items" :key="i">
+      <form-design-render
+        v-if="item.name === 'GridLayout'"
+        :value="_value"
+        :form-item="item"
+        :form-data="_value"
+        :mode="mode"
+      />
+      <form-design-render
+        v-else
+        :value="_value[item.id]"
+        :form-item="item"
+        :form-data="_value"
+        :mode="mode"
+      />
+    </div>
+  </div>
   <div v-else> {{ formItem.title }} </div>
 </template>
 <script setup lang="ts">
@@ -103,7 +126,7 @@
       default: {},
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formItem: {
@@ -239,6 +262,7 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
   .grid-title {
     min-height: 50px;
     margin-top: 5px;

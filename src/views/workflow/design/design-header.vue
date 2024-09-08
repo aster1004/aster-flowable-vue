@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-row class="design-header">
+  <el-row class="header-container" :style="headerStyle">
     <el-col :span="6" class="header-left">
       <div class="p-10px">
         <el-button @click="back()" circle>
@@ -30,11 +30,11 @@
       </div>
     </el-col>
     <el-col :span="12" class="header-center">
-      <el-menu :default-active="value" @select="handleSelect" mode="horizontal">
+      <el-menu :default-active="modelValue" @select="handleSelect" mode="horizontal">
         <el-menu-item index="formDesign">表单设计</el-menu-item>
         <el-menu-item index="processDesign">流程设计</el-menu-item>
         <el-menu-item index="listDesign">列表设计</el-menu-item>
-        <el-menu-item index="formSetting">表单设置</el-menu-item>
+        <el-menu-item index="formSettings">表单设置</el-menu-item>
       </el-menu>
     </el-col>
     <el-col :span="6" class="header-right">
@@ -59,17 +59,19 @@
   import { computed, onMounted, PropType, ref } from 'vue';
   import IconSelect from '@/components/icon/icon-select.vue';
   import { isNotEmpty } from '@/utils';
+  import { useGlobalStore } from '@/stores/modules/global';
 
   const workFlowStore = useWorkFlowStore();
   const router = useRouter();
+  const globalStore = useGlobalStore();
 
   // 事件
   const emits = defineEmits(['update:modelValue', 'save', 'publish']);
 
   // props
   const props = defineProps({
-    value: {
-      type: String as PropType<'formDesign' | 'processDesign' | 'listDesign' | 'formSetting'>,
+    modelValue: {
+      type: String as PropType<'formDesign' | 'processDesign' | 'listDesign' | 'formSettings'>,
       default: () => 'formDesign',
     },
   });
@@ -92,6 +94,23 @@
       return { color: '#fff', backgroundColor: formInfo.value.iconColor };
     } else {
       return {};
+    }
+  });
+
+  // 页面头部背景图
+  const headerStyle = computed(() => {
+    if (globalStore.isDark) {
+      const bgImage = new URL(`../../../assets/images/header_bg2.png`, import.meta.url).href;
+      return {
+        backgroundImage: `url(${bgImage})`,
+      };
+    } else if (globalStore.isGrey || globalStore.isWeak) {
+      return { background: 'var(--el-menu-bg-color)' };
+    } else {
+      const bgImage = new URL(`../../../assets/images/header_bg.png`, import.meta.url).href;
+      return {
+        backgroundImage: `url(${bgImage})`,
+      };
     }
   });
 
@@ -129,13 +148,12 @@
   });
 </script>
 <style scoped lang="scss">
-  .design-header {
+  .header-container {
     height: 100%;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-image: url(../../../assets/images/header_bg.png);
     background-size: 100% 100%;
     background-repeat: no-repeat;
   }
@@ -143,7 +161,7 @@
   .header-left {
     display: flex;
     align-items: center;
-    height: var(--el-menu-horizontal-height);
+    height: 55px;
     padding-left: 20px;
 
     .el-divider--vertical {
@@ -183,6 +201,7 @@
       display: flex;
       justify-content: center;
       background: none;
+      height: 55px;
     }
     .el-menu--horizontal.el-menu {
       border: none;

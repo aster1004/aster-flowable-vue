@@ -6,45 +6,36 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div class="card filter">
-    <el-select
-      v-model="queryParams.appId"
-      placeholder="请选择应用"
-      clearable
-      @change="handleAppChange"
-    >
-      <el-option
-        v-for="appItem in appList"
-        :key="appItem.id"
-        :label="appItem.name"
-        :value="appItem.id"
+  <div class="tree-box">
+    <div class="tree-app">
+      <el-select
+        v-model="queryParams.appId"
+        placeholder="请选择应用"
+        clearable
+        @change="handleAppChange"
+      >
+        <el-option
+          v-for="appItem in appList"
+          :key="appItem.id"
+          :label="appItem.name"
+          :value="appItem.id"
+        />
+      </el-select>
+    </div>
+    <div class="tree-form">
+      <tree-filter
+        label="formName"
+        :data="formList"
+        :default-value="formList[0]?.id"
+        :show-all="false"
+        @change="handleFormClick"
       />
-    </el-select>
-    <el-scrollbar
-      :style="{ marginTop: '10px', height: title ? `calc(100% - 95px)` : `calc(100% - 56px)` }"
-    >
-      <div class="form-container" v-if="isNotEmpty(formList) && formList.length > 0">
-        <div
-          :class="['app', formItem.id == activeId ? 'active' : '']"
-          v-for="(formItem, index) in formList"
-          :key="index"
-          @click="handleClick(formItem)"
-        >
-          <div class="form-icon">
-            <i
-              :class="['iconfont', formItem.icon, 'iconStyle']"
-              :style="{ backgroundColor: formItem.iconColor }"
-            ></i>
-          </div>
-          <div class="form-name">{{ formItem.formName }}</div>
-        </div>
-      </div>
-      <el-empty description="暂无数据" :image-size="70" v-else />
-    </el-scrollbar>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts" name="TreeFilter">
+  import TreeFilter from '@/components/tree/tree-filter.vue';
   import { ref, reactive, onMounted } from 'vue';
   import { formListApi } from '@/api/workflow/form';
   import { appListApi } from '@/api/workflow/app';
@@ -58,13 +49,10 @@
   // emit
   const emits = defineEmits(['change']);
 
-  const title = ref<string>('应用信息');
   // 应用集合
   const appList = ref<WorkApp.AppInfo[]>([]);
   // 应用信息
   const formList = ref<WorkForm.FormModel[]>([]);
-  // 选中的应用ID
-  const activeId = ref<string | undefined>('');
   // 查询参数
   const queryParams = reactive<WorkForm.QueryParams>({
     appId: '',
@@ -78,11 +66,11 @@
   const getFormList = () => {
     formListApi(queryParams).then(({ data }) => {
       formList.value = data;
-      if (isNotEmpty(formList.value)) {
+      if (isNotEmpty(formList.value) && formList.value[0].id) {
         // 默认选中应用下的第一个表单
-        handleClick(formList.value[0]);
+        handleFormClick(formList.value[0].id);
       } else {
-        handleClick();
+        handleFormClick('');
       }
     });
   };
@@ -104,12 +92,12 @@
   };
 
   /**
-   * @description: 选中表单
+   * @description: 处理表单点击事件
    * @param {WorkForm.FormModel} formInfo
    * @return {*}
    */
-  const handleClick = (formInfo?: WorkForm.FormModel) => {
-    activeId.value = formInfo?.id;
+  const handleFormClick = (formId: string) => {
+    const formInfo = formList.value.find((item) => item.id == formId);
     const params: WorkForm.QueryParams = {
       id: formInfo?.id,
       code: formInfo?.code,
@@ -124,7 +112,6 @@
    * @return {*}
    */
   const handleAppChange = (e: any) => {
-    activeId.value = '';
     if (isDef(e)) {
       queryParams.appId = e;
       getFormList();
@@ -143,82 +130,17 @@
 </script>
 
 <style scoped lang="scss">
-  .filter {
-    box-sizing: border-box;
-    width: 220px;
+  .tree-box {
     height: 100%;
-    padding: 18px;
-    margin-right: 10px;
-    .title {
-      margin: 0 0 15px;
-      font-size: 18px;
-      font-weight: bold;
-      color: var(--el-color-info-dark-2);
-      letter-spacing: 0.5px;
-    }
-    .el-input {
-      margin: 0 0 15px;
-    }
-    .el-scrollbar {
-      :deep(.el-tree) {
-        height: 80%;
-        overflow: auto;
-        .el-tree-node__content {
-          height: 33px;
-        }
-      }
-      :deep(.el-tree--highlight-current) {
-        .el-tree-node.is-current > .el-tree-node__content {
-          background-color: var(--el-color-primary);
-          .el-tree-node__label,
-          .el-tree-node__expand-icon {
-            color: white;
-          }
-          .is-leaf {
-            color: transparent;
-          }
-        }
-      }
-    }
-  }
 
-  .form-container {
-    display: flex;
-    flex-direction: column;
-    .app {
-      display: flex;
-      height: 45px;
-      line-height: 45px;
-      text-align: left;
-      border-left: 5px solid #ffffff;
-      cursor: pointer;
-      .form-icon {
-        width: 35px;
-        text-align: center;
-      }
-      .form-name {
-        flex: 1;
-        font-size: 14px;
-      }
+    .tree-app {
+      height: 32px;
+      width: 220px;
+      margin-right: 10px;
     }
-    .app:hover {
-      border-left: 5px solid $primary-color;
-      background-color: #fff1f0;
-    }
-    .active {
-      border-left: 5px solid $primary-color;
-      background-color: #fff1f0;
-    }
-  }
 
-  .iconStyle {
-    width: 20px;
-    height: 20px;
-    font-size: 15px;
-    color: #ffffff;
-    line-height: 20px;
-    text-align: center;
-    border-radius: 5px;
-    padding: 5px;
+    .tree-form {
+      height: calc(100% - 32px);
+    }
   }
 </style>

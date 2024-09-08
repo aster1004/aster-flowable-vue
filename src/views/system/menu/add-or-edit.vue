@@ -308,7 +308,6 @@
 
   const close = () => {
     visible.value = false;
-    iconSelectRef.value.hide();
   };
 
   defineExpose({

@@ -92,7 +92,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { formInfoByCodeApi } from '@/api/workflow/form';
   import { flatFormItems } from '@/utils/workflow';
-  import { instanceListByCodeApi } from '@/api/workflow/instance';
+  import { instanceListByCodeApi } from '@/api/workflow/process';
 
   const emits = defineEmits(['update:formItem']);
   const props = defineProps({

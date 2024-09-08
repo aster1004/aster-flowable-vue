@@ -6,70 +6,92 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div class="el-form-item">
-    <template v-if="mode === 'design'">
-      <el-form-item
-        v-if="!_hidden"
-        :prop="formItemProp"
-        :label-width="labelWidth"
-        :show-message="showMessage"
-        style="width: 100%"
-      >
-        <template #label>
-          <span v-show="showLabel">{{ _formItem.title }}</span>
-        </template>
-        <template v-if="_formItem.props.expand">
-          <el-radio-group :model-value="_formItem.value" readonly>
-            <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
-              {{ item.label }}
-            </el-radio>
-          </el-radio-group>
-        </template>
-        <template v-else>
-          <el-select
-            :model-value="_formItem.value"
-            :multiple="false"
-            :clearable="true"
-            :disabled="true"
-          >
-            <el-option
-              v-for="(item, i) in options"
-              :key="i"
-              :label="item.label"
-              :value="item.value"
+  <div v-if="!_hidden">
+    <div class="el-form-item" v-if="mode != 'print'">
+      <template v-if="mode === 'design'">
+        <el-form-item
+          :prop="formItemProp"
+          :label-width="labelWidth"
+          :show-message="showMessage"
+          style="width: 100%"
+        >
+          <template #label>
+            <span v-show="showLabel">{{ _formItem.title }}</span>
+          </template>
+          <template v-if="_formItem.props.expand">
+            <el-radio-group :model-value="_formItem.value" readonly>
+              <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
+                {{ item.label }}
+              </el-radio>
+            </el-radio-group>
+          </template>
+          <template v-else>
+            <el-select
+              :model-value="_formItem.value"
+              :multiple="false"
+              :clearable="true"
+              :disabled="true"
             >
-              {{ item.label }}
-            </el-option>
-          </el-select>
-        </template>
-      </el-form-item>
-    </template>
+              <el-option
+                v-for="(item, i) in options"
+                :key="i"
+                :label="item.label"
+                :value="item.value"
+              >
+                {{ item.label }}
+              </el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+      </template>
 
-    <template v-else-if="mode === 'form'">
-      <el-form-item
-        v-if="!_hidden"
-        :prop="formItemProp"
-        :label-width="labelWidth"
-        :show-message="showMessage"
-        style="width: 100%"
-      >
-        <template #label>
-          <span v-show="showLabel">{{ formItem.title }}</span>
-        </template>
-        <template v-if="formItem.props.expand">
-          <el-radio-group v-model="_value" :disabled="formItem.props.readonly">
-            <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
-              {{ item.label }}
-            </el-radio>
-          </el-radio-group>
-        </template>
-        <template v-else>
-          <el-select
-            v-model="_value"
-            :multiple="false"
-            :clearable="true"
-            :disabled="formItem.props.readonly"
-          >
+      <template v-else-if="mode === 'form'">
+        <el-form-item
+          :prop="formItemProp"
+          :label-width="labelWidth"
+          :show-message="showMessage"
+          style="width: 100%"
+        >
+          <template #label>
+            <span v-show="showLabel">{{ formItem.title }}</span>
+          </template>
+          <template v-if="formItem.props.expand">
+            <el-radio-group v-model="_value" :disabled="formItem.props.readonly">
+              <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
+                {{ item.label }}
+              </el-radio>
+            </el-radio-group>
+          </template>
+          <template v-else>
+            <el-select
+              v-model="_value"
+              :multiple="false"
+              :clearable="true"
+              :disabled="formItem.props.readonly"
+            >
+              <el-option
+                v-for="(item, i) in options"
+                :key="i"
+                :label="item.label"
+                :value="item.value"
+              >
+                {{ item.label }}
+              </el-option>
+            </el-select>
+          </template>
+        </el-form-item>
+      </template>
+      <template v-else-if="mode === 'search'">
+        <el-form-item
+          :prop="formItemProp"
+          :label-width="labelWidth"
+          :show-message="showMessage"
+          style="width: 100%"
+        >
+          <template #label>
+            <span v-show="showLabel">{{ formItem.title }}</span>
+          </template>
+          <el-select v-model="_value" :multiple="false" :clearable="true">
             <el-option
               v-for="(item, i) in options"
               :key="i"
@@ -79,30 +101,20 @@
               {{ item.label }}
             </el-option>
           </el-select>
-        </template>
-      </el-form-item>
-    </template>
-    <template v-else-if="mode === 'search'">
-      <el-form-item
-        v-if="!_hidden"
-        :prop="formItemProp"
-        :label-width="labelWidth"
-        :show-message="showMessage"
-        style="width: 100%"
-      >
-        <template #label>
-          <span v-show="showLabel">{{ formItem.title }}</span>
-        </template>
-        <el-select v-model="_value" :multiple="false" :clearable="true">
-          <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value">
-            {{ item.label }}
-          </el-option>
-        </el-select>
-      </el-form-item>
-    </template>
-    <template v-else>
-      {{ _value }}
-    </template>
+        </el-form-item>
+      </template>
+      <template v-else>
+        {{ _value }}
+      </template>
+    </div>
+    <div v-else class="print-cell">
+      <div class="print-cell-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-cell-value">
+        <span>{{ _value }}</span>
+      </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -111,7 +123,7 @@
   import { computed, onMounted, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { getDictDataList, isNotEmpty } from '@/utils';
-  import { instanceListByCodeApi } from '@/api/workflow/instance';
+  import { instanceListByCodeApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
 
@@ -122,7 +134,7 @@
       default: '',
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -312,4 +324,6 @@
     _hidden,
   });
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  @import url(../print/print.scss);
+</style>

@@ -37,7 +37,7 @@
   import copyerDrawer from '@/views/workflow/components/process/drawer/copyerDrawer.vue';
   import conditionDrawer from '@/views/workflow/components/process/drawer/conditionDrawer.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { isNotEmpty, isEmpty } from '@/utils';
+  import { isNotEmpty, isEmpty, isDef } from '@/utils';
   import { ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
   import { setAllNodeFormPermission, getProcessNodesByType } from '@/utils/process/process';
 
@@ -164,7 +164,7 @@
    * @param parentId
    */
   const rectifyNodeId = ({ childNode }: any, parentId = '') => {
-    if (isNotEmpty(childNode)) {
+    if (isDef(childNode) && isNotEmpty(childNode)) {
       let { id, type, conditionNodes } = childNode;
       childNode.parentId = parentId;
       if (type <= 3) {
@@ -174,12 +174,16 @@
           for (let i = 0; i < conditionNodes.length; i++) {
             rectifyNodeId(conditionNodes[i], conditionNodes[i].id);
             //继续遍历下方节点
-            if (isNotEmpty(conditionNodes[i].childNode)) {
+            if (isDef(conditionNodes[i].childNode) && isNotEmpty(conditionNodes[i].childNode)) {
               rectifyNodeId(conditionNodes[i].childNode, conditionNodes[i].childNode.id);
             }
           }
         }
         rectifyNodeId(childNode, id);
+        // 继续遍历下方节点
+        if (isDef(childNode.childNode) && isNotEmpty(childNode.childNode)) {
+          rectifyNodeId(childNode.childNode, childNode.childNode.id);
+        }
       }
     } else {
       childNode = null;

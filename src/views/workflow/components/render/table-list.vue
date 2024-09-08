@@ -203,6 +203,29 @@
         </template>
       </el-drawer>
     </div>
+    <div v-else-if="mode == 'print'" class="print-table-list">
+      <div class="print-table-list-header">
+        {{ formItem.title }}
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th> 序号 </th>
+            <th v-for="(item, index) in _columns" :key="index" class="print-border-left">{{
+              item.title
+            }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(data, index) in _value" :key="index">
+            <td class="text-center">{{ index + 1 }}</td>
+            <td v-for="(item, i) in _columns" :key="i" class="print-border-left">
+              {{ data[item.id] }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div v-else> {{ _value }} </div>
   </div>
 </template>
@@ -225,7 +248,7 @@
       default: () => [],
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -504,6 +527,7 @@
   //   // 需要每一行都验证必填
 
   // };
+
   /**
    * @description: 是否隐藏, true-隐藏
    */
@@ -521,6 +545,8 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
+
   .table-main {
     background: var(--el-fill-color-blank);
     color: #606266;

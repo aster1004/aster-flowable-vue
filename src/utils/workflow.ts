@@ -16,12 +16,22 @@ import { evaluate, parse } from './formula';
  * @description: 生成字段id
  * @return {*} 字段id
  */
-export const generateFieldId = () => {
+export const generateFieldId = (prefix = 'field') => {
   return (
-    'field' +
+    prefix +
     (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString() +
     new Date().getTime().toString().substring(5)
   );
+};
+
+/**
+ * @description: 生成流程图节点id
+ * @return {*} 点id
+ */
+export const getRandomId = () => {
+  return `node_${new Date().getTime().toString().substring(5)}${Math.round(
+    Math.random() * 9000 + 1000,
+  )}`;
 };
 
 /**

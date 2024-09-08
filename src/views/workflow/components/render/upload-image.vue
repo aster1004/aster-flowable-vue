@@ -6,55 +6,83 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-form-item
-    v-if="!_hidden"
-    :prop="formItemProp"
-    :label-width="labelWidth"
-    :show-message="showMessage"
-  >
-    <template #label>
-      <span v-show="showLabel">{{ formItem.title }}</span>
-    </template>
-    <div v-if="mode === 'design'">
-      <div class="image-empty">
-        <i class="iconfont icon-plus"></i>
+  <div v-if="!_hidden">
+    <el-form-item
+      v-if="mode != 'print'"
+      :prop="formItemProp"
+      :label-width="labelWidth"
+      :show-message="showMessage"
+    >
+      <template #label>
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </template>
+      <div v-if="mode === 'design'">
+        <div class="image-empty">
+          <i class="iconfont icon-plus"></i>
+        </div>
       </div>
-    </div>
-    <div v-else-if="mode === 'form'">
-      <el-upload
-        v-if="!formItem.props.readonly"
-        :file-list="fileList"
-        :action="ImageUpload.url"
-        list-type="picture-card"
-        :limit="formItem.props.maxNumber"
-        :multipl="formItem.props.maxNumber > 1"
-        :on-exceed="handleExceed"
-        :on-success="handleSuccess"
-        :on-error="handleError"
-        :before-upload="handleBeforeUpload"
-      >
-        <i class="iconfont icon-plus !text-4xl"></i>
+      <div v-else-if="mode === 'form'">
+        <el-upload
+          v-if="!formItem.props.readonly"
+          :file-list="fileList"
+          :action="ImageUpload.url"
+          list-type="picture-card"
+          :limit="formItem.props.maxNumber"
+          :multipl="formItem.props.maxNumber > 1"
+          :on-exceed="handleExceed"
+          :on-success="handleSuccess"
+          :on-error="handleError"
+          :before-upload="handleBeforeUpload"
+        >
+          <i class="iconfont icon-plus !text-4xl"></i>
 
-        <template #file="{ file }">
-          <div>
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-            <span class="el-upload-list__item-actions">
-              <span class="el-upload-list__item-preview px-3px" @click="handlePreview(file)">
-                <i class="iconfont icon-zoom-in"></i>
+          <template #file="{ file }">
+            <div>
+              <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+              <span class="el-upload-list__item-actions">
+                <span class="el-upload-list__item-preview px-3px" @click="handlePreview(file)">
+                  <i class="iconfont icon-zoom-in"></i>
+                </span>
+                <span class="el-upload-list__item-delete px-3px" @click="handleDownload(file)">
+                  <i class="iconfont icon-xiazai"></i>
+                </span>
+                <span class="el-upload-list__item-delete px-3px" @click="handleRemove(file, [])">
+                  <i class="iconfont icon-shanchu"></i>
+                </span>
               </span>
-              <span class="el-upload-list__item-delete px-3px" @click="handleDownload(file)">
-                <i class="iconfont icon-xiazai"></i>
-              </span>
-              <span class="el-upload-list__item-delete px-3px" @click="handleRemove(file, [])">
-                <i class="iconfont icon-shanchu"></i>
-              </span>
-            </span>
-          </div>
-        </template>
-      </el-upload>
-      <div v-else class="image-readonly">
+            </div>
+          </template>
+        </el-upload>
+        <div v-else class="image-readonly">
+          <el-image
+            style="width: 100px; height: 100px"
+            :preview-src-list="previewList"
+            v-for="(img, i) in fileList"
+            :key="i"
+            :alt="img.name"
+            :src="img.url"
+          />
+        </div>
+      </div>
+      <div v-else-if="mode === 'search'" style="width: 100%">
+        <el-input v-model="_value[0]" />
+      </div>
+      <div v-else>
+        <span v-for="(item, index) in _value" :key="index">
+          <p>
+            {{ item.name }}
+          </p>
+        </span>
+      </div>
+    </el-form-item>
+    <div v-else class="print-file">
+      <div class="print-file-label">
+        <span v-show="showLabel">{{ formItem.title }}</span>
+      </div>
+      <div class="print-file-value">
+        <!-- <div v-for="(item, index) in _value" :key="index"> </div> -->
         <el-image
-          style="width: 100px; height: 100px"
+          class="print-image"
           :preview-src-list="previewList"
           v-for="(img, i) in fileList"
           :key="i"
@@ -63,23 +91,12 @@
         />
       </div>
     </div>
-    <div v-else-if="mode === 'search'" style="width: 100%">
-      <el-input v-model="_value[0]" />
-    </div>
-    <div v-else>
-      <span v-for="(item, index) in _value" :key="index">
-        <p>
-          {{ item.name }}
-        </p>
-      </span>
-    </div>
-
-    <el-dialog v-model="previewVisible" :title="'预览-' + previewFile.name">
+    <el-dialog v-model="previewVisible" :title="'预览-' + previewFile.name" :lock-scroll="false">
       <div class="image-preview">
         <img w-full :src="previewFile.url" :alt="previewFile.name" />
       </div>
     </el-dialog>
-  </el-form-item>
+  </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
@@ -99,7 +116,7 @@
       default: () => [],
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {
@@ -314,6 +331,7 @@
   });
 </script>
 <style scoped lang="scss">
+  @import url(../print/print.scss);
   .image-empty {
     i {
       color: #dbdbdb;

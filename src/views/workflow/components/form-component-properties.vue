@@ -23,7 +23,12 @@
       </el-form-item>
     </el-form>
 
-    <formula ref="formulaRef" title="隐藏条件" v-model:formula="_formItem.props.hidden" />
+    <formula
+      ref="formulaRef"
+      title="隐藏条件"
+      v-model:formula="_formItem.props.hidden"
+      placeholder="当表达式值解析为true时, 当前控件隐藏"
+    />
   </div>
 </template>
 <script lang="ts">

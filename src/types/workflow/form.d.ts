@@ -19,6 +19,19 @@ declare namespace WorkForm {
   };
 
   /**
+   * @description: 表单提交校验
+   */
+  export interface SubmitValidate {
+    id: string;
+    // 校验规则
+    formula: string;
+    // 错误提示
+    errorMessage: string;
+    // 是否启用
+    enable: boolean;
+  }
+
+  /**
    * @description: 表单扩展信息
    */
   export interface FormSettings {
@@ -33,6 +46,10 @@ declare namespace WorkForm {
       title?: string;
       types?: string[];
     };
+    // 提交校验
+    submitValidates?: SubmitValidate[];
+    // 关联列表
+    associationList?: WorkComponent.TreeNode[];
   }
 
   /**
@@ -207,5 +224,20 @@ declare namespace WorkForm {
     latitude: number;
     // 区域编码
     adcode?: string;
+  }
+
+  export interface AssocaitionListModel {
+    id?: string;
+    code?: string;
+    fieldId?: string;
+    associationCode?: string;
+    instanceNumber?: number;
+  }
+
+  export interface AssocaitionListQuery {
+    associationCode?: string;
+    associationInstanceId?: string;
+    code?: string;
+    codes?: string[];
   }
 }
