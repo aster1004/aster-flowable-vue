@@ -85,7 +85,12 @@
       </template>
 
       <template v-else>
-        {{ _label }}
+        <template v-if="formItem.props.type === 'dict'">
+          <dict-tag :dict-type="formItem.props.dictType" :value="_value" />
+        </template>
+        <template v-else>
+          {{ _label }}
+        </template>
       </template>
     </el-form-item>
 
@@ -108,6 +113,7 @@
   import { instanceListByCodeApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import DictTag from '@/components/dict/dict-tag.vue';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -225,7 +231,7 @@
       options.value = dataList.map((item) => {
         return {
           label: item.dictLabel,
-          value: item.dictLabel,
+          value: item.dictValue,
         };
       });
     } else if (type === 'dynamic') {
@@ -275,6 +281,12 @@
     let label = '';
     if (isNotEmpty(_value.value)) {
       label = _value.value.join(',');
+      _value.value.forEach((val) => {
+        const node = options.value.find((o) => o.value === val);
+        if (node) {
+          label += node.label + ',';
+        }
+      });
     }
     return label;
   });
