@@ -613,6 +613,10 @@
     }
   }
 
+  ::v-deep(.el-form-item) {
+    margin-bottom: 0px !important;
+  }
+
   ::v-deep(.el-form-item--default) {
     margin-top: 8px !important;
     margin-bottom: 8px !important;
