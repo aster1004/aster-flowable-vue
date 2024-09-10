@@ -75,8 +75,8 @@ declare namespace WorkForm {
    * @description: 功能按钮接口
    */
   export interface FunctionButton {
-    id: string;
-    title: string;
+    label: string;
+    value: string;
     icon: string;
     click: any;
   }
