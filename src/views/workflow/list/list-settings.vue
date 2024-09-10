@@ -63,10 +63,10 @@
                     :key="index"
                   >
                     <div class="function-popover-checkbox-title">
-                      {{ item.title }}
+                      {{ item.label }}
                     </div>
                     <div class="function-popover-checkbox-o">
-                      <el-checkbox :value="item.id" :label="item.id" />
+                      <el-checkbox :value="item.value" :label="item.value" />
                     </div>
                   </div>
                 </el-checkbox-group>
@@ -89,12 +89,12 @@
                   <i :class="['!text-lg function-button-icon', element.icon]"></i>
                 </el-col>
                 <el-col :span="17" class="function-button-title">
-                  <span>{{ element.title }}</span>
+                  <span>{{ element.label }}</span>
                 </el-col>
                 <el-col :span="4">
                   <i
                     class="iconfont icon-shanchu function-button-icon"
-                    @click="handleQueryRemove(element.id)"
+                    @click="handleQueryRemove(element.value)"
                   ></i>
                 </el-col>
               </el-row>
@@ -133,11 +133,11 @@
 
   // 所有的功能按钮
   const functionButtons = ref<WorkForm.FunctionButton[]>([
-    { id: '1', title: '刷新', icon: 'iconfont icon-shuaxin', click: 'handleQuery' },
-    { id: '2', title: '筛选', icon: 'iconfont icon-sousuo', click: 'handleShowQuery' },
-    { id: '3', title: '导入', icon: 'iconfont icon-shangchuan', click: 'handleImport' },
-    { id: '4', title: '导出', icon: 'iconfont icon-xiazai', click: 'handleExport' },
-    { id: '5', title: '显示', icon: 'iconfont icon-liebiao', click: 'handleShowColumns' },
+    { label: '刷新', value: 'refresh', icon: 'iconfont icon-shuaxin', click: 'handleQuery' },
+    { label: '筛选', value: 'search', icon: 'iconfont icon-sousuo', click: 'handleShowQuery' },
+    { label: '导入', value: 'import', icon: 'iconfont icon-shangchuan', click: 'handleImport' },
+    { label: '导出', value: 'export', icon: 'iconfont icon-xiazai', click: 'handleExport' },
+    { label: '显示', value: 'column', icon: 'iconfont icon-liebiao', click: 'handleShowColumns' },
   ]);
   // 功能按钮
   const actions = ref(
@@ -161,7 +161,7 @@
     if (val) {
       // 避免queryItems的变动影响_formItem
       actions.value = JSON.parse(JSON.stringify(functionButtons.value));
-      functionCheckedIds.value = actions.value.map((item) => item.id);
+      functionCheckedIds.value = actions.value.map((item) => item.value);
     } else {
       actions.value = [];
       functionCheckedIds.value = [];
@@ -182,7 +182,7 @@
     // 双重循环是为了保护已经排序的字段不受影响
     functionCheckedIds.value.forEach((id) => {
       functionButtons.value.forEach((item) => {
-        if (item.id == id) {
+        if (item.value == id) {
           actions.value.push(item);
         }
       });
@@ -194,8 +194,8 @@
    * @param {*} id
    * @return {*}
    */
-  const handleQueryRemove = (id: string) => {
-    actions.value = actions.value.filter((item) => item.id != id);
+  const handleQueryRemove = (val: string) => {
+    actions.value = actions.value.filter((item) => item.value != val);
   };
 
   // 表单项扁平化，排除不需要的控件
@@ -208,7 +208,7 @@
   // 监听数据
   watchEffect(() => {
     // 将排序好的查询字段同步给选中的id
-    functionCheckedIds.value = actions.value.map((item) => item.id);
+    functionCheckedIds.value = actions.value.map((item) => item.value);
     // 查询选中状态
     const checkedCount = actions.value.length;
     functionCheckAll.value = checkedCount === functionButtons.value.length;

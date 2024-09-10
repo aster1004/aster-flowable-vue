@@ -34,7 +34,7 @@
       default: null,
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'print'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {

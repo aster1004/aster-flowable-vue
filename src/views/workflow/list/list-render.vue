@@ -67,7 +67,7 @@
           <el-tooltip
             v-for="(item, index) in _actions"
             :key="index"
-            :content="item.title"
+            :content="item.label"
             effect="dark"
             placement="top"
           >

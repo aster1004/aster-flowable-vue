@@ -117,7 +117,7 @@
    * @return {*}
    */
   const handleChange = (val: string[]) => {
-    if (isNotEmpty(val) && val.length === 2) {
+    if (val && isNotEmpty(val) && val.length === 2) {
       let formName = '';
       treeNodes.value.forEach((app) => {
         if (app.value === val[0]) {
@@ -184,7 +184,7 @@
    */
   const showDataScope = () => {
     // 显示数据范围限定
-    if (isNotEmpty(associatedFormInfo.value)) {
+    if (associatedFormInfo.value && isNotEmpty(associatedFormInfo.value)) {
       dataScopeRef.value.init(associatedFormInfo.value?.formItems);
     } else {
       ElMessage.error('请先选择关联表单');
@@ -201,7 +201,7 @@
     // 当前表单的表单项
     const formItems = workFlowStore.design.formItems;
     // 显示数据填充规则
-    if (isNotEmpty(associatedFormInfo.value)) {
+    if (associatedFormInfo.value && isNotEmpty(associatedFormInfo.value)) {
       dataFillRef.value.init(dataFill, formItems, associatedFormInfo.value?.formItems);
     } else {
       ElMessage.error('请先选择关联表单');
@@ -224,7 +224,11 @@
 
   watchEffect(() => {
     // 获取关联表单信息
-    if (_formItem.value && _formItem.value.props.formCode.length === 2) {
+    if (
+      _formItem.value &&
+      _formItem.value.props.formCode &&
+      _formItem.value.props.formCode.length === 2
+    ) {
       getAssociatedFormInfo(_formItem.value?.props.formCode[1]);
     }
   });
