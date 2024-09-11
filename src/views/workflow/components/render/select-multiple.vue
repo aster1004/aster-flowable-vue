@@ -60,6 +60,7 @@
         <template v-else>
           <el-select
             v-model="_value"
+            filterable
             :multiple="true"
             :clearable="true"
             :disabled="formItem.props.readonly"
