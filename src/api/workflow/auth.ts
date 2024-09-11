@@ -28,7 +28,7 @@ export const roleGroupApi = () => {
 
 /**
  * @description: 保存角色|角色分组
- * @param {WorkAuth.RoleInfo} params
+ * @param {WorkAuth.RoleInfo} params 查询参数
  */
 export const roleSaveApi = (params: WorkAuth.RoleInfo) => {
   return request.post<WorkAuth.RoleInfo>(PORT5 + `/auth/role/save`, params, {
@@ -38,7 +38,7 @@ export const roleSaveApi = (params: WorkAuth.RoleInfo) => {
 
 /**
  * @description: 删除角色|角色分组
- * @param {any} ids
+ * @param {any} ids 主键
  * @return {*}
  */
 export const roleDeleteApi = (ids: any) => {
@@ -47,7 +47,7 @@ export const roleDeleteApi = (ids: any) => {
 
 /**
  * @description: 角色排序
- * @param {WorkAuth.RoleInfo} sorts
+ * @param {WorkAuth.RoleInfo} sorts 排序信息
  * @return {*}
  */
 export const roleSortApi = (sorts: WorkAuth.RoleInfo[]) => {
@@ -56,7 +56,7 @@ export const roleSortApi = (sorts: WorkAuth.RoleInfo[]) => {
 
 /**
  * @description: 获取成员列表
- * @param {WorkAuth.MemberParams} params
+ * @param {WorkAuth.MemberParams} params 查询参数
  */
 export const memberListApi = (params: WorkAuth.MemberParams) => {
   return request.get<WorkAuth.MemberInfo[]>(PORT5 + `/auth/member/list`, params, {
@@ -66,7 +66,7 @@ export const memberListApi = (params: WorkAuth.MemberParams) => {
 
 /**
  * @description: 批量保存成员
- * @param {WorkAuth.MemberInfo} members
+ * @param {WorkAuth.MemberInfo} members 成员信息
  */
 export const memberSaveApi = (roleId: string, members: WorkAuth.MemberInfo[]) => {
   return request.post<string>(PORT5 + `/auth/member/batchSave/${roleId}`, members, {
@@ -75,9 +75,49 @@ export const memberSaveApi = (roleId: string, members: WorkAuth.MemberInfo[]) =>
 };
 
 /**
+ * @description: 修改成员信息
+ * @param {WorkAuth.MemberInfo} member 成员信息
+ */
+export const memberEditApi = (member: WorkAuth.MemberInfo) => {
+  return request.post<string>(PORT5 + `/auth/member/save`, member, {
+    noLoading: true,
+  });
+};
+
+/**
  * @description: 删除成员
- * @param {any} ids
+ * @param {any} ids 主键
  */
 export const memberDeleteApi = (ids: string[]) => {
   return request.post<string>(PORT5 + `/auth/member/delete`, ids, { noLoading: true });
+};
+
+/**
+ * @description: 获取角色权限
+ * @param {string} roleId 角色ID
+ */
+export const permListApi = (roleId: string) => {
+  return request.get<WorkAuth.RolePermission[]>(PORT5 + `/auth/perm/list/${roleId}`, {
+    noLoading: false,
+  });
+};
+
+/**
+ * @description: 保存角色权限
+ * @param {WorkAuth.RolePermission} perms 权限信息
+ */
+export const permSaveApi = (perms: WorkAuth.RolePermission[]) => {
+  return request.post<string>(PORT5 + `/auth/perm/save`, perms, {
+    noLoading: false,
+  });
+};
+
+/**
+ * @description: 删除角色权限
+ * @param {WorkAuth.RolePermission} perm 权限信息
+ */
+export const permDeleteApi = (perm: WorkAuth.RolePermission) => {
+  return request.post<string>(PORT5 + `/auth/perm/delete`, perm, {
+    noLoading: true,
+  });
 };

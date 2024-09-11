@@ -35,7 +35,12 @@
         >
           <template #default="{ data }">
             <div class="card-label">
-              <span @click="handleRoleClick(data)">{{ data.name }}</span>
+              <span
+                @click="handleRoleClick(data)"
+                :style="{ width: data.type != 'default' ? '70%' : '100%' }"
+              >
+                {{ data.name }}
+              </span>
               <span class="card-operation" v-if="data.type != 'default'">
                 <i class="iconfont icon-shezhi !text-sm pr-10px" @click="handleEdit(data)"></i>
                 <i class="iconfont icon-shanchu !text-sm" @click="handleDelete(data)"></i>

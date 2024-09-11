@@ -7,8 +7,8 @@
 -->
 <template>
   <div class="table-box">
-    <system-perm :role-id="roleInfo.id" v-if="permType === 'system'" />
-    <user-perm v-else />
+    <system-perm v-if="permType === 'system'" :role-id="roleInfo.id" />
+    <user-perm v-else :role-id="roleInfo.id" :role-type="permType" />
   </div>
 </template>
 <script setup lang="ts">

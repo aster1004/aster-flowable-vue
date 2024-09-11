@@ -63,6 +63,8 @@ declare namespace WorkComponent {
     label: string;
     value: string;
     leaf?: boolean;
+    checked?: boolean;
+    disabled?: boolean;
     children?: TreeNode[];
   }
 

@@ -48,4 +48,16 @@ declare namespace WorkAuth {
     type?: string;
     avatar?: string;
   }
+
+  export interface RolePermission {
+    id?: string;
+    roleId?: string;
+    appId?: string;
+    formId?: string;
+    formName?: string;
+    formPerms?: string[];
+    listPerms?: string[];
+    dataPerm?: string;
+    checked?: boolean;
+  }
 }

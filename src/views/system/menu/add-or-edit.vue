@@ -40,7 +40,7 @@
                   </template>
                 </el-input>
               </template>
-              <div>
+              <el-scrollbar style="overflow-y: auto">
                 <el-tree
                   ref="menuListTree"
                   :data="menuList"
@@ -50,8 +50,9 @@
                   :expand-on-click-node="false"
                   accordion
                   @current-change="treeCurrentChange"
+                  style="max-height: 280px"
                 />
-              </div>
+              </el-scrollbar>
             </el-popover>
           </el-form-item>
         </el-col>
