@@ -229,16 +229,24 @@ export const formItemList = (
  * @param {string} formula 公式
  * @return {*}
  */
-const getFieldTexts = (formula: string) => {
+const getFieldTexts = (formula: string, type = '[]') => {
   if (!formula) {
     return [];
   }
-  const regexp = /\[\[(.+?)\]\]/g;
+  let regexp = /\[\[(.+?)\]\]/g;
+  let replaceRegexp = /\[\[|]]/g;
+  if (type == '[]') {
+    regexp = /\[\[(.+?)\]\]/g;
+    replaceRegexp = /\[\[|]]/g;
+  } else if (type == '{}') {
+    regexp = /\{\{(.+?)\}\}/g;
+    replaceRegexp = /\{\{|}}/g;
+  }
   const texts = formula.match(regexp);
   let result: string[] = [];
   if (texts) {
     result = texts.map((text) => {
-      return text.replace(/\[\[|]]/g, '');
+      return text.replace(replaceRegexp, '');
     });
   }
   return result;
@@ -260,6 +268,44 @@ export const analysisFormula = (formula: string, formulaNodes: WorkComponent.for
     fieldTexts.forEach((text) => {
       if (node.label && text == node.label && node.value) {
         const label = '[[' + text + ']]';
+        result = result.replace(label, node.value);
+      }
+    });
+  });
+  return result;
+};
+
+/**
+ * @description: 解析关联表单公式
+ * @param {string} formula 公式
+ * @param {WorkComponent.formulaNode[]} associatedNodes 关联表单数据项
+ * @param {WorkComponent.formulaNode[]} currentNodes 当前表单数据项
+ * @return {*}
+ */
+export const analysisAssociatedFormula = (
+  formula: string,
+  associatedNodes: WorkComponent.formulaNode[],
+  currentNodes: WorkComponent.formulaNode[],
+) => {
+  if (!formula) {
+    return formula;
+  }
+  let fieldTexts = getFieldTexts(formula);
+  let result = formula;
+  associatedNodes.forEach((node) => {
+    fieldTexts.forEach((text) => {
+      if (node.label && text == node.label && node.value) {
+        const label = '[[' + text + ']]';
+        result = result.replace(label, node.value);
+      }
+    });
+  });
+
+  fieldTexts = getFieldTexts(result, '{}');
+  currentNodes.forEach((node) => {
+    fieldTexts.forEach((text) => {
+      if (node.label && text == node.label && node.value) {
+        const label = '{{' + text + '}}';
         result = result.replace(label, node.value);
       }
     });
@@ -303,6 +349,35 @@ export const restorationFormulaByFormItems = (
   formItems.forEach((node) => {
     if (node.id && node.name && formula.indexOf(node.id) != -1) {
       result = result.replaceAll(node.id, '[[' + node.title + ']]');
+    }
+  });
+  return result;
+};
+
+/**
+ * @description: 还原关联表单公式
+ * @param {string} formula 公式
+ * @param {WorkComponent.formulaNode[]} associatedNodes 关联表单数据项
+ * @param {WorkComponent.formulaNode[]} currentNodes 当前表单数据项
+ * @return {*}
+ */
+export const restorationAssociatedFormula = (
+  formula: string,
+  associatedNodes: WorkComponent.formulaNode[],
+  currentNodes: WorkComponent.formulaNode[],
+) => {
+  if (!formula) {
+    return formula;
+  }
+  let result = formula;
+  associatedNodes.forEach((node) => {
+    if (node.value && node.label && formula.indexOf(node.value) != -1) {
+      result = result.replaceAll(node.value, '[[' + node.label + ']]');
+    }
+  });
+  currentNodes.forEach((node) => {
+    if (node.value && node.label && formula.indexOf(node.value) != -1) {
+      result = result.replaceAll(node.value, '{{' + node.label + '}}');
     }
   });
   return result;

@@ -17,15 +17,26 @@
     <div class="formula">
       <div class="formula-aside">
         <el-collapse v-model="activeCollapse" accordion style="width: 100%">
-          <el-collapse-item name="currentForm" :title="title">
+          <el-collapse-item name="associatedForm" :title="title">
             <el-tree
-              ref="currentFormRef"
+              ref="associatedFormRef"
               node-key="fieldId"
-              :data="treeData"
+              :data="associatedTreeData"
               :expand-on-click-node="false"
               :highlight-current="true"
               default-expand-all
-              @node-click="handleNodeClick"
+              @node-click="handleNodeClick($event, 'associated')"
+            />
+          </el-collapse-item>
+          <el-collapse-item name="currentForm" title="当前表单">
+            <el-tree
+              ref="currentFormRef"
+              node-key="fieldId"
+              :data="_flatFormItems"
+              :expand-on-click-node="false"
+              :highlight-current="true"
+              default-expand-all
+              @node-click="handleNodeClick($event, 'current')"
             />
           </el-collapse-item>
           <el-collapse-item name="function" title="函数列表">
@@ -80,14 +91,15 @@
   import { computed, ref, watchEffect } from 'vue';
   import { isNotEmpty } from '@/utils';
   import {
-    analysisFormula,
     formulaValidate,
     formulaItemTree,
-    restorationFormula,
+    analysisAssociatedFormula,
+    restorationAssociatedFormula,
   } from '@/utils/workflow';
   import { doc as functionList } from '@/utils/formula/doc';
   import CodeMirror from './code-mirror.vue';
   import { ElMessage } from 'element-plus';
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
 
   const emits = defineEmits(['update:label', 'update:formula']);
 
@@ -107,21 +119,23 @@
     },
   });
 
+  // 工作流store
+  const workFlowStore = useWorkFlowStore();
   // 注册组件
   const codeMirrorRef = ref();
   const treeFunRef = ref();
   // 是否显示
   const visible = ref(false);
   // 激活折叠
-  const activeCollapse = ref('currentForm');
+  const activeCollapse = ref('associatedForm');
   // 当前函数
   const currentFunction: any = ref();
   // 过滤条件
   const filterText = ref('');
-  // 表单组件
-  const formItems = ref<WorkComponent.ComponentConfig[]>([]);
-  // 扁平化表单组件
-  const flatFormData = ref<WorkComponent.formulaNode[]>([]);
+  // 关联表单组件
+  const associatedFormItems = ref<WorkComponent.ComponentConfig[]>([]);
+  // 扁平化关联表单组件
+  const associatedFlatFormData = ref<WorkComponent.formulaNode[]>([]);
 
   /**
    * @description: 过滤函数
@@ -162,10 +176,14 @@
    */
   const insertContent = (value, type) => {
     const from = codeMirrorRef.value.getCursor();
-    if (type === 'variable') {
+    if (type === 'associated') {
       codeMirrorRef.value.replaceSelection(value);
       const to = codeMirrorRef.value.getCursor();
-      codeMirrorRef.value.markText(from, to, value, type);
+      codeMirrorRef.value.markText(from, to, value, 'variable');
+    } else if (type === 'current') {
+      codeMirrorRef.value.replaceSelection(value);
+      const to = codeMirrorRef.value.getCursor();
+      codeMirrorRef.value.markText(from, to, value, 'variable2');
     } else if (type === 'func') {
       codeMirrorRef.value.replaceSelection(`${value}()`);
       const to = codeMirrorRef.value.getCursor();
@@ -177,7 +195,6 @@
     }
     codeMirrorRef.value.focus();
   };
-
   /**
    * @description: 节点点击
    */
@@ -191,7 +208,7 @@
     } else {
       // 设置【明细表.明细表】的节点不可点击
       if (!data.disabled) {
-        insertContent(data.label, 'variable');
+        insertContent(data.label, type);
       }
     }
   };
@@ -200,9 +217,9 @@
    * @description: 初始化
    * @return {*}
    */
-  const init = (items: WorkComponent.ComponentConfig[]) => {
+  const init = (associatedItems: WorkComponent.ComponentConfig[]) => {
     visible.value = true;
-    formItems.value = items;
+    associatedFormItems.value = associatedItems;
   };
 
   /**
@@ -211,7 +228,11 @@
    */
   const onSubmit = () => {
     const editorValue = codeMirrorRef.value.getValue();
-    const value = analysisFormula(editorValue, flatFormData.value);
+    const value = analysisAssociatedFormula(
+      editorValue,
+      associatedFlatFormData.value,
+      _flatFormItems.value,
+    );
     console.log(editorValue);
     console.log('---公式为：', value);
     // 公式校验,校验通过返回true，校验失败返回错误信息
@@ -227,13 +248,23 @@
   };
 
   /**
-   * @description: 组件树的数据
+   * @description: 关联表单组件树的数据
    * @return {*}
    */
-  const treeData = computed(() => {
+  const associatedTreeData = computed(() => {
     let nodes: WorkComponent.formulaNode[] = [];
-    formulaItemTree(formItems.value, nodes, false);
-    flatFormData.value = nodes;
+    formulaItemTree(associatedFormItems.value, nodes, false);
+    associatedFlatFormData.value = nodes;
+    return nodes;
+  });
+
+  /**
+   * @description: 扁平化当前表单组件
+   * @return {*}
+   */
+  const _flatFormItems = computed(() => {
+    let nodes: WorkComponent.formulaNode[] = [];
+    formulaItemTree(workFlowStore.design.formItems, nodes, false);
     return nodes;
   });
 
@@ -245,7 +276,11 @@
 
   watchEffect(() => {
     if (codeMirrorRef.value && isNotEmpty(props.formula)) {
-      const label = restorationFormula(props.formula, flatFormData.value);
+      const label = restorationAssociatedFormula(
+        props.formula,
+        associatedFlatFormData.value,
+        _flatFormItems.value,
+      );
       codeMirrorRef.value.setValue(label);
     }
   });

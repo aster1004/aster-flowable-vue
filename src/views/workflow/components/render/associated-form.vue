@@ -289,6 +289,52 @@
   };
 
   /**
+   * @description: 组件值
+   */
+  const _value = computed({
+    get() {
+      return props.value;
+    },
+    set(val) {
+      emit('update:value', val);
+    },
+  });
+
+  /**
+   * @description: 是否隐藏, true-隐藏
+   */
+  const _hidden = computed(() => {
+    let r = false;
+    if (props.formItem.props.hidden) {
+      let expression = props.formItem.props.hidden;
+      // 如果是子表中的控件，则需要用到下标
+      if (isNotEmpty(props.tableId)) {
+        expression = expression.replaceAll('?', props.tableIndex);
+      }
+      r = evaluateFormula(expression, props.formData);
+    }
+    if (props.formItem.props.required) {
+      // 调用form-render的方法
+      mittBus.emit('changeFormRules', {
+        hidden: r,
+        fieldId: isNotEmpty(props.tableId)
+          ? props.tableId + '.' + props.tableIndex + '.' + props.formItem.id
+          : props.formItem.id,
+        fieldName: props.formItem.title,
+        trigger: 'blur',
+      });
+    }
+    return r;
+  });
+
+  /**
+   * @description: 监听表单数据变化
+   */
+  const _formData = computed(() => {
+    return JSON.parse(JSON.stringify(props.formData));
+  });
+
+  /**
    * @description: 监听关联表单的变化
    */
   watch(
@@ -328,43 +374,41 @@
   );
 
   /**
-   * @description: 组件值
+   * @description: 监听表单数据变化
    */
-  const _value = computed({
-    get() {
-      return props.value;
-    },
-    set(val) {
-      emit('update:value', val);
-    },
-  });
-
-  /**
-   * @description: 是否隐藏, true-隐藏
-   */
-  const _hidden = computed(() => {
-    let r = false;
-    if (props.formItem.props.hidden) {
-      let expression = props.formItem.props.hidden;
-      // 如果是子表中的控件，则需要用到下标
-      if (isNotEmpty(props.tableId)) {
-        expression = expression.replaceAll('?', props.tableIndex);
+  watch(
+    () => _formData.value,
+    async (nval, oval) => {
+      if (
+        nval &&
+        props.mode === 'form' &&
+        props.formItem &&
+        props.formItem.props.dataScope &&
+        isNotEmpty(props.formItem.props.dataScope.value)
+      ) {
+        // 数据范围限定公式
+        const dataScopeFormula = props.formItem.props.dataScope.value;
+        Object.keys(nval).forEach((key) => {
+          if (dataScopeFormula.indexOf(key) != -1 && oval != undefined && nval[key] != oval[key]) {
+            associatedOptions.value = associatedList.value
+              .filter((item: Process.InstanceInfo) => {
+                return evaluateFormula(dataScopeFormula, { ...item, ...nval });
+              })
+              .map((item: Process.InstanceInfo) => {
+                const labels = props.formItem.props.displayField.map((fieldId: string) => {
+                  return item[fieldId];
+                });
+                return {
+                  value: item.procInstId,
+                  label: labels.join('-'),
+                };
+              });
+          }
+        });
       }
-      r = evaluateFormula(expression, props.formData);
-    }
-    if (props.formItem.props.required) {
-      // 调用form-render的方法
-      mittBus.emit('changeFormRules', {
-        hidden: r,
-        fieldId: isNotEmpty(props.tableId)
-          ? props.tableId + '.' + props.tableIndex + '.' + props.formItem.id
-          : props.formItem.id,
-        fieldName: props.formItem.title,
-        trigger: 'blur',
-      });
-    }
-    return r;
-  });
+    },
+    { immediate: true, deep: true },
+  );
 
   defineExpose({
     _hidden,
