@@ -162,30 +162,36 @@ declare namespace WorkForm {
     tableId: string;
     directorMaxLevel: number;
     flowPermission: [];
-    nodeConfig: {
-      id: string;
-      parentId: string | null;
-      nodeName: string;
-      type: 0;
-      priorityLevel: string;
-      settype: string;
-      selectMode: string;
-      selectRange: string;
-      directorLevel: string;
-      examineMode: string;
-      noHanderAction: string;
-      examineEndDirectorLevel: string;
-      ccSelfSelectFlag: string;
-      nodeUserList: [];
-      childNode: {};
-      conditionNodes: [];
-      formPermission?: [];
-      buttonPermission?: any[];
-      error?: boolean;
-      errorTip: string;
-    };
+    nodeConfig: NodeConfig;
   }
 
+  export interface NodeConfig {
+    id: string;
+    parentId: string | null;
+    nodeName: string;
+    type: 0;
+    priorityLevel: string;
+    settype: string;
+    selectMode: string;
+    selectRange: string;
+    directorLevel: string;
+    examineMode: string;
+    noHanderAction: string;
+    examineEndDirectorLevel: string;
+    ccSelfSelectFlag: string;
+    nodeUserList: [];
+    childNode: {};
+    conditionNodes: [];
+    formPermission?: [];
+    buttonPermission?: ButtonPermission[];
+    error?: boolean;
+    errorTip: string;
+  }
+  export interface ButtonPermission {
+    name: string; // 按钮类型，如agree
+    operation: number; //操作名称，如同意
+    status: boolean; //是否启用，true 为启用
+  }
   /**
    * @description: 表单信息
    */
@@ -240,4 +246,14 @@ declare namespace WorkForm {
     code?: string;
     codes?: string[];
   }
+
+  // 审核提交的参数
+  declare type ApproveParams = {
+    comment?: string; // 审核意见
+    approveType: string; // 审核类型,如agree，refuse
+    signature?: string; // 签名
+    formData?: FormDataModel; // 表单数据
+    taskId?: string;
+    formId?: string;
+  };
 }

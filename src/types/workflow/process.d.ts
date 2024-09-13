@@ -64,7 +64,6 @@ declare namespace Process {
     // 表单字段
     [key: string]: any;
   }
-
   /**
    * 流程实例详情
    */
@@ -72,5 +71,6 @@ declare namespace Process {
     instanceInfo: InstanceInfo;
     formInfo: WorkForm.FormModel;
     processInfo?: string;
+    nodeConfig?: WorkForm.NodeConfig;
   }
 }

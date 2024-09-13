@@ -175,7 +175,7 @@
     </div>
 
     <!-- 新增表单 -->
-    <form-initiation ref="formInitiationRef" />
+    <form-initiation ref="formInitiationRef" @resetQuery="resetQuery" />
 
     <el-popover
       ref="popoverRef"
@@ -219,7 +219,7 @@
       </div>
     </el-popover>
 
-    <form-detail ref="formDetailRef" />
+    <form-detail ref="formDetailRef" @resetQuery="resetQuery" />
   </div>
 </template>
 <script setup lang="ts">
@@ -483,7 +483,7 @@
   const handleDetail = (row: any) => {
     const code = queryParams.code;
     const id = row.id;
-    const procDefId = row.procDefId;
+    const procDefId = row['proc_def_id'];
     formDetailRef.value.getInstanceInfo(id, code, procDefId);
   };
 

@@ -28,8 +28,8 @@ export const CompareOptions = {
     { label: '不含有', value: 'NHAS' },
   ],
   Date: [
-    { label: '在之前<', value: 'BF' },
-    { label: '在之后>', value: 'AF' },
+    { label: '在之前', value: 'BF' },
+    { label: '在之后', value: 'AF' },
     { label: '在之间', value: 'CT' },
     { label: '在之外', value: 'NCT' },
   ],
@@ -38,8 +38,8 @@ export const CompareOptions = {
     { label: '本人不属于', value: 'NIN' },
     { label: '部门属于', value: 'DEPTIN' },
     { label: '部门不属于', value: 'DEPTNIN' },
-    { label: '系统角色属于', value: 'SYSROLEIN' },
-    { label: '系统角色不属于', value: 'SYSROLENIN' },
+    /* { label: '系统角色属于', value: 'SYSROLEIN' },
+    { label: '系统角色不属于', value: 'SYSROLENIN' },*/
     { label: '流程角色属于', value: 'FLOWROLEIN' },
     { label: '流程角色不属于', value: 'FLOWROLENIN' },
   ],

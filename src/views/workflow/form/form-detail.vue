@@ -90,11 +90,28 @@
       :form-info="_baseFormInfo"
       :form-status="formStatus"
     />
-    <template #footer v-if="isFooter">
-      <el-button type="primary" @click="submit">{{ $t('button.confirm') }}</el-button>
-      <el-button @click="cancel">{{ $t('button.cancel') }}</el-button>
+    <template #footer v-if="isFooter || buttonPermission.length > 0">
+      <div v-if="isFooter">
+        <el-button type="primary" @click="submit">{{ $t('button.confirm') }}</el-button>
+        <el-button @click="cancel">{{ $t('button.cancel') }}</el-button>
+      </div>
+      <div v-if="!isFooter && buttonPermission.length > 0">
+        <template v-for="item in buttonPermission">
+          <el-button type="primary" v-if="item.status" @click="handleAction(item)">
+            {{ item.operation }}
+          </el-button>
+        </template>
+      </div>
     </template>
   </el-drawer>
+  <approve-task
+    v-if="isNotEmpty(taskId)"
+    ref="approveTaskRef"
+    :task-id="taskId"
+    :form-id="formInfo.id"
+    @cancel="cancel"
+    :form-data="formData"
+  />
 </template>
 <script setup lang="ts">
   import { instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/task';
@@ -108,9 +125,12 @@
   import FormInfo from './form-info.vue';
   import ListAssociation from '../list/list-association.vue';
   import PrintTemplate from '../settings/print-template.vue';
-
+  import ApproveTask from '@/views/workflow/components/common/approve-task.vue';
+  const emits = defineEmits(['resetQuery']); // 关闭详情弹框
   // 显示抽屉
   const visible = ref(false);
+  // 显示审核弹框
+  const approveTaskRef = ref();
   // 抽屉全屏
   const isFullScreen = ref<boolean>(false);
   // 表单数据
@@ -119,6 +139,8 @@
   const formStatus = ref<string>('');
   // 表单实例
   const formInstanceId = ref<string>('');
+
+  const buttonPermission = ref<WorkForm.ButtonPermission[]>([]); //{name: "agree", operation: "同意", status: true}
   // 表单信息
   const formInfo = ref<WorkForm.FormModel>({
     icon: 'iconfont icon-gengduo',
@@ -151,7 +173,7 @@
     code: '',
     procDefId: '',
   });
-
+  const taskId = ref('');
   // 是否显示关联表单
   const isShowAssociationList = computed(() => {
     return (
@@ -210,7 +232,7 @@
    * @return {*}
    */
   const handleEdit = () => {
-    isFooter.value = true;
+    isFooter.value = !isFooter.value;
   };
 
   /**
@@ -221,6 +243,14 @@
     console.log('submit');
   };
 
+  /**
+   * @description: 处理按钮事件
+   * @param item
+   */
+  const handleAction = (item: WorkForm.ButtonPermission) => {
+    console.log('handleAction', item);
+    approveTaskRef.value.init(item);
+  };
   /**
    * @description: 打印
    * @return {*}
@@ -236,6 +266,10 @@
   const cancel = () => {
     isFooter.value = false;
     visible.value = false;
+    // 延迟400ms后刷新列表，防止流程状态还没更改过来查询到的数据还是旧的数据
+    setTimeout(() => {
+      emits('resetQuery'); // 提交成功，刷新
+    }, 400);
   };
 
   /**
@@ -308,6 +342,8 @@
         }
         // 表单数据
         const instanceInfo = res.data.instanceInfo;
+        console.log(instanceInfo);
+        taskId.value = instanceInfo['taskId'];
         if (isNotEmpty(instanceInfo)) {
           formStatus.value = instanceInfo['form_status'];
           for (const key in instanceInfo) {
@@ -320,7 +356,14 @@
             }
           }
         }
-
+        // 当前节点配置信息，包括按钮、表单权限
+        const nodeConfigInfo = res.data.nodeConfig;
+        // 获取按钮权限列表
+        if (isNotEmpty(nodeConfigInfo)) {
+          buttonPermission.value = nodeConfigInfo?.buttonPermission || [];
+        } else {
+          buttonPermission.value = [];
+        }
         // 显示抽屉
         visible.value = true;
         // 默认不显示footer

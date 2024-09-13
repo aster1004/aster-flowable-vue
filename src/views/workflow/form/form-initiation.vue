@@ -46,7 +46,7 @@
   import { useI18n } from 'vue-i18n';
   import { formSubmitApi } from '@/api/workflow/task';
   import { ResultEnum } from '@/enums/httpEnum';
-
+  const emits = defineEmits(['resetQuery']); // 关闭详情弹框
   // 获取工作流store
   const workFlowStore = useWorkFlowStore();
   // 国际化
@@ -174,6 +174,7 @@
           duration: 500,
           onClose: () => {
             visible.value = false;
+            emits('resetQuery'); // 提交成功，刷新列表
           },
         });
       }
