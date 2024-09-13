@@ -31,6 +31,7 @@
   const emits = defineEmits(['update:value']);
   const props = defineProps({
     value: {
+      type: [String, Number, Boolean, Array, Object],
       default: null,
     },
     mode: {

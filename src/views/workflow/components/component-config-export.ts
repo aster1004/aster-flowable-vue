@@ -433,8 +433,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         // 隐藏
         hidden: '',
         // 只读
-        placeholder: '请选择部门',
         readonly: false,
+        placeholder: '请选择部门',
         multiple: false,
         expansion: false,
         options: [],

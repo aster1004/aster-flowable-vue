@@ -48,7 +48,7 @@
 
       <template v-else-if="mode === 'form'">
         <template v-if="formItem.props.expand">
-          <el-checkbox-group v-model="_value" :disabled="formItem.props.readonly">
+          <el-checkbox-group v-model="_value" :disabled="_readonly">
             <el-checkbox
               v-for="(item, i) in options"
               :key="i"
@@ -63,7 +63,7 @@
             filterable
             :multiple="true"
             :clearable="true"
-            :disabled="formItem.props.readonly"
+            :disabled="_readonly"
           >
             <el-option
               v-for="(item, i) in options"
@@ -87,7 +87,12 @@
 
       <template v-else>
         <template v-if="formItem.props.type === 'dict'">
-          <dict-tag :dict-type="formItem.props.dictType" :value="_value" />
+          <dict-tag
+            v-for="(item, i) in _value"
+            :key="i"
+            :dict-type="formItem.props.dictType"
+            :value="item"
+          />
         </template>
         <template v-else>
           {{ _label }}
@@ -115,6 +120,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import DictTag from '@/components/dict/dict-tag.vue';
+  import { FormPermissionEnum } from '@/enums/workFlowEnum';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -297,6 +303,7 @@
    */
   const _hidden = computed(() => {
     let r = false;
+    // 解析隐藏条件公式
     if (props.formItem.props.hidden) {
       let expression = props.formItem.props.hidden;
       // 如果是子表中的控件，则需要用到下标
@@ -305,6 +312,11 @@
       }
       r = evaluateFormula(expression, props.formData);
     }
+    // 判断流程节点下该控件是否隐藏
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.HIDDEN;
+    }
+    // 如果是必填则动态添加rule
     if (props.formItem.props.required) {
       // 调用form-render的方法
       mittBus.emit('changeFormRules', {
@@ -315,6 +327,17 @@
         fieldName: props.formItem.title,
         trigger: 'blur',
       });
+    }
+    return r;
+  });
+
+  /**
+   * @description: 是否只读, true-只读
+   */
+  const _readonly = computed(() => {
+    let r = props.formItem.props.readonly;
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.READONLY;
     }
     return r;
   });

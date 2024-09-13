@@ -173,7 +173,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="table-btn" v-if="!formItem.props.readonly">
+        <div class="table-btn" v-if="!_readonly">
           <el-button @click="handleAdd()">
             <i class="iconfont icon-xinzeng pr-5px"></i>增加
           </el-button>
@@ -238,6 +238,7 @@
   import draggable from 'vuedraggable';
   import { useI18n } from 'vue-i18n';
   import { generateUUID, isDef } from '@/utils';
+  import { FormPermissionEnum } from '@/enums/workFlowEnum';
   const workFlowStore = useWorkFlowStore();
   const { t } = useI18n();
 
@@ -344,6 +345,7 @@
     const validateFlag = deleteComponentValidate(
       workFlowStore.design.formItems,
       _columns.value[index].id,
+      props.formItem,
     );
     if (!validateFlag) {
       return;
@@ -369,7 +371,7 @@
    */
   const _columns = computed({
     get() {
-      if (props.formItem.props.readonly) {
+      if (_readonly) {
         return props.formItem.props.columns.map((col) => {
           col.props.readonly = true;
           return col;
@@ -533,9 +535,25 @@
    */
   const _hidden = computed(() => {
     let r = false;
+    // 解析隐藏条件公式
     if (props.formItem.props.hidden) {
       let expression = props.formItem.props.hidden;
       r = evaluateFormula(expression, props.formData);
+    }
+    // 判断流程节点下该控件是否隐藏
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.HIDDEN;
+    }
+    return r;
+  });
+
+  /**
+   * @description: 是否只读, true-只读
+   */
+  const _readonly = computed(() => {
+    let r = props.formItem.props.readonly;
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.READONLY;
     }
     return r;
   });

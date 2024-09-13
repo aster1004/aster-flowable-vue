@@ -88,6 +88,7 @@ export const deleteComponentValidate = (
       ElMessage.warning(`${tableItem.title}[${itemTitles}]中引用了该控件，不可删除`);
       return false;
     }
+    return true;
   } else {
     return true;
   }

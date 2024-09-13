@@ -23,7 +23,7 @@
       </div>
       <div v-else-if="mode === 'form'" style="width: 100%">
         <el-upload
-          v-if="!formItem.props.readonly"
+          v-if="!_readonly"
           list-type="text"
           :file-list="fileList"
           :action="ImageUpload.url"
@@ -96,6 +96,7 @@
   import { useI18n } from 'vue-i18n';
   import { ResultEnum } from '@/enums/httpEnum';
   import { downloadFileByUrl } from '@/utils/fileUtils';
+  import { FormPermissionEnum } from '@/enums/workFlowEnum';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -187,6 +188,7 @@
    */
   const _hidden = computed(() => {
     let r = false;
+    // 解析隐藏条件公式
     if (props.formItem.props.hidden) {
       let expression = props.formItem.props.hidden;
       // 如果是子表中的控件，则需要用到下标
@@ -195,6 +197,11 @@
       }
       r = evaluateFormula(expression, props.formData);
     }
+    // 判断流程节点下该控件是否隐藏
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.HIDDEN;
+    }
+    // 如果是必填则动态添加rule
     if (props.formItem.props.required) {
       // 调用form-render的方法
       mittBus.emit('changeFormRules', {
@@ -205,6 +212,17 @@
         fieldName: props.formItem.title,
         trigger: 'blur',
       });
+    }
+    return r;
+  });
+
+  /**
+   * @description: 是否只读, true-只读
+   */
+  const _readonly = computed(() => {
+    let r = props.formItem.props.readonly;
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.READONLY;
     }
     return r;
   });
