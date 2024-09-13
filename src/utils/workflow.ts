@@ -48,14 +48,20 @@ export const deleteFormComponent = (formComponents: any[], index: number) => {
  * @description: 删除表单组件的验证规则
  * @param {WorkComponent.ComponentConfig[]} formItems 表单组件
  * @param {string} fieldId 字段id
+ * @param {WorkComponent.ComponentConfig} tableItem 明细表列
  * @return {*} true-可删除,false-不可删除
  */
 export const deleteComponentValidate = (
   formItems: WorkComponent.ComponentConfig[],
   fieldId: string,
+  tableItem?: WorkComponent.ComponentConfig,
 ) => {
   // 获取含有currentId的组件
   const filterItems = flatFormItems(formItems).filter((item) => {
+    // 跳过当前明细表
+    if (tableItem && tableItem.id === item.id) {
+      return false;
+    }
     const itemStr = JSON.stringify(item);
     if (item.id != fieldId && itemStr.indexOf(fieldId) > -1) {
       return true;
@@ -68,6 +74,20 @@ export const deleteComponentValidate = (
     const itemTitles = filterItems.map((item) => '`' + item.title + '`').join(',');
     ElMessage.warning(`${itemTitles}中引用了该控件，不可删除`);
     return false;
+  } else if (tableItem) {
+    const filterCols = tableItem.props.columns.filter((item) => {
+      const itemStr = JSON.stringify(item);
+      if (item.id != fieldId && itemStr.indexOf(fieldId) > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    if (filterCols.length > 0) {
+      const itemTitles = filterCols.map((item) => '`' + item.title + '`').join(',');
+      ElMessage.warning(`${tableItem.title}[${itemTitles}]中引用了该控件，不可删除`);
+      return false;
+    }
   } else {
     return true;
   }

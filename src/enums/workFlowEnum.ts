@@ -9,11 +9,30 @@ export enum DrawerEnum {
  * @description：流程定义节点类型
  */
 export enum ProcessNodeTypeEnum {
-  ROOT = 0, // 发送人
-  APPROVE = 1, // 审批人
-  SEND = 2, // 抄送人
-  CONDITION = 3, // 条件
-  GATEWAY = 4, // 路由
-  PARALLEL = 5, // 并行
-  INCLUSION = 6, // 包容
+  // 发送人
+  ROOT = 0,
+  // 审批人
+  APPROVE = 1,
+  // 抄送人
+  SEND = 2,
+  // 条件
+  CONDITION = 3,
+  // 路由
+  GATEWAY = 4,
+  // 并行
+  PARALLEL = 5,
+  // 包容
+  INCLUSION = 6,
+}
+
+/**
+ * @description：表单权限
+ */
+export enum FormPermissionEnum {
+  // 隐藏
+  HIDDEN = 'hidden',
+  // 只读
+  READONLY = 'readonly',
+  // 编辑
+  EDIT = 'edit',
 }

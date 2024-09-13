@@ -28,6 +28,8 @@ declare namespace WorkComponent {
     valueType: any;
     // 组件属性
     props: PropModel;
+    // 组件权限
+    operation?: string[];
   }
 
   /**
