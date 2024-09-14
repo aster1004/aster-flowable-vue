@@ -231,6 +231,7 @@
       ElMessage.warning('请先选择左侧表单');
       return;
     }
+    //TODO init方法已改为code,不能再传id 记得改下
     formInitiationRef.value.init(formId.value);
   };
 

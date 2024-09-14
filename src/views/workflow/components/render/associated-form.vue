@@ -292,7 +292,7 @@
    */
   const handleAssociatedForm = (instanceId: string) => {
     const code = props.formItem.props.formCode[1];
-    associatedFormDetailRef.value.getInstanceInfoByInstanceId(code, instanceId);
+    associatedFormDetailRef.value.getInstanceInfoByInstanceId(code, instanceId, true);
   };
 
   /**

@@ -472,7 +472,7 @@
       ElMessage.warning('请先选择左侧表单');
       return;
     }
-    formInitiationRef.value.init(props.formId);
+    formInitiationRef.value.init(props.code);
   };
 
   /**

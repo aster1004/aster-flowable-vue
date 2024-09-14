@@ -11,6 +11,7 @@ import { ElMessage } from 'element-plus';
 import moment, { Moment } from 'moment';
 import { isEmpty, isNotEmpty, isObject } from '.';
 import { evaluate, parse } from './formula';
+import { FormPermissionEnum } from '@/enums/workFlowEnum';
 
 /**
  * @description: 生成字段id
@@ -518,6 +519,46 @@ export const setDefaultValue = (
       } else if (defaultObj.type === 'dynamic') {
         // TODO数据联动
         // formData[item.id] = getDynamicValue(defaultObj.value, formData);
+      }
+    }
+  });
+};
+
+/**
+ * @description: 设置表单项权限
+ * @param {WorkComponent.ComponentConfig[]} formItems 表单项
+ * @param {Process.FormPermissionModel} formPermission 表单项权限
+ * @param {string} nodeType 节点类型 root-发起人 task-任务节点
+ * @return {*}
+ */
+export const setFormPermission = (
+  formItems: WorkComponent.ComponentConfig[],
+  formPermission: Process.FormPermissionModel,
+  nodeType = 'root',
+) => {
+  formItems.forEach((item) => {
+    if (item.name === 'GridLayout') {
+      item.props.items.forEach((col) => {
+        setFormPermission(col, formPermission, nodeType);
+      });
+    } else if (item.name === 'GridTitle') {
+      setFormPermission(item.props.items, formPermission, nodeType);
+    } else if (item.name === 'TableList') {
+      if (formPermission.hasOwnProperty(item.id) && formPermission[item.id].length > 0) {
+        item.operation = formPermission[item.id];
+      } else {
+        item.operation = [
+          nodeType === 'root' ? FormPermissionEnum.EDIT : FormPermissionEnum.READONLY,
+        ];
+      }
+      setFormPermission(item.props.columns, formPermission, nodeType);
+    } else {
+      if (formPermission.hasOwnProperty(item.id) && formPermission[item.id].length > 0) {
+        item.operation = formPermission[item.id];
+      } else {
+        item.operation = [
+          nodeType === 'root' ? FormPermissionEnum.EDIT : FormPermissionEnum.READONLY,
+        ];
       }
     }
   });

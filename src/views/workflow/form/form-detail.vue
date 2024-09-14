@@ -60,7 +60,7 @@
         <form-info
           ref="formInfoRef"
           v-model:form-data="formData"
-          :form-items="formInfo.formItems"
+          :form-items="_formItems"
           :form-info="_baseFormInfo"
           :form-status="formStatus"
         />
@@ -78,7 +78,7 @@
       v-else
       ref="formInfoRef"
       v-model:form-data="formData"
-      :form-items="formInfo.formItems"
+      :form-items="_formItems"
       :form-info="_baseFormInfo"
       :form-status="formStatus"
     />
@@ -86,7 +86,7 @@
     <print-template
       ref="printTemplateRef"
       :form-data="formData"
-      :form-items="formInfo.formItems"
+      :form-items="_formItems"
       :form-info="_baseFormInfo"
       :form-status="formStatus"
     />
@@ -104,6 +104,7 @@
       </div>
     </template>
   </el-drawer>
+
   <approve-task
     v-if="isNotEmpty(taskId)"
     ref="approveTaskRef"
@@ -121,7 +122,7 @@
   import { computed, reactive, ref } from 'vue';
   import DictTag from '@/components/dict/dict-tag.vue';
   import { ElMessage, TabPaneName } from 'element-plus';
-  import { convertDataTypes } from '@/utils/workflow';
+  import { convertDataTypes, setFormPermission } from '@/utils/workflow';
   import FormInfo from './form-info.vue';
   import ListAssociation from '../list/list-association.vue';
   import PrintTemplate from '../settings/print-template.vue';
@@ -158,6 +159,10 @@
       actions: [],
     },
   });
+  // 表单权限
+  const formPermission = ref<Process.FormPermissionModel>({});
+  // 是否关联表单
+  const isAssociated = ref<boolean>(false);
   // 显示footer
   const isFooter = ref<boolean>(false);
   // 活动页签
@@ -317,16 +322,23 @@
 
   /**
    * @description: 获取表单信息
-   * @param {string} id
-   * @param {string} code
-   * @param {string} procDefId
+   * @param {string} id 表单实例表的ID, 非proc_inst_id
+   * @param {string} code 表单编码
+   * @param {string} procDefId 流程定义ID
+   * @param {boolean} isAssociatedForm 是否关联表单
    * @return {*}
    */
-  const getInstanceInfo = async (id: string, code: string, procDefId: string) => {
+  const getInstanceInfo = async (
+    id: string,
+    code: string,
+    procDefId: string,
+    isAssociatedForm = false,
+  ) => {
     if (isEmpty(id) || isEmpty(code)) {
       ElMessage.error('参数错误');
       return;
     }
+    isAssociated.value = isAssociatedForm;
     // 查询参数
     queryParams.id = id;
     queryParams.code = code;
@@ -339,6 +351,10 @@
           formInfo.value = formDesignInfo;
           // 查询关联表单信息
           getAssociationList(res.data.instanceInfo['proc_inst_id']);
+        }
+        // 表单权限
+        if (res.data.formPermission) {
+          formPermission.value = res.data.formPermission;
         }
         // 表单数据
         const instanceInfo = res.data.instanceInfo;
@@ -379,13 +395,20 @@
    * @description: 通过实例id获取表单信息
    * @param {string} code 表单编码
    * @param {string} procInstId 流程实例id
+   * @param {boolean} isAssociatedForm 是否关联表单
    * @return {*}
    */
-  const getInstanceInfoByInstanceId = async (code: string, procInstId: string) => {
+  const getInstanceInfoByInstanceId = async (
+    code: string,
+    procInstId: string,
+    isAssociatedForm = false,
+  ) => {
     if (isEmpty(procInstId) || isEmpty(code)) {
       ElMessage.error('参数错误');
       return;
     }
+    // 是否关联数据
+    isAssociated.value = isAssociatedForm;
     await instanceInfoByInstanceIdApi(code, procInstId).then((res) => {
       if (res.code === ResultEnum.SUCCESS) {
         // 表单信息
@@ -394,6 +417,10 @@
           formInfo.value = formDesignInfo;
           // 查询关联表单信息
           getAssociationList(procInstId);
+        }
+        // 表单权限
+        if (res.data.formPermission) {
+          formPermission.value = res.data.formPermission;
         }
         // 表单数据
         const instanceInfo = res.data.instanceInfo;
@@ -431,6 +458,19 @@
       labelWidth: formInfo.value.labelWidth,
     };
     return info;
+  });
+
+  // 表单项
+  const _formItems = computed(() => {
+    const formItems = JSON.parse(JSON.stringify(formInfo.value.formItems));
+    if (formPermission.value) {
+      if (isAssociated.value) {
+        setFormPermission(formItems, {}, 'other');
+      } else {
+        setFormPermission(formItems, formPermission.value, 'other');
+      }
+    }
+    return formItems;
   });
 
   defineExpose({

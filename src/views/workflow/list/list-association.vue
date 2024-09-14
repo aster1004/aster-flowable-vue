@@ -67,7 +67,7 @@
           <el-tooltip
             v-for="(item, index) in _actions"
             :key="index"
-            :content="item.title"
+            :content="item.label"
             effect="dark"
             placement="top"
           >
@@ -443,7 +443,7 @@
       ElMessage.warning('参数有误，请刷新后重试');
       return;
     }
-    formInitiationRef.value.init(formId.value);
+    formInitiationRef.value.init(code.value);
   };
 
   /**
@@ -455,7 +455,7 @@
     const code = queryParams.code;
     const id = row.id;
     const procDefId = row.procDefId;
-    formDetailRef.value.getInstanceInfo(id, code, procDefId);
+    formDetailRef.value.getInstanceInfo(id, code, procDefId, true);
   };
 
   // 列表设置内容

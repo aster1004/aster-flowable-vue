@@ -64,13 +64,22 @@ declare namespace Process {
     // 表单字段
     [key: string]: any;
   }
+
+  /**
+   * 表单权限
+   */
+  export interface FormPermissionModel {
+    [key: string]: string[];
+  }
+
   /**
    * 流程实例详情
    */
   export interface InstanceDetail {
-    instanceInfo: InstanceInfo;
     formInfo: WorkForm.FormModel;
+    instanceInfo: InstanceInfo;
     processInfo?: string;
     nodeConfig?: WorkForm.NodeConfig;
+    formPermission?: FormPermissionModel;
   }
 }

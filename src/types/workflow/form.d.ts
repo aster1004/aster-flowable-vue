@@ -188,9 +188,12 @@ declare namespace WorkForm {
     errorTip: string;
   }
   export interface ButtonPermission {
-    name: string; // 按钮类型，如agree
-    operation: number; //操作名称，如同意
-    status: boolean; //是否启用，true 为启用
+    // 按钮类型，如agree
+    name: string;
+    // 操作名称，如同意
+    operation: string;
+    // 是否启用，true 为启用
+    status: boolean;
   }
   /**
    * @description: 表单信息
@@ -249,10 +252,14 @@ declare namespace WorkForm {
 
   // 审核提交的参数
   declare type ApproveParams = {
-    comment?: string; // 审核意见
-    approveType: string; // 审核类型,如agree，refuse
-    signature?: string; // 签名
-    formData?: FormDataModel; // 表单数据
+    // 审核意见
+    comment?: string;
+    // 审核类型,如agree，refuse
+    approveType: string;
+    // 签名
+    signature?: string;
+    // 表单数据
+    formData?: FormDataModel;
     taskId?: string;
     formId?: string;
   };
