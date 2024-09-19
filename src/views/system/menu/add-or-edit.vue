@@ -243,6 +243,7 @@
       formDataRef.value.resetFields();
       formData.component = '';
       formData.createTime = '';
+      formData.perms = '';
     }
     // 判断新增还是编辑
     if (menu && isNotEmpty(menu.id)) {

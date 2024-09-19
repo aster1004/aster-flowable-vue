@@ -49,14 +49,24 @@
         </el-col>
         <el-col :span="24">
           <el-form-item :label="$t('label.role.menuAuth')">
-            <el-tree
-              ref="menuListTreeRef"
-              :data="menuList"
-              :props="{ label: 'name', children: 'children' }"
-              node-key="id"
-              accordion
-              show-checkbox
-            />
+            <div class="flex flex-col">
+              <el-checkbox
+                v-model="menuCheckStrictly"
+                @change="handleCheckStrictly"
+                style="padding: 0 0 10px 24px"
+              >
+                <span>父子联动</span>
+              </el-checkbox>
+              <el-tree
+                ref="menuListTreeRef"
+                :data="menuList"
+                :props="{ label: 'name', children: 'children' }"
+                :check-strictly="formData.menuCheckStrictly == '1'"
+                node-key="id"
+                accordion
+                show-checkbox
+              />
+            </div>
           </el-form-item>
         </el-col>
       </el-row>
@@ -68,11 +78,11 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { reactive, ref, computed } from 'vue';
+  import { reactive, ref, computed, nextTick } from 'vue';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus/es';
   import { isNotEmpty } from '@/utils';
-  import { roleInfoApi, roleMenuApi, roleSaveApi } from '@/api/sys/role';
+  import { roleInfoApi, roleSaveApi } from '@/api/sys/role';
   import DictRadio from '@/components/dict/dict-radio.vue';
   import { menuListApi } from '@/api/sys/menu';
   import { useI18n } from 'vue-i18n';
@@ -109,6 +119,8 @@
   });
   /** 菜单列表 */
   const menuList = ref<Menu.MenuOptions[]>([]);
+  /** 菜单是否联动 */
+  const menuCheckStrictly = ref(false);
 
   /** 初始化 */
   const init = async (key?: string) => {
@@ -150,8 +162,23 @@
   const getDataInfo = async (key: string) => {
     await roleInfoApi(key).then(({ data }) => {
       Object.assign(formData, data);
-      formData.menuIdList?.forEach((item) => menuListTreeRef.value.setChecked(item, true));
+      menuCheckStrictly.value = formData.menuCheckStrictly != '1';
+      formData.menuIdList?.forEach((item) => {
+        nextTick(() => {
+          menuListTreeRef.value.setChecked(item, true);
+        });
+      });
     });
+  };
+
+  /**
+   * @description: 菜单是否联动
+   * @param {boolean} value
+   * @return {*}
+   */
+  const handleCheckStrictly = (value: boolean) => {
+    menuCheckStrictly.value = value;
+    formData.menuCheckStrictly = value ? '0' : '1';
   };
 
   /**
