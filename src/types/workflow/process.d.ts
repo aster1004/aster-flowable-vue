@@ -82,4 +82,12 @@ declare namespace Process {
     nodeConfig?: WorkForm.NodeConfig;
     formPermission?: FormPermissionModel;
   }
+
+  /**
+   * 可回退节点
+   */
+  export interface BackNodeModel {
+    nodeId: string; // 节点ID
+    nodeName: string; // 审核节点名称
+  }
 }

@@ -28,7 +28,7 @@
           :action="ImageUpload.url"
           list-type="picture-card"
           :limit="formItem.props.maxNumber"
-          :multipl="formItem.props.maxNumber > 1"
+          :multiple="formItem.props.maxNumber > 1"
           :on-exceed="handleExceed"
           :on-success="handleSuccess"
           :on-error="handleError"

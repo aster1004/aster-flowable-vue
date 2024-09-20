@@ -271,10 +271,10 @@
   const cancel = () => {
     isFooter.value = false;
     visible.value = false;
-    // 延迟400ms后刷新列表，防止流程状态还没更改过来查询到的数据还是旧的数据
+    // 延迟600ms后刷新列表，防止流程状态还没更改过来查询到的数据还是旧的数据
     setTimeout(() => {
       emits('resetQuery'); // 提交成功，刷新
-    }, 400);
+    }, 600);
   };
 
   /**

@@ -664,7 +664,7 @@
 
   // 判断是否为多选
   const isMultiple = computed(() => {
-    return props.multiple || props.formItem.props.multiple;
+    return props.multiple || props.formItem?.props?.multiple;
   });
   /**
    * @description: 当用户手动勾选数据行的 Checkbox 时触发的事件

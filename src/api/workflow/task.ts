@@ -65,3 +65,17 @@ export const instanceInfoByInstanceIdApi = (code: string, instanceId: string) =>
     },
   );
 };
+
+/**
+ * @description: 获取可退回的节点
+ * @param params
+ */
+export const getRecallTaskNodesApi = (taskId: string) => {
+  return request.get<Process.BackNodeModel[]>(
+    PORT5 + `/processTask/getRecallTaskNodes`,
+    { taskId: taskId },
+    {
+      noLoading: true,
+    },
+  );
+};

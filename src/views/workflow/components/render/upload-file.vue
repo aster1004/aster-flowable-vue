@@ -29,7 +29,7 @@
           :action="ImageUpload.url"
           :accept="acceptList"
           :limit="formItem.props.maxNumber"
-          :multipl="formItem.props.maxNumber > 1"
+          :multiple="formItem.props.maxNumber > 1"
           :on-exceed="handleExceed"
           :on-success="handleSuccess"
           :on-preview="handlePreview"
@@ -287,7 +287,14 @@
     } else if (fileExtensions.value.join(',').indexOf(extension) != -1) {
       previewDocumentVisible.value = true;
     } else {
-      console.log('preview--->', file);
+      ElMessageBox.confirm('不支持预览此类型的文件,是否要下载查看?', t('common.tips'), {
+        confirmButtonText: t('button.confirm'),
+        cancelButtonText: t('button.cancel'),
+        type: 'warning',
+        lockScroll: false,
+      }).then(async () => {
+        await downloadFileByUrl(file.url, file.name);
+      });
     }
   };
 

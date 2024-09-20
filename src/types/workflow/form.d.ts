@@ -251,16 +251,31 @@ declare namespace WorkForm {
   }
 
   // 审核提交的参数
-  declare type ApproveParams = {
-    // 审核意见
-    comment?: string;
+  export interface ApproveParams {
+    // 任务id
+    taskId?: string;
     // 审核类型,如agree，refuse
     approveType: string;
-    // 签名
+    //  手写签名,base64
     signature?: string;
     // 表单数据
     formData?: FormDataModel;
-    taskId?: string;
+
+    // 表单id
     formId?: string;
-  };
+    // 退回节点
+    backNode?: string;
+    // 转交人
+    transferUser?: string;
+    // 会签人
+    countersignUser?: string;
+    comment?: Comment;
+  }
+  export interface Comment {
+    // 审核意见
+    opinion: string;
+    // 上传的图片
+    imageList?: WorkForm.FileModel[];
+    fileList?: WorkForm.FileModel[];
+  }
 }

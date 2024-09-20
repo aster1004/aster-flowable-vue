@@ -22,7 +22,7 @@ export enum ProcessNodeTypeEnum {
   // 并行
   PARALLEL = 5,
   // 包容
-  INCLUSION = 6,
+  INCLUSIVE = 6,
 }
 
 /**
@@ -36,3 +36,49 @@ export enum FormPermissionEnum {
   // 编辑
   EDIT = 'edit',
 }
+export const opinionOptions = [
+  { name: '同意', value: '1' },
+  { name: '拒绝', value: '2' },
+  { name: '已阅', value: '3' },
+];
+
+/**
+ * @description：按钮定义
+ */
+export const buttonPermission = [
+  {
+    operation: '同意',
+    name: 'agree',
+    status: true,
+    alias: '', // 按钮别名
+    sort: 1,
+  },
+  {
+    operation: '不同意',
+    name: 'disagree',
+    status: true,
+    alias: '',
+    sort: 2,
+  },
+  {
+    operation: '退回',
+    name: 'recall',
+    status: true,
+    alias: '',
+    sort: 3,
+  },
+  {
+    operation: '转交',
+    name: 'forward',
+    status: true,
+    alias: '',
+    sort: 4,
+  },
+  {
+    operation: '加签',
+    name: 'afterAddSign',
+    status: true,
+    alias: '',
+    sort: 5,
+  },
+];
