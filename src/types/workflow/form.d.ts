@@ -277,5 +277,20 @@ declare namespace WorkForm {
     // 上传的图片
     imageList?: WorkForm.FileModel[];
     fileList?: WorkForm.FileModel[];
+    operationType?: OperationType;
+  }
+
+  /**
+   * 任务处理类型及处理过程的数据
+   */
+  export interface OperationType {
+    // 审核类型,如agree，refuse
+    approveType: string;
+    // 目标id
+    targetId?: string;
+    // 目标名称
+    targetName?: string;
+    // 目标类型,user | node
+    targetType?: string;
   }
 }

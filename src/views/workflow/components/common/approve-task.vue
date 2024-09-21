@@ -104,9 +104,8 @@
   import ApproveUploadImage from '@/views/workflow/components/common/approve-upload-image.vue';
   import ApproveUploadFile from '@/views/workflow/components/common/approve-upload-file.vue';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
-  import { isDef, isNotEmpty, isUnDef } from '@/utils';
+  import { isDef, isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { ElMessage } from 'element-plus';
   const props = defineProps({
     formData: {
       type: Object as PropType<WorkForm.FormDataModel>,
@@ -149,11 +148,20 @@
   // 选中的用户名称
   const selectedUserName = ref('');
 
+  const operationTypeInfo = ref<WorkForm.OperationType>({
+    approveType: '', // 审批类型
+    targetId: '', // 目标id
+    targetName: '', // 目标名称
+    targetType: '', // 目标类型
+  });
+
   const commentInfo = ref<WorkForm.Comment>({
     opinion: '', // 审批意见
     imageList: [],
     fileList: [],
+    operationType: operationTypeInfo.value,
   });
+
   // 提交参数
   const approveParams = ref<WorkForm.ApproveParams>({
     taskId: '', // 任务id
@@ -168,6 +176,7 @@
       opinion: '', // 审批意见
       imageList: [],
       fileList: [],
+      operationType: operationTypeInfo.value,
     },
   });
 
@@ -208,8 +217,17 @@
       imageList: [],
       fileList: [],
     };
+    operationTypeInfo.value = {
+      approveType: '', // 审批类型
+      targetId: '', // 目标id
+      targetName: '', // 目标名称
+      targetType: '', // 目标类型
+    };
     approveParams.value = {
-      comment: commentInfo.value,
+      comment: {
+        ...commentInfo.value,
+        ...operationTypeInfo.value,
+      },
       taskId: '', // 任务id
       approveType: 'agree',
       signature: '', // 手写签名,base64
@@ -237,8 +255,17 @@
    * @description: 常用意见选中值改变时赋值给审批意见
    * @param val
    */
-  const backNodeNameChange = (val: string) => {
-    console.log(val);
+  const backNodeNameChange = (val) => {
+    backNodeList.value.forEach((item: Process.BackNodeModel) => {
+      if (item.nodeId === val) {
+        // 如果是退回，给审批意见赋值
+        operationTypeInfo.value.approveType = approveParams.value.approveType;
+        operationTypeInfo.value.targetId = item.nodeId;
+        operationTypeInfo.value.targetName = item.nodeName;
+        operationTypeInfo.value.targetType = 'node'; // user | node
+        commentInfo.value.operationType = operationTypeInfo.value;
+      }
+    });
     approveParams.value.backNode = val;
   };
 
@@ -257,7 +284,12 @@
         if (item?.realName != null) {
           selectedUserName.value = item.realName;
         }
-        console.log(item);
+        // 如果是转交或加签
+        operationTypeInfo.value.approveType = approveParams.value.approveType;
+        operationTypeInfo.value.targetId = item.id;
+        operationTypeInfo.value.targetName = selectedUserName.value;
+        operationTypeInfo.value.targetType = 'user'; // user | node
+        commentInfo.value.operationType = operationTypeInfo.value;
         approveParams.value.transferUser = item.id;
       });
     } else {
