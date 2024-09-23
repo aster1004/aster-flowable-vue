@@ -25,7 +25,7 @@
   });
 
   // 权限类型
-  const permType = ref<'system' | 'all' | 'custom'>('system');
+  const permType = ref<string>('system');
 
   /**
    * @description: 监听角色信息变化
@@ -34,17 +34,7 @@
     () => props.roleInfo,
     (val) => {
       if (val && val.id && isNotEmpty(val.id)) {
-        if (val.type === 'default') {
-          if (val.name === '系统管理员') {
-            permType.value = 'system';
-          } else if (val.name === '所有用户') {
-            permType.value = 'all';
-          } else {
-            permType.value = 'custom';
-          }
-        } else {
-          permType.value = 'custom';
-        }
+        permType.value = val.type ? val.type : 'system';
       }
     },
     { immediate: true, deep: true },

@@ -196,7 +196,7 @@
 </template>
 <script setup lang="ts">
   import MemberSelect from '../components/common/member-select.vue';
-  import { onMounted, PropType, reactive, ref, watch } from 'vue';
+  import { onMounted, reactive, ref, watch } from 'vue';
   import { appFormTreeApi } from '@/api/workflow/app';
   import {
     permListApi,
@@ -221,7 +221,7 @@
       default: '',
     },
     roleType: {
-      type: String as PropType<'all' | 'custom'>,
+      type: String,
       default: '',
     },
   });
@@ -554,6 +554,7 @@
       if (res.code === ResultEnum.SUCCESS) {
         ElMessage.success('编辑成功');
         getMemberList(props.roleId);
+        serviceVisible.value = false;
       } else {
         ElMessage.error('编辑失败');
       }
