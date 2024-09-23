@@ -106,6 +106,7 @@
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { isDef, isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
+  import { ElMessage } from 'element-plus';
   const props = defineProps({
     formData: {
       type: Object as PropType<WorkForm.FormDataModel>,
@@ -186,18 +187,22 @@
    */
   const handleSubmit = () => {
     console.log(approveParams.value);
+    commentInfo.value.operationType = operationTypeInfo.value;
     approveParams.value.taskId = props.taskId;
     approveParams.value.formId = props.formId;
     approveParams.value.comment = commentInfo.value;
     console.info('处理待办：', props.taskId);
     completeTaskApi(approveParams.value).then((res) => {
       console.info(res);
+      if (res.code == ResultEnum.SUCCESS) {
+        visible.value = false;
+        emits('cancel'); // 处理成功，关闭详
+        // 重置表单数据，防止下次提交还有数据
+        resetApproveParams();
+      } else {
+        ElMessage.error(res.message);
+      }
     });
-
-    visible.value = false;
-    // 重置表单数据，防止下次提交还有数据
-    resetApproveParams();
-    emits('cancel'); // 处理成功，关闭详情
   };
 
   /**
@@ -250,6 +255,7 @@
    */
   const commonOpinionChange = (val: string) => {
     commentInfo.value.opinion = val;
+    commentInfo.value.operationType = operationTypeInfo.value;
   };
   /**
    * @description: 常用意见选中值改变时赋值给审批意见
@@ -353,6 +359,7 @@
     visible.value = true;
     buttonInfo.value = item;
     approveParams.value.approveType = buttonInfo.value?.name;
+    operationTypeInfo.value.approveType = approveParams.value.approveType;
     console.log('init', approveParams.value.approveType);
     if (approveParams.value.approveType === 'recall') {
       getBackNodeList();

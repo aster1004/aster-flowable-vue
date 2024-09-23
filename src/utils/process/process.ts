@@ -97,7 +97,7 @@ const setNodeFormPermission = (type: number, formPermissionData: any[]) => {
  * @returns
  */
 export const getAllNode = () => {
-  let process = workFlowStore.design.process.nodeConfig;
+  let process = workFlowStore.design.process;
   // console.info('process：', JSON.stringify(process));
   return revertNode(process, []);
 };

@@ -155,16 +155,6 @@ declare namespace WorkForm {
     status?: string;
   }
 
-  /**
-   * @description: 列表设置信息
-   */
-  export interface FormProcess {
-    tableId: string;
-    directorMaxLevel: number;
-    flowPermission: [];
-    nodeConfig: NodeConfig;
-  }
-
   export interface NodeConfig {
     id: string;
     parentId: string | null;
@@ -206,7 +196,7 @@ declare namespace WorkForm {
     // 表单项
     formItems: WorkComponent.ComponentConfig[];
     // 流程
-    process: FormProcess;
+    process: NodeConfig;
     // 流程配置
     processConfig?: string;
     // 列表配置

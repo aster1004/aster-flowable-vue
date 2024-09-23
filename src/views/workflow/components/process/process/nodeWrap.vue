@@ -73,15 +73,11 @@
     setCopyerConfig,
     setConditionsConfig,
   } = store;
-  const emits = defineEmits(['update:flowPermission', 'update:nodeConfig']);
+  const emits = defineEmits(['update:nodeConfig']);
   const props = defineProps({
     nodeConfig: {
       type: Object,
       default: () => ({}),
-    },
-    flowPermission: {
-      type: Object,
-      default: () => [],
     },
   });
 
