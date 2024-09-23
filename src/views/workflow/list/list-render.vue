@@ -603,6 +603,8 @@
       // 默认显示查询条件并折叠
       showSearch.value = true;
       searchCollapsed.value = true;
+      // 先置空table数据
+      dataList.value = [];
       // 如果是列表模式，则加载表单信息
       if (props.type == 'list') {
         if (isNotEmpty(val)) {
