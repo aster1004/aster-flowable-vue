@@ -8,12 +8,12 @@
 <template>
   <div v-if="!_hidden">
     <el-form v-if="mode === 'design'" class="table-list">
-      <div class="table-title">
+      <div class="table-list-title">
         <span class="text-sm">{{ formItem.title }}</span>
       </div>
       <el-row>
-        <el-col :span="18" class="table-border">
-          <div class="table-main">
+        <el-col :span="18" class="table-list-border">
+          <div class="table-list-main">
             <el-table
               :data="designValue"
               :border="formItem.props.showBorder"
@@ -33,7 +33,7 @@
               >
                 <template #default>
                   <div
-                    class="table-component"
+                    class="table-list-component"
                     @click.stop="onSelectComponent(item)"
                     :style="onSelectedComponentStyle(item)"
                   >
@@ -53,13 +53,13 @@
             </el-table>
           </div>
         </el-col>
-        <el-col :span="6" class="table-border">
-          <div class="table-tip">
+        <el-col :span="6" class="table-list-border">
+          <div class="table-list-tip">
             <span class="text-xs">拖入左侧控件到此处</span>
           </div>
           <draggable
             ref="draggerRef"
-            class="table-dragger"
+            class="table-list-dragger"
             :style="tableDraggerStyle"
             item-key="id"
             :list="_columns"
@@ -81,7 +81,7 @@
       </el-row>
     </el-form>
     <div v-else-if="mode == 'form'">
-      <div class="table-main" :id="formItem.id">
+      <div class="table-list-main" :id="formItem.id">
         <div class="flex items-center justify-between pb-5px">
           <span class="text-sm font-600">{{ formItem.title }}</span>
         </div>
@@ -124,7 +124,7 @@
               {{ item.title }}
             </template>
             <template #default="scope">
-              <div class="table-component">
+              <div class="table-list-component">
                 <form-design-render
                   v-model:value="_value[scope.$index][item.id]"
                   :form-data="formData"
@@ -173,7 +173,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="table-btn" v-if="!_readonly">
+        <div class="table-list-btn" v-if="!_readonly">
           <el-button @click="handleAdd()">
             <i class="iconfont icon-xinzeng pr-5px"></i>增加
           </el-button>
@@ -371,7 +371,7 @@
    */
   const _columns = computed({
     get() {
-      if (_readonly) {
+      if (_readonly.value) {
         return props.formItem.props.columns.map((col) => {
           col.props.readonly = true;
           return col;
@@ -565,24 +565,24 @@
 <style scoped lang="scss">
   @import url(../print/print.scss);
 
-  .table-main {
-    background: var(--el-fill-color-blank);
-    color: #606266;
-  }
-
   .table-list {
     color: #606266;
 
-    .table-title {
+    .table-list-main {
+      background: var(--el-fill-color-blank);
+      color: #606266;
+    }
+
+    .table-list-title {
       padding-bottom: 5px;
       font-weight: 600;
     }
 
-    .table-border {
+    .table-list-border {
       border: 1px solid #ebeef5;
     }
 
-    .table-component {
+    .table-list-component {
       position: relative;
 
       .close {
@@ -602,7 +602,7 @@
       }
     }
   }
-  .table-tip {
+  .table-list-tip {
     position: absolute;
     right: 20px;
     top: 10px;
@@ -612,18 +612,18 @@
     align-items: center;
     color: #909399;
   }
-  .table-dragger {
+  .table-list-dragger {
     width: 100%;
     position: relative;
   }
-  .table-btn {
+  .table-list-btn {
     width: 100%;
     padding: 8px 0px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
   }
-  .table-popover {
+  .table-list-popover {
     padding: 5px 10px;
 
     i {
