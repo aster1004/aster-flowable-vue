@@ -235,6 +235,7 @@
   import { ElMessage } from 'element-plus';
   import vClickOutside from 'element-plus/es/directives/click-outside/index';
   import { instancePageApi } from '@/api/workflow/process';
+  import { permFormDataApi } from '@/api/workflow/auth';
 
   const props = defineProps({
     type: {
@@ -303,6 +304,10 @@
   const columnIndeterminate = ref(false);
   // 已选中查询字段id
   const columnCheckedIds = ref<string[]>([]);
+  // 表单权限
+  const formDataPermission = ref<WorkAuth.FormDataPermission>({
+    code: props.code,
+  });
 
   /**
    * @description: 查询
@@ -502,8 +507,13 @@
   // 功能按钮
   const _actions = computed(() => {
     if (_listSettings.value.actions && _listSettings.value.actions.length > 0) {
-      return _listSettings.value.actions;
+      return _listSettings.value.actions.filter(
+        (item) =>
+          formDataPermission.value.listPerms &&
+          formDataPermission.value.listPerms.includes(item.value),
+      );
     }
+
     return [];
   });
 
@@ -595,6 +605,21 @@
     });
   };
 
+  /**
+   * @description: 获取表单数据权限
+   * @param {*} code 表单code
+   * @return {*}
+   */
+  const getFormDataPermission = (code: string) => {
+    permFormDataApi(code).then((res) => {
+      if (res.code == ResultEnum.SUCCESS) {
+        formDataPermission.value = res.data;
+      } else {
+        ElMessage.error(res.message);
+      }
+    });
+  };
+
   // 监听表单编码
   watch(
     () => props.code,
@@ -611,6 +636,8 @@
           readonly.value = false;
           // 根据code获取表单信息
           loadFormInfoByCode(val);
+          // 获取表单数据权限
+          getFormDataPermission(val);
         } else {
           readonly.value = false;
           tableColumns.value = [];

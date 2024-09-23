@@ -49,6 +49,9 @@ declare namespace WorkAuth {
     avatar?: string;
   }
 
+  /**
+   * @description: 角色权限信息
+   */
   export interface RolePermission {
     id?: string;
     roleId?: string;
@@ -59,5 +62,17 @@ declare namespace WorkAuth {
     listPerms?: string[];
     dataPerm?: string;
     checked?: boolean;
+  }
+
+  /**
+   * @description: 表单数据权限
+   */
+  export interface FormDataPermission {
+    code: string;
+    formPerms?: string[];
+    listPerms?: string[];
+    dataPerm?: string;
+    userId?: string;
+    deptIds?: string[];
   }
 }

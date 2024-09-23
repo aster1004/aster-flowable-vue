@@ -121,3 +121,13 @@ export const permDeleteApi = (perm: WorkAuth.RolePermission) => {
     noLoading: true,
   });
 };
+
+/**
+ * @description: 获取流程表单权限
+ * @param {string} code 流程编码
+ */
+export const permFormDataApi = (code: string) => {
+  return request.get<WorkAuth.FormDataPermission>(PORT5 + `/auth/perm/form/${code}`, {
+    noLoading: true,
+  });
+};
