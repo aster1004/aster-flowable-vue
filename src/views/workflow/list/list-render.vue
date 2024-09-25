@@ -307,6 +307,7 @@
   // 表单权限
   const formDataPermission = ref<WorkAuth.FormDataPermission>({
     code: props.code,
+    isAdmin: false,
   });
 
   /**
@@ -509,8 +510,9 @@
     if (_listSettings.value.actions && _listSettings.value.actions.length > 0) {
       return _listSettings.value.actions.filter(
         (item) =>
-          formDataPermission.value.listPerms &&
-          formDataPermission.value.listPerms.includes(item.value),
+          formDataPermission.value.isAdmin ||
+          (formDataPermission.value.listPerms &&
+            formDataPermission.value.listPerms.includes(item.value)),
       );
     }
 

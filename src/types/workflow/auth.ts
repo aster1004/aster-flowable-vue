@@ -69,6 +69,7 @@ declare namespace WorkAuth {
    */
   export interface FormDataPermission {
     code: string;
+    isAdmin: boolean;
     formPerms?: string[];
     listPerms?: string[];
     dataPerm?: string;
