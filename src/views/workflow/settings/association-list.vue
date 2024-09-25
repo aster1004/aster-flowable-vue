@@ -112,10 +112,13 @@
           associationList: [],
         };
       }
+      if (!workFlowStore.design.settings.associationList) {
+        workFlowStore.design.settings.associationList = [];
+      }
       return workFlowStore.design.settings.associationList;
     },
     set(val) {
-      if (workFlowStore.design.settings) {
+      if (workFlowStore.design.settings && val) {
         workFlowStore.design.settings.associationList = val;
       }
     },
@@ -129,7 +132,9 @@
   // 手动选中/取消
   const toggleSelection = (item: WorkComponent.TreeNode) => {
     const formInfo = associations.value.find((associate) => associate.value === item.value);
-    tableRef.value!.toggleRowSelection(formInfo, undefined);
+    if (formInfo) {
+      tableRef.value!.toggleRowSelection(formInfo, undefined);
+    }
   };
 
   // 获取关联列表
