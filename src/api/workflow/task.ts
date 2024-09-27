@@ -79,3 +79,15 @@ export const getRecallTaskNodesApi = (taskId: string) => {
     },
   );
 };
+
+/**
+ * @description: 获取流程日志
+ * @param procInstId
+ */
+export const getInstanceLogsApi = (procInstId: string) => {
+  return request.get<WorkForm.InstanceLogs[]>(
+    PORT5 + `/processTask/instance/logs/${procInstId}`,
+    {},
+    { noLoading: true },
+  );
+};

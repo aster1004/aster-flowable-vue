@@ -283,4 +283,29 @@ declare namespace WorkForm {
     // 目标类型,user | node
     targetType?: string;
   }
+
+  /**
+   * 流程日志
+   */
+  export interface InstanceLogs {
+    nodeId: string;
+    taskId?: string;
+    nodeName: string;
+    type: string;
+    approveType?: string;
+    user?: UserInfo;
+    taskComments?: TaskComment;
+    duration?: string;
+    startTime: string;
+    finishTime?: string;
+    procInstId?: string;
+    procDefId?: string;
+  }
+  export interface TaskComment extends Comment {
+    id?: string;
+    taskId?: string;
+    type?: string;
+    user?: User.UserInfo;
+    createTime?: string;
+  }
 }

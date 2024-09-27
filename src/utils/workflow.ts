@@ -11,7 +11,7 @@ import { ElMessage } from 'element-plus';
 import moment, { Moment } from 'moment';
 import { isEmpty, isNotEmpty, isObject } from '.';
 import { evaluate, parse } from './formula';
-import { FormPermissionEnum } from '@/enums/workFlowEnum';
+import { FormPermissionEnum, ProcessButtonTypeEnum } from '@/enums/workFlowEnum';
 
 /**
  * @description: 生成字段id
@@ -933,4 +933,65 @@ export const isConvertItemValue = (
     return source.valueType === ValueType.dateRange;
   }
   return false;
+};
+export const getTaskResult = (instance) => {
+  if (instance.approveResult === ProcessButtonTypeEnum.AGREEN) {
+    return { text: '已同意', type: 'success', icon: 'icon-tongyi', color: '#35B881' };
+  } else if (instance.approveResult === ProcessButtonTypeEnum.DISAGREE) {
+    return { text: '已拒绝', type: 'danger', icon: 'icon-jujue1', color: '#F56C6C' };
+  } else if (instance.approveResult === ProcessButtonTypeEnum.FORWARD) {
+    return { text: '已转交', type: 'primary', icon: 'icon-zhuanjiao1', color: '#409EFF' };
+  } else if (instance.approveResult === ProcessButtonTypeEnum.RECALL) {
+    return { text: '已退回', type: 'danger', icon: 'icon-jurassic_last', color: '#F56C6C' };
+  } else if (!instance.approveResult && instance.finishTime) {
+    return { text: '已取消', type: 'info', icon: 'icon-guanbi1', color: '#E4E4E4' };
+  } else {
+    return { text: '处理中', type: 'warning', icon: 'icon-chulizhong', color: '#F78F5F' };
+  }
+};
+
+/**
+ * 对日期、日期字符串、时间戳进行格式化
+ *
+ * 示例：
+ *
+ * DATETOSTR('12/25/2022', 'YYYY-MM-DD') 得到 '2022.12.25'
+ * DATETOSTR(1676563200, 'YYYY.MM.DD') 得到 '2023.02.17'
+ * DATETOSTR(1676563200000, 'YYYY.MM.DD hh:mm:ss') 得到 '2023.02.17 12:00:00'
+ * DATETOSTR(DATE('2021-12-21'), 'YYYY.MM.DD hh:mm:ss') 得到 '2021.12.21 08:00:00'
+ *
+ * @example DATETOSTR(date, 'YYYY-MM-DD')
+ * @namespace 日期函数
+ * @param {any} date 日期对象、日期字符串、时间戳
+ * @param {string} format 日期格式，默认为 "YYYY-MM-DD HH:mm:ss"
+ *
+ * @returns {string} 日期字符串
+ */
+export const dateFormat = (
+  date: Date | string | number,
+  format: string = 'YYYY-MM-DD HH:mm:ss',
+) => {
+  date = normalizeDate(date);
+  return moment(date).format(format);
+};
+const normalizeDate = (raw: any): Date => {
+  if (typeof raw === 'string' || typeof raw === 'number') {
+    let formats = ['', 'YYYY-MM-DD HH:mm:ss', 'X'];
+
+    if (/^\d{10}((\.\d+)*)$/.test(raw.toString())) {
+      formats = ['X', 'x', 'YYYY-MM-DD HH:mm:ss', ''];
+    } else if (/^\d{13}((\.\d+)*)$/.test(raw.toString())) {
+      formats = ['x', 'X', 'YYYY-MM-DD HH:mm:ss', ''];
+    }
+    while (formats.length) {
+      const format = formats.shift()!;
+      const date = moment(raw, format);
+
+      if (date.isValid()) {
+        return date.toDate();
+      }
+    }
+  }
+
+  return raw;
 };

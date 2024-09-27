@@ -82,3 +82,22 @@ export const buttonPermission = [
     sort: 5,
   },
 ];
+/**
+ * @description：流程定义节点类型
+ */
+export enum ProcessButtonTypeEnum {
+  // 同意
+  AGREEN = 'agree',
+  // 不同意
+  DISAGREE = 'disagree',
+  // 退回
+  RECALL = 'recall',
+  // 转交
+  FORWARD = 'forward',
+  // 加签
+  AFTERADDSIGN = 'afterAddSign',
+  // 撤销
+  REVOKE = 'revoke',
+  // 发起
+  START = 'start',
+}

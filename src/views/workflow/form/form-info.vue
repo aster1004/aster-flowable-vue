@@ -35,12 +35,17 @@
           <span>评论</span>
         </div>
       </div>
-      <div class="process-content" v-else>
-        <el-tabs v-model="processActiveName" class="process-tabs">
-          <el-tab-pane label="流程日志" name="log">User</el-tab-pane>
+      <el-scrollbar v-else class="process-content">
+        <el-tabs v-model="processActiveName" @tab-change="handleTabChange" class="process-tabs">
+          <el-tab-pane label="流程日志" name="log">
+            <div> </div>
+            <div style="height: 100%; max-width: 600px">
+              <flow-logs ref="flowLogsRef" :instance-logs="instanceLogs" />
+            </div>
+          </el-tab-pane>
           <el-tab-pane label="评论" name="comment">Config</el-tab-pane>
         </el-tabs>
-      </div>
+      </el-scrollbar>
       <div class="menu-collapse">
         <div class="ico-button" @click="isCollapse = !isCollapse">
           <i v-if="isCollapse" class="iconfont icon-zuozhijiantou !text-10px"></i>
@@ -51,9 +56,13 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, PropType, ref } from 'vue';
+  import { computed, onMounted, PropType, ref } from 'vue';
   import FormRender from './form-render.vue';
-
+  import { TabPaneName } from 'element-plus';
+  import { getInstanceLogsApi } from '@/api/workflow/task';
+  import { ResultEnum } from '@/enums/httpEnum';
+  import { isNotEmpty } from '@/utils';
+  import FlowLogs from '@/views/workflow/components/process/processlog/flow-logs.vue';
   const emits = defineEmits(['update:formData']);
 
   const props = defineProps({
@@ -79,8 +88,12 @@
       type: String,
       default: '',
     },
+    procInstId: {
+      type: String,
+      default: '',
+    },
   });
-
+  const instanceLogs = ref<WorkForm.InstanceLogs[]>([]);
   // 折叠状态
   const isCollapse = ref<boolean>(true);
   // 活动标签
@@ -98,13 +111,42 @@
 
   /**
    * @description: 打开流程页签
-   * @param {*} activeName 页签name
+   * @param {*} activeName 页签name log | comment and so on
    * @return {*}
    */
   const handleShowTabs = (activeName: string) => {
     isCollapse.value = false;
     processActiveName.value = activeName;
+    getInstanceLogs();
   };
+
+  /**
+   * @description: 页签切换
+   * @param tabName
+   */
+  const handleTabChange = (tabName: TabPaneName) => {
+    console.log(tabName);
+    getInstanceLogs();
+  };
+
+  const getInstanceLogs = () => {
+    instanceLogs.value = [];
+    console.log(props.procInstId);
+    getInstanceLogsApi(props.procInstId).then((res) => {
+      console.info(res);
+      if (res.code == ResultEnum.SUCCESS) {
+        console.info(res);
+        instanceLogs.value = res.data;
+        console.log(instanceLogs.value);
+      }
+    });
+  };
+
+  onMounted(() => {
+    if (isNotEmpty(props.procInstId)) {
+      getInstanceLogs();
+    }
+  });
 </script>
 <style scoped lang="scss">
   .form-body {
@@ -185,6 +227,8 @@
 
       .process-content {
         width: 400px;
+        overflow: auto;
+        background-color: #ffffff;
         background: var(--el-bg-color);
         height: 100%;
         .process-tabs {

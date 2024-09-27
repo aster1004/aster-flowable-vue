@@ -81,6 +81,7 @@
       :form-items="_formItems"
       :form-info="_baseFormInfo"
       :form-status="formStatus"
+      :proc-inst-id="procInstId"
     />
 
     <print-template
@@ -140,6 +141,8 @@
   const formStatus = ref<string>('');
   // 表单实例
   const formInstanceId = ref<string>('');
+  // 流程实例id
+  const procInstId = ref<string>('');
 
   const buttonPermission = ref<WorkForm.ButtonPermission[]>([]); //{name: "agree", operation: "同意", status: true}
   // 表单信息
@@ -359,7 +362,9 @@
         // 表单数据
         const instanceInfo = res.data.instanceInfo;
         console.log(instanceInfo);
+        console.log(instanceInfo['proc_inst_id']);
         taskId.value = instanceInfo['taskId'];
+        procInstId.value = instanceInfo['proc_inst_id'];
         if (isNotEmpty(instanceInfo)) {
           formStatus.value = instanceInfo['form_status'];
           for (const key in instanceInfo) {
