@@ -294,7 +294,7 @@ declare namespace WorkForm {
     type: string;
     approveType?: string;
     user?: UserInfo;
-    taskComments?: TaskComment;
+    taskComments?: TaskComment[];
     duration?: string;
     startTime: string;
     finishTime?: string;

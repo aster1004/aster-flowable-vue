@@ -43,7 +43,12 @@
             <div v-for="comment in item.taskComments">
               <div class="comment-task">
                 <div class="comment-task-avatar">
-                  <flow-avatar :size="40" :src="comment?.user?.avatar" :show-icon="false" />
+                  <flow-avatar
+                    :size="40"
+                    v-if="comment?.user?.avatar"
+                    :src="comment?.user?.avatar"
+                    :show-icon="false"
+                  />
                 </div>
 
                 <div class="comment-task-content">
