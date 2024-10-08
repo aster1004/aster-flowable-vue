@@ -12,30 +12,34 @@
       <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
         <div class="grid-box">
           <div class="grid-column">
-            <el-form-item :label="$t('label.post.postCode')" prop="postCode">
-              <el-input
-                v-model="queryParams.postCode"
-                :placeholder="$t('placeholder.post.postCode')"
+            <el-form-item label="所属表单" prop="appId">
+              <el-cascader
+                v-model="selectedNode"
+                :options="treeNodes"
+                :show-all-levels="false"
                 clearable
+                filterable
+                placeholder="请选择所属表单"
+                @change="handleNodeChange"
+                style="width: 100%"
               />
             </el-form-item>
           </div>
           <div class="grid-column">
-            <el-form-item :label="$t('label.post.postName')" prop="postName">
-              <el-input
-                v-model="queryParams.postName"
-                :placeholder="$t('placeholder.post.postName')"
-                clearable
-              />
+            <el-form-item label="表单名称" prop="title">
+              <el-input v-model="queryParams.title" placeholder="请输入表单名称" clearable />
             </el-form-item>
           </div>
           <div class="grid-column" v-show="!searchCollapsed">
-            <el-form-item :label="$t('label.status')" prop="status">
-              <dict-select
-                v-model="queryParams.status"
-                dict-type="status"
-                clearable
-                :placeholder="$t('placeholder.status')"
+            <el-form-item label="时间范围" prop="startTime">
+              <el-date-picker
+                v-model="dateValue"
+                type="daterange"
+                :range-separator="$t('common.dateRange.separator')"
+                :start-placeholder="$t('common.dateRange.start')"
+                :end-placeholder="$t('common.dateRange.end')"
+                format="YYYY-MM-DD HH:mm:ss"
+                @calendar-change="calendarChange"
               />
             </el-form-item>
           </div>
@@ -67,14 +71,7 @@
     <div class="card table-main">
       <!-- 表格头部 操作按钮 -->
       <div class="table-header">
-        <div class="header-button-lf">
-          <el-button type="primary" v-hasPerm="['sys:post:add']" @click="handleAdd">
-            <i class="iconfont icon-xinzeng pr-5px"></i>{{ $t('button.add') }}
-          </el-button>
-          <el-button type="danger" v-hasPerm="['sys:post:delete']" @click="handleDelete()">
-            <i class="iconfont icon-shanchu pr-5px"></i>{{ $t('button.delete') }}
-          </el-button>
-        </div>
+        <div class="header-button-lf"> </div>
         <div class="header-button-ri">
           <el-tooltip effect="dark" :content="$t('button.refresh')" placement="top">
             <el-button circle @click="handleQuery">
@@ -92,65 +89,51 @@
           </el-tooltip>
         </div>
       </div>
-      <el-table
-        ref="tableRef"
-        :data="dataList"
-        :border="true"
-        row-key="id"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" header-align="center" align="center" width="50" />
+      <el-table ref="tableRef" :data="dataList" :border="true" row-key="id">
+        <el-table-column fixed type="index" width="50" header-align="center" align="center" />
         <el-table-column
-          prop="postCode"
-          :label="$t('label.post.postCode')"
+          prop="dataTitle"
+          label="数据标题"
+          fixed
           header-align="center"
           align="center"
-        />
-        <el-table-column
-          prop="postName"
-          :label="$t('label.post.postName')"
-          header-align="center"
-          align="center"
-        />
-        <el-table-column
-          prop="sort"
-          :label="$t('label.sort')"
-          header-align="center"
-          align="center"
-          width="60"
-        />
-        <el-table-column
-          prop="status"
-          :label="$t('label.status')"
-          header-align="center"
-          align="center"
+          min-width="180"
+          show-overflow-tooltip
         >
           <template #default="scope">
-            <dict-tag dict-type="status" :value="scope.row.status" />
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('label.operate')" align="center" class-name="operation">
-          <template #default="scope">
-            <el-button
-              size="small"
-              link
-              type="primary"
-              @click="handleEdit(scope.row.id)"
-              v-hasPerm="['sys:post:edit']"
-            >
-              <i class="iconfont icon-bianji"></i>{{ $t('button.edit') }}
-            </el-button>
-            <el-button
-              size="small"
-              link
-              type="primary"
-              @click="handleDelete(scope.row.id)"
-              v-hasPerm="['sys:post:delete']"
-            >
-              <i class="iconfont icon-shanchu"></i>{{ $t('button.delete') }}
+            <el-button class="flex" type="primary" link @click="handleDetail(scope.row)">
+              {{ scope.row.dataTitle }}
             </el-button>
           </template>
         </el-table-column>
+        <el-table-column
+          prop="formName"
+          label="所属表单"
+          header-align="center"
+          align="center"
+          min-width="180"
+        />
+        <el-table-column
+          prop="nodeName"
+          label="当前节点"
+          header-align="center"
+          align="center"
+          min-width="120"
+        />
+        <el-table-column
+          prop="startUserName"
+          label="发起人"
+          header-align="center"
+          align="center"
+          min-width="100"
+        />
+        <el-table-column
+          prop="createTime"
+          label="任务到达时间"
+          header-align="center"
+          align="center"
+          min-width="180"
+        />
       </el-table>
 
       <el-pagination
@@ -164,45 +147,52 @@
         @current-change="handleCurrentChange"
       />
     </div>
+
+    <form-detail ref="formDetailRef" @resetQuery="resetQuery" />
   </div>
 </template>
 <script setup lang="ts">
-  import { postPageApi, postDeleteApi } from '@/api/sys/post';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { ElMessage, ElMessageBox } from 'element-plus';
+  import { ElMessage } from 'element-plus';
   import { ref, reactive, onMounted } from 'vue';
-  import DictSelect from '@/components/dict/dict-select.vue';
-  import DictTag from '@/components/dict/dict-tag.vue';
   import { useI18n } from 'vue-i18n';
+  import { TaskStatusEnum } from '@/enums/workFlowEnum';
+  import { getTaskPageApi } from '@/api/workflow/task';
+  import { appFormTreeApi } from '@/api/workflow/app';
+  import FormDetail from '../form/form-detail.vue';
+  import { isNotEmpty, parseTime } from '@/utils';
 
   const { t } = useI18n();
 
   /** 注册组件 */
   const queryForm = ref();
-  const addOrEditRef = ref();
+  const formDetailRef = ref();
   /** 是否显示查询 */
   const showSearch = ref(true);
   /** 默认折叠搜索项 */
   const searchCollapsed = ref(true);
   /** 查询条件 */
-  const queryParams = reactive<Post.PostParams>({
-    postCode: '',
-    postName: '',
-    status: '',
+  const queryParams = reactive<WorkTask.TaskQuery>({
+    title: '',
+    userId: '',
+    appId: '',
+    formCode: '',
+    startTime: '',
+    endTime: '',
+    status: TaskStatusEnum.TODO,
     pageNum: 1,
     pageSize: 10,
   });
   /** 数据列表 */
-  const dataList = ref<Post.PostInfo[]>();
+  const dataList = ref<WorkTask.TaskNodeModel[]>();
   /** 总数 */
   const total = ref<number>(0);
-  /** 已选择列表 */
-  const selectedList = ref<Post.PostInfo[]>();
   const loading = ref(true);
-
-  onMounted(() => {
-    handleQuery();
-  });
+  /** 日期时间 */
+  const dateValue = ref('');
+  // 表单树
+  const treeNodes = ref<WorkComponent.TreeNode[]>([]);
+  const selectedNode = ref<string[]>([]);
 
   /**
    * @description: 重置查询
@@ -211,6 +201,11 @@
   const resetQuery = () => {
     queryForm.value.resetFields();
     queryParams.pageNum = 1;
+    selectedNode.value = [];
+    queryParams.formCode = '';
+    dateValue.value = '';
+    queryParams.startTime = '';
+    queryParams.endTime = '';
     handleQuery();
   };
 
@@ -220,20 +215,15 @@
    */
   const handleQuery = () => {
     loading.value = true;
-    postPageApi(queryParams).then(({ data }) => {
-      dataList.value = data.list;
-      total.value = data.total;
+    getTaskPageApi(queryParams).then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        dataList.value = res.data.list;
+        total.value = res.data.total;
+      } else {
+        ElMessage.error(res.message);
+      }
       loading.value = false;
     });
-  };
-
-  /**
-   * @description: 选择列
-   * @param {*} val
-   * @return {*}
-   */
-  const handleSelectionChange = (val: Post.PostInfo[]) => {
-    selectedList.value = val;
   };
 
   /**
@@ -258,53 +248,59 @@
   };
 
   /**
-   * @description: 新增
+   * @description: 详情
+   * @param {*} row 行数据
    * @return {*}
    */
-  const handleAdd = () => {
-    addOrEditRef.value.init();
+  const handleDetail = (row: WorkTask.TaskNodeModel) => {
+    const code = row.formCode;
+    const procInstId = row.procInstId;
+    formDetailRef.value.getInstanceInfoByInstanceId(code, procInstId);
   };
 
   /**
-   * @description: 修改
-   * @param {string} key
+   * @description: 时间控件change
+   * @param {*} val
    * @return {*}
    */
-  const handleEdit = (key: string) => {
-    addOrEditRef.value.init(key);
+  const calendarChange = (val: [Date, Date]) => {
+    queryParams.startTime = parseTime(val[0]);
+    queryParams.endTime = parseTime(val[1]);
   };
 
   /**
-   * @description: 删除
-   * @param {string} key
+   * @description: 显示应用表单树
    * @return {*}
    */
-  const handleDelete = (key?: string) => {
-    let val: any = [];
-    if (key) {
-      val.push(key);
-    } else {
-      val = selectedList.value?.map((item) => item.id);
-      if (!val || val.length == 0) {
-        ElMessage.warning(t('delete.empty'));
-        return;
+  const getTreeData = () => {
+    appFormTreeApi().then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        treeNodes.value = res.data;
+      } else {
+        ElMessage.error(res.message);
       }
-    }
-    ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
-      confirmButtonText: t('button.confirm'),
-      cancelButtonText: t('button.cancel'),
-      type: 'warning',
-      lockScroll: false,
-    })
-      .then(() => {
-        postDeleteApi(val).then((res) => {
-          if (res.code == ResultEnum.SUCCESS) {
-            ElMessage.success(t('delete.success'));
-            handleQuery();
-          }
-        });
-      })
-      .catch(() => {});
+    });
   };
+
+  /**
+   * @description: 级联选中值变化
+   * @param {string[]} val 选中的值
+   * @return {*}
+   */
+  const handleNodeChange = (val: string[]) => {
+    if (val && isNotEmpty(val) && val.length === 2) {
+      queryParams.appId = val[0];
+      queryParams.formCode = val[1];
+    } else {
+      // 值置空时, 需清空所有数据
+      queryParams.appId = '';
+      queryParams.formCode = '';
+    }
+  };
+
+  onMounted(() => {
+    getTreeData();
+    handleQuery();
+  });
 </script>
 <style lang="scss" scoped></style>

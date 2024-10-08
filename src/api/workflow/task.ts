@@ -91,3 +91,25 @@ export const getInstanceLogsApi = (procInstId: string) => {
     { noLoading: true },
   );
 };
+
+/**
+ * @description: 获取待办/已办任务列表
+ * @param params 查询参数
+ */
+export const getTaskPageApi = (params: WorkTask.TaskQuery) => {
+  return request.post<Page.ResPage<WorkTask.TaskNodeModel>>(PORT5 + `/processTask/page`, params, {
+    noLoading: false,
+  });
+};
+
+/**
+ * @description: 获取已发起的流程列表
+ * @param params 查询参数
+ */
+export const getMyStartedApi = (params: WorkTask.TaskQuery) => {
+  return request.post<Page.ResPage<WorkTask.MyStartedModel>>(
+    PORT5 + `/processTask/started`,
+    params,
+    { noLoading: true },
+  );
+};

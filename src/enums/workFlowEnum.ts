@@ -101,3 +101,17 @@ export enum ProcessButtonTypeEnum {
   // 发起
   START = 'start',
 }
+
+/**
+ * @description：任务列表状态
+ */
+export enum TaskStatusEnum {
+  // 待办
+  TODO = 'todo',
+  // 已办
+  COMPLETE = 'complete',
+  // 我发起的
+  STARTED = 'started',
+  // 抄送我的
+  COPY = 'copy',
+}
