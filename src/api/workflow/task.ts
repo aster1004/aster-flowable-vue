@@ -103,7 +103,7 @@ export const getTaskPageApi = (params: WorkTask.TaskQuery) => {
 };
 
 /**
- * @description: 获取已发起的流程列表
+ * @description: 获取我发起的流程列表
  * @param params 查询参数
  */
 export const getMyStartedApi = (params: WorkTask.TaskQuery) => {

@@ -451,6 +451,9 @@ export function getStaticResource(relativePath: string) {
  * @return {*}
  */
 export function convertMilliSecond(milliSecond: number) {
+  if (!milliSecond || milliSecond == 0) {
+    return '';
+  }
   if (milliSecond < 1000) {
     return milliSecond + '毫秒';
   } else if (milliSecond >= 1000 && milliSecond < 60000) {

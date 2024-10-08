@@ -58,9 +58,10 @@ declare namespace WorkTask {
     formStatus?: string;
     version?: number;
     startUserId?: string;
-    startUserName?: string;
-    startUserAvatar?: string;
+    nodeKey?: string;
+    nodeName?: string;
     startTime?: string;
     endTime?: string;
+    duration?: number;
   }
 }
