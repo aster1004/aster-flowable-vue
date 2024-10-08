@@ -39,6 +39,9 @@ declare namespace WorkTask {
     startUserName?: string;
     startUserAvatar?: string;
     createTime?: string;
+    startTime?: string;
+    endTime?: string;
+    duration?: number;
   }
 
   /**

@@ -1,8 +1,8 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-05-22 16:11:38
- * @FilePath: \aster-flowable-vue\src\views\workflow\workbench\todo-list.vue
- * @Description: 待办任务
+ * @FilePath: \aster-flowable-vue\src\views\workflow\workbench\complete-list.vue
+ * @Description: 已办任务
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
@@ -128,12 +128,30 @@
           min-width="100"
         />
         <el-table-column
-          prop="createTime"
+          prop="startTime"
           label="任务到达时间"
           header-align="center"
           align="center"
           min-width="180"
         />
+        <el-table-column
+          prop="endTime"
+          label="任务完成时间"
+          header-align="center"
+          align="center"
+          min-width="180"
+        />
+        <el-table-column
+          prop="duration"
+          label="任务耗时"
+          header-align="center"
+          align="center"
+          min-width="180"
+        >
+          <template #default="scope">
+            {{ convertMilliSecond(scope.row.duration) }}
+          </template>
+        </el-table-column>
       </el-table>
 
       <el-pagination
@@ -160,7 +178,7 @@
   import { getTaskPageApi } from '@/api/workflow/task';
   import { appFormTreeApi } from '@/api/workflow/app';
   import FormDetail from '../form/form-detail.vue';
-  import { isNotEmpty, parseTime } from '@/utils';
+  import { isNotEmpty, parseTime, convertMilliSecond } from '@/utils';
 
   const { t } = useI18n();
 
@@ -179,7 +197,7 @@
     formCode: '',
     startTime: '',
     endTime: '',
-    status: TaskStatusEnum.TODO,
+    status: TaskStatusEnum.COMPLETE,
     pageNum: 1,
     pageSize: 10,
   });

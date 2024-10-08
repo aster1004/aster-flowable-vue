@@ -444,3 +444,20 @@ export function parseTime(time: any, pattern?: string) {
 export function getStaticResource(relativePath: string) {
   return new URL(relativePath, import.meta.url).href;
 }
+
+/**
+ * @description: 毫秒转时分秒
+ * @param {*}
+ * @return {*}
+ */
+export function convertMilliSecond(milliSecond: number) {
+  if (milliSecond < 1000) {
+    return milliSecond + '毫秒';
+  } else if (milliSecond >= 1000 && milliSecond < 60000) {
+    return (milliSecond / 1000).toFixed(1) + '秒';
+  } else if (milliSecond >= 60000 && milliSecond < 3600000) {
+    return (milliSecond / 60000).toFixed(1) + '分钟';
+  } else {
+    return (milliSecond / 3600000).toFixed(1) + '小时';
+  }
+}
