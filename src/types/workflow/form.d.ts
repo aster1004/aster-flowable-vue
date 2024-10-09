@@ -225,6 +225,17 @@ declare namespace WorkForm {
     adcode?: string;
   }
 
+  export interface SignatureCombineModel {
+    // 签名
+    signature: string;
+    // 签章
+    signatureCombine: string;
+    // 签章时间
+    date: string;
+    // 签章内容
+    comment: string;
+  }
+
   export interface AssocaitionListModel {
     id?: string;
     code?: string;

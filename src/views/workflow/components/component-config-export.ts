@@ -535,13 +535,47 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
     },
     {
       id: '',
+      title: '签章',
+      name: 'SignatureCombine',
+      icon: 'iconfont icon-shenpi',
+      value: {
+        signature: '',
+        signatureCombine:
+          'http://localhost:8081/aster-flowable/upload/20241009/qianzhang_66368.png',
+        date: '',
+        comment: '',
+      },
+      valueType: ValueType.object,
+      props: {
+        // 必填
+        required: false,
+        // 隐藏
+        hidden: '',
+        // 只读
+        readonly: false,
+        // 提示
+        placeholder: '请输入内容',
+        // 显示签名
+        showSignature: true,
+        // 显示本地签名
+        showLocal: false,
+        // 显示盖章
+        showSignatureCombine: true,
+        // 签章大小
+        signSize: 100,
+        // 显示日期
+        showDate: true,
+      },
+    },
+    {
+      id: '',
       title: '关联表单',
       name: 'AssociatedForm',
       icon: 'iconfont icon-guanlianbiaodan',
       value: { label: '', value: '' },
       valueType: ValueType.object,
+      // 必填
       props: {
-        // 必填
         required: false,
         // 隐藏
         hidden: '',
