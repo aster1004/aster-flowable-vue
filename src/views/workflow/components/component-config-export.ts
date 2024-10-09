@@ -540,8 +540,7 @@ const advancedComponentConfig: WorkComponent.ComponentConfigGroup = {
       icon: 'iconfont icon-shenpi',
       value: {
         signature: '',
-        signatureCombine:
-          'http://localhost:8081/aster-flowable/upload/20241009/qianzhang_66368.png',
+        signatureCombine: '',
         date: '',
         comment: '',
       },
