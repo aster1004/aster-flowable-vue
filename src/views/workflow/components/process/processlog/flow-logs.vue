@@ -54,7 +54,10 @@
 
           <div v-for="item in instanceItem">
             <!-- 任务处理人 -->
-            <div class="step-assign" v-if="isNotEmpty(item.taskComments)">
+            <div
+              class="step-assign"
+              v-if="isNotEmpty(item.taskComments) && isUnDef(item.taskComments)"
+            >
               <div class="comment-content">
                 <div v-for="comment in item.taskComments">
                   <div class="step-assign-top" v-if="item.taskComments.length > 1">
@@ -130,7 +133,7 @@
   </el-steps>
 </template>
 <script setup lang="ts">
-  import { isDef, isNotEmpty } from '@/utils';
+  import { isDef, isNotEmpty, isUnDef } from '@/utils';
   import {
     dateFormat,
     getApproveName,
