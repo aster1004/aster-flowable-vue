@@ -40,7 +40,7 @@
           <el-tab-pane label="流程日志" name="log">
             <div> </div>
             <div style="height: 100%; max-width: 600px">
-              <flow-logs ref="flowLogsRef" :instance-logs="instanceLogs" />
+              <flow-logs ref="flowLogsRef" :process-result="processResult" />
             </div>
           </el-tab-pane>
           <el-tab-pane label="评论" name="comment">Config</el-tab-pane>
@@ -93,7 +93,9 @@
       default: '',
     },
   });
-  const instanceLogs = ref<WorkForm.InstanceLogs[]>([]);
+  const instanceLogs = ref<WorkForm.InstanceLogsList>([]);
+  const processResult = ref<WorkForm.ProcessResult>();
+
   // 折叠状态
   const isCollapse = ref<boolean>(true);
   // 活动标签
@@ -136,8 +138,7 @@
       console.info(res);
       if (res.code == ResultEnum.SUCCESS) {
         console.info(res);
-        instanceLogs.value = res.data;
-        console.log(instanceLogs.value);
+        processResult.value = res.data;
       }
     });
   };

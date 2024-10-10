@@ -101,6 +101,11 @@ export enum ProcessButtonTypeEnum {
   // 发起
   START = 'start',
 }
+export enum ApprovalModeEnum {
+  AND = 'AND', //会签(可同时审批，须全部同意)
+  ORDER = 'ORDER', //会签(按选择顺序审批，须全部同意，不支持加签)
+  OR = 'OR', //或签(有一人同意即可)
+}
 
 /**
  * @description：任务列表状态
@@ -114,4 +119,18 @@ export enum TaskStatusEnum {
   STARTED = 'started',
   // 抄送我的
   COPY = 'copy',
+}
+
+/**
+ * 整体流程的状态
+ */
+export enum ProcessResultEnum {
+  // 处理中
+  PROCESSING = 'processing',
+  // 流程被撤销
+  REVOKE_END = 'revoke-end',
+  // 流程被驳回
+  DISAGREE_END = 'disagree-end',
+  // 结束,流程正常结束
+  END = 'end',
 }

@@ -302,15 +302,16 @@ declare namespace WorkForm {
     nodeId: string;
     taskId?: string;
     nodeName: string;
-    type: string;
-    approveType?: string;
-    user?: UserInfo;
+    type: string; //0 发起人 1审批 2抄送 3条件 4路由 5并行分支 6包容网关
+    approveType?: string; //节点会签类型,AND（会签），ORDER（顺序会签），OR（或签）
+    user?: User.UserInfo;
     taskComments?: TaskComment[];
     duration?: string;
     startTime: string;
     finishTime?: string;
     procInstId?: string;
     procDefId?: string;
+    approveResult?: string; //审核结果，如同意、驳回、撤销、转交、加签、退回,发起
   }
   export interface TaskComment extends Comment {
     id?: string;
@@ -318,5 +319,12 @@ declare namespace WorkForm {
     type?: string;
     user?: User.UserInfo;
     createTime?: string;
+  }
+
+  export type InstanceLogsList = InstanceLogs[];
+  export interface ProcessResult {
+    instanceLogs: InstanceLogsList[];
+    processResult?: string;
+    processResultText?: string;
   }
 }

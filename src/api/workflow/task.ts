@@ -85,7 +85,7 @@ export const getRecallTaskNodesApi = (taskId: string) => {
  * @param procInstId
  */
 export const getInstanceLogsApi = (procInstId: string) => {
-  return request.get<WorkForm.InstanceLogs[]>(
+  return request.get<WorkForm.ProcessResult>(
     PORT5 + `/processTask/instance/logs/${procInstId}`,
     {},
     { noLoading: true },
