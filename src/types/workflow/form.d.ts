@@ -313,6 +313,10 @@ declare namespace WorkForm {
     procDefId?: string;
     approveResult?: string; //审核结果，如同意、驳回、撤销、转交、加签、退回,发起
   }
+
+  /**
+   * 任务评论
+   */
   export interface TaskComment extends Comment {
     id?: string;
     taskId?: string;
@@ -322,9 +326,13 @@ declare namespace WorkForm {
   }
 
   export type InstanceLogsList = InstanceLogs[];
+
+  /**
+   * 流程结果
+   */
   export interface ProcessResult {
     instanceLogs: InstanceLogsList[];
-    processResult?: string;
-    processResultText?: string;
+    approveResult?: string; //processing,end,disgree-end,refuse-end
+    approveResultText?: string; //上边对应的文字描述
   }
 }

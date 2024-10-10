@@ -177,7 +177,7 @@
   watchEffect(() => {
     if (isNotEmpty(props.processResult)) {
       // 获取数组props.instanceLogs的最后一个
-      if (props.processResult.processResult === ProcessResultEnum.PROCESSING) {
+      if (props.processResult.approveResult === ProcessResultEnum.PROCESSING) {
         lastNode.iconFont = 'icon-gengduo1';
         lastNode.color = '#A8A8A8';
       } else {
@@ -186,9 +186,9 @@
       }
       lastNode.size = '30px';
       lastNode.nodeName =
-        props.processResult.processResult === ProcessResultEnum.END
+        props.processResult.approveResult === ProcessResultEnum.END
           ? '审批通过'
-          : props.processResult.processResultText;
+          : props.processResult.approveResultText;
     }
   });
   const instanceLogs = computed(() => {
@@ -236,7 +236,7 @@
         case ProcessButtonTypeEnum.AGREEN:
           return '';
         case ProcessButtonTypeEnum.DISAGREE:
-          return '拒绝';
+          return '';
         case ProcessButtonTypeEnum.FORWARD:
           return '转交给：' + operationType.targetName;
         case ProcessButtonTypeEnum.RECALL:
@@ -244,7 +244,7 @@
         case ProcessButtonTypeEnum.AFTERADDSIGN:
           return '加签给：' + operationType.targetName;
         case ProcessButtonTypeEnum.REVOKE:
-          return '撤销';
+          return '';
         default:
           return '未知操作类型！！！';
       }
