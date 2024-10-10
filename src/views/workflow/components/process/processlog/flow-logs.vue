@@ -54,20 +54,17 @@
 
           <div v-for="item in instanceItem">
             <!-- 任务处理人 -->
-            <div
-              class="step-assign"
-              v-if="isNotEmpty(item.taskComments) && isUnDef(item.taskComments)"
-            >
+            <div class="step-assign" v-if="isNotEmpty(item.taskComments)">
               <div class="comment-content">
                 <div v-for="comment in item.taskComments">
-                  <div class="step-assign-top" v-if="item.taskComments.length > 1">
+                  <div class="step-assign-top" v-if="instanceItem.length > 1">
                     <div style="display: flex; flex-direction: row; align-items: center">
                       <flow-avatar
                         :size="30"
                         v-if="item?.user?.avatar"
                         :src="comment?.user?.avatar"
                       />
-                      <div style="color: black">
+                      <div style="color: black; margin-left: -10px">
                         {{ comment?.user?.realName }}
                       </div>
                       <el-tag style="margin-left: 8px" size="small" round>
@@ -78,7 +75,15 @@
                       dateFormat(comment.createTime as string, 'YYYY-MM-DD HH:mm')
                     }}</div>
                   </div>
-                  <div class="comment-task" v-if="isNotEmpty(comment)">
+                  <div
+                    class="comment-task"
+                    v-if="
+                      isNotEmpty(comment?.opinion) ||
+                      isNotEmpty(comment?.imageList) ||
+                      isNotEmpty(comment?.fileList) ||
+                      isNotEmpty(getOperationDesc(comment))
+                    "
+                  >
                     <div class="comment-task-content">
                       <div>
                         <el-tag
