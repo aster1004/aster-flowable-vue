@@ -99,17 +99,22 @@
                       </div>
                       <div class="comment-task-image" v-if="isNotEmpty(comment?.imageList)">
                         <div class="image-preview">
-                          <img
-                            class="image-list"
-                            v-for="img in comment?.imageList"
-                            :src="img.url"
-                            :alt="img.name"
-                          />
+                          <div class="image-list" v-for="img in comment?.imageList">
+                            <img class="image-item" :src="img.url" :alt="img.name" />
+                            <span class="image-actions">
+                              <span @click="handlePreview(img)">
+                                <i class="iconfont icon-zoom-in px-3px"></i>
+                              </span>
+                              <span @click="handleDownload(img)">
+                                <i class="iconfont icon-xiazai px-3px"></i>
+                              </span>
+                            </span>
+                          </div>
                         </div>
                       </div>
 
                       <div class="comment-task-image" v-if="isNotEmpty(comment?.fileList)">
-                        <div style="color: #1e83e9" v-for="file in comment?.imageList">
+                        <div style="color: #1e83e9" v-for="file in comment?.fileList">
                           <span>{{ file.name }}</span>
                         </div>
                       </div>
@@ -136,6 +141,11 @@
       </template>
     </el-step>
   </el-steps>
+  <el-dialog v-model="previewVisible" :title="'预览-' + previewFile.name" :lock-scroll="false">
+    <div class="image-preview">
+      <img style="width: 100%" :src="previewFile.url" :alt="previewFile.name" />
+    </div>
+  </el-dialog>
 </template>
 <script setup lang="ts">
   import { isDef, isNotEmpty, isUnDef } from '@/utils';
@@ -148,6 +158,10 @@
   import FlowAvatar from '@/views/workflow/components/process/processlog/flow-avatar.vue';
   import { ProcessButtonTypeEnum, ProcessResultEnum } from '@/enums/workFlowEnum';
   import { reactive, ref, watchEffect, computed, PropType } from 'vue';
+  import { ElMessage, ElMessageBox, UploadProps } from 'element-plus';
+  import { downloadFileByUrl } from '@/utils/fileUtils';
+  import { useI18n } from 'vue-i18n';
+  const { t } = useI18n();
 
   const props = defineProps({
     processResult: {
@@ -155,12 +169,23 @@
       default: () => {},
     },
   });
+
+  // 最后一个节点
   const lastNode = reactive({
     size: 45,
     iconFont: 'icon-gengduo1',
     nodeName: '',
     color: '',
   });
+
+  // 显示预览
+  const previewVisible = ref<boolean>(false);
+  // 预览图片url
+  const previewFile = ref<WorkForm.FileModel>({
+    name: '',
+    url: '',
+  });
+
   /**
    * 获取任务处理结果、图标、颜色等
    * @param item
@@ -174,7 +199,9 @@
       return ''; //getTaskResult(item[0]).icon;
     }
   };
+
   watchEffect(() => {
+    // 构造最后一个节点，包括流程状态
     if (isNotEmpty(props.processResult)) {
       // 获取数组props.instanceLogs的最后一个
       if (props.processResult.approveResult === ProcessResultEnum.PROCESSING) {
@@ -191,9 +218,11 @@
           : props.processResult.approveResultText;
     }
   });
+
   const instanceLogs = computed(() => {
     return props.processResult.instanceLogs;
   });
+
   /**
    * 获取会签头像、图标、icon等
    * @param item
@@ -229,6 +258,10 @@
     }
   };
 
+  /**
+   * 获取任务处理结果描述
+   * @param item
+   */
   const getOperationDesc = (item?: any) => {
     const operationType = item.operationType;
     if (isNotEmpty(operationType) && isDef(operationType)) {
@@ -248,6 +281,38 @@
         default:
           return '未知操作类型！！！';
       }
+    }
+  };
+
+  /**
+   * @description: 预览图片
+   * @return {*}
+   */
+  const handlePreview: UploadProps['onPreview'] = (file: any) => {
+    previewFile.value = {
+      name: file.name,
+      url: file.url,
+    };
+    previewVisible.value = true;
+  };
+
+  /**
+   * @description: 下载图片
+   * @param {*} file
+   * @return {*}
+   */
+  const handleDownload = (file: any) => {
+    if (isNotEmpty(file.url)) {
+      ElMessageBox.confirm('是否要下载此图片?', t('common.tips'), {
+        confirmButtonText: t('button.confirm'),
+        cancelButtonText: t('button.cancel'),
+        type: 'warning',
+        lockScroll: false,
+      }).then(async () => {
+        downloadFileByUrl(file.url, file.name);
+      });
+    } else {
+      ElMessage.error('图片不存在');
     }
   };
 </script>
@@ -348,11 +413,43 @@
     flex-wrap: wrap;
   }
   .image-list {
-    width: 27%;
-    margin: 4px;
+    width: 80px;
+    height: 80px;
+    border: 1px solid #dcdfe6;
+    position: relative;
+    border-radius: 5px;
+    margin: 5px;
+  }
+  .image-item {
+    width: 100%;
+    height: 100%;
     border-radius: 5px;
   }
-  ::v-deep(.iconfont::before) {
-    background-color: #fff;
+
+  .image-actions {
+    align-items: center;
+    background-color: var(--el-overlay-color-lighter);
+    cursor: default;
+    color: #fff;
+    display: inline-flex;
+    font-size: 20px;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+  .image-actions:hover {
+    opacity: 1;
+    border-radius: 6px;
+  }
+  .image-actions span {
+    cursor: pointer;
+    display: none;
+  }
+  .image-actions:hover span {
+    display: inline-flex;
   }
 </style>
