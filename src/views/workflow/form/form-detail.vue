@@ -12,6 +12,7 @@
     :lock-scroll="false"
     :size="drawerSize"
     :append-to-body="true"
+    :before-close="handleBeforeClose"
   >
     <template #header="{ close }">
       <div class="form-header">
@@ -128,6 +129,7 @@
   import ListAssociation from '../list/list-association.vue';
   import PrintTemplate from '../settings/print-template.vue';
   import ApproveTask from '@/views/workflow/components/common/approve-task.vue';
+
   const emits = defineEmits(['resetQuery']); // 关闭详情弹框
   // 显示抽屉
   const visible = ref(false);
@@ -175,6 +177,7 @@
   // 注册组件
   const associationListRefs: any[] = [];
   const printTemplateRef = ref();
+  const formInfoRef = ref();
   // 查询参数
   const queryParams = reactive<Process.InstanceQueryParams>({
     id: '',
@@ -278,6 +281,16 @@
     setTimeout(() => {
       emits('resetQuery'); // 提交成功，刷新
     }, 400);
+  };
+
+  /**
+   * @description: 关闭前的处理
+   * @return {*}
+   */
+  const handleBeforeClose = (done: () => void) => {
+    console.log('b--->');
+    formInfoRef.value.isCollapse = true;
+    done();
   };
 
   /**

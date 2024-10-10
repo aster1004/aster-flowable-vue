@@ -47,7 +47,7 @@
         </el-tabs>
       </el-scrollbar>
       <div class="menu-collapse">
-        <div class="ico-button" @click="isCollapse = !isCollapse">
+        <div class="ico-button" @click="handleCollapse">
           <i v-if="isCollapse" class="iconfont icon-zuozhijiantou !text-10px"></i>
           <i v-else class="iconfont icon-youzhijiantou !text-10px"></i>
         </div>
@@ -56,9 +56,9 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, onMounted, PropType, ref } from 'vue';
+  import { computed, PropType, ref } from 'vue';
   import FormRender from './form-render.vue';
-  import { TabPaneName } from 'element-plus';
+  import { ElMessage, TabPaneName } from 'element-plus';
   import { getInstanceLogsApi } from '@/api/workflow/task';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isNotEmpty } from '@/utils';
@@ -93,9 +93,13 @@
       default: '',
     },
   });
-  const instanceLogs = ref<WorkForm.InstanceLogsList>([]);
-  const processResult = ref<WorkForm.ProcessResult>();
 
+  // 流程日志
+  const processResult = ref<WorkForm.ProcessResult>({
+    instanceLogs: [],
+    approveResult: '',
+    approveResultText: '',
+  });
   // 折叠状态
   const isCollapse = ref<boolean>(true);
   // 活动标签
@@ -131,22 +135,32 @@
     getInstanceLogs();
   };
 
-  const getInstanceLogs = () => {
-    instanceLogs.value = [];
-    console.log(props.procInstId);
-    getInstanceLogsApi(props.procInstId).then((res) => {
-      console.info(res);
+  /**
+   * @description: 获取流程日志
+   */
+  const getInstanceLogs = async () => {
+    processResult.value = { instanceLogs: [], approveResult: '', approveResultText: '' };
+    await getInstanceLogsApi(props.procInstId).then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
-        console.info(res);
         processResult.value = res.data;
+      } else {
+        ElMessage.error(res.message);
       }
     });
   };
 
-  onMounted(() => {
-    if (isNotEmpty(props.procInstId)) {
+  /**
+   * @description: 折叠
+   */
+  const handleCollapse = () => {
+    isCollapse.value = !isCollapse.value;
+    if (!isCollapse.value && isNotEmpty(props.procInstId)) {
       getInstanceLogs();
     }
+  };
+
+  defineExpose({
+    isCollapse,
   });
 </script>
 <style scoped lang="scss">
