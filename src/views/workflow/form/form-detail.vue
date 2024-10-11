@@ -64,6 +64,7 @@
           :form-items="_formItems"
           :form-info="_baseFormInfo"
           :form-status="formStatus"
+          :proc-inst-id="procInstId"
         />
       </el-tab-pane>
       <el-tab-pane
@@ -374,8 +375,6 @@
         }
         // 表单数据
         const instanceInfo = res.data.instanceInfo;
-        console.log(instanceInfo);
-        console.log(instanceInfo['proc_inst_id']);
         taskId.value = instanceInfo['taskId'];
         procInstId.value = instanceInfo['proc_inst_id'];
         if (isNotEmpty(instanceInfo)) {
@@ -418,23 +417,24 @@
    */
   const getInstanceInfoByInstanceId = async (
     code: string,
-    procInstId: string,
+    procInstId1: string,
     isAssociatedForm = false,
   ) => {
-    if (isEmpty(procInstId) || isEmpty(code)) {
+    if (isEmpty(procInstId1) || isEmpty(code)) {
       ElMessage.error('参数错误');
       return;
     }
+    procInstId.value = procInstId1;
     // 是否关联数据
     isAssociated.value = isAssociatedForm;
-    await instanceInfoByInstanceIdApi(code, procInstId).then((res) => {
+    await instanceInfoByInstanceIdApi(code, procInstId1).then((res) => {
       if (res.code === ResultEnum.SUCCESS) {
         // 表单信息
         const formDesignInfo = res.data.formInfo;
         if (isNotEmpty(formDesignInfo)) {
           formInfo.value = formDesignInfo;
           // 查询关联表单信息
-          getAssociationList(procInstId);
+          getAssociationList(procInstId1);
         }
         // 表单权限
         if (res.data.formPermission) {
@@ -442,6 +442,7 @@
         }
         // 表单数据
         const instanceInfo = res.data.instanceInfo;
+        taskId.value = instanceInfo['taskId'];
         if (isNotEmpty(instanceInfo)) {
           formStatus.value = instanceInfo['form_status'];
           for (const key in instanceInfo) {
@@ -453,6 +454,14 @@
               );
             }
           }
+        }
+        // 当前节点配置信息，包括按钮、表单权限
+        const nodeConfigInfo = res.data.nodeConfig;
+        // 获取按钮权限列表
+        if (isNotEmpty(nodeConfigInfo)) {
+          buttonPermission.value = nodeConfigInfo?.buttonPermission || [];
+        } else {
+          buttonPermission.value = [];
         }
 
         // 显示抽屉
