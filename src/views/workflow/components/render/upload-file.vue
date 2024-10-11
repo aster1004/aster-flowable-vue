@@ -14,7 +14,7 @@
       :show-message="showMessage"
     >
       <template #label>
-        <span v-show="showLabel">{{ formItem.title }}</span>
+        <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
       </template>
       <div v-if="mode === 'design'">
         <div class="file-empty">
@@ -58,15 +58,17 @@
         </span>
       </div>
     </el-form-item>
-    <div v-else class="print-file">
-      <div class="print-file-label">
-        <span v-show="showLabel">{{ formItem.title }}</span>
+    <div v-else class="print-file" ref="printRef">
+      <div class="print-file-label" :style="{ height: printMaxHeight + 'px' }">
+        <span ref="printLabelRef" v-show="showLabel">{{ formItem.title }}</span>
       </div>
-      <div class="print-file-value">
-        <div v-for="(item, index) in _value" :key="index">
-          <p>
-            {{ item.name }}
-          </p>
+      <div class="print-file-value" :style="{ height: printMaxHeight + 'px' }">
+        <div ref="printValueRef">
+          <div v-for="(item, index) in _value" :key="index">
+            <p>
+              {{ item.name }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -88,7 +90,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, ref } from 'vue';
+  import { computed, nextTick, onMounted, PropType, ref } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import { ImageUpload } from '@/config/fileConfig';
@@ -143,6 +145,22 @@
   });
   // 可以预览的文件后缀
   const fileExtensions = ref(['.pdf', '.doc,.docx', '.xls,.xlsx', '.ppt,.pptx', '.txt,.csv']);
+
+  // 打印 宽度
+  const printRef = ref();
+  const printLabelRef = ref();
+  const printValueRef = ref();
+  const printMaxHeight = ref(32);
+
+  /**
+   * @description: 更新高度
+   */
+  const updateHeight = () => {
+    const parentHeight = printRef.value.parentNode.offsetHeight;
+    const labelHeight = printLabelRef.value.offsetHeight;
+    const valueHeight = printValueRef.value.offsetHeight;
+    printMaxHeight.value = Math.max(parentHeight, labelHeight, valueHeight);
+  };
 
   // 键
   const formItemProp = computed(() => {
@@ -353,6 +371,14 @@
       ElMessage.error('附件不存在');
     }
   };
+
+  onMounted(() => {
+    if (props.mode === 'print') {
+      nextTick(() => {
+        updateHeight();
+      });
+    }
+  });
 
   defineExpose({
     _hidden,

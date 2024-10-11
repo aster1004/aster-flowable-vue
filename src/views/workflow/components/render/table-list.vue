@@ -9,7 +9,7 @@
   <div v-if="!_hidden">
     <el-form v-if="mode === 'design'" class="table-list">
       <div class="table-list-title">
-        <span class="text-sm">{{ formItem.title }}</span>
+        <span class="text-sm" style="line-height: normal">{{ formItem.title }}</span>
       </div>
       <el-row>
         <el-col :span="18" class="table-list-border">
@@ -83,7 +83,7 @@
     <div v-else-if="mode == 'form'">
       <div class="table-list-main" :id="formItem.id">
         <div class="flex items-center justify-between pb-5px">
-          <span class="text-sm font-600">{{ formItem.title }}</span>
+          <span class="text-sm font-600" style="line-height: normal">{{ formItem.title }}</span>
         </div>
         <el-table
           :data="_value"

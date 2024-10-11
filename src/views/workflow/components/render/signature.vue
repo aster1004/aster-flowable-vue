@@ -14,7 +14,7 @@
       :show-message="showMessage"
     >
       <template #label>
-        <span v-show="showLabel">{{ formItem.title }}</span>
+        <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
       </template>
       <div v-if="mode === 'design'">
         <div class="sign-design">
@@ -43,19 +43,24 @@
         @success="handleSuccess"
       />
     </el-form-item>
-    <div v-else class="print-image">
-      <div class="print-image-label">
-        <span v-show="showLabel">{{ formItem.title }}</span>
+    <div v-else class="print-image" ref="printRef">
+      <div class="print-image-label" :style="{ height: printMaxHeight + 'px' }">
+        <span ref="printLabelRef" v-show="showLabel">{{ formItem.title }}</span>
       </div>
-      <div class="print-image-value">
-        <el-image v-if="isNotEmpty(_value)" style="height: 100px" :src="_value" />
+      <div class="print-image-value" :style="{ height: printMaxHeight + 'px' }">
+        <el-image
+          ref="printValueRef"
+          v-if="isNotEmpty(_value)"
+          style="height: 100px"
+          :src="_value"
+        />
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { ref, computed, PropType } from 'vue';
+  import { ref, computed, nextTick, onMounted, PropType } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import Sign from '@/components/sign/index.vue';
@@ -92,6 +97,22 @@
       default: true,
     },
   });
+
+  // 打印 宽度
+  const printRef = ref();
+  const printLabelRef = ref();
+  const printValueRef = ref();
+  const printMaxHeight = ref(32);
+
+  /**
+   * @description: 更新高度
+   */
+  const updateHeight = () => {
+    const parentHeight = printRef.value.parentNode.offsetHeight;
+    const labelHeight = printLabelRef.value.offsetHeight;
+    const valueHeight = printValueRef.value.offsetHeight;
+    printMaxHeight.value = Math.max(parentHeight, labelHeight, valueHeight);
+  };
 
   // 注册组件
   const signRef = ref();
@@ -185,6 +206,14 @@
       r = r || props.formItem.operation[0] == FormPermissionEnum.READONLY;
     }
     return r;
+  });
+
+  onMounted(() => {
+    if (props.mode === 'print') {
+      nextTick(() => {
+        updateHeight();
+      });
+    }
   });
 
   defineExpose({

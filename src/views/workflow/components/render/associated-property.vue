@@ -15,7 +15,7 @@
         style="width: 100%"
       >
         <template #label>
-          <span v-show="showLabel">{{ formItem.title }}</span>
+          <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
         </template>
         <span class="label-tip"> 用于展示关联表单的属性, 且数据不会保存 </span>
       </el-form-item>

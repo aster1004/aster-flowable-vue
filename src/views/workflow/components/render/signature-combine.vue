@@ -14,7 +14,7 @@
       :show-message="showMessage"
     >
       <template #label>
-        <span v-show="showLabel">{{ formItem.title }}</span>
+        <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
       </template>
       <div class="sign-combine-container" v-if="mode === 'design'">
         <div class="sign-combine-content">
@@ -88,12 +88,35 @@
       </span>
       <Sign ref="signRef" :show-local="formItem.props.showLocal" @success="handleSuccess" />
     </el-form-item>
-    <div v-else class="print-image">
-      <div class="print-image-label">
+
+    <div v-else class="print-sign-combine">
+      <div class="print-sign-combine-label">
         <span v-show="showLabel">{{ formItem.title }}</span>
       </div>
-      <div class="print-image-value">
-        <el-image v-if="isNotEmpty(_value)" style="height: 100px" :src="_value" />
+      <div class="print-sign-combine-value">
+        <div>
+          {{ _value.comment }}
+        </div>
+        <div class="sign-combine-footer">
+          <el-row>
+            <el-col :span="12">
+              <div style="position: absolute; bottom: 0"> (签字并盖章) </div>
+            </el-col>
+            <el-col :span="12">
+              <div class="sign-combine-preview" :style="_signStyle">
+                <img
+                  v-if="isNotEmpty(_value.signatureCombine) && formItem.props.showSignatureCombine"
+                  :src="_value.signatureCombine"
+                />
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <div class="flex justify-end w-full">
+              <p>{{ _signDates[0] }} 年 {{ _signDates[1] }} 月 {{ _signDates[2] }} 日</p>
+            </div>
+          </el-row>
+        </div>
       </div>
     </div>
 

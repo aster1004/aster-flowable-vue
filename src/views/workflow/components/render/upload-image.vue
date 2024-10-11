@@ -14,7 +14,7 @@
       :show-message="showMessage"
     >
       <template #label>
-        <span v-show="showLabel">{{ formItem.title }}</span>
+        <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
       </template>
       <div v-if="mode === 'design'">
         <div class="image-empty">
@@ -75,20 +75,21 @@
         </span>
       </div>
     </el-form-item>
-    <div v-else class="print-file">
-      <div class="print-file-label">
-        <span v-show="showLabel">{{ formItem.title }}</span>
+    <div v-else class="print-file" ref="printRef">
+      <div class="print-file-label" :style="{ height: printMaxHeight + 'px' }">
+        <span ref="printLabelRef" v-show="showLabel">{{ formItem.title }}</span>
       </div>
-      <div class="print-file-value">
-        <!-- <div v-for="(item, index) in _value" :key="index"> </div> -->
-        <el-image
-          class="print-image"
-          :preview-src-list="previewList"
-          v-for="(img, i) in fileList"
-          :key="i"
-          :alt="img.name"
-          :src="img.url"
-        />
+      <div class="print-file-value" :style="{ height: printMaxHeight + 'px' }">
+        <div ref="printValueRef">
+          <el-image
+            class="print-image"
+            :preview-src-list="previewList"
+            v-for="(img, i) in fileList"
+            :key="i"
+            :alt="img.name"
+            :src="img.url"
+          />
+        </div>
       </div>
     </div>
     <el-dialog v-model="previewVisible" :title="'预览-' + previewFile.name" :lock-scroll="false">
@@ -100,7 +101,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, ref } from 'vue';
+  import { computed, nextTick, onMounted, PropType, ref } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import { ImageUpload } from '@/config/fileConfig';
@@ -150,6 +151,23 @@
     name: '',
     url: '',
   });
+
+  // 打印 宽度
+  const printRef = ref();
+  const printLabelRef = ref();
+  const printValueRef = ref();
+  const printMaxHeight = ref(32);
+
+  /**
+   * @description: 更新高度
+   */
+  const updateHeight = () => {
+    const parentHeight = printRef.value.parentNode.offsetHeight;
+    const labelHeight = printLabelRef.value.offsetHeight;
+    const valueHeight = printValueRef.value.offsetHeight;
+    printMaxHeight.value = Math.max(parentHeight, labelHeight, valueHeight);
+  };
+
   // 键
   const formItemProp = computed(() => {
     if (isNotEmpty(props.tableId)) {
@@ -343,6 +361,14 @@
       ElMessage.error('图片不存在');
     }
   };
+
+  onMounted(() => {
+    if (props.mode === 'print') {
+      nextTick(() => {
+        updateHeight();
+      });
+    }
+  });
 
   defineExpose({
     _hidden,

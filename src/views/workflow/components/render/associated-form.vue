@@ -14,7 +14,7 @@
       :show-message="showMessage"
     >
       <template #label>
-        <span v-show="showLabel">{{ formItem.title }}</span>
+        <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
       </template>
       <template v-if="mode === 'design'">
         <el-input placeholder="请选择" readonly />
@@ -87,19 +87,19 @@
       </template>
       <form-detail ref="associatedFormDetailRef" />
     </el-form-item>
-    <div v-else class="print-cell">
-      <div class="print-cell-label">
-        <span v-show="showLabel">{{ formItem.title }}</span>
+    <div v-else class="print-cell" ref="printRef">
+      <div class="print-cell-label" :style="{ height: printMaxHeight + 'px' }">
+        <span ref="printLabelRef" v-show="showLabel">{{ formItem.title }}</span>
       </div>
-      <div class="print-cell-value">
-        <span>{{ _value ? _value.label : '' }}</span>
+      <div class="print-cell-value" :style="{ height: printMaxHeight + 'px' }">
+        <span ref="printValueRef">{{ _value ? _value.label : '' }}</span>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, ref, watch } from 'vue';
+  import { computed, nextTick, onMounted, PropType, ref, watch } from 'vue';
   import FormDetail from '../../form/form-detail.vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
@@ -154,6 +154,21 @@
   // 最小宽度
   const minWidth = ref(200);
   const popoverInputRef = ref();
+  // 打印 宽度
+  const printRef = ref();
+  const printLabelRef = ref();
+  const printValueRef = ref();
+  const printMaxHeight = ref(32);
+
+  /**
+   * @description: 更新高度
+   */
+  const updateHeight = () => {
+    const parentHeight = printRef.value.parentNode.offsetHeight;
+    const labelHeight = printLabelRef.value.offsetHeight;
+    const valueHeight = printValueRef.value.offsetHeight;
+    printMaxHeight.value = Math.max(parentHeight, labelHeight, valueHeight);
+  };
 
   /**
    * @description: 隐藏弹窗
@@ -433,6 +448,14 @@
     },
     { immediate: true, deep: true },
   );
+
+  onMounted(() => {
+    if (props.mode === 'print') {
+      nextTick(() => {
+        updateHeight();
+      });
+    }
+  });
 
   defineExpose({
     _hidden,

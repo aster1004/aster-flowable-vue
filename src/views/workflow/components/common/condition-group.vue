@@ -120,6 +120,7 @@
       'GeoLocation', //地理位置
       'Area', //行政区划
       'Signature', //手写签名
+      'SignatureCombine', // 签章
       'AssociatedProperty', //关联属性
       'DateTime', //日期时间
       'DateTimeRange', //日期区间
