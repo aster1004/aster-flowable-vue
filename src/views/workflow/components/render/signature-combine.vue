@@ -30,7 +30,7 @@
         <div class="sign-combine-footer">
           <el-row>
             <el-col :span="12">
-              <span>(签字并盖章)</span>
+              <span>{{ _signTip }}</span>
             </el-col>
             <el-col :span="12"> </el-col>
           </el-row>
@@ -62,7 +62,7 @@
                 :disabled="_readonly"
                 style="position: absolute; bottom: 0"
               >
-                (签字并盖章)
+                {{ _signTip }}
               </el-button>
             </el-col>
             <el-col :span="12">
@@ -100,7 +100,7 @@
         <div class="sign-combine-footer">
           <el-row>
             <el-col :span="12">
-              <div style="position: absolute; bottom: 0"> (签字并盖章) </div>
+              <div style="position: absolute; bottom: 0"> {{ _signTip }} </div>
             </el-col>
             <el-col :span="12">
               <div class="sign-combine-preview" :style="_signStyle">
@@ -240,7 +240,6 @@
   // 更新签名
   const handleSuccess = (val: string) => {
     _value.value.signature = val;
-    console.log(_value.value);
   };
 
   /**
@@ -251,6 +250,20 @@
       return _value.value.date.split('-');
     }
     return ['xxxx', 'xx', 'xx'];
+  });
+
+  /**
+   * @description: 签章提示
+   */
+  const _signTip = computed(() => {
+    if (props.formItem.props.showSignature && props.formItem.props.showSignatureCombine) {
+      return '(签字并盖章)';
+    } else if (props.formItem.props.showSignature) {
+      return '(签字)';
+    } else if (props.formItem.props.showSignatureCombine) {
+      return '(盖章)';
+    }
+    return '';
   });
 
   /**
