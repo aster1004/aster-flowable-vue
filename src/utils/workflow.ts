@@ -1037,8 +1037,12 @@ export const dateFormat = (
   date: Date | string | number,
   format: string = 'YYYY-MM-DD HH:mm:ss',
 ) => {
-  date = normalizeDate(date);
-  return moment(date).format(format);
+  if (isNotEmpty(date)) {
+    date = normalizeDate(date);
+    return moment(date).format(format);
+  } else {
+    return '';
+  }
 };
 const normalizeDate = (raw: any): Date => {
   if (typeof raw === 'string' || typeof raw === 'number') {

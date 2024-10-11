@@ -22,7 +22,7 @@
             <div>{{ getInstanceNodeResult(instanceItem)?.nodeName }}</div>
             <span>{{ getInstanceNodeResult(instanceItem)?.text }}</span>
             <span
-              style="margin-left: 8px"
+              class="ml-8px"
               v-if="
                 instanceItem.length == 1 && isNotEmpty(getInstanceNodeResult(instanceItem)?.result)
               "
@@ -33,9 +33,9 @@
             </span>
             <span
               v-if="instanceItem.length == 1"
-              style="font-size: 14px; float: right; color: #8c8c8c"
+              style="font-size: 14px; float: right; color: #737373"
             >
-              {{ dateFormat(instanceItem.startTime as string, 'YYYY-MM-DD HH:mm') }}
+              {{ dateFormat(instanceItem[0].finishTime as string, 'YYYY-MM-DD HH:mm') }}
             </span>
           </div>
 
@@ -57,7 +57,10 @@
             <div class="step-assign" v-if="isNotEmpty(item.taskComments)">
               <div class="comment-content">
                 <div v-for="comment in item.taskComments">
-                  <div class="step-assign-top" v-if="instanceItem.length > 1">
+                  <div
+                    class="step-assign-top"
+                    v-if="instanceItem.length > 1 || item.taskComments!.length > 1"
+                  >
                     <div style="display: flex; flex-direction: row; align-items: center">
                       <flow-avatar
                         :size="30"
@@ -71,9 +74,9 @@
                         {{ getApproveName(comment.operationType!.approveType) }}
                       </el-tag>
                     </div>
-                    <div class="step-title-right" style="font-size: 14px">{{
-                      dateFormat(comment.createTime as string, 'YYYY-MM-DD HH:mm')
-                    }}</div>
+                    <div class="step-title-right" style="font-size: 13px">
+                      {{ dateFormat(comment.createTime as string, 'MM-DD HH:mm') }}
+                    </div>
                   </div>
                   <div
                     class="comment-task"
@@ -102,10 +105,10 @@
                           <div class="image-list" v-for="img in comment?.imageList">
                             <img class="image-item" :src="img.url" :alt="img.name" />
                             <span class="image-actions">
-                              <span @click="handlePreview(img)">
+                              <span title="预览" @click="handlePreview(img)">
                                 <i class="iconfont icon-zoom-in px-3px"></i>
                               </span>
-                              <span @click="handleDownload(img)">
+                              <span title="下载" @click="handleDownload(img)">
                                 <i class="iconfont icon-xiazai px-3px"></i>
                               </span>
                             </span>
@@ -114,8 +117,17 @@
                       </div>
 
                       <div class="comment-task-image" v-if="isNotEmpty(comment?.fileList)">
-                        <div style="color: #1e83e9" v-for="file in comment?.fileList">
-                          <span>{{ file.name }}</span>
+                        <div class="file-preview" v-for="file in comment?.fileList">
+                          <div class="file-preview-top">
+                            <i class="iconfont icon-fujian px-3px"></i>
+                            <span class="px-3px">
+                              {{ file.name }}
+                            </span>
+                          </div>
+                          <div class="file-preview-bottom">
+                            <span class="pl-20px" @click="handlePreviewFile(file)">预览</span>
+                            <span class="pl-20px" @click="handleDownloadFile(file)">下载</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -128,9 +140,8 @@
       </template>
     </el-step>
     <!--  处理最后一个节点状态  -->
-    <el-step>
+    <el-step v-if="isNotEmpty(lastNode.nodeName)">
       <template #icon>
-        <!--        <flow-avatar :size="45" :src="lastNode.src" :icon="lastNode.icon" :show-icon="false" />-->
         <i
           :class="`iconfont ${lastNode.iconFont}`"
           :style="{ fontSize: lastNode.size, color: lastNode.color }"
@@ -141,14 +152,26 @@
       </template>
     </el-step>
   </el-steps>
+
+  <!-- 图片预览弹框 -->
   <el-dialog v-model="previewVisible" :title="'预览-' + previewFile.name" :lock-scroll="false">
     <div class="image-preview">
       <img style="width: 100%" :src="previewFile.url" :alt="previewFile.name" />
     </div>
   </el-dialog>
+  <!-- 文件预览  -->
+  <el-dialog v-model="previewImageVisible" :title="'预览-' + previewFile.name" :lock-scroll="false">
+    <div class="image-preview">
+      <img w-full :src="previewFile.url" :alt="previewFile.name" />
+    </div>
+    <template #footer>
+      <el-button @click="previewImageVisible = false">{{ $t('button.cancel') }}</el-button>
+      <el-button type="primary" @click="handleDownload">{{ $t('button.download') }}</el-button>
+    </template>
+  </el-dialog>
 </template>
 <script setup lang="ts">
-  import { isDef, isNotEmpty, isUnDef } from '@/utils';
+  import { isDef, isNotEmpty } from '@/utils';
   import {
     dateFormat,
     getApproveName,
@@ -158,8 +181,9 @@
   import FlowAvatar from '@/views/workflow/components/process/processlog/flow-avatar.vue';
   import { ProcessButtonTypeEnum, ProcessResultEnum } from '@/enums/workFlowEnum';
   import { reactive, ref, watchEffect, computed, PropType } from 'vue';
-  import { ElMessage, ElMessageBox, UploadProps } from 'element-plus';
+  import { ElMessage, ElMessageBox } from 'element-plus';
   import { downloadFileByUrl } from '@/utils/fileUtils';
+  import { ImageUpload } from '@/config/fileConfig';
   import { useI18n } from 'vue-i18n';
   const { t } = useI18n();
 
@@ -172,7 +196,7 @@
 
   // 最后一个节点
   const lastNode = reactive({
-    size: 45,
+    size: '45px',
     iconFont: 'icon-gengduo1',
     nodeName: '',
     color: '',
@@ -185,6 +209,12 @@
     name: '',
     url: '',
   });
+  // 显示文档预览
+  const previewDocumentVisible = ref<boolean>(false);
+  // 显示图片预览
+  const previewImageVisible = ref<boolean>(false);
+  // 可以预览的文件后缀
+  const fileExtensions = ref(['.pdf', '.doc,.docx', '.xls,.xlsx', '.ppt,.pptx', '.txt,.csv']);
 
   /**
    * 获取任务处理结果、图标、颜色等
@@ -215,7 +245,7 @@
       lastNode.nodeName =
         props.processResult.approveResult === ProcessResultEnum.END
           ? '审批通过'
-          : props.processResult.approveResultText;
+          : (props.processResult.approveResultText as string);
     }
   });
 
@@ -288,7 +318,7 @@
    * @description: 预览图片
    * @return {*}
    */
-  const handlePreview: UploadProps['onPreview'] = (file: any) => {
+  const handlePreview = (file: any) => {
     previewFile.value = {
       name: file.name,
       url: file.url,
@@ -309,11 +339,52 @@
         type: 'warning',
         lockScroll: false,
       }).then(async () => {
-        downloadFileByUrl(file.url, file.name);
+        await downloadFileByUrl(file.url, file.name);
       });
     } else {
       ElMessage.error('图片不存在');
     }
+  };
+
+  /**
+   * @description: 预览文件
+   * @return {*}
+   */
+  const handlePreviewFile = (file: any) => {
+    const extension = file.url.split('.').pop();
+    if (ImageUpload.type.join(',').indexOf(extension) != -1) {
+      previewFile.value = {
+        name: file.name,
+        url: file.url,
+      };
+      previewImageVisible.value = true;
+    } else if (fileExtensions.value.join(',').indexOf(extension) != -1) {
+      previewDocumentVisible.value = true;
+    } else {
+      ElMessageBox.confirm('不支持预览此类型的文件,是否要下载查看?', t('common.tips'), {
+        confirmButtonText: t('button.confirm'),
+        cancelButtonText: t('button.cancel'),
+        type: 'warning',
+        lockScroll: false,
+      }).then(async () => {
+        await downloadFileByUrl(file.url, file.name);
+      });
+    }
+  };
+
+  /**
+   * 下载文件
+   * @param file
+   */
+  const handleDownloadFile = (file: any) => {
+    ElMessageBox.confirm('确定要下载此文件?', t('common.tips'), {
+      confirmButtonText: t('button.confirm'),
+      cancelButtonText: t('button.cancel'),
+      type: 'warning',
+      lockScroll: false,
+    }).then(async () => {
+      await downloadFileByUrl(file.url, file.name);
+    });
   };
 </script>
 <style scoped lang="scss">
@@ -352,16 +423,16 @@
     margin-left: -35px;
     margin-top: 15px;
   }
-  /* .step-title .step-title-left {
+  .step-title .step-title-left {
     font-weight: 500;
   }
   .step-title .step-title-right {
     color: #afafaf;
     font-size: 14px;
-  }*/
+  }
   /*流程办理人*/
   .step-assign {
-    margin-top: 5px;
+    margin-top: 15px;
     font-weight: normal;
     margin-left: -30px;
     color: #1a1a1a;
@@ -387,7 +458,6 @@
     flex-direction: row;
     align-items: center;
     border-radius: 5px;
-    background-color: #fafafa;
     border: 1px solid #e6e6e6;
   }
   .comment-task-avatar {
@@ -451,5 +521,25 @@
   }
   .image-actions:hover span {
     display: inline-flex;
+  }
+
+  .file-preview {
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    border: 1px solid #e8e8e8;
+    margin: 12px 0;
+    padding: 5px;
+    .file-preview-top {
+      display: -webkit-box; /* 必须配合此属性使用 */
+      -webkit-box-orient: vertical; /* 设置为垂直方向 */
+      -webkit-line-clamp: 1; /* 显示的行数 */
+      overflow: hidden; /* 隐藏超出的内容 */
+    }
+    .file-preview-bottom {
+      color: #409eff;
+      font-size: 14px;
+      cursor: pointer;
+    }
   }
 </style>

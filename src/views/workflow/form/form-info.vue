@@ -38,8 +38,15 @@
       <el-scrollbar v-else class="process-content">
         <el-tabs v-model="processActiveName" @tab-change="handleTabChange" class="process-tabs">
           <el-tab-pane label="流程日志" name="log">
-            <div> </div>
             <div style="height: 100%; max-width: 600px">
+              <!-- 数据加载中..  -->
+              <div
+                id="loadingDiv"
+                v-if="loadingInstance"
+                v-loading="loadingInstance"
+                element-loading-text="数据加载中……"
+              ></div>
+
               <flow-logs ref="flowLogsRef" :process-result="processResult" />
             </div>
           </el-tab-pane>
@@ -102,6 +109,8 @@
   });
   // 折叠状态
   const isCollapse = ref<boolean>(true);
+  // 加载中...
+  const loadingInstance = ref<boolean>(true);
   // 活动标签
   const processActiveName = ref<string>('log');
 
@@ -139,12 +148,15 @@
    * @description: 获取流程日志
    */
   const getInstanceLogs = async () => {
+    loadingInstance.value = true;
     processResult.value = { instanceLogs: [], approveResult: '', approveResultText: '' };
     await getInstanceLogsApi(props.procInstId).then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
         processResult.value = res.data;
+        loadingInstance.value = false;
       } else {
         ElMessage.error(res.message);
+        loadingInstance.value = false;
       }
     });
   };
@@ -251,5 +263,13 @@
         }
       }
     }
+  }
+
+  /*数据加载中样式*/
+  #loadingDiv {
+    overflow: hidden;
+    z-index: 1000;
+    height: 70vh;
+    width: 100%;
   }
 </style>
