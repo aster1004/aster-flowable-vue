@@ -149,7 +149,7 @@
   );
 
   watch(copyerConfig1, (copyer) => {
-    if (copyer.flag && copyer.id === _uid) {
+    if (copyer.flag && copyer.id === props.nodeConfig.id) {
       emits('update:nodeConfig', copyer.value);
     }
   });
@@ -257,6 +257,8 @@
   const delTerm = (index) => {
     console.log(props.nodeConfig.conditionNodes);
     const { typeName } = props.nodeConfig;
+    console.log('del------------->');
+    console.log(JSON.stringify(props.nodeConfig));
     props.nodeConfig.conditionNodes.splice(index, 1);
 
     let conditionTitle = '条件';
@@ -276,17 +278,9 @@
     resetConditionNodesErr();
     emits('update:nodeConfig', props.nodeConfig);
     if (props.nodeConfig.conditionNodes.length === 1) {
-      if (props.nodeConfig.type === 4) {
-        props.nodeConfig.childNode = null;
-      }
-      if (props.nodeConfig.childNode) {
-        if (props.nodeConfig.conditionNodes[0].childNode) {
-          reData(props.nodeConfig.conditionNodes[0].childNode, props.nodeConfig.childNode);
-        } else {
-          props.nodeConfig.conditionNodes[0].childNode = props.nodeConfig.childNode;
-        }
-      }
-      emits('update:nodeConfig', props.nodeConfig.conditionNodes[0].childNode);
+      const childNode = props.nodeConfig.childNode.childNode;
+      props.nodeConfig.childNode = null;
+      emits('update:nodeConfig', childNode);
     }
   };
   const reData = (data, addData) => {

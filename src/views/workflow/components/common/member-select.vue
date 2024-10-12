@@ -292,7 +292,7 @@
     depts.value = [];
     checkedUsers.value = [];
     defaultCheckedDept.value = [];
-    if (isNotEmpty(props.value)) {
+    if (props.value && isNotEmpty(props.value)) {
       selectedTags.value = props.value;
       selectedTags.value.forEach((item) => {
         if (item.type === 'user') {

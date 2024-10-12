@@ -417,24 +417,24 @@
    */
   const getInstanceInfoByInstanceId = async (
     code: string,
-    procInstId1: string,
+    instanceId: string,
     isAssociatedForm = false,
   ) => {
-    if (isEmpty(procInstId1) || isEmpty(code)) {
+    if (isEmpty(instanceId) || isEmpty(code)) {
       ElMessage.error('参数错误');
       return;
     }
-    procInstId.value = procInstId1;
+    procInstId.value = instanceId;
     // 是否关联数据
     isAssociated.value = isAssociatedForm;
-    await instanceInfoByInstanceIdApi(code, procInstId1).then((res) => {
+    await instanceInfoByInstanceIdApi(code, instanceId).then((res) => {
       if (res.code === ResultEnum.SUCCESS) {
         // 表单信息
         const formDesignInfo = res.data.formInfo;
         if (isNotEmpty(formDesignInfo)) {
           formInfo.value = formDesignInfo;
           // 查询关联表单信息
-          getAssociationList(procInstId1);
+          getAssociationList(instanceId);
         }
         // 表单权限
         if (res.data.formPermission) {

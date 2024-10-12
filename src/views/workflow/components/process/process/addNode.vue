@@ -81,7 +81,7 @@
           examineMode: 1,
           noHanderAction: 1,
           examineEndDirectorLevel: 0,
-          childNode: null,
+          childNode: props.childNodeP,
           nodeUserList: [],
           parentId: props.parentId,
           error: false,
@@ -101,6 +101,7 @@
           ccSelfSelectFlag: 1,
           childNode: props.childNodeP,
           nodeUserList: [],
+          formPermission: [],
           parentId: props.parentId,
         };
       default:
@@ -128,6 +129,7 @@
             typeName: typeName,
             nodeName: '排他网关聚合',
             type: '7',
+            childNode: props.childNodeP,
           },
           typeName: typeName,
           conditionNodes: [
@@ -181,6 +183,7 @@
             typeName: typeName,
             nodeName: '并行网关聚合',
             type: '7',
+            childNode: props.childNodeP,
           },
           typeName: typeName,
           conditionNodes: [
@@ -227,6 +230,7 @@
             typeName: typeName,
             nodeName: '包容网关聚合',
             type: '7',
+            childNode: props.childNodeP,
           },
           typeName: typeName,
           conditionNodes: [
