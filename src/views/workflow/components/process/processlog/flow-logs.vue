@@ -33,7 +33,7 @@
             </span>
             <span
               v-if="instanceItem.length == 1"
-              style="font-size: 14px; float: right; color: #737373"
+              style="font-size: 14px; float: right; color: var(--el-text-color-regular)"
             >
               {{ dateFormat(instanceItem[0].finishTime as string, 'YYYY-MM-DD HH:mm') }}
             </span>
@@ -67,14 +67,14 @@
                         v-if="item?.user?.avatar"
                         :src="comment?.user?.avatar"
                       />
-                      <div style="color: black; margin-left: -10px">
+                      <div style="color: var(--el-text-color-primary); margin-left: -10px">
                         {{ comment?.user?.realName }}
                       </div>
                       <el-tag style="margin-left: 8px" size="small" round>
                         {{ getApproveName(comment.operationType!.approveType) }}
                       </el-tag>
                     </div>
-                    <div class="step-title-right" style="font-size: 13px">
+                    <div style="font-size: 13px">
                       {{ dateFormat(comment.createTime as string, 'MM-DD HH:mm') }}
                     </div>
                   </div>
@@ -97,13 +97,13 @@
                           {{ getOperationDesc(comment) }}
                         </el-tag>
                       </div>
-                      <div class="comment-task-issue" v-if="isNotEmpty(comment?.opinion)">
+                      <div v-if="isNotEmpty(comment?.opinion)">
                         <span>{{ comment?.opinion }}</span>
                       </div>
                       <div class="comment-task-image" v-if="isNotEmpty(comment?.imageList)">
                         <div class="image-preview">
                           <div class="image-list" v-for="img in comment?.imageList">
-                            <img class="image-item" :src="img.url" :alt="img.name" />
+                            <img class="image-item" :src="img.url" alt="加载失败" />
                             <span class="image-actions">
                               <span title="预览" @click="handlePreview(img)">
                                 <i class="iconfont icon-zoom-in px-3px"></i>
@@ -399,46 +399,35 @@
     margin: -10px 0 30px 40px;
   }
   ::v-deep(.el-step__title.is-wait) {
-    color: black;
+    color: var(--el-text-color-primary);
   }
   ::v-deep(.el-step__title.is-process) {
-    color: black;
+    color: var(--el-text-color-primary);
     font-weight: normal;
   }
 
   ::v-deep(.el-step__description) {
     padding-right: 0;
   }
-  ::v-deep(.el-step__line) {
-    background-color: #e4e7ed;
-  }
+
   /*流程title*/
   .step-avatar {
     width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    color: #999999;
     font-weight: normal;
     margin-left: -35px;
     margin-top: 15px;
-  }
-  .step-title .step-title-left {
-    font-weight: 500;
-  }
-  .step-title .step-title-right {
-    color: #afafaf;
-    font-size: 14px;
   }
   /*流程办理人*/
   .step-assign {
     margin-top: 15px;
     font-weight: normal;
     margin-left: -30px;
-    color: #1a1a1a;
   }
   .step-assign-top {
-    color: #999999;
+    color: var(--el-text-color-secondary);
     font-weight: normal;
     display: flex;
     flex-direction: row;
@@ -458,7 +447,7 @@
     flex-direction: row;
     align-items: center;
     border-radius: 5px;
-    border: 1px solid #e6e6e6;
+    border: 1px solid var(--el-header-border-color);
   }
   .comment-task-avatar {
     display: flex;
@@ -471,9 +460,7 @@
     display: flex;
     flex-direction: column;
   }
-  .comment-task-issue {
-    color: #1a1a1a;
-  }
+
   .comment-task-image {
     margin: 5px 0;
   }
@@ -485,7 +472,7 @@
   .image-list {
     width: 80px;
     height: 80px;
-    border: 1px solid #dcdfe6;
+    border: 1px solid var(--el-header-border-color);
     position: relative;
     border-radius: 5px;
     margin: 5px;
@@ -500,7 +487,6 @@
     align-items: center;
     background-color: var(--el-overlay-color-lighter);
     cursor: default;
-    color: #fff;
     display: inline-flex;
     font-size: 20px;
     height: 100%;
@@ -527,7 +513,7 @@
     display: flex;
     flex-direction: column;
     border-radius: 4px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--el-header-border-color);
     margin: 12px 0;
     padding: 5px;
     .file-preview-top {
@@ -538,6 +524,7 @@
     }
     .file-preview-bottom {
       color: #409eff;
+      color: var(--el-color-primary-light-1);
       font-size: 14px;
       cursor: pointer;
     }

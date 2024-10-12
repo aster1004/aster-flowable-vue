@@ -17,7 +17,7 @@
         <i class="head-icon" :class="`iconfont ` + icon"></i>
       </template>
       <template v-if="showName">
-        <div class="avatar-name ellipsis">{{ avatar.user?.realName }} </div>
+        <div class="avatar-name">{{ avatar.user?.realName }} </div>
       </template>
     </div>
   </div>
@@ -69,7 +69,7 @@
     border-radius: 50%;
     font-size: 18px;
     color: #f78f5f;
-    background: #fff;
-    border: 2px solid #fff;
+    background: var(--el-color-white);
+    border: 2px solid var(--el-color-white);
   }
 </style>
