@@ -25,6 +25,14 @@ export const staticRouter: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/renderFlow',
+    name: 'renderFlow',
+    component: () => import('@/views/workflow/components/flow/render-flow.vue'),
+    meta: {
+      title: '流程图',
+    },
+  },
+  {
     path: '/layout',
     name: 'layout',
     component: () => import('@/views/layout/index.vue'),

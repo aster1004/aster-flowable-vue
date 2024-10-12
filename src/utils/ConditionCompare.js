@@ -69,7 +69,6 @@ const getCdName = (cd) => {
 
 //流程条件支持对象
 export const getCdDescription = (cd) => {
-  console.log(cd);
   return `${cd.title} ${getCdName(cd)} ${cd.compareVal.join('、')}`;
 };
 
@@ -202,7 +201,7 @@ export const conditionStr = (nodeConfig, index) => {
           return `${hasMore ? '[' : ''}${conditionsDesc}${hasMore ? ']' : ''}`;
         })
         .join(` ${conditionNodes[index].groupType === 'AND' ? '且' : '或'} `);
-      console.log(desc);
+      // console.log(desc);
       return desc;
     } else if (conditionType && conditionType === 5) {
       return '并行流程分支';
