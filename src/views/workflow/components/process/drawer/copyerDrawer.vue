@@ -71,7 +71,6 @@
   import MemberSelect from '../../common/member-select.vue';
   import { isNotEmpty } from '@/utils';
   import FormPermission from '../permission/form-permission.vue';
-  import ButtonPermission from '../permission/button-permission.vue';
   import { getFormFieldData } from '@/utils/process/process';
 
   let store = processStore();

@@ -44,7 +44,7 @@
             <div v-for="item2 in instanceItem">
               <flow-avatar
                 :size="40"
-                :avatar="item2"
+                :avatar="item2.user"
                 :show-icon="true"
                 :icon="getSignIconByItem(item2, instanceItem)"
                 :show-name="true"
@@ -53,6 +53,17 @@
           </div>
 
           <div v-for="item in instanceItem">
+            <!-- 抄送人显示 type==2  -->
+            <div v-if="item.type === '2'" class="step-avatar" style="margin-left: -15px">
+              <flow-avatar
+                v-for="ccUser in item.ccUsers"
+                :size="40"
+                :avatar="ccUser"
+                :show-icon="false"
+                :show-name="true"
+              />
+            </div>
+
             <!-- 任务处理人 -->
             <div class="step-assign" v-if="isNotEmpty(item.taskComments)">
               <div class="comment-content">
@@ -281,7 +292,12 @@
 
   const getAvatarByItem = (item: WorkForm.InstanceLogsList) => {
     if (item.length === 1) {
-      return item[0].user?.avatar;
+      // 判断是否是抄送，抄送也是一个节点
+      if (item[0].type === '2') {
+        return new URL(`../../../../../assets/images/cc.png`, import.meta.url).href;
+      } else {
+        return item[0].user?.avatar;
+      }
     } else {
       // 如果大于1 说明是多人会签
       return new URL(`../../../../../assets/images/countersign.png`, import.meta.url).href;

@@ -10,14 +10,14 @@
     <div class="avatar-container">
       <el-avatar :size="size">
         <template #default>
-          <el-image :src="src ? src : avatar.user?.avatar" />
+          <el-image :src="src ? src : avatar?.avatar" />
         </template>
       </el-avatar>
       <template v-if="showIcon">
         <i class="head-icon" :class="`iconfont ` + icon"></i>
       </template>
       <template v-if="showName">
-        <div class="avatar-name">{{ avatar.user?.realName }} </div>
+        <div class="avatar-name">{{ avatar?.realName }} </div>
       </template>
     </div>
   </div>

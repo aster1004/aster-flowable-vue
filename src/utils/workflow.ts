@@ -939,12 +939,22 @@ export const isConvertItemValue = (
 export const getInstanceNodeResult = (instanceList: WorkForm.InstanceLogsList) => {
   if (instanceList.length === 1) {
     const instance = instanceList[0];
-    return {
-      nodeName: instance.nodeName, //节点名称
-      startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
-      text: instance.user?.realName, //办理人
-      result: getTaskResult(instance).text, // 处理结果
-    };
+    // 判断是不是抄送
+    if (instance.type === '2') {
+      return {
+        nodeName: instance.nodeName, //节点名称
+        startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
+        text: '系统', //办理人
+        result: '抄送', // 处理结果
+      };
+    } else {
+      return {
+        nodeName: instance.nodeName, //节点名称
+        startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
+        text: instance.user?.realName, //办理人
+        result: getTaskResult(instance).text, // 处理结果
+      };
+    }
   } else {
     // 通过第一个数据判断会签类型、任务状态以及整个节点的状态
     const instance = instanceList[0];

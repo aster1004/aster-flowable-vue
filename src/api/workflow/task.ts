@@ -113,3 +113,13 @@ export const getMyStartedApi = (params: WorkTask.TaskQuery) => {
     { noLoading: true },
   );
 };
+
+/**
+ * @description: 获取【抄送我的】流程列表
+ * @param params 查询参数
+ */
+export const getCcMeApi = (params: WorkTask.TaskQuery) => {
+  return request.post<Page.ResPage<WorkTask.MyStartedModel>>(PORT5 + `/processTask/ccme`, params, {
+    noLoading: true,
+  });
+};
