@@ -168,6 +168,13 @@
             {{ convertMilliSecond(scope.row.duration) }}
           </template>
         </el-table-column>
+        <el-table-column label="操作" min-width="90" align="center" class-name="operation">
+          <template #default="scope">
+            <el-button size="small" type="primary" text @click="handleAddAgin(scope.row)">
+              再次提交
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       <el-pagination
@@ -181,7 +188,8 @@
         @current-change="handleCurrentChange"
       />
     </div>
-
+    <!-- 新增表单 -->
+    <form-initiation ref="formInitiationRef" @resetQuery="resetQuery" />
     <form-detail ref="formDetailRef" @resetQuery="resetQuery" />
   </div>
 </template>
@@ -193,15 +201,17 @@
   import { getMyStartedApi } from '@/api/workflow/task';
   import { appFormTreeApi } from '@/api/workflow/app';
   import FormDetail from '../form/form-detail.vue';
-  import { isNotEmpty, parseTime, convertMilliSecond } from '@/utils';
+  import { isNotEmpty, parseTime, convertMilliSecond, isEmpty } from '@/utils';
   import DictSelect from '@/components/dict/dict-select.vue';
   import DictTag from '@/components/dict/dict-tag.vue';
+  import FormInitiation from '@/views/workflow/form/form-initiation.vue';
 
   const { t } = useI18n();
 
   /** 注册组件 */
   const queryForm = ref();
   const formDetailRef = ref();
+  const formInitiationRef = ref();
   /** 是否显示查询 */
   const showSearch = ref(true);
   /** 默认折叠搜索项 */
@@ -333,6 +343,19 @@
     }
   };
 
+  /**
+   * 再次提交
+   */
+
+  const handleAddAgin = (row: WorkTask.MyStartedModel) => {
+    const code = row.formCode;
+    const procInstId = row.procInstId;
+    if (isNotEmpty(code) && isNotEmpty(procInstId)) {
+      formInitiationRef.value.initAgain(code, procInstId);
+    } else {
+      ElMessage.error('表单编码和流程实例id不能为空');
+    }
+  };
   onMounted(() => {
     getTreeData();
     handleQuery();
