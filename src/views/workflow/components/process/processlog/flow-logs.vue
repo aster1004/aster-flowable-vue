@@ -234,7 +234,11 @@
   const getIconByItem = (item: WorkForm.InstanceLogsList) => {
     if (item.length === 1) {
       if (item[0].nodeId === 'root') {
-        return 'icon-tongyi';
+        if (isNotEmpty(item[0].finishTime)) {
+          return 'icon-tongyi';
+        } else {
+          return 'icon-chulizhong';
+        }
       }
     } else {
       return ''; //getTaskResult(item[0]).icon;
@@ -324,6 +328,8 @@
           return '加签给：' + operationType.targetName;
         case ProcessButtonTypeEnum.REVOKE:
           return '';
+        case ProcessButtonTypeEnum.SUBMIT:
+          return '提交';
         default:
           return '未知操作类型！！！';
       }

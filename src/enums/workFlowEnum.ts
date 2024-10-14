@@ -99,7 +99,7 @@ export enum ProcessButtonTypeEnum {
   // 撤销
   REVOKE = 'revoke',
   // 发起
-  START = 'start',
+  SUBMIT = 'submit',
 }
 export enum ApprovalModeEnum {
   AND = 'AND', //会签(可同时审批，须全部同意)

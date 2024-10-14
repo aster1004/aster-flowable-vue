@@ -13,7 +13,7 @@
           <el-image :src="src ? src : avatar?.avatar" />
         </template>
       </el-avatar>
-      <template v-if="showIcon">
+      <template v-if="showIcon && isNotEmpty(icon)">
         <i class="head-icon" :class="`iconfont ` + icon"></i>
       </template>
       <template v-if="showName">
@@ -23,7 +23,9 @@
   </div>
 </template>
 <script setup lang="ts">
-  const props = defineProps({
+  import { isNotEmpty } from '@/utils';
+
+  defineProps({
     // 头像地址,如果传src了，则以src为主
     src: { type: String },
     avatar: { type: Object },
@@ -66,6 +68,10 @@
     margin-bottom: -25px;
     top: 20px;
     right: 5px;
+    height: 22px;
+    width: 22px;
+    display: flex;
+    align-items: center;
     border-radius: 50%;
     font-size: 18px;
     color: #f78f5f;
