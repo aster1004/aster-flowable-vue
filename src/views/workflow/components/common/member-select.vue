@@ -69,7 +69,7 @@
                   :default-checked-keys="defaultCheckedDept"
                   show-checkbox
                   :props="{ label: 'orgName', children: 'children' }"
-                  @check="handleDeptCheck"
+                  @check-change="handleDeptCheck"
                 />
               </el-scrollbar>
             </div>
@@ -116,6 +116,10 @@
     nodeLabel: {
       type: String,
       default: 'name',
+    },
+    multiple: {
+      type: Boolean,
+      default: true,
     },
   });
   // 是否展示
@@ -197,8 +201,17 @@
   /**
    * 点击部门tab栏中的部门树
    */
-  const handleDeptCheck = () => {
+  const handleDeptCheck = (value: any, checked: boolean) => {
     let checkedNodes = deptTreeRef.value.getCheckedNodes();
+    if (isNotEmpty(checkedNodes)) {
+      if (!props.multiple) {
+        if (checked) {
+          selectedTags.value = [];
+          deptTreeRef.value.setCheckedKeys([value.id]);
+        }
+        checkedNodes = [checkedNodes[checkedNodes.length - 1]];
+      }
+    }
     // 处理选中的部门
     handleTags(checkedNodes);
   };
@@ -240,6 +253,12 @@
    */
   const handleUserCheckChange = (values: any) => {
     if (isNotEmpty(values)) {
+      if (!props.multiple) {
+        selectedTags.value = [];
+        let multipleValue = [values[values.length - 1]];
+        checkedUsers.value = multipleValue;
+        values = multipleValue;
+      }
       let userTagIds = selectedTags.value.map((tagItem) => {
         if (tagItem.type === 'user') {
           return tagItem[props.nodeKey];
