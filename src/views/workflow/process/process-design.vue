@@ -49,8 +49,13 @@
   const conditionRef = ref();
   //
 
-  const _process = computed(() => {
-    return workFlowStore.design.process;
+  const _process = computed({
+    get() {
+      return workFlowStore.design.process;
+    },
+    set(value) {
+      workFlowStore.design.process = value;
+    },
   });
 
   const reErr = ({ childNode }: any) => {
