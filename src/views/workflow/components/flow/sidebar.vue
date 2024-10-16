@@ -36,7 +36,7 @@
   </div>
 </template>
 <script setup>
-  import useDragAndDrop from '../js/useDnD.js';
+  import useDragAndDrop from '@/utils/useDnD.js';
   const { onDragStart } = useDragAndDrop();
 </script>
 <style scoped>
