@@ -17,15 +17,16 @@
         <i class="head-icon" :class="`iconfont ` + icon"></i>
       </template>
       <template v-if="showName">
-        <div class="avatar-name">{{ avatar?.realName }} </div>
+        <div class="avatar-name">{{ _name }} </div>
       </template>
     </div>
   </div>
 </template>
 <script setup lang="ts">
   import { isNotEmpty } from '@/utils';
+  import { computed } from 'vue';
 
-  defineProps({
+  const props = defineProps({
     // 头像地址,如果传src了，则以src为主
     src: { type: String },
     avatar: { type: Object },
@@ -43,6 +44,13 @@
       type: Boolean,
       default: false,
     },
+  });
+
+  /**
+   * @description: 获取用户名称
+   */
+  const _name = computed(() => {
+    return isNotEmpty(props.avatar?.realName) ? props.avatar?.realName : props.avatar?.nickName;
   });
 </script>
 

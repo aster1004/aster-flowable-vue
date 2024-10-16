@@ -46,7 +46,12 @@
                   <el-checkbox-group v-model="checkedUsers" @change="handleUserCheckChange">
                     <el-scrollbar height="260px">
                       <div v-for="userItem in userList" :key="userItem.id">
-                        <el-checkbox :label="userItem.realName" :value="userItem.id" />
+                        <el-checkbox
+                          :label="
+                            isNotEmpty(userItem.realName) ? userItem.realName : userItem.nickName
+                          "
+                          :value="userItem.id"
+                        />
                       </div>
                     </el-scrollbar>
                   </el-checkbox-group>
@@ -250,7 +255,9 @@
           if (userItem.id === userId && userTagIds.indexOf(userItem.id) == -1) {
             let node = {};
             node[props.nodeKey] = userItem.id;
-            node[props.nodeLabel] = userItem.realName;
+            node[props.nodeLabel] = isNotEmpty(userItem.realName)
+              ? userItem.realName
+              : userItem.nickName;
             node['type'] = 'user';
             selectedTags.value.push(node);
           }

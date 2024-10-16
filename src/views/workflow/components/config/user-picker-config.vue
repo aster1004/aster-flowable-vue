@@ -229,7 +229,7 @@
   const getLabel = (item: any) => {
     switch (_canselected.value.type) {
       case 'user':
-        return item?.realName;
+        return isNotEmpty(item?.realName) ? item?.realName : item?.nickName;
       case 'dept':
         return item?.orgName;
       case 'sysRole':

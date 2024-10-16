@@ -287,8 +287,10 @@
     if (val.length > 0) {
       val.forEach((item: User.UserInfo) => {
         selectedInfos.value.push(item);
-        if (item?.realName != null) {
+        if (item.realName && isNotEmpty(item.realName)) {
           selectedUserName.value = item.realName;
+        } else {
+          item.nickName && (selectedUserName.value = item.nickName);
         }
         // 如果是转交或加签
         operationTypeInfo.value.approveType = approveParams.value.approveType;
