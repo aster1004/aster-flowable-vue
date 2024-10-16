@@ -17,7 +17,7 @@
         <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
       </template>
       <el-input v-if="mode === 'design'" :model-value="formItem.value" readonly />
-      <div v-else-if="mode === 'form'">
+      <div v-else-if="mode === 'form'" class="w-full">
         <el-date-picker
           v-model="_value"
           :type="dateType"
@@ -25,6 +25,7 @@
           :value-format="formItem.props.format"
           :readonly="_readonly"
           clearable
+          style="width: 100%"
         />
         <div class="date-length" v-if="formItem.props.showLength">
           {{ dateLength }}
@@ -37,6 +38,7 @@
         :format="formItem.props.format"
         :value-format="formItem.props.format"
         clearable
+        style="width: 100%"
       />
       <span v-else>{{ _value }}</span>
     </el-form-item>

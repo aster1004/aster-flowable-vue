@@ -193,6 +193,7 @@ export default {
       uploadAvatar: '上传头像',
       resetPassword: '重置密码',
       exportConfirm: '确认导出用户数据?',
+      resetPwdConfirm: '确认重置密码?',
     },
     access: {
       username: '登录账号',
