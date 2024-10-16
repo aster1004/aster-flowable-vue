@@ -51,7 +51,7 @@
 
 <style lang="scss">
   /** 在线引入iconfont图标 */
-  @import url(//at.alicdn.com/t/c/font_4195112_jacqiifujj.css);
+  @import url(//at.alicdn.com/t/c/font_4195112_eiqh0k8hvta.css);
 
   html,
   body,
