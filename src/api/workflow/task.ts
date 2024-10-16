@@ -98,7 +98,7 @@ export const getInstanceLogsApi = (procInstId: string) => {
  */
 export const getTaskPageApi = (params: WorkTask.TaskQuery) => {
   return request.post<Page.ResPage<WorkTask.TaskNodeModel>>(PORT5 + `/processTask/page`, params, {
-    noLoading: false,
+    noLoading: true,
   });
 };
 
@@ -115,11 +115,24 @@ export const getMyStartedApi = (params: WorkTask.TaskQuery) => {
 };
 
 /**
- * @description: 获取【抄送我的】流程列表
+ * @description: 获取抄送我的流程列表
  * @param params 查询参数
  */
 export const getCcMeApi = (params: WorkTask.TaskQuery) => {
   return request.post<Page.ResPage<WorkTask.MyStartedModel>>(PORT5 + `/processTask/ccme`, params, {
     noLoading: true,
   });
+};
+
+/**
+ * @description: 获取年度任务统计
+ */
+export const getAnnualTaskApi = () => {
+  return request.get<WorkTask.AnnualTaskModel>(
+    PORT5 + `/processTask/annualTask`,
+    {},
+    {
+      noLoading: true,
+    },
+  );
 };

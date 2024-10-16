@@ -17,7 +17,8 @@ const workFlowStore = useWorkFlowStore();
  * @param val
  */
 export const getFormFieldData = (val: any) => {
-  let formItems = flatFormItems(workFlowStore.design.formItems);
+  const _formItems = JSON.parse(JSON.stringify(workFlowStore.design.formItems));
+  let formItems = flatFormItems(_formItems);
   formItems.forEach((formItem: any) => {
     if (val.value.type === 0) {
       formItem.operation = ['edit'];

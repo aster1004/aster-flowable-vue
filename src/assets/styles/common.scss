@@ -1,0 +1,42 @@
+.single-line-text {
+  overflow: hidden; /* 隐藏溢出内容 */
+  text-overflow: ellipsis; /* 当文本溢出时显示省略号 */
+  white-space: nowrap; /* 禁止文本换行 */
+}
+
+.multi-line-text {
+  display: -webkit-box; /* 兼容WebKit内核浏览器，如Chrome和Safari */
+  -webkit-line-clamp: 3; /* 显示最大3行 */
+  -webkit-box-orient: vertical; /* 设置垂直方向上的排列方式 */
+
+  overflow: hidden; /* 隐藏溢出内容 */
+  text-overflow: ellipsis; /* 当文本溢出时显示省略号 */
+
+  /* 对于非WebKit内核浏览器，可以使用以下CSS Grid方案作为备用（但不会显示省略号） */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  max-height: 3em; /* 调整为所需的行高乘以最大行数 */
+  margin-bottom: 0.2em; /* 为省略号留出空间（可选） */
+  padding-right: 0.5em; /* 为省略号留出空间（可选） */
+}
+
+/* 为非WebKit内核浏览器添加省略号（仅在支持伪元素的浏览器中有效） */
+.multi-line-text::after {
+  content: '...'; /* 添加省略号 */
+  position: absolute;
+  right: 0; /* 将省略号定位到右侧 */
+  bottom: 0; /* 将省略号定位到底部 */
+  background-color: white; /* 与背景色相同，覆盖可能的多余文本 */
+  width: 0.5em; /* 省略号宽度 */
+  height: 0.5em; /* 省略号高度 */
+  line-height: 0.5em; /* 保持省略号居中 */
+  text-align: center;
+}
+
+.scroll-text {
+  width: 288rpx;
+  max-height: 148rpx;
+  overflow: scroll; /* 溢出内容可以滚动 */
+
+  line-height: 44rpx;
+}

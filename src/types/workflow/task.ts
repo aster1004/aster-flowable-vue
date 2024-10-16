@@ -64,4 +64,14 @@ declare namespace WorkTask {
     endTime?: string;
     duration?: number;
   }
+
+  /**
+   * @description: 年度任务统计
+   */
+  export interface AnnualTaskModel {
+    todoNum: number;
+    completeNum: number;
+    startedNum: number;
+    ccNum: number;
+  }
 }

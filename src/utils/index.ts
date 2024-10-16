@@ -386,6 +386,23 @@ export function getDictDataList(dictList: any[], dictType: string) {
 }
 
 /**
+ * @description: 根据字典类型和字典值查询字典标签
+ * @param {any} dictList
+ * @param {string} dictType
+ * @param {string} value
+ * @return {*}
+ */
+export function getDictLabelByValue(dictList: any[], dictType: string, value: string) {
+  const dataList = getDictDataList(dictList, dictType);
+  const item = dataList.find((element: any) => element.dictValue === value);
+  if (item) {
+    return item.dictLabel;
+  } else {
+    return '';
+  }
+}
+
+/**
  * 日期格式化
  * @param time
  * @param pattern

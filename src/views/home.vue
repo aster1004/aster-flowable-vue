@@ -7,7 +7,11 @@
 -->
 <template>
   <div class="home">
-    <el-row :gutter="20" class="!flex justify-between w-full h-full mt-4">
+    <el-row
+      v-if="!userStore.isSuperAdmin"
+      :gutter="20"
+      class="!flex justify-between w-full h-full mt-4"
+    >
       <el-col :span="weatherVisible ? 16 : 24">
         <el-card class="home-card" style="height: 345px">
           <h2>介绍</h2>
@@ -102,6 +106,119 @@
       </el-col>
     </el-row>
 
+    <div v-else class="w-full h-full">
+      <el-row :gutter="10" class="w-full">
+        <el-col :span="16">
+          <el-row :gutter="10">
+            <el-col :span="12">
+              <!-- 我的应用 -->
+              <el-card class="home-card-default">
+                <div class="card-title">
+                  <div class="card-title--content">
+                    <i class="iconfont icon-caidan"></i>
+                    <span>我的应用</span>
+                  </div>
+                  <el-button type="primary" link size="small" @click="handleMoreApp">
+                    更多
+                  </el-button>
+                </div>
+                <div class="card-content--app">
+                  <div class="app-info" v-for="(item, index) in appList" :key="index">
+                    <div
+                      class="app-icon"
+                      @click="handleAppClick(item.id)"
+                      :style="{ backgroundColor: item.iconColor }"
+                    >
+                      <i :class="['iconfont', item.icon]"></i>
+                    </div>
+                    <div class="app-name">{{ item.name }}</div>
+                  </div>
+                </div>
+              </el-card>
+            </el-col>
+            <el-col :span="12">
+              <!-- 我的待办 -->
+              <el-card class="home-card-default">
+                <div class="card-title">
+                  <div class="card-title--content">
+                    <i class="iconfont icon-liucheng"></i>
+                    <span>我的待办</span>
+                  </div>
+                  <el-button type="primary" link size="small" @click="handleMoreTask">
+                    更多
+                  </el-button>
+                </div>
+                <div class="card-content">
+                  <div class="list-info" v-for="(item, index) in todoList" :key="index">
+                    <div class="list-info--title single-line-text" @click="handleTaskClick(item)">
+                      {{ item.dataTitle }}
+                    </div>
+                    <div class="list-info--time">
+                      {{ dateFormat(item.createTime || '', 'MM-DD HH:mm') }}
+                    </div>
+                  </div>
+                </div>
+              </el-card>
+            </el-col>
+            <el-col :span="12">
+              <!-- 我的本年度办理情况 -->
+              <el-card class="home-card-little">
+                <div class="card-title">
+                  <div class="card-title--content">
+                    <i class="iconfont icon-niannianyouyu"></i>
+                    <span>我的本年度办理情况</span>
+                  </div>
+                  <el-button type="primary" link size="small" @click="handleMoreTask">
+                    更多
+                  </el-button>
+                </div>
+              </el-card>
+            </el-col>
+            <el-col :span="12"></el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="8">
+          <!-- 我的日程 -->
+          <el-card class="home-card-large">
+            <div class="card-title">
+              <div class="card-title--content">
+                <i class="iconfont icon-rili"></i>
+                <span>我的日程</span>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row :gutter="10" class="w-full">
+        <el-col :span="8">
+          <!-- 我的应用 -->
+          <el-card class="home-card-small">
+            <div class="card-title">
+              <div class="card-title--content">
+                <i class="iconfont icon-xiaoxizhongxin"></i>
+                <span>通知公告</span>
+              </div>
+              <el-button type="primary" link size="small" @click="handleMoreNotice">
+                更多
+              </el-button>
+            </div>
+            <div class="card-content">
+              <div class="list-info" v-for="(item, index) in noticeList" :key="index">
+                <div class="list-info--title single-line-text" @click="handleNoticeClick(item)">
+                  <dict-tag dict-type="notice_type" :value="item.type" />{{ item.title }}
+                </div>
+                <div class="list-info--time">
+                  {{ dateFormat(item.createTime || '', 'MM-DD HH:mm') }}
+                </div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="8">1</el-col>
+        <el-col :span="8">2</el-col>
+      </el-row>
+    </div>
+
     <el-dialog
       v-model="visible"
       :title="title"
@@ -126,18 +243,35 @@
         </span>
       </template>
     </el-dialog>
+
+    <form-detail ref="formDetailRef" @resetQuery="handleQueryTodo" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref } from 'vue';
-  import { announcementApi } from '@/api/sys/notice';
+  import { useRouter } from 'vue-router';
+  import { onMounted, reactive, ref } from 'vue';
+  import { announcementApi, noticePageApi } from '@/api/sys/notice';
   import { ResultEnum } from '@/enums/httpEnum';
   import useNoticeStore from '@/stores/modules/notice';
-  import { isNotEmpty } from '@/utils';
+  import { useUserStore } from '@/stores/modules/user';
+  import { useAppStore } from '@/stores/modules/app';
+  import { isNotEmpty, getDictLabelByValue } from '@/utils';
+  import { dateFormat } from '@/utils/workflow';
   import { weatherApi } from '@/api/index';
+  import { appListApi } from '@/api/workflow/app';
   import WeatherForecast from '@/components/weather/weather-forecast.vue';
+  import { TaskStatusEnum } from '@/enums/workFlowEnum';
+  import { getTaskPageApi, getAnnualTaskApi } from '@/api/workflow/task';
+  import FormDetail from './workflow/form/form-detail.vue';
+  import DictTag from '@/components/dict/dict-tag.vue';
 
   const noticeStore = useNoticeStore();
+  const userStore = useUserStore();
+  const appStore = useAppStore();
+
+  // 路由
+  const router = useRouter();
+
   /** 是否显示公告 */
   const visible = ref(false);
   /** 公告标题 */
@@ -148,6 +282,41 @@
   const weatherVisible = ref(false);
   /** 天气信息 */
   const forecastInfo = ref<Weather.WeatherForecast>();
+  /** 应用集合 */
+  const appList = ref<WorkApp.AppInfo[]>();
+  /** 待办查询条件 */
+  const todoParams = reactive<WorkTask.TaskQuery>({
+    title: '',
+    userId: '',
+    appId: '',
+    formCode: '',
+    startTime: '',
+    endTime: '',
+    status: TaskStatusEnum.TODO,
+    pageNum: 1,
+    pageSize: 7,
+  });
+  /** 待办列表 */
+  const todoList = ref<WorkTask.TaskNodeModel[]>();
+  /** 注册组件 */
+  const formDetailRef = ref();
+  /** 通知公告参数 */
+  const noticeParams = reactive<Notice.NoticeParams>({
+    title: '',
+    type: '',
+    status: '',
+    pageNum: 1,
+    pageSize: 8,
+  });
+  /** 我的年度办理情况 */
+  const annualTask = ref<WorkTask.AnnualTaskModel>({
+    todoNum: 0,
+    completeNum: 0,
+    startedNum: 0,
+    ccNum: 0,
+  });
+  /** 通知公告列表 */
+  const noticeList = ref<Notice.NoticeInfo[]>();
 
   /**
    * @description: 获取公告
@@ -178,8 +347,8 @@
    * @description: 天气预报
    * @return {*}
    */
-  const handleWeather = () => {
-    weatherApi().then((res) => {
+  const handleWeather = async () => {
+    await weatherApi().then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
         weatherVisible.value = true;
         forecastInfo.value = res.data;
@@ -189,9 +358,141 @@
     });
   };
 
+  /**
+   * @description: 更多应用
+   * @return {*}
+   */
+  const handleMoreApp = () => {
+    router.push({
+      path: '/workflow/workbench',
+    });
+  };
+
+  /**
+   * @description: 跳转流程实例列表
+   * @param {*} appId 应用ID
+   * @return {*}
+   */
+  const handleAppClick = (appId?: string) => {
+    router.push({
+      path: '/workflow/workbench/instance-list',
+      query: {
+        appId: appId,
+      },
+    });
+  };
+
+  /**
+   * @description: 更多待办
+   * @return {*}
+   */
+  const handleMoreTask = () => {
+    router.push('/workflow/workbench/todo');
+  };
+
+  /**
+   * @description: 待办跳转
+   * @param {WorkTask.TaskNodeModel} task
+   * @return {*}
+   */
+  const handleTaskClick = (task: WorkTask.TaskNodeModel) => {
+    const code = task.formCode;
+    const procInstId = task.procInstId;
+    formDetailRef.value.getInstanceInfoByInstanceId(code, procInstId);
+  };
+
+  /**
+   * @description: 更多公告
+   * @return {*}
+   */
+  const handleMoreNotice = () => {
+    router.push('/system/notice');
+  };
+
+  /**
+   * @description: 公告详情
+   * @param {Notice.NoticeInfo} notice
+   * @return {*}
+   */
+  const handleNoticeClick = (notice: Notice.NoticeInfo) => {
+    noticeInfo.value = notice;
+    visible.value = true;
+    const dictLabel = getDictLabelByValue(appStore.dictList, 'notice_type', notice.type);
+    title.value = dictLabel + (dictLabel ? ': ' : '') + noticeInfo.value.title;
+  };
+
+  /**
+   * 查询应用信息
+   */
+  const handleQueryApp = async () => {
+    await appListApi({}).then((res) => {
+      if (res.code == ResultEnum.SUCCESS) {
+        if (res.data.length > 12) {
+          appList.value = res.data.slice(0, 12);
+        } else {
+          appList.value = res.data;
+        }
+      }
+    });
+  };
+
+  /**
+   * @description: 查询待办列表
+   * @return {*}
+   */
+  const handleQueryTodo = async () => {
+    await getTaskPageApi(todoParams).then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        todoList.value = res.data.list;
+      } else {
+        todoList.value = [];
+      }
+    });
+  };
+
+  /**
+   * @description: 查询年度办理情况
+   * @return {*}
+   */
+  const handleQueryAnnualTask = async () => {
+    getAnnualTaskApi().then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        annualTask.value = res.data;
+      } else {
+        annualTask.value = { todoNum: 0, completeNum: 0, startedNum: 0, ccNum: 0 };
+      }
+    });
+  };
+
+  /**
+   * @description: 查询公告列表
+   * @return {*}
+   */
+  const handleQueryNotice = async () => {
+    await noticePageApi(noticeParams).then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        noticeList.value = res.data.list;
+      } else {
+        noticeList.value = [];
+      }
+    });
+  };
+
   onMounted(async () => {
     await handleAnnouncement();
-    await handleWeather();
+    if (userStore.isSuperAdmin) {
+      await handleWeather();
+    }
+    // else {
+    // 查询应用
+    await handleQueryApp();
+    // 查询待办
+    await handleQueryTodo();
+    // 查询公告
+    await handleQueryNotice();
+    // 查询年度办理情况
+    await handleQueryAnnualTask();
+    // }
   });
 </script>
 <style lang="scss" scoped>
@@ -215,6 +516,108 @@
     }
     p {
       padding: 3px;
+    }
+  }
+
+  .home-card-little {
+    height: 110px;
+    margin: 5px;
+  }
+
+  .home-card-small {
+    height: 260px;
+    margin: 5px;
+  }
+
+  .home-card-default {
+    height: 300px;
+    margin: 5px;
+  }
+
+  .home-card-large {
+    height: 420px;
+    margin: 5px;
+  }
+
+  .card-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    line-height: 1.2rem;
+
+    &--content {
+      text-align: center;
+      line-height: 1;
+      i {
+        font-size: 0.75rem !important;
+        color: var(--el-color-white);
+        text-align: center;
+        border-radius: 50%;
+        padding: 3px;
+        background-color: $primary-color;
+      }
+      span {
+        padding-left: 5px;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .card-content {
+    width: 100%;
+    padding: 10px 10px;
+
+    .list-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      font-size: 0.875rem;
+
+      &--title {
+        width: 70%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+      &--time {
+        width: 30%;
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  .card-content--app {
+    width: 100%;
+    min-width: 250px;
+    padding: 5px 10px;
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+
+    .app-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding-top: 5px;
+
+      .app-icon {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        border-radius: 10px;
+        cursor: pointer;
+        i {
+          font-size: 35px;
+          color: var(--el-color-white);
+        }
+      }
+      .app-name {
+        padding-top: 5px;
+        font-size: 0.875rem;
+      }
     }
   }
 </style>
