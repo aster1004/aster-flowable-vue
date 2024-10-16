@@ -69,7 +69,7 @@
   import { formSaveApi } from '@/api/workflow/form';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus/es';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { WarningFilled, Loading } from '@element-plus/icons-vue';
 
@@ -80,7 +80,7 @@
   const workFlowStore = useWorkFlowStore();
   // 路由
   const route = useRoute();
-
+  const router = useRouter();
   // 活动菜单
   const activeMenu = ref('formDesign');
   // 表单设计ref
@@ -189,19 +189,24 @@
     }
   };
 
+  const goListPage = () => {
+    router.replace('/workflow/design/list');
+  };
   /**
    * 校验通过后发布
    */
-  const doSave = () => {
+  const doSave = async () => {
     console.info(workFlowStore.design);
-    formSaveApi(workFlowStore.design).then((res) => {
+    await formSaveApi(workFlowStore.design).then((res) => {
       console.info('保存成功');
       console.info(res);
       if (res.code == ResultEnum.SUCCESS) {
         ElMessage.success({
           message: t('common.success'),
           duration: 500,
-          onClose: () => {},
+          onClose: () => {
+            goListPage(); //返回列表页
+          },
         });
       } else {
         ElMessage.error({

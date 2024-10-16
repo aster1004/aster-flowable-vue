@@ -149,6 +149,7 @@
   import { computed, ref, watch } from 'vue';
   import { CompareOptions } from '@/utils/ConditionCompare';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
+  import { isNotEmpty } from '@/utils';
 
   const emit = defineEmits(['update:condition', 'delete']);
 
@@ -248,7 +249,7 @@
   const getLabel = (item: any) => {
     switch (item.type) {
       case 'user':
-        return item?.realName;
+        return isNotEmpty(item.realName) ? item.realName : item.nickName;
       case 'dept':
         return item?.orgName;
       case 'sysRole':

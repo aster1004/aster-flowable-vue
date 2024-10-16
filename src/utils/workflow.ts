@@ -951,7 +951,9 @@ export const getInstanceNodeResult = (instanceList: WorkForm.InstanceLogsList) =
       return {
         nodeName: instance.nodeName, //节点名称
         startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
-        text: instance.user?.realName, //办理人
+        text: isNotEmpty(instance.user?.realName)
+          ? instance.user?.realName
+          : instance.user?.nickName, //办理人
         result: getTaskResult(instance).text, // 处理结果
       };
     }

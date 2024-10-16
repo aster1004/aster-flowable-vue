@@ -29,7 +29,7 @@
         <el-option
           v-for="(item, index) in selectedUsers"
           :key="index"
-          :label="item.realName"
+          :label="isNotEmpty(item.realName) ? item.realName : item.nickName"
           :value="item.id"
         />
       </el-select>
@@ -43,7 +43,7 @@
         <el-option
           v-for="(item, index) in selectedUsers"
           :key="index"
-          :label="item.realName"
+          :label="isNotEmpty(item.realName) ? item.realName : item.nickName"
           :value="item.id"
         />
       </el-select>
@@ -242,7 +242,7 @@
     if (isNotEmpty(selectedUsers.value)) {
       return selectedUsers.value
         .map((item: User.UserInfo) => {
-          return item.realName;
+          return isNotEmpty(item.realName) ? item.realName : item.nickName;
         })
         .join(',');
     }

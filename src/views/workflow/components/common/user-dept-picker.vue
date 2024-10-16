@@ -79,11 +79,16 @@
           />
           <el-table-column
             prop="realName"
-            :label="$t('label.user.realName')"
+            label="用户名称"
             width="120"
             header-align="center"
             align="center"
-          />
+          >
+            <template #default="scope">
+              <span v-if="scope.row.realName">{{ scope.row.realName }}</span>
+              <span v-else>{{ scope.row.nickName }}</span>
+            </template>
+          </el-table-column>
 
           <el-table-column
             prop="mobile"
@@ -125,11 +130,16 @@
         <el-table :data="submitList" :border="true" row-key="id" style="width: 100%">
           <el-table-column
             prop="realName"
-            :label="$t('label.user.realName')"
+            label="用户名称"
             width="100"
             header-align="center"
             align="center"
-          />
+          >
+            <template #default="scope">
+              <span v-if="scope.row.realName">{{ scope.row.realName }}</span>
+              <span v-else>{{ scope.row.nickName }}</span>
+            </template>
+          </el-table-column>
 
           <el-table-column :label="$t('label.operate')" align="center" class-name="operation">
             <template #default="scope">
@@ -694,6 +704,7 @@
         id: row.id,
         type: props.type,
         realName: row.realName, // 用户名称
+        nickName: row.nickName, // 昵称
         orgName: row.orgName, // 部门名称
         roleName: row.roleName, // 角色名称
       });
@@ -704,6 +715,7 @@
           id: item.id,
           type: props.type,
           realName: item.realName,
+          nickName: row.nickName, // 昵称
           orgName: item.orgName,
           roleName: item.roleName,
         };

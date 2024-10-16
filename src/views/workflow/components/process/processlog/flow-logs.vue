@@ -79,7 +79,11 @@
                         :src="comment?.user?.avatar"
                       />
                       <div style="color: var(--el-text-color-primary); margin-left: -10px">
-                        {{ comment?.user?.realName }}
+                        {{
+                          isNotEmpty(comment?.user?.realName)
+                            ? comment?.user?.realName
+                            : comment?.user?.nickName
+                        }}
                       </div>
                       <el-tag style="margin-left: 8px" size="small" round>
                         {{ getApproveName(comment.operationType!.approveType) }}
