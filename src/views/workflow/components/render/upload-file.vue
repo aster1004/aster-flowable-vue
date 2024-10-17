@@ -42,7 +42,7 @@
         <div v-else class="file-readonly">
           <el-row v-for="(item, index) in _value" :key="index">
             <el-col :span="24">
-              <span :title="item.name">{{ item.name }}</span>
+              <span :title="item.name" @click="handlePreview(item)">{{ item.name }}</span>
             </el-col>
           </el-row>
         </div>
@@ -99,6 +99,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { downloadFileByUrl } from '@/utils/fileUtils';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
+  import { Base64 } from 'js-base64';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -295,6 +296,7 @@
    * @return {*}
    */
   const handlePreview: UploadProps['onPreview'] = (file: any) => {
+    console.info('file:', file);
     const extension = file.url.split('.').pop();
     if (ImageUpload.type.join(',').indexOf(extension) != -1) {
       previewFile.value = {
@@ -304,6 +306,10 @@
       previewImageVisible.value = true;
     } else if (fileExtensions.value.join(',').indexOf(extension) != -1) {
       previewDocumentVisible.value = true;
+      window.open(
+        'http://106.37.75.241:9107/onlinePreview?url=' +
+          encodeURIComponent(Base64.encode(file.url)),
+      );
     } else {
       ElMessageBox.confirm('不支持预览此类型的文件,是否要下载查看?', t('common.tips'), {
         confirmButtonText: t('button.confirm'),
