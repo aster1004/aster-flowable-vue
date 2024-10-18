@@ -25,6 +25,7 @@
         :value-format="formItem.props.format"
         :readonly="_readonly"
         clearable
+        style="width: 100%"
       />
       <el-date-picker
         v-else-if="mode === 'search'"
@@ -33,15 +34,16 @@
         :format="formItem.props.format"
         :value-format="formItem.props.format"
         clearable
+        style="width: 100%"
       />
-      <span v-else>{{ _value }}</span>
+      <span v-else>{{ _formatValue }}</span>
     </el-form-item>
     <div v-else class="print-cell" ref="printRef">
       <div class="print-cell-label" :style="{ height: printMaxHeight + 'px' }">
         <p ref="printLabelRef" v-show="showLabel">{{ formItem.title }}</p>
       </div>
       <div class="print-cell-value" :style="{ height: printMaxHeight + 'px' }">
-        <p ref="printValueRef">{{ _value }}</p>
+        <p ref="printValueRef">{{ _formatValue }}</p>
       </div>
     </div>
   </div>
@@ -54,6 +56,7 @@
   import { instanceInfoByCustomParamsApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
+  import moment from 'moment';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -103,6 +106,16 @@
     console.log(parentHeight, labelHeight, valueHeight);
     printMaxHeight.value = Math.max(parentHeight, labelHeight, valueHeight);
   };
+
+  /**
+   * @description: 格式化值
+   */
+  const _formatValue = computed(() => {
+    if (isNotEmpty(_value.value)) {
+      return moment(_value.value).format(props.formItem.props.format);
+    }
+    return '';
+  });
 
   // 键
   const formItemProp = computed(() => {

@@ -47,7 +47,7 @@
         <p ref="printLabelRef" v-show="showLabel">{{ formItem.title }}</p>
       </div>
       <div class="print-cell-value" :style="{ height: printMaxHeight + 'px' }">
-        <p ref="printValueRef">{{ _value ? _value.join('-') : '' }}</p>
+        <p ref="printValueRef">{{ _value ? _value.join('至') : '' }}</p>
       </div>
     </div>
   </div>
