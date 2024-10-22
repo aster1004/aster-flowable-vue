@@ -10,7 +10,7 @@
         <div class="node-name">发起人</div>
       </div>
       <div class="start-node-body">
-        {{ props.data.data.nodeUser }}
+        <!-- {{ props.data.data.nodeUser }} -->
       </div>
     </div>
   </el-tooltip>

@@ -1,3 +1,10 @@
+<!--
+ * @Author: Aster lipian1004@163.com
+ * @Date: 2024-10-12 14:59:55
+ * @FilePath: \aster-flowable-vue\src\views\workflow\components\flow\render-flow.vue
+ * @Description: 流程图渲染
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
+-->
 <template>
   <div class="flow-container" @drop="onDrop">
     <VueFlow
@@ -8,8 +15,8 @@
       @dragover="onDragOver"
       @dragleave="onDragLeave"
       :style="{
-        height: '100vh',
-        width: '100vw',
+        width: '100%',
+        height: '100%',
         backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',
         transition: 'background-color 0.2s ease',
       }"
@@ -64,7 +71,8 @@
   import useDragAndDrop from '@/utils/useDnD.js';
   import { conditionStr } from '@/utils/ConditionCompare';
   import { isNotEmpty } from '@/utils';
-  import * as processData from '@/data/render_flow_demo.json';
+  import { DEFAULT_PRIMARY } from '@/config';
+  import { type } from 'os';
 
   const { onConnect, addEdges } = useVueFlow();
   const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop();
@@ -75,6 +83,10 @@
       type: Object,
       default: () => ({}),
     },
+    activeId: {
+      type: Array,
+      default: () => [],
+    },
   });
 
   const drawer = ref(false);
@@ -82,7 +94,8 @@
   const edges = ref([]);
 
   onMounted(() => {
-    if (isNotEmpty(processData)) {
+    console.log('props.data', props.data);
+    if (isNotEmpty(props.data)) {
       renderFlow();
     }
   });
@@ -97,7 +110,7 @@
   // 渲染流程图
   const renderFlow = () => {
     // 递归渲染流程图
-    rv(processData);
+    rv(props.data);
     // 获取第一个节点用于获取x轴坐标
     let firstNode = nodes.value[0];
     // 获取最后一个节点用于获取y轴坐标
@@ -117,7 +130,7 @@
       target: 'end',
       label: '',
       type: 'step',
-      style: { stroke: '#fb5923' },
+      style: { stroke: DEFAULT_PRIMARY },
       animated: false,
       labelBgStyle: { fill: 'orange' },
       markerEnd: MarkerType.ArrowClosed,
@@ -151,7 +164,7 @@
         target: node.id,
         label: '',
         type: 'step',
-        style: { stroke: '#fb5923' },
+        style: { stroke: DEFAULT_PRIMARY },
         animated: false,
         labelBgStyle: { fill: 'orange' },
         markerEnd: MarkerType.ArrowClosed,
@@ -201,7 +214,7 @@
         target: node.id,
         label: '',
         type: 'step',
-        style: { stroke: '#fb5923' },
+        style: { stroke: DEFAULT_PRIMARY },
         animated: false,
         labelBgStyle: { fill: 'orange' },
         markerEnd: MarkerType.ArrowClosed,
@@ -230,7 +243,7 @@
         target: node.id,
         label: '',
         type: 'step',
-        style: { stroke: '#fb5923' },
+        style: { stroke: DEFAULT_PRIMARY },
         animated: false,
         labelBgStyle: { fill: 'orange' },
         markerEnd: MarkerType.ArrowClosed,
@@ -283,7 +296,7 @@
           target: node.id,
           label: '',
           type: 'step',
-          style: { stroke: '#fb5923' },
+          style: { stroke: DEFAULT_PRIMARY },
           animated: false,
           labelBgStyle: { fill: 'orange' },
           markerEnd: MarkerType.ArrowClosed,
@@ -379,7 +392,8 @@
   @import '@vue-flow/core/dist/theme-default.css';
   @import '@vue-flow/controls/dist/style.css';
   @import '@vue-flow/minimap/dist/style.css';
-
+</style>
+<style scoped type="scss">
   body {
     margin: 0px;
   }

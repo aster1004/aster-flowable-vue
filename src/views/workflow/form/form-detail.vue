@@ -64,6 +64,7 @@
           :form-items="_formItems"
           :form-info="_baseFormInfo"
           :form-status="formStatus"
+          :process="_process"
           :proc-inst-id="procInstId"
         />
       </el-tab-pane>
@@ -83,6 +84,7 @@
       :form-items="_formItems"
       :form-info="_baseFormInfo"
       :form-status="formStatus"
+      :process="_process"
       :proc-inst-id="procInstId"
     />
 
@@ -498,6 +500,11 @@
       }
     }
     return formItems;
+  });
+
+  // 流程设计
+  const _process = computed(() => {
+    return JSON.parse(JSON.stringify(formInfo.value.process));
   });
 
   defineExpose({
