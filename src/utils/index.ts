@@ -386,6 +386,23 @@ export function getDictDataList(dictList: any[], dictType: string) {
 }
 
 /**
+ * @description: 根据字典类型和字典值查询字典标签
+ * @param {any} dictList
+ * @param {string} dictType
+ * @param {string} value
+ * @return {*}
+ */
+export function getDictLabelByValue(dictList: any[], dictType: string, value: string) {
+  const dataList = getDictDataList(dictList, dictType);
+  const item = dataList.find((element: any) => element.dictValue === value);
+  if (item) {
+    return item.dictLabel;
+  } else {
+    return '';
+  }
+}
+
+/**
  * 日期格式化
  * @param time
  * @param pattern
@@ -443,4 +460,24 @@ export function parseTime(time: any, pattern?: string) {
  */
 export function getStaticResource(relativePath: string) {
   return new URL(relativePath, import.meta.url).href;
+}
+
+/**
+ * @description: 毫秒转时分秒
+ * @param {*}
+ * @return {*}
+ */
+export function convertMilliSecond(milliSecond: number) {
+  if (!milliSecond || milliSecond == 0) {
+    return '';
+  }
+  if (milliSecond < 1000) {
+    return milliSecond + '毫秒';
+  } else if (milliSecond >= 1000 && milliSecond < 60000) {
+    return (milliSecond / 1000).toFixed(1) + '秒';
+  } else if (milliSecond >= 60000 && milliSecond < 3600000) {
+    return (milliSecond / 60000).toFixed(1) + '分钟';
+  } else {
+    return (milliSecond / 3600000).toFixed(1) + '小时';
+  }
 }

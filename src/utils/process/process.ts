@@ -17,7 +17,8 @@ const workFlowStore = useWorkFlowStore();
  * @param val
  */
 export const getFormFieldData = (val: any) => {
-  let formItems = flatFormItems(workFlowStore.design.formItems);
+  const _formItems = JSON.parse(JSON.stringify(workFlowStore.design.formItems));
+  let formItems = flatFormItems(_formItems);
   formItems.forEach((formItem: any) => {
     if (val.value.type === 0) {
       formItem.operation = ['edit'];
@@ -97,7 +98,7 @@ const setNodeFormPermission = (type: number, formPermissionData: any[]) => {
  * @returns
  */
 export const getAllNode = () => {
-  let process = workFlowStore.design.process.nodeConfig;
+  let process = workFlowStore.design.process;
   // console.info('process：', JSON.stringify(process));
   return revertNode(process, []);
 };

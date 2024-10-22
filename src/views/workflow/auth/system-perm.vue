@@ -2,7 +2,7 @@
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-09-04 16:37:16
  * @FilePath: \aster-flowable-vue\src\views\workflow\auth\system-perm.vue
- * @Description: 系统管理员权限
+ * @Description: 管理员权限
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
@@ -11,7 +11,7 @@
       <div class="header-title">权限设置</div>
     </div>
     <div class="table-body">
-      <p class="table-body__desc">系统管理员拥有系统所有功能权限，可查看全部数据</p>
+      <p class="table-body__desc">数据管理员可查看所有表单数据</p>
       <div class="system-title">
         <span>成员管理</span>
       </div>

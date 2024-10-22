@@ -115,6 +115,7 @@
   import { computed, onMounted, PropType, ref } from 'vue';
   import draggable from 'vuedraggable';
   import { useI18n } from 'vue-i18n';
+  import { FormPermissionEnum } from '@/enums/workFlowEnum';
 
   const workFlowStore = useWorkFlowStore();
   const { t } = useI18n();
@@ -249,8 +250,13 @@
    */
   const _hidden = computed(() => {
     let r = false;
+    // 解析隐藏条件公式
     if (props.formItem.props.hidden) {
       r = evaluateFormula(props.formItem.props.hidden, props.value);
+    }
+    // 判断流程节点下该控件是否隐藏
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.HIDDEN;
     }
     return r;
   });

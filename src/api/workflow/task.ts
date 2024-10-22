@@ -65,3 +65,87 @@ export const instanceInfoByInstanceIdApi = (code: string, instanceId: string) =>
     },
   );
 };
+
+/**
+ * @description: 获取可退回的节点
+ * @param params
+ */
+export const getRecallTaskNodesApi = (taskId: string) => {
+  return request.get<Process.BackNodeModel[]>(
+    PORT5 + `/processTask/getRecallTaskNodes`,
+    { taskId: taskId },
+    {
+      noLoading: true,
+    },
+  );
+};
+
+/**
+ * @description: 获取流程日志
+ * @param procInstId
+ */
+export const getInstanceLogsApi = (procInstId: string) => {
+  return request.get<WorkForm.ProcessResult>(
+    PORT5 + `/processTask/instance/logs/${procInstId}`,
+    {},
+    { noLoading: true },
+  );
+};
+
+/**
+ * @description: 获取待办/已办任务列表
+ * @param params 查询参数
+ */
+export const getTaskPageApi = (params: WorkTask.TaskQuery) => {
+  return request.post<Page.ResPage<WorkTask.TaskNodeModel>>(PORT5 + `/processTask/page`, params, {
+    noLoading: true,
+  });
+};
+
+/**
+ * @description: 获取我发起的流程列表
+ * @param params 查询参数
+ */
+export const getMyStartedApi = (params: WorkTask.TaskQuery) => {
+  return request.post<Page.ResPage<WorkTask.MyStartedModel>>(
+    PORT5 + `/processTask/started`,
+    params,
+    { noLoading: true },
+  );
+};
+
+/**
+ * @description: 获取抄送我的流程列表
+ * @param params 查询参数
+ */
+export const getCcMeApi = (params: WorkTask.TaskQuery) => {
+  return request.post<Page.ResPage<WorkTask.MyStartedModel>>(PORT5 + `/processTask/ccme`, params, {
+    noLoading: true,
+  });
+};
+
+/**
+ * @description: 获取年度任务统计
+ */
+export const getAnnualTaskApi = () => {
+  return request.get<WorkTask.AnnualTaskModel>(
+    PORT5 + `/processTask/annualTask`,
+    {},
+    {
+      noLoading: true,
+    },
+  );
+};
+
+/**
+ * @description: 获取已办统计
+ */
+export const getCompleteStatisticskApi = () => {
+  return request.get<WorkTask.CompleteStatisticsModel[]>(
+    PORT5 + `/processTask/completeStatistics`,
+    {},
+    {
+      noLoading: true,
+    },
+  );
+};

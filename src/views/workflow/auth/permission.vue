@@ -7,16 +7,14 @@
 -->
 <template>
   <div class="table-box">
-    <system-perm :role-id="roleInfo.id" v-if="permType === 'system'" />
-    <app-perm v-else-if="permType === 'app'" />
-    <user-perm v-else />
+    <system-perm v-if="permType === 'system'" :role-id="roleInfo.id" />
+    <user-perm v-else :role-id="roleInfo.id" :role-type="permType" />
   </div>
 </template>
 <script setup lang="ts">
   import { isNotEmpty } from '@/utils';
   import { PropType, ref, watch } from 'vue';
   import SystemPerm from './system-perm.vue';
-  import AppPerm from './app-perm.vue';
   import UserPerm from './user-perm.vue';
 
   const props = defineProps({
@@ -27,7 +25,7 @@
   });
 
   // 权限类型
-  const permType = ref<'system' | 'app' | 'all' | 'custom'>('system');
+  const permType = ref<string>('system');
 
   /**
    * @description: 监听角色信息变化
@@ -36,19 +34,7 @@
     () => props.roleInfo,
     (val) => {
       if (val && val.id && isNotEmpty(val.id)) {
-        if (val.type === 'default') {
-          if (val.name === '系统管理员') {
-            permType.value = 'system';
-          } else if (val.name === '应用管理员') {
-            permType.value = 'app';
-          } else if (val.name === '所有用户') {
-            permType.value = 'all';
-          } else {
-            permType.value = 'custom';
-          }
-        } else {
-          permType.value = 'custom';
-        }
+        permType.value = val.type ? val.type : 'system';
       }
     },
     { immediate: true, deep: true },

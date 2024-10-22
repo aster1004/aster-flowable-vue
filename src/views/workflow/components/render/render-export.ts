@@ -22,6 +22,7 @@ import AssociatedForm from './associated-form.vue';
 import GeoLocation from './geo-location.vue';
 import Area from './area.vue';
 import Signature from './signature.vue';
+import SignatureCombine from './signature-combine.vue';
 import AssociatedProperty from './associated-property.vue';
 import CalcFormula from './calc-formula.vue';
 import SummaryFormula from './summary-formula.vue';
@@ -56,6 +57,7 @@ export default {
   GeoLocation,
   Area,
   Signature,
+  SignatureCombine,
   AssociatedProperty,
   CalcFormula,
   SummaryFormula,

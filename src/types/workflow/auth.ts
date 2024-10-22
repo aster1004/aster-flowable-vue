@@ -48,4 +48,32 @@ declare namespace WorkAuth {
     type?: string;
     avatar?: string;
   }
+
+  /**
+   * @description: 角色权限信息
+   */
+  export interface RolePermission {
+    id?: string;
+    roleId?: string;
+    appId?: string;
+    formId?: string;
+    formName?: string;
+    formPerms?: string[];
+    listPerms?: string[];
+    dataPerm?: string;
+    checked?: boolean;
+  }
+
+  /**
+   * @description: 表单数据权限
+   */
+  export interface FormDataPermission {
+    code: string;
+    isAdmin: boolean;
+    formPerms?: string[];
+    listPerms?: string[];
+    dataPerm?: string;
+    userId?: string;
+    deptIds?: string[];
+  }
 }

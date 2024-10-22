@@ -19,6 +19,7 @@ declare namespace Notice {
     content: string;
     status: string;
     remark: string;
+    createTime?: string;
   }
 
   export interface NoticeItem {

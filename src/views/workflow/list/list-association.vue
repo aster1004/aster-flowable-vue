@@ -67,7 +67,7 @@
           <el-tooltip
             v-for="(item, index) in _actions"
             :key="index"
-            :content="item.title"
+            :content="item.label"
             effect="dark"
             placement="top"
           >
@@ -98,7 +98,7 @@
           fixed
           header-align="center"
           align="center"
-          width="180"
+          min-width="180"
           show-overflow-tooltip
         >
           <template #default="scope">
@@ -122,7 +122,7 @@
           :label="item.title"
           header-align="center"
           align="center"
-          width="180"
+          min-width="180"
         >
           <template #default="scope">
             <div class="table-component">
@@ -213,6 +213,7 @@
   import { ElMessage } from 'element-plus';
   import vClickOutside from 'element-plus/es/directives/click-outside/index';
   import { instancePageApi } from '@/api/workflow/process';
+  import { permFormDataApi } from '@/api/workflow/auth';
 
   // 注册组件
   const formInitiationRef = ref();
@@ -274,6 +275,11 @@
   const columnIndeterminate = ref(false);
   // 已选中查询字段id
   const columnCheckedIds = ref<string[]>([]);
+  // 表单权限
+  const formDataPermission = ref<WorkAuth.FormDataPermission>({
+    code: code.value,
+    isAdmin: false,
+  });
 
   /**
    * @description: 查询
@@ -443,7 +449,7 @@
       ElMessage.warning('参数有误，请刷新后重试');
       return;
     }
-    formInitiationRef.value.init(formId.value);
+    formInitiationRef.value.init(code.value);
   };
 
   /**
@@ -455,7 +461,7 @@
     const code = queryParams.code;
     const id = row.id;
     const procDefId = row.procDefId;
-    formDetailRef.value.getInstanceInfo(id, code, procDefId);
+    formDetailRef.value.getInstanceInfo(id, code, procDefId, true);
   };
 
   // 列表设置内容
@@ -466,7 +472,12 @@
   // 功能按钮
   const _actions = computed(() => {
     if (_listSettings.value.actions && _listSettings.value.actions.length > 0) {
-      return _listSettings.value.actions;
+      return _listSettings.value.actions.filter(
+        (item) =>
+          formDataPermission.value.isAdmin ||
+          (formDataPermission.value.listPerms &&
+            formDataPermission.value.listPerms.includes(item.value)),
+      );
     }
     return [];
   });
@@ -538,6 +549,21 @@
   };
 
   /**
+   * @description: 获取表单数据权限
+   * @param {*} code 表单code
+   * @return {*}
+   */
+  const getFormDataPermission = (code: string) => {
+    permFormDataApi(code).then((res) => {
+      if (res.code == ResultEnum.SUCCESS) {
+        formDataPermission.value = res.data;
+      } else {
+        ElMessage.error(res.message);
+      }
+    });
+  };
+
+  /**
    * @description: 初始化
    * @param {string} formCode 表单编码
    * @param {string} associationCode 关联编码
@@ -563,6 +589,8 @@
     readonly.value = false;
     // 根据code获取表单信息
     loadFormInfoByCode(formCode);
+    // 获取表单数据权限
+    getFormDataPermission(formCode);
     visible.value = true;
   };
 

@@ -16,7 +16,7 @@
           style="width: 100%"
         >
           <template #label>
-            <span v-show="showLabel">{{ _formItem.title }}</span>
+            <span v-show="showLabel" style="line-height: normal">{{ _formItem.title }}</span>
           </template>
           <template v-if="_formItem.props.expand">
             <el-radio-group :model-value="_formItem.value" readonly>
@@ -56,7 +56,7 @@
             <span v-show="showLabel">{{ formItem.title }}</span>
           </template>
           <template v-if="formItem.props.expand">
-            <el-radio-group v-model="_value" :disabled="formItem.props.readonly">
+            <el-radio-group v-model="_value" :disabled="_readonly">
               <el-radio v-for="(item, i) in options" :key="i" :value="item.value">
                 {{ item.label }}
               </el-radio>
@@ -65,9 +65,10 @@
           <template v-else>
             <el-select
               v-model="_value"
+              filterable
               :multiple="false"
               :clearable="true"
-              :disabled="formItem.props.readonly"
+              :disabled="_readonly"
             >
               <el-option
                 v-for="(item, i) in options"
@@ -104,15 +105,20 @@
         </el-form-item>
       </template>
       <template v-else>
-        {{ _value }}
+        <template v-if="formItem.props.type === 'dict'">
+          <dict-tag :dict-type="formItem.props.dictType" :value="_value" />
+        </template>
+        <template v-else>
+          {{ _label }}
+        </template>
       </template>
     </div>
-    <div v-else class="print-cell">
-      <div class="print-cell-label">
-        <span v-show="showLabel">{{ formItem.title }}</span>
+    <div v-else class="print-cell" ref="printRef">
+      <div class="print-cell-label" :style="{ height: printMaxHeight + 'px' }">
+        <p ref="printLabelRef" v-show="showLabel">{{ formItem.title }}</p>
       </div>
-      <div class="print-cell-value">
-        <span>{{ _value }}</span>
+      <div class="print-cell-value" :style="{ height: printMaxHeight + 'px' }">
+        <p ref="printValueRef">{{ _label }}</p>
       </div>
     </div>
   </div>
@@ -120,12 +126,14 @@
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, onMounted, PropType, ref, watch } from 'vue';
+  import { computed, nextTick, onMounted, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { getDictDataList, isNotEmpty } from '@/utils';
   import { instanceListByCodeApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import DictTag from '@/components/dict/dict-tag.vue';
+  import { FormPermissionEnum } from '@/enums/workFlowEnum';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -165,6 +173,22 @@
   const appStore = useAppStore();
   // 选项
   const options = ref<any[]>([]);
+
+  // 打印 宽度
+  const printRef = ref();
+  const printLabelRef = ref();
+  const printValueRef = ref();
+  const printMaxHeight = ref(32);
+
+  /**
+   * @description: 更新高度
+   */
+  const updateHeight = () => {
+    const parentHeight = printRef.value.parentNode.offsetHeight;
+    const labelHeight = printLabelRef.value.offsetHeight;
+    const valueHeight = printValueRef.value.offsetHeight;
+    printMaxHeight.value = Math.max(parentHeight, labelHeight, valueHeight);
+  };
 
   // 键
   const formItemProp = computed(() => {
@@ -243,7 +267,7 @@
       options.value = dataList.map((item) => {
         return {
           label: item.dictLabel,
-          value: item.dictLabel,
+          value: item.dictValue,
         };
       });
     } else if (type === 'dynamic') {
@@ -287,10 +311,25 @@
   });
 
   /**
+   * @description: 标签
+   */
+  const _label = computed(() => {
+    let label = '';
+    if (isNotEmpty(_value.value)) {
+      const node = options.value.find((o) => o.value === _value.value);
+      if (node) {
+        label = node.label;
+      }
+    }
+    return label;
+  });
+
+  /**
    * @description: 是否隐藏, true-隐藏
    */
   const _hidden = computed(() => {
     let r = false;
+    // 解析隐藏条件公式
     if (props.formItem.props.hidden) {
       let expression = props.formItem.props.hidden;
       // 如果是子表中的控件，则需要用到下标
@@ -299,6 +338,11 @@
       }
       r = evaluateFormula(expression, props.formData);
     }
+    // 判断流程节点下该控件是否隐藏
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.HIDDEN;
+    }
+    // 如果是必填则动态添加rule
     if (props.formItem.props.required) {
       // 调用form-render的方法
       mittBus.emit('changeFormRules', {
@@ -313,10 +357,26 @@
     return r;
   });
 
+  /**
+   * @description: 是否只读, true-只读
+   */
+  const _readonly = computed(() => {
+    let r = props.formItem.props.readonly;
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.READONLY;
+    }
+    return r;
+  });
+
   onMounted(() => {
     const dataStr = JSON.stringify(props.formData);
     if (!props.formItem.id || dataStr.indexOf(props.formItem.id) == -1) {
       _value.value = props.formItem.value;
+    }
+    if (props.mode === 'print') {
+      nextTick(() => {
+        updateHeight();
+      });
     }
   });
 

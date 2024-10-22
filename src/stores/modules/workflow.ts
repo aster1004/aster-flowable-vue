@@ -20,7 +20,7 @@ export const useWorkFlowStore = defineStore({
       labelPosition: 'left',
       formName: '未命名表单',
       formItems: [],
-      process: <WorkForm.FormProcess>{},
+      process: <WorkForm.NodeConfig>{},
       labelWidth: 80,
       listSettings: {
         queryItems: [],
@@ -50,42 +50,37 @@ export const useWorkFlowStore = defineStore({
           actions: [],
         },
         process: {
-          tableId: '',
-          directorMaxLevel: 4,
-          flowPermission: [],
-          nodeConfig: {
-            id: 'root',
-            parentId: null,
-            nodeName: '发起人', //节点名称
-            type: 0, // 0 发起人 1审批 2抄送 3条件 4路由
-            priorityLevel: '', // 条件优先级
-            settype: '', // 审批人设置 1指定成员 2主管 4发起人自选 5发起人自己 7连续多级主管
-            selectMode: '', //审批人数 1选一个人 2选多个人
-            selectRange: '', //选择范围 1.全公司 2指定成员 2指定角色
-            directorLevel: '', //审批终点  最高层主管数
-            examineMode: '', //多人审批时采用的审批方式 1依次审批 2会签
-            noHanderAction: '', //审批人为空时 1自动审批通过/不允许发起 2转交给审核管理员
-            examineEndDirectorLevel: '', //审批终点 第n层主管
-            ccSelfSelectFlag: '', //允许发起人自选抄送人
-            nodeUserList: [], //操作人
-            error: false,
-            errorTip: '',
-            childNode: {},
-            conditionNodes: [],
-            formPermission: [],
-            buttonPermission: [
-              {
-                operation: '提交',
-                name: 'submit',
-                status: true,
-              },
-              {
-                operation: '撤销',
-                name: 'revoke',
-                status: true,
-              },
-            ],
-          },
+          id: 'root',
+          parentId: null,
+          nodeName: '发起人', //节点名称
+          type: 0, // 0 发起人 1审批 2抄送 3条件 4路由
+          priorityLevel: '', // 条件优先级
+          settype: '', // 审批人设置 1指定成员 2主管 4发起人自选 5发起人自己 7连续多级主管
+          selectMode: '', //审批人数 1选一个人 2选多个人
+          selectRange: '', //选择范围 1.全公司 2指定成员 2指定角色
+          directorLevel: '', //审批终点  最高层主管数
+          examineMode: '', //多人审批时采用的审批方式 1依次审批 2会签
+          noHanderAction: '', //审批人为空时 1自动审批通过/不允许发起 2转交给审核管理员
+          examineEndDirectorLevel: '', //审批终点 第n层主管
+          ccSelfSelectFlag: '', //允许发起人自选抄送人
+          nodeUserList: [], //操作人
+          error: false,
+          errorTip: '',
+          childNode: {},
+          conditionNodes: [],
+          formPermission: [],
+          buttonPermission: [
+            {
+              operation: '提交',
+              name: 'submit',
+              status: true,
+            },
+            {
+              operation: '撤销',
+              name: 'revoke',
+              status: true,
+            },
+          ],
         },
       };
     },

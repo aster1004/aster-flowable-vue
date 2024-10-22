@@ -46,7 +46,12 @@
                   <el-checkbox-group v-model="checkedUsers" @change="handleUserCheckChange">
                     <el-scrollbar height="260px">
                       <div v-for="userItem in userList" :key="userItem.id">
-                        <el-checkbox :label="userItem.realName" :value="userItem.id" />
+                        <el-checkbox
+                          :label="
+                            isNotEmpty(userItem.realName) ? userItem.realName : userItem.nickName
+                          "
+                          :value="userItem.id"
+                        />
                       </div>
                     </el-scrollbar>
                   </el-checkbox-group>
@@ -69,7 +74,7 @@
                   :default-checked-keys="defaultCheckedDept"
                   show-checkbox
                   :props="{ label: 'orgName', children: 'children' }"
-                  @check="handleDeptCheck"
+                  @check-change="handleDeptCheck"
                 />
               </el-scrollbar>
             </div>
@@ -116,6 +121,10 @@
     nodeLabel: {
       type: String,
       default: 'name',
+    },
+    multiple: {
+      type: Boolean,
+      default: true,
     },
   });
   // 是否展示
@@ -197,8 +206,17 @@
   /**
    * 点击部门tab栏中的部门树
    */
-  const handleDeptCheck = () => {
+  const handleDeptCheck = (value: any, checked: boolean) => {
     let checkedNodes = deptTreeRef.value.getCheckedNodes();
+    if (isNotEmpty(checkedNodes)) {
+      if (!props.multiple) {
+        if (checked) {
+          selectedTags.value = [];
+          deptTreeRef.value.setCheckedKeys([value.id]);
+        }
+        checkedNodes = [checkedNodes[checkedNodes.length - 1]];
+      }
+    }
     // 处理选中的部门
     handleTags(checkedNodes);
   };
@@ -240,6 +258,12 @@
    */
   const handleUserCheckChange = (values: any) => {
     if (isNotEmpty(values)) {
+      if (!props.multiple) {
+        selectedTags.value = [];
+        let multipleValue = [values[values.length - 1]];
+        checkedUsers.value = multipleValue;
+        values = multipleValue;
+      }
       let userTagIds = selectedTags.value.map((tagItem) => {
         if (tagItem.type === 'user') {
           return tagItem[props.nodeKey];
@@ -250,7 +274,9 @@
           if (userItem.id === userId && userTagIds.indexOf(userItem.id) == -1) {
             let node = {};
             node[props.nodeKey] = userItem.id;
-            node[props.nodeLabel] = userItem.realName;
+            node[props.nodeLabel] = isNotEmpty(userItem.realName)
+              ? userItem.realName
+              : userItem.nickName;
             node['type'] = 'user';
             selectedTags.value.push(node);
           }
@@ -292,7 +318,7 @@
     depts.value = [];
     checkedUsers.value = [];
     defaultCheckedDept.value = [];
-    if (isNotEmpty(props.value)) {
+    if (props.value && isNotEmpty(props.value)) {
       selectedTags.value = props.value;
       selectedTags.value.forEach((item) => {
         if (item.type === 'user') {

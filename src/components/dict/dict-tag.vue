@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div class="dictTag">
+  <div class="dict-tag">
     <template v-for="(item, index) in dataList">
       <template v-if="values.includes(item.dictValue)">
         <el-tag
@@ -61,5 +61,10 @@
 <style lang="scss" scoped>
   .el-tag + .el-tag {
     margin-left: 10px;
+  }
+
+  .dict-tag {
+    display: inline-block;
+    padding: 0 3px;
   }
 </style>

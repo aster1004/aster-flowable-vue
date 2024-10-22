@@ -75,8 +75,8 @@ declare namespace WorkForm {
    * @description: 功能按钮接口
    */
   export interface FunctionButton {
-    id: string;
-    title: string;
+    label: string;
+    value: string;
     icon: string;
     click: any;
   }
@@ -155,37 +155,36 @@ declare namespace WorkForm {
     status?: string;
   }
 
-  /**
-   * @description: 列表设置信息
-   */
-  export interface FormProcess {
-    tableId: string;
-    directorMaxLevel: number;
-    flowPermission: [];
-    nodeConfig: {
-      id: string;
-      parentId: string | null;
-      nodeName: string;
-      type: 0;
-      priorityLevel: string;
-      settype: string;
-      selectMode: string;
-      selectRange: string;
-      directorLevel: string;
-      examineMode: string;
-      noHanderAction: string;
-      examineEndDirectorLevel: string;
-      ccSelfSelectFlag: string;
-      nodeUserList: [];
-      childNode: {};
-      conditionNodes: [];
-      formPermission?: [];
-      buttonPermission?: any[];
-      error?: boolean;
-      errorTip: string;
-    };
+  export interface NodeConfig {
+    id: string;
+    parentId: string | null;
+    nodeName: string;
+    type: 0;
+    priorityLevel: string;
+    settype: string;
+    selectMode: string;
+    selectRange: string;
+    directorLevel: string;
+    examineMode: string;
+    noHanderAction: string;
+    examineEndDirectorLevel: string;
+    ccSelfSelectFlag: string;
+    nodeUserList: [];
+    childNode: {};
+    conditionNodes: [];
+    formPermission?: [];
+    buttonPermission?: ButtonPermission[];
+    error?: boolean;
+    errorTip: string;
   }
-
+  export interface ButtonPermission {
+    // 按钮类型，如agree
+    name: string;
+    // 操作名称，如同意
+    operation: string;
+    // 是否启用，true 为启用
+    status: boolean;
+  }
   /**
    * @description: 表单信息
    */
@@ -197,7 +196,7 @@ declare namespace WorkForm {
     // 表单项
     formItems: WorkComponent.ComponentConfig[];
     // 流程
-    process: FormProcess;
+    process: NodeConfig;
     // 流程配置
     processConfig?: string;
     // 列表配置
@@ -226,6 +225,17 @@ declare namespace WorkForm {
     adcode?: string;
   }
 
+  export interface SignatureCombineModel {
+    // 签名
+    signature: string;
+    // 签章
+    signatureCombine: string;
+    // 签章时间
+    date: string;
+    // 签章内容
+    comment: string;
+  }
+
   export interface AssocaitionListModel {
     id?: string;
     code?: string;
@@ -239,5 +249,91 @@ declare namespace WorkForm {
     associationInstanceId?: string;
     code?: string;
     codes?: string[];
+  }
+
+  // 审核提交的参数
+  export interface ApproveParams {
+    // 任务id
+    taskId?: string;
+    // 审核类型,如agree，refuse
+    approveType: string;
+    //  手写签名,base64
+    signature?: string;
+    // 表单数据
+    formData?: FormDataModel;
+
+    // 表单id
+    formId?: string;
+    // 退回节点
+    backNode?: string;
+    // 转交人
+    transferUser?: string;
+    // 会签人
+    countersignUser?: string;
+    comment?: Comment;
+  }
+  export interface Comment {
+    // 审核意见
+    opinion: string;
+    // 上传的图片
+    imageList?: WorkForm.FileModel[];
+    fileList?: WorkForm.FileModel[];
+    operationType?: OperationType;
+  }
+
+  /**
+   * 任务处理类型及处理过程的数据
+   */
+  export interface OperationType {
+    // 审核类型,如agree，refuse
+    approveType: string;
+    // 目标id
+    targetId?: string;
+    // 目标名称
+    targetName?: string;
+    // 目标类型,user | node
+    targetType?: string;
+  }
+
+  /**
+   * 流程日志
+   */
+  export interface InstanceLogs {
+    nodeId: string;
+    taskId?: string;
+    nodeName: string;
+    type: string; //0 发起人 1审批 2抄送 3条件 4路由 5并行分支 6包容网关
+    approveType?: string; //节点会签类型,AND（会签），ORDER（顺序会签），OR（或签）
+    user?: User.UserInfo;
+    ccUsers?: User.UserInfo[]; // 抄送节点才有值
+    taskComments?: TaskComment[];
+    duration?: string;
+    startTime: string;
+    finishTime?: string;
+    procInstId?: string;
+    procDefId?: string;
+    approveResult?: string; //审核结果，如同意、驳回、撤销、转交、加签、退回,发起
+  }
+
+  /**
+   * 任务评论
+   */
+  export interface TaskComment extends Comment {
+    id?: string;
+    taskId?: string;
+    type?: string;
+    user?: User.UserInfo;
+    createTime?: string;
+  }
+
+  export type InstanceLogsList = InstanceLogs[];
+
+  /**
+   * 流程结果
+   */
+  export interface ProcessResult {
+    instanceLogs: InstanceLogsList[];
+    approveResult?: string; //processing,end,disgree-end,refuse-end
+    approveResultText?: string; //上边对应的文字描述
   }
 }

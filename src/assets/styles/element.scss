@@ -330,3 +330,7 @@
     flex: none !important;
   }
 }
+
+.el-form-item--label-left .el-form-item__label {
+  align-items: center;
+}

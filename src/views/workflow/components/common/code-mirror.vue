@@ -6,9 +6,12 @@
   import { basicSetup } from 'codemirror';
   import { EditorState } from '@codemirror/state';
   import { javascript } from '@codemirror/lang-javascript';
-  import { placeholdersPlugin } from '@/views/workflow/components/common/placeholders';
-  import { functionPlugin } from '@/views/workflow/components/common/functions';
   import { EditorView, placeholder } from '@codemirror/view';
+  import {
+    placeholdersPlugin,
+    placeholdersPlugin2,
+  } from '@/views/workflow/components/common/placeholders';
+  import { functionPlugin } from '@/views/workflow/components/common/functions';
 
   const props = defineProps({
     // 编辑器默认提示信息
@@ -51,12 +54,13 @@
         state: EditorState.create({
           extensions: [
             placeholdersPlugin(),
+            placeholdersPlugin2(),
             functionPlugin(),
             baseTheme,
             basicSetup,
             javascript(),
-            EditorView.lineWrapping,
             EditorView.editable.of(props.editable),
+            EditorView.lineWrapping,
             placeholder(props.placeholder as string),
           ],
         }),
@@ -104,7 +108,20 @@
           anchor: from + text.length,
         },
       });
-    } else {
+    } else if (type == 'variable2') {
+      const text = `{{${val}}} `;
+      editorView.value.dispatch({
+        changes: {
+          from: from,
+          to: to,
+          insert: text,
+        },
+        // 光标位置
+        selection: {
+          anchor: from + text.length,
+        },
+      });
+    } else if (type == 'func') {
       const text = `${val}()`;
       editorView.value.dispatch({
         changes: {
@@ -141,5 +158,13 @@
   }
   ::v-deep(.cm-editor) {
     height: 100%;
+  }
+  ::v-deep(.cm-gutters) {
+    background-color: var(--el-bg-color-page);
+    color: var(--el-text-color-regular);
+    border-right: 1px solid var(--el-border-color);
+  }
+  ::v-deep(.cm-activeLineGutter) {
+    background-color: #cceeff44;
   }
 </style>

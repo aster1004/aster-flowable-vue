@@ -31,10 +31,11 @@
   const emits = defineEmits(['update:value']);
   const props = defineProps({
     value: {
+      type: [String, Number, Boolean, Array, Object],
       default: null,
     },
     mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'print'>,
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
       default: 'design',
     },
     formData: {

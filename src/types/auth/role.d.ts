@@ -25,6 +25,7 @@ declare namespace Role {
     roleName: string;
     roleCode: string;
     dataScope?: string;
+    menuCheckStrictly?: string;
     orgId?: string;
     sort?: number;
     status: string;

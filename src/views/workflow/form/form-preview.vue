@@ -24,7 +24,6 @@
       :form-info="_formInfo"
     />
     <template #footer>
-      <el-button type="primary" @click="validateForm">{{ $t('button.confirm') }}</el-button>
       <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
     </template>
   </el-drawer>
@@ -51,9 +50,10 @@
    */
   const init = () => {
     visible.value = true;
-    formData.value = workFlowStore.design.formItems.reduce(
-      (acc, cur) => ({ ...acc, [cur.id]: cur.value }),
-      {},
+    formData.value = JSON.parse(
+      JSON.stringify(
+        workFlowStore.design.formItems.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.value }), {}),
+      ),
     );
   };
 
@@ -74,13 +74,6 @@
   });
 
   /**
-   * @description: 验证表单
-   */
-  const validateForm = () => {
-    formRenderRef.value.validate();
-  };
-
-  /**
    * @description: 表单数据
    */
   const _formData = computed(() => {
@@ -89,8 +82,8 @@
 
   watch(
     () => _formData.value,
-    (val, oval) => {
-      console.log('preview--->', val, oval);
+    (val) => {
+      console.log('preview--->', val);
     },
     {
       immediate: true,

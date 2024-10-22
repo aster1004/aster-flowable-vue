@@ -20,6 +20,7 @@
   </div>
 </template>
 <script setup lang="ts">
+  import { FormPermissionEnum } from '@/enums/workFlowEnum';
   import { evaluateFormula } from '@/utils/workflow';
   import { computed, PropType } from 'vue';
 
@@ -48,8 +49,13 @@
    */
   const _hidden = computed(() => {
     let r = false;
+    // 解析隐藏条件公式
     if (props.formItem.props.hidden) {
       r = evaluateFormula(props.formItem.props.hidden, props.formData);
+    }
+    // 判断流程节点下该控件是否隐藏
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.HIDDEN;
     }
     return r;
   });
