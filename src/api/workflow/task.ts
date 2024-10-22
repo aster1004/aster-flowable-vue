@@ -136,3 +136,16 @@ export const getAnnualTaskApi = () => {
     },
   );
 };
+
+/**
+ * @description: 获取已办统计
+ */
+export const getCompleteStatisticskApi = () => {
+  return request.get<WorkTask.CompleteStatisticsModel[]>(
+    PORT5 + `/processTask/completeStatistics`,
+    {},
+    {
+      noLoading: true,
+    },
+  );
+};

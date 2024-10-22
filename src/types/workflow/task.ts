@@ -74,4 +74,16 @@ declare namespace WorkTask {
     startedNum: number;
     ccNum: number;
   }
+
+  /**
+   * @description: 已办统计
+   */
+  export interface CompleteStatisticsModel {
+    appId: string;
+    formCode: string;
+    formName: string;
+    icon: string;
+    iconColor: string;
+    completeNum: number;
+  }
 }

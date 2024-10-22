@@ -28,8 +28,18 @@ export const useUserStore = defineStore({
   }),
   getters: {
     // 是否超级管理员
-    isSuperAdmin: (state) =>
-      isNotEmpty(state.userInfo.superAdmin) && state.userInfo.superAdmin == SuperAdminEnum.YES,
+    isSuperAdmin: (state) => {
+      return (
+        isNotEmpty(state.userInfo.superAdmin) && state.userInfo.superAdmin == SuperAdminEnum.YES
+      );
+    },
+
+    // 显示名称
+    displayName: (state) => {
+      return isNotEmpty(state.userInfo.realName)
+        ? state.userInfo.realName
+        : state.userInfo.nickName;
+    },
   },
   actions: {
     // Set Token

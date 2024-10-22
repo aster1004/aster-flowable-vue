@@ -118,9 +118,11 @@
   watch(
     () => props.forecast,
     (val) => {
-      casts.value = val.casts;
-      province.value = val.province;
-      city.value = val.city;
+      if (val) {
+        casts.value = val.casts;
+        province.value = val.province;
+        city.value = val.city;
+      }
     },
     {
       immediate: true,
