@@ -72,7 +72,6 @@
   import { conditionStr } from '@/utils/ConditionCompare';
   import { isNotEmpty } from '@/utils';
   import { DEFAULT_PRIMARY } from '@/config';
-  import { type } from 'os';
 
   const { onConnect, addEdges } = useVueFlow();
   const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop();
@@ -83,7 +82,7 @@
       type: Object,
       default: () => ({}),
     },
-    activeId: {
+    activeNodeId: {
       type: Array,
       default: () => [],
     },
@@ -94,7 +93,7 @@
   const edges = ref([]);
 
   onMounted(() => {
-    console.log('props.data', props.data);
+    // console.log('props.data', props.data);
     if (isNotEmpty(props.data)) {
       renderFlow();
     }
@@ -130,7 +129,7 @@
       target: 'end',
       label: '',
       type: 'step',
-      style: { stroke: DEFAULT_PRIMARY },
+      style: { stroke: getColor(false) },
       animated: false,
       labelBgStyle: { fill: 'orange' },
       markerEnd: MarkerType.ArrowClosed,
@@ -145,6 +144,8 @@
    * @param {*} xindex
    */
   const rv = (node, xlen, xindex) => {
+    let currentFlag = props.activeNodeId.indexOf(node.id) != -1;
+    // console.info('当前节点：' + node.nodeName, currentFlag);
     // 发起人
     if (node.type == 0) {
       nodes.value.push({
@@ -152,7 +153,7 @@
         parentId: 'root',
         type: 'start-node',
         position: { x: 250, y: 5 },
-        data: { label: node.nodeName, nodeUser: node.nodeUser },
+        data: { label: node.nodeName, nodeUser: node.nodeUser, current: currentFlag },
       });
       // console.log(node.nodeName);
       rv(node.childNode);
@@ -164,8 +165,8 @@
         target: node.id,
         label: '',
         type: 'step',
-        style: { stroke: DEFAULT_PRIMARY },
-        animated: false,
+        style: { stroke: getColor(currentFlag) },
+        animated: currentFlag,
         labelBgStyle: { fill: 'orange' },
         markerEnd: MarkerType.ArrowClosed,
         sourceHandle: 'c',
@@ -177,7 +178,7 @@
         parentId: node.parentId,
         type: 'approve-node',
         position: { x: position.x, y: position.y + 150 },
-        data: { label: node.nodeName, nodeUserList: node.nodeUserList },
+        data: { label: node.nodeName, nodeUserList: node.nodeUserList, current: currentFlag },
       });
       // console.log(node.nodeName);
       // 判断子节点不为空
@@ -205,7 +206,7 @@
         parentId: node.parentId,
         type: 'condition-node',
         position: { x: xlen, y: position.y + 150 },
-        data: { label: node.nodeName, conditionStr: node.conditionStr },
+        data: { label: node.nodeName, conditionStr: node.conditionStr, current: currentFlag },
       });
 
       edges.value.push({
@@ -214,8 +215,8 @@
         target: node.id,
         label: '',
         type: 'step',
-        style: { stroke: DEFAULT_PRIMARY },
-        animated: false,
+        style: { stroke: getColor(currentFlag) },
+        animated: currentFlag,
         labelBgStyle: { fill: 'orange' },
         markerEnd: MarkerType.ArrowClosed,
         sourceHandle: 'c',
@@ -234,7 +235,7 @@
         type: 'gateway-node',
         conditionNodes: node.conditionNodes,
         position: { x: position.x + 50, y: position.y + 150 },
-        data: { label: node.nodeName },
+        data: { label: node.nodeName, current: currentFlag },
       });
 
       edges.value.push({
@@ -243,8 +244,8 @@
         target: node.id,
         label: '',
         type: 'step',
-        style: { stroke: DEFAULT_PRIMARY },
-        animated: false,
+        style: { stroke: getColor(currentFlag) },
+        animated: currentFlag,
         labelBgStyle: { fill: 'orange' },
         markerEnd: MarkerType.ArrowClosed,
         sourceHandle: 'c',
@@ -296,8 +297,8 @@
           target: node.id,
           label: '',
           type: 'step',
-          style: { stroke: DEFAULT_PRIMARY },
-          animated: false,
+          style: { stroke: getColor(currentFlag) },
+          animated: currentFlag,
           labelBgStyle: { fill: 'orange' },
           markerEnd: MarkerType.ArrowClosed,
           sourceHandle: 'c',
@@ -310,9 +311,13 @@
         parentId: node.parentId,
         type: 'gateway-end-node',
         position: { x: x, y: y + 180 },
-        data: { label: node.nodeName },
+        data: { label: node.nodeName, current: currentFlag },
       });
     }
+  };
+
+  const getColor = (flag) => {
+    return flag ? DEFAULT_PRIMARY : '#213547';
   };
 
   /**

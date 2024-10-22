@@ -1,8 +1,12 @@
 <template>
   <el-tooltip class="box-item" effect="dark" content="发起人" placement="top">
-    <div class="flow-node" @click="handleClickNode">
+    <div
+      class="flow-node"
+      :class="props.data.data.current ? 'current-node' : ''"
+      @click="handleClickNode"
+    >
       <div class="node-header">
-        <div class="node-icon">
+        <div class="node-icon" :class="props.data.data.current ? 'current-node-icon' : ''">
           <el-icon :size="15" color="#ffffff">
             <User />
           </el-icon>
@@ -54,12 +58,12 @@
     width: 200px;
     height: 90px;
     background-color: #ffffff;
-    border: 2px solid #fb5923;
+    border: 2px solid #213547;
     border-radius: 10px;
   }
 
   .flow-node:hover {
-    border-color: red;
+    border-color: #213547;
   }
 
   .node-header {
@@ -74,25 +78,32 @@
     width: 20px;
     height: 20px;
     border-radius: 5px;
-    background-color: #f56c6c;
+    background-color: #213547;
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
+  .current-node-icon {
+    background-color: #f56c6c;
+  }
+
+  .current-node {
+    border-color: #f56c6c;
+  }
   .node-name {
-    font-size: 10px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     padding-left: 5px;
   }
 
   .node {
-    background-color: #f56c6c;
+    background-color: #213547;
   }
 
   .start-node-body {
     padding: 0px 8px 8px 8px;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 500;
   }
 </style>

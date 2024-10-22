@@ -78,8 +78,8 @@
   }
 
   .node-name {
-    font-size: 10px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     padding-left: 5px;
     white-space: nowrap; /* 不换行 */
     overflow: hidden; /* 隐藏超出的内容 */

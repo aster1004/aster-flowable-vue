@@ -1,8 +1,12 @@
 <template>
   <el-tooltip class="box-item" effect="dark" :content="props.data.data.label" placement="top">
-    <div class="flow-node" @click="handleClickNode">
+    <div
+      class="flow-node"
+      :class="props.data.data.current ? 'current-node' : ''"
+      @click="handleClickNode"
+    >
       <div class="node-header">
-        <div class="node-icon">
+        <div class="node-icon" :class="props.data.data.current ? 'current-node-icon' : ''">
           <el-icon :size="15" color="#ffffff">
             <Edit />
           </el-icon>
@@ -39,7 +43,7 @@
   });
 
   onMounted(() => {
-    // console.log('mounted：', props.data);
+    // console.log('mounted：', props.data.data);
   });
 
   const onSelect = (color) => {
@@ -82,9 +86,13 @@
     align-items: center;
   }
 
+  .current-node-icon {
+    background-color: #f56c6c;
+  }
+
   .node-name {
-    font-size: 10px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     padding-left: 5px;
     white-space: nowrap; /* 不换行 */
     overflow: hidden; /* 隐藏超出的内容 */
@@ -93,6 +101,10 @@
 
   .node {
     background-color: #213547;
+  }
+
+  .current-node {
+    border-color: #f56c6c;
   }
 
   .node-body {
@@ -106,8 +118,8 @@
   }
 
   .node-body span {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 500;
     margin-left: 3px;
   }
 </style>

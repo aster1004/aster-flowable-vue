@@ -78,8 +78,8 @@
   }
 
   .node-name {
-    font-size: 10px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     padding-left: 5px;
   }
 
@@ -89,7 +89,7 @@
 
   .condition-node-body {
     padding: 0px 10px 10px 10px;
-    font-size: 13px;
+    font-size: 12px;
     height: 21px;
     display: -webkit-box; /* 必须配合此属性使用 */
     -webkit-box-orient: vertical; /* 设置为垂直方向 */

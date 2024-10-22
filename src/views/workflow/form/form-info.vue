@@ -72,7 +72,7 @@
       append-to-body
       :lock-scroll="false"
     >
-      <render-flow :data="props.process" />
+      <render-flow :data="props.process" :active-node-id="activeNodeId" />
     </el-drawer>
   </div>
 </template>
@@ -85,6 +85,7 @@
   import { isNotEmpty } from '@/utils';
   import FlowLogs from '@/views/workflow/components/process/processlog/flow-logs.vue';
   import RenderFlow from '@/views/workflow/components/flow/render-flow.vue';
+  import { ProcessResultEnum } from '@/enums/workFlowEnum';
 
   const emits = defineEmits(['update:formData']);
 
@@ -120,6 +121,8 @@
       default: '',
     },
   });
+
+  const activeNodeId = ref<string[]>([]);
 
   // 流程日志
   const processResult = ref<WorkForm.ProcessResult>({
@@ -176,6 +179,12 @@
       if (res.code == ResultEnum.SUCCESS) {
         processResult.value = res.data;
         loadingInstance.value = false;
+        // 如果是正在进行中
+        if (processResult.value.approveResult == ProcessResultEnum.PROCESSING) {
+          let instanceLogs = processResult.value.instanceLogs;
+          console.info(instanceLogs[instanceLogs.length - 1][0]);
+          activeNodeId.value = [instanceLogs[instanceLogs.length - 1][0].nodeId];
+        }
       } else {
         ElMessage.error(res.message);
         loadingInstance.value = false;
