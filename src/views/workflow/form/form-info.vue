@@ -35,14 +35,26 @@
           <span>评论</span>
         </div>
       </div>
-      <div class="process-content" v-else>
-        <el-tabs v-model="processActiveName" class="process-tabs">
-          <el-tab-pane label="流程日志" name="log">User</el-tab-pane>
+      <el-scrollbar v-else class="process-content">
+        <el-tabs v-model="processActiveName" @tab-change="handleTabChange" class="process-tabs">
+          <el-tab-pane label="流程日志" name="log">
+            <div style="height: 100%; max-width: 600px">
+              <!-- 数据加载中..  -->
+              <div
+                id="loadingDiv"
+                v-if="loadingInstance"
+                v-loading="loadingInstance"
+                element-loading-text="数据加载中……"
+              ></div>
+
+              <flow-logs ref="flowLogsRef" :process-result="processResult" />
+            </div>
+          </el-tab-pane>
           <el-tab-pane label="评论" name="comment">Config</el-tab-pane>
         </el-tabs>
-      </div>
+      </el-scrollbar>
       <div class="menu-collapse">
-        <div class="ico-button" @click="isCollapse = !isCollapse">
+        <div class="ico-button" @click="handleCollapse">
           <i v-if="isCollapse" class="iconfont icon-zuozhijiantou !text-10px"></i>
           <i v-else class="iconfont icon-youzhijiantou !text-10px"></i>
         </div>
@@ -53,7 +65,11 @@
 <script setup lang="ts">
   import { computed, PropType, ref } from 'vue';
   import FormRender from './form-render.vue';
-
+  import { ElMessage, TabPaneName } from 'element-plus';
+  import { getInstanceLogsApi } from '@/api/workflow/task';
+  import { ResultEnum } from '@/enums/httpEnum';
+  import { isNotEmpty } from '@/utils';
+  import FlowLogs from '@/views/workflow/components/process/processlog/flow-logs.vue';
   const emits = defineEmits(['update:formData']);
 
   const props = defineProps({
@@ -79,10 +95,22 @@
       type: String,
       default: '',
     },
+    procInstId: {
+      type: String,
+      default: '',
+    },
   });
 
+  // 流程日志
+  const processResult = ref<WorkForm.ProcessResult>({
+    instanceLogs: [],
+    approveResult: '',
+    approveResultText: '',
+  });
   // 折叠状态
   const isCollapse = ref<boolean>(true);
+  // 加载中...
+  const loadingInstance = ref<boolean>(true);
   // 活动标签
   const processActiveName = ref<string>('log');
 
@@ -98,13 +126,54 @@
 
   /**
    * @description: 打开流程页签
-   * @param {*} activeName 页签name
+   * @param {*} activeName 页签name log | comment and so on
    * @return {*}
    */
   const handleShowTabs = (activeName: string) => {
     isCollapse.value = false;
     processActiveName.value = activeName;
+    getInstanceLogs();
   };
+
+  /**
+   * @description: 页签切换
+   * @param tabName
+   */
+  const handleTabChange = (tabName: TabPaneName) => {
+    console.log(tabName);
+    getInstanceLogs();
+  };
+
+  /**
+   * @description: 获取流程日志
+   */
+  const getInstanceLogs = async () => {
+    loadingInstance.value = true;
+    processResult.value = { instanceLogs: [], approveResult: '', approveResultText: '' };
+    await getInstanceLogsApi(props.procInstId).then((res) => {
+      if (res.code == ResultEnum.SUCCESS) {
+        processResult.value = res.data;
+        loadingInstance.value = false;
+      } else {
+        ElMessage.error(res.message);
+        loadingInstance.value = false;
+      }
+    });
+  };
+
+  /**
+   * @description: 折叠
+   */
+  const handleCollapse = () => {
+    isCollapse.value = !isCollapse.value;
+    if (!isCollapse.value && isNotEmpty(props.procInstId)) {
+      getInstanceLogs();
+    }
+  };
+
+  defineExpose({
+    isCollapse,
+  });
 </script>
 <style scoped lang="scss">
   .form-body {
@@ -185,6 +254,8 @@
 
       .process-content {
         width: 400px;
+        overflow: auto;
+        background-color: #ffffff;
         background: var(--el-bg-color);
         height: 100%;
         .process-tabs {
@@ -192,5 +263,13 @@
         }
       }
     }
+  }
+
+  /*数据加载中样式*/
+  #loadingDiv {
+    overflow: hidden;
+    z-index: 1000;
+    height: 70vh;
+    width: 100%;
   }
 </style>

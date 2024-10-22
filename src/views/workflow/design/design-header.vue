@@ -71,7 +71,7 @@
   // props
   const props = defineProps({
     modelValue: {
-      type: String as PropType<'formDesign' | 'processDesign' | 'listDesign' | 'formSettings'>,
+      type: String,
       default: () => 'formDesign',
     },
   });
@@ -93,7 +93,7 @@
     if (isNotEmpty(formInfo.value.iconColor)) {
       return { color: '#fff', backgroundColor: formInfo.value.iconColor };
     } else {
-      return {};
+      return { color: 'none', backgroundColor: 'none' };
     }
   });
 

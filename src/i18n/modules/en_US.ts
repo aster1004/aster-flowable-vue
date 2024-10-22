@@ -193,6 +193,7 @@ export default {
       uploadAvatar: 'Upload Avatar',
       resetPassword: 'Reset Password',
       exportConfirm: 'Confirm exporting user data?',
+      resetPwdConfirm: 'Confirm resetting password?',
     },
     access: {
       username: 'Login Account',

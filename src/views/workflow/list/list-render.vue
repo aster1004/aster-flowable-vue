@@ -67,7 +67,7 @@
           <el-tooltip
             v-for="(item, index) in _actions"
             :key="index"
-            :content="item.title"
+            :content="item.label"
             effect="dark"
             placement="top"
           >
@@ -175,7 +175,7 @@
     </div>
 
     <!-- 新增表单 -->
-    <form-initiation ref="formInitiationRef" />
+    <form-initiation ref="formInitiationRef" @resetQuery="resetQuery" />
 
     <el-popover
       ref="popoverRef"
@@ -219,7 +219,7 @@
       </div>
     </el-popover>
 
-    <form-detail ref="formDetailRef" />
+    <form-detail ref="formDetailRef" @resetQuery="resetQuery" />
   </div>
 </template>
 <script setup lang="ts">
@@ -235,6 +235,7 @@
   import { ElMessage } from 'element-plus';
   import vClickOutside from 'element-plus/es/directives/click-outside/index';
   import { instancePageApi } from '@/api/workflow/process';
+  import { permFormDataApi } from '@/api/workflow/auth';
 
   const props = defineProps({
     type: {
@@ -303,6 +304,11 @@
   const columnIndeterminate = ref(false);
   // 已选中查询字段id
   const columnCheckedIds = ref<string[]>([]);
+  // 表单权限
+  const formDataPermission = ref<WorkAuth.FormDataPermission>({
+    code: props.code,
+    isAdmin: false,
+  });
 
   /**
    * @description: 查询
@@ -472,7 +478,7 @@
       ElMessage.warning('请先选择左侧表单');
       return;
     }
-    formInitiationRef.value.init(props.formId);
+    formInitiationRef.value.init(props.code);
   };
 
   /**
@@ -483,7 +489,7 @@
   const handleDetail = (row: any) => {
     const code = queryParams.code;
     const id = row.id;
-    const procDefId = row.procDefId;
+    const procDefId = row['proc_def_id'];
     formDetailRef.value.getInstanceInfo(id, code, procDefId);
   };
 
@@ -502,8 +508,14 @@
   // 功能按钮
   const _actions = computed(() => {
     if (_listSettings.value.actions && _listSettings.value.actions.length > 0) {
-      return _listSettings.value.actions;
+      return _listSettings.value.actions.filter(
+        (item) =>
+          formDataPermission.value.isAdmin ||
+          (formDataPermission.value.listPerms &&
+            formDataPermission.value.listPerms.includes(item.value)),
+      );
     }
+
     return [];
   });
 
@@ -595,6 +607,21 @@
     });
   };
 
+  /**
+   * @description: 获取表单数据权限
+   * @param {*} code 表单code
+   * @return {*}
+   */
+  const getFormDataPermission = (code: string) => {
+    permFormDataApi(code).then((res) => {
+      if (res.code == ResultEnum.SUCCESS) {
+        formDataPermission.value = res.data;
+      } else {
+        ElMessage.error(res.message);
+      }
+    });
+  };
+
   // 监听表单编码
   watch(
     () => props.code,
@@ -603,12 +630,16 @@
       // 默认显示查询条件并折叠
       showSearch.value = true;
       searchCollapsed.value = true;
+      // 先置空table数据
+      dataList.value = [];
       // 如果是列表模式，则加载表单信息
       if (props.type == 'list') {
         if (isNotEmpty(val)) {
           readonly.value = false;
           // 根据code获取表单信息
           loadFormInfoByCode(val);
+          // 获取表单数据权限
+          getFormDataPermission(val);
         } else {
           readonly.value = false;
           tableColumns.value = [];

@@ -28,6 +28,8 @@ declare namespace WorkComponent {
     valueType: any;
     // 组件属性
     props: PropModel;
+    // 组件权限
+    operation?: string[];
   }
 
   /**
@@ -63,6 +65,8 @@ declare namespace WorkComponent {
     label: string;
     value: string;
     leaf?: boolean;
+    checked?: boolean;
+    disabled?: boolean;
     children?: TreeNode[];
   }
 

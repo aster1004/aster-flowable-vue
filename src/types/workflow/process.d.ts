@@ -66,11 +66,28 @@ declare namespace Process {
   }
 
   /**
+   * 表单权限
+   */
+  export interface FormPermissionModel {
+    [key: string]: string[];
+  }
+
+  /**
    * 流程实例详情
    */
   export interface InstanceDetail {
-    instanceInfo: InstanceInfo;
     formInfo: WorkForm.FormModel;
+    instanceInfo: InstanceInfo;
     processInfo?: string;
+    nodeConfig?: WorkForm.NodeConfig;
+    formPermission?: FormPermissionModel;
+  }
+
+  /**
+   * 可回退节点
+   */
+  export interface BackNodeModel {
+    nodeId: string; // 节点ID
+    nodeName: string; // 审核节点名称
   }
 }

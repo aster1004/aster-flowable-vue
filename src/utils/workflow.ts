@@ -11,6 +11,7 @@ import { ElMessage } from 'element-plus';
 import moment, { Moment } from 'moment';
 import { isEmpty, isNotEmpty, isObject } from '.';
 import { evaluate, parse } from './formula';
+import { ApprovalModeEnum, FormPermissionEnum, ProcessButtonTypeEnum } from '@/enums/workFlowEnum';
 
 /**
  * @description: 生成字段id
@@ -48,14 +49,20 @@ export const deleteFormComponent = (formComponents: any[], index: number) => {
  * @description: 删除表单组件的验证规则
  * @param {WorkComponent.ComponentConfig[]} formItems 表单组件
  * @param {string} fieldId 字段id
+ * @param {WorkComponent.ComponentConfig} tableItem 明细表列
  * @return {*} true-可删除,false-不可删除
  */
 export const deleteComponentValidate = (
   formItems: WorkComponent.ComponentConfig[],
   fieldId: string,
+  tableItem?: WorkComponent.ComponentConfig,
 ) => {
   // 获取含有currentId的组件
   const filterItems = flatFormItems(formItems).filter((item) => {
+    // 跳过当前明细表
+    if (tableItem && tableItem.id === item.id) {
+      return false;
+    }
     const itemStr = JSON.stringify(item);
     if (item.id != fieldId && itemStr.indexOf(fieldId) > -1) {
       return true;
@@ -68,6 +75,21 @@ export const deleteComponentValidate = (
     const itemTitles = filterItems.map((item) => '`' + item.title + '`').join(',');
     ElMessage.warning(`${itemTitles}中引用了该控件，不可删除`);
     return false;
+  } else if (tableItem) {
+    const filterCols = tableItem.props.columns.filter((item) => {
+      const itemStr = JSON.stringify(item);
+      if (item.id != fieldId && itemStr.indexOf(fieldId) > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    if (filterCols.length > 0) {
+      const itemTitles = filterCols.map((item) => '`' + item.title + '`').join(',');
+      ElMessage.warning(`${tableItem.title}[${itemTitles}]中引用了该控件，不可删除`);
+      return false;
+    }
+    return true;
   } else {
     return true;
   }
@@ -144,6 +166,7 @@ const excludeComponent = (item: WorkComponent.ComponentConfig) => {
     item.name !== 'UploadFile' &&
     item.name !== 'GeoLocation' &&
     item.name !== 'Signature' &&
+    item.name !== 'SignatureCombine' &&
     item.name !== 'AssociatedProperty' &&
     item.name !== 'CalcFormula' &&
     item.name !== 'SummaryFormula'
@@ -229,16 +252,24 @@ export const formItemList = (
  * @param {string} formula 公式
  * @return {*}
  */
-const getFieldTexts = (formula: string) => {
+const getFieldTexts = (formula: string, type = '[]') => {
   if (!formula) {
     return [];
   }
-  const regexp = /\[\[(.+?)\]\]/g;
+  let regexp = /\[\[(.+?)\]\]/g;
+  let replaceRegexp = /\[\[|]]/g;
+  if (type == '[]') {
+    regexp = /\[\[(.+?)\]\]/g;
+    replaceRegexp = /\[\[|]]/g;
+  } else if (type == '{}') {
+    regexp = /\{\{(.+?)\}\}/g;
+    replaceRegexp = /\{\{|}}/g;
+  }
   const texts = formula.match(regexp);
   let result: string[] = [];
   if (texts) {
     result = texts.map((text) => {
-      return text.replace(/\[\[|]]/g, '');
+      return text.replace(replaceRegexp, '');
     });
   }
   return result;
@@ -260,6 +291,44 @@ export const analysisFormula = (formula: string, formulaNodes: WorkComponent.for
     fieldTexts.forEach((text) => {
       if (node.label && text == node.label && node.value) {
         const label = '[[' + text + ']]';
+        result = result.replace(label, node.value);
+      }
+    });
+  });
+  return result;
+};
+
+/**
+ * @description: 解析关联表单公式
+ * @param {string} formula 公式
+ * @param {WorkComponent.formulaNode[]} associatedNodes 关联表单数据项
+ * @param {WorkComponent.formulaNode[]} currentNodes 当前表单数据项
+ * @return {*}
+ */
+export const analysisAssociatedFormula = (
+  formula: string,
+  associatedNodes: WorkComponent.formulaNode[],
+  currentNodes: WorkComponent.formulaNode[],
+) => {
+  if (!formula) {
+    return formula;
+  }
+  let fieldTexts = getFieldTexts(formula);
+  let result = formula;
+  associatedNodes.forEach((node) => {
+    fieldTexts.forEach((text) => {
+      if (node.label && text == node.label && node.value) {
+        const label = '[[' + text + ']]';
+        result = result.replace(label, node.value);
+      }
+    });
+  });
+
+  fieldTexts = getFieldTexts(result, '{}');
+  currentNodes.forEach((node) => {
+    fieldTexts.forEach((text) => {
+      if (node.label && text == node.label && node.value) {
+        const label = '{{' + text + '}}';
         result = result.replace(label, node.value);
       }
     });
@@ -303,6 +372,35 @@ export const restorationFormulaByFormItems = (
   formItems.forEach((node) => {
     if (node.id && node.name && formula.indexOf(node.id) != -1) {
       result = result.replaceAll(node.id, '[[' + node.title + ']]');
+    }
+  });
+  return result;
+};
+
+/**
+ * @description: 还原关联表单公式
+ * @param {string} formula 公式
+ * @param {WorkComponent.formulaNode[]} associatedNodes 关联表单数据项
+ * @param {WorkComponent.formulaNode[]} currentNodes 当前表单数据项
+ * @return {*}
+ */
+export const restorationAssociatedFormula = (
+  formula: string,
+  associatedNodes: WorkComponent.formulaNode[],
+  currentNodes: WorkComponent.formulaNode[],
+) => {
+  if (!formula) {
+    return formula;
+  }
+  let result = formula;
+  associatedNodes.forEach((node) => {
+    if (node.value && node.label && formula.indexOf(node.value) != -1) {
+      result = result.replaceAll(node.value, '[[' + node.label + ']]');
+    }
+  });
+  currentNodes.forEach((node) => {
+    if (node.value && node.label && formula.indexOf(node.value) != -1) {
+      result = result.replaceAll(node.value, '{{' + node.label + '}}');
     }
   });
   return result;
@@ -422,6 +520,46 @@ export const setDefaultValue = (
       } else if (defaultObj.type === 'dynamic') {
         // TODO数据联动
         // formData[item.id] = getDynamicValue(defaultObj.value, formData);
+      }
+    }
+  });
+};
+
+/**
+ * @description: 设置表单项权限
+ * @param {WorkComponent.ComponentConfig[]} formItems 表单项
+ * @param {Process.FormPermissionModel} formPermission 表单项权限
+ * @param {string} nodeType 节点类型 root-发起人 task-任务节点
+ * @return {*}
+ */
+export const setFormPermission = (
+  formItems: WorkComponent.ComponentConfig[],
+  formPermission: Process.FormPermissionModel,
+  nodeType = 'root',
+) => {
+  formItems.forEach((item) => {
+    if (item.name === 'GridLayout') {
+      item.props.items.forEach((col) => {
+        setFormPermission(col, formPermission, nodeType);
+      });
+    } else if (item.name === 'GridTitle') {
+      setFormPermission(item.props.items, formPermission, nodeType);
+    } else if (item.name === 'TableList') {
+      if (formPermission.hasOwnProperty(item.id) && formPermission[item.id].length > 0) {
+        item.operation = formPermission[item.id];
+      } else {
+        item.operation = [
+          nodeType === 'root' ? FormPermissionEnum.EDIT : FormPermissionEnum.READONLY,
+        ];
+      }
+      setFormPermission(item.props.columns, formPermission, nodeType);
+    } else {
+      if (formPermission.hasOwnProperty(item.id) && formPermission[item.id].length > 0) {
+        item.operation = formPermission[item.id];
+      } else {
+        item.operation = [
+          nodeType === 'root' ? FormPermissionEnum.EDIT : FormPermissionEnum.READONLY,
+        ];
       }
     }
   });
@@ -745,6 +883,7 @@ export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: 
   } else if (formItem.valueType === ValueType.number) {
     return isNotEmpty(value) ? Number(value) : null;
   } else if (formItem.valueType === ValueType.date) {
+    console.log(value);
     return isNotEmpty(value) ? value.replace('T', ' ') : null;
   } else if (formItem.valueType === ValueType.object) {
     if (typeof value === 'string' && isNotEmpty(value) && value.indexOf('{') != -1) {
@@ -795,4 +934,146 @@ export const isConvertItemValue = (
     return source.valueType === ValueType.dateRange;
   }
   return false;
+};
+
+export const getInstanceNodeResult = (instanceList: WorkForm.InstanceLogsList) => {
+  if (instanceList.length === 1) {
+    const instance = instanceList[0];
+    // 判断是不是抄送
+    if (instance.type === '2') {
+      return {
+        nodeName: instance.nodeName, //节点名称
+        startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
+        text: '系统', //办理人
+        result: '抄送', // 处理结果
+      };
+    } else {
+      return {
+        nodeName: instance.nodeName, //节点名称
+        startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
+        text: isNotEmpty(instance.user?.realName)
+          ? instance.user?.realName
+          : instance.user?.nickName, //办理人
+        result: getTaskResult(instance).text, // 处理结果
+      };
+    }
+  } else {
+    // 通过第一个数据判断会签类型、任务状态以及整个节点的状态
+    const instance = instanceList[0];
+    console.log(instance);
+
+    //判断当前会签任务是否全部完成
+    let textVar = instance.approveType === ApprovalModeEnum.AND ? '会签' : '或签';
+    let nodeName = '';
+    let startTime = '';
+    let result2 = '';
+    // 获取instanceList finishTime 不为空并且approveResult 不为空的数组并返回最后一个
+    const finishTime = instanceList
+      .filter((item) => {
+        return isNotEmpty(item.finishTime) && isNotEmpty(item.approveResult);
+      })
+      .pop();
+    if (finishTime) {
+      nodeName = finishTime.nodeName;
+      startTime = dateFormat(finishTime.startTime, 'MM-DD HH:mm');
+      textVar = instanceList.length + '人' + textVar;
+      result2 = getTaskResult(finishTime).text;
+    } else {
+      nodeName = instance.nodeName;
+      startTime = dateFormat(instance.startTime, 'MM-DD HH:mm');
+      textVar = instanceList.length + '人' + textVar;
+      result2 = '处理中';
+    }
+    return { text: textVar, result: result2, nodeName: nodeName, startTime: startTime };
+  }
+};
+export const getTaskResult = (instance) => {
+  if (instance.nodeId === 'root') {
+    return { text: '提交', type: 'success', icon: 'icon-tongyi', color: '#F78F5F' };
+  } else {
+    if (instance.approveResult === ProcessButtonTypeEnum.AGREEN) {
+      return { text: '同意', type: 'success', icon: 'icon-tongyi', color: '#35B881' };
+    } else if (instance.approveResult === ProcessButtonTypeEnum.DISAGREE) {
+      return { text: '不同意', type: 'danger', icon: 'icon-jujue1', color: '#F56C6C' };
+    } else if (instance.approveResult === ProcessButtonTypeEnum.FORWARD) {
+      return { text: '转交', type: 'primary', icon: 'icon-zhuanjiao1', color: '#409EFF' };
+    } else if (instance.approveResult === ProcessButtonTypeEnum.RECALL) {
+      return { text: '退回', type: 'danger', icon: 'icon-jurassic_last', color: '#F56C6C' };
+    } else if (!instance.approveResult && instance.finishTime) {
+      return { text: '撤销', type: 'info', icon: 'icon-guanbi1', color: '#E4E4E4' };
+    } else {
+      return { text: '处理中', type: 'warning', icon: 'icon-chulizhong', color: '#F78F5F' };
+    }
+  }
+};
+
+/**
+ * 通过审批类型获取审批名称
+ * @param approveType
+ */
+export const getApproveName = (approveType: string) => {
+  if (approveType === ProcessButtonTypeEnum.AGREEN) {
+    return '同意';
+  } else if (approveType === ProcessButtonTypeEnum.DISAGREE) {
+    return '不同意';
+  } else if (approveType === ProcessButtonTypeEnum.FORWARD) {
+    return '转交';
+  } else if (approveType === ProcessButtonTypeEnum.RECALL) {
+    return '退回';
+  } else if (approveType === ProcessButtonTypeEnum.REVOKE) {
+    return '撤销';
+  } else if (approveType === ProcessButtonTypeEnum.AFTERADDSIGN) {
+    return '加签';
+  } else {
+    return '处理中';
+  }
+};
+/**
+ * 对日期、日期字符串、时间戳进行格式化
+ *
+ * 示例：
+ *
+ * DATETOSTR('12/25/2022', 'YYYY-MM-DD') 得到 '2022.12.25'
+ * DATETOSTR(1676563200, 'YYYY.MM.DD') 得到 '2023.02.17'
+ * DATETOSTR(1676563200000, 'YYYY.MM.DD hh:mm:ss') 得到 '2023.02.17 12:00:00'
+ * DATETOSTR(DATE('2021-12-21'), 'YYYY.MM.DD hh:mm:ss') 得到 '2021.12.21 08:00:00'
+ *
+ * @example DATETOSTR(date, 'YYYY-MM-DD')
+ * @namespace 日期函数
+ * @param {any} date 日期对象、日期字符串、时间戳
+ * @param {string} format 日期格式，默认为 "YYYY-MM-DD HH:mm:ss"
+ *
+ * @returns {string} 日期字符串
+ */
+export const dateFormat = (
+  date: Date | string | number,
+  format: string = 'YYYY-MM-DD HH:mm:ss',
+) => {
+  if (isNotEmpty(date)) {
+    date = normalizeDate(date);
+    return moment(date).format(format);
+  } else {
+    return '';
+  }
+};
+const normalizeDate = (raw: any): Date => {
+  if (typeof raw === 'string' || typeof raw === 'number') {
+    let formats = ['', 'YYYY-MM-DD HH:mm:ss', 'X'];
+
+    if (/^\d{10}((\.\d+)*)$/.test(raw.toString())) {
+      formats = ['X', 'x', 'YYYY-MM-DD HH:mm:ss', ''];
+    } else if (/^\d{13}((\.\d+)*)$/.test(raw.toString())) {
+      formats = ['x', 'X', 'YYYY-MM-DD HH:mm:ss', ''];
+    }
+    while (formats.length) {
+      const format = formats.shift()!;
+      const date = moment(raw, format);
+
+      if (date.isValid()) {
+        return date.toDate();
+      }
+    }
+  }
+
+  return raw;
 };

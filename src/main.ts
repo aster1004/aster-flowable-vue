@@ -24,6 +24,8 @@ import 'element-plus/theme-chalk/dark/css-vars.css';
 import '@/assets/styles/element-dark.scss';
 // custom element css
 import '@/assets/styles/element.scss';
+// 自定义样式
+import '@/assets/styles/common.scss';
 // vue i18n
 import I18n from '@/i18n/index';
 // 路由

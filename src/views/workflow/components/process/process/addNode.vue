@@ -47,6 +47,7 @@
   import { ref } from 'vue';
   import { isNotEmpty } from '@/utils/index';
   import { getRandomId } from '@/utils/workflow';
+  import { buttonPermission, ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
   let props = defineProps({
     childNodeP: {
       type: Object,
@@ -60,12 +61,6 @@
 
   let emits = defineEmits(['update:childNodeP']);
   let visible = ref(false);
-  const TYPE_AUDITOR = 1; // 审核人
-  const TYPE_COPY = 2; // 抄送人
-  const TYPE_EXCLUSIVE_CONDITION = 3; //路由 条件分支
-  const TYPE_ROUTER = 4; //路由 条件分支
-  const TYPE_PARALLEL_CONDITION = 5; // 并行分支
-  const TYPE_INCLUSIVE_GATEWAY = 6; // 包容网关
 
   /**
    * 创建审核人和抄送人节点
@@ -74,7 +69,7 @@
    */
   const createBaseData = (type) => {
     switch (type) {
-      case TYPE_AUDITOR:
+      case ProcessNodeTypeEnum.APPROVE:
         return {
           id: getRandomId(),
           nodeName: '审核人',
@@ -86,52 +81,27 @@
           examineMode: 1,
           noHanderAction: 1,
           examineEndDirectorLevel: 0,
-          childNode: null,
+          childNode: props.childNodeP,
           nodeUserList: [],
           parentId: props.parentId,
           error: false,
           errorTip: '',
           formPermission: [],
-          buttonPermission: [
-            {
-              operation: '同意',
-              name: 'agree',
-              status: true,
-            },
-            {
-              operation: '不同意',
-              name: 'disagree',
-              status: true,
-            },
-            {
-              operation: '撤销',
-              name: 'revoke',
-              status: true,
-            },
-            {
-              operation: '转交',
-              name: 'forward',
-              status: true,
-            },
-            {
-              operation: '加签',
-              name: 'addNode',
-              status: true,
-            },
-          ],
+          buttonPermission: buttonPermission,
           noUser: 'autoPass',
           approveType: 'togetherCountersign',
         };
-      case TYPE_COPY:
+      case ProcessNodeTypeEnum.SEND:
         return {
           id: getRandomId(),
           nodeName: '抄送人',
-          type: TYPE_COPY,
+          type: ProcessNodeTypeEnum.SEND,
           error: false,
           errorTip: '',
           ccSelfSelectFlag: 1,
           childNode: props.childNodeP,
           nodeUserList: [],
+          formPermission: [],
           parentId: props.parentId,
         };
       default:
@@ -152,13 +122,14 @@
           id: exclusiveId,
           parentId: props.parentId,
           nodeName: '排他网关',
-          type: TYPE_ROUTER,
+          type: ProcessNodeTypeEnum.GATEWAY,
           childNode: {
             id: getRandomId(),
             parentId: exclusiveId,
             typeName: typeName,
             nodeName: '排他网关聚合',
             type: '7',
+            childNode: props.childNodeP,
           },
           typeName: typeName,
           conditionNodes: [
@@ -169,7 +140,7 @@
               icon: 'iconfont icon-bumen',
               error: false,
               errorTip: '',
-              type: TYPE_EXCLUSIVE_CONDITION,
+              type: ProcessNodeTypeEnum.CONDITION,
               groupType: 'AND',
               isDefault: false, // 是否为默认节点，
               conditionGroups: [
@@ -189,7 +160,7 @@
               error: false,
               errorTip: '',
               icon: 'iconfont icon-bumen',
-              type: TYPE_EXCLUSIVE_CONDITION,
+              type: ProcessNodeTypeEnum.CONDITION,
               groupType: 'AND',
               isDefault: true, // 是否为默认节点，
               conditionGroups: [], // 默认条件暂时不加条件组
@@ -205,13 +176,14 @@
           id: parallelId,
           parentId: props.parentId,
           nodeName: '并行网关',
-          type: TYPE_ROUTER,
+          type: ProcessNodeTypeEnum.GATEWAY,
           childNode: {
             id: getRandomId(),
             parentId: parallelId,
             typeName: typeName,
             nodeName: '并行网关聚合',
             type: '7',
+            childNode: props.childNodeP,
           },
           typeName: typeName,
           conditionNodes: [
@@ -222,7 +194,7 @@
               icon: 'iconfont icon-jiekou',
               error: false,
               errorTip: '',
-              type: TYPE_PARALLEL_CONDITION, // 分支节点类型
+              type: ProcessNodeTypeEnum.PARALLEL, // 分支节点类型
               nodeUserList: [],
               isDefault: false,
               priorityLevel: 1,
@@ -234,7 +206,7 @@
               parentId: parallelId,
               nodeName: '并行分支2',
               icon: 'iconfont icon-jiekou',
-              type: TYPE_PARALLEL_CONDITION,
+              type: ProcessNodeTypeEnum.PARALLEL,
               nodeUserList: [],
               error: false,
               errorTip: '',
@@ -251,13 +223,14 @@
           id: inclusiveId,
           parentId: props.parentId,
           nodeName: '包容网关',
-          type: TYPE_ROUTER,
+          type: ProcessNodeTypeEnum.GATEWAY,
           childNode: {
             id: getRandomId(),
             parentId: inclusiveId,
             typeName: typeName,
             nodeName: '包容网关聚合',
             type: '7',
+            childNode: props.childNodeP,
           },
           typeName: typeName,
           conditionNodes: [
@@ -268,7 +241,7 @@
               icon: 'iconfont icon-liucheng1',
               error: false,
               errorTip: '',
-              type: TYPE_INCLUSIVE_GATEWAY,
+              type: ProcessNodeTypeEnum.INCLUSIVE,
               groupType: 'AND',
               isDefault: false, // 是否为默认节点，
               conditionGroups: [
@@ -286,7 +259,7 @@
               parentId: inclusiveId,
               nodeName: '默认条件',
               icon: 'iconfont icon-liucheng1',
-              type: TYPE_INCLUSIVE_GATEWAY,
+              type: ProcessNodeTypeEnum.INCLUSIVE,
               groupType: 'AND',
               isDefault: true, // 是否为默认节点，
               conditionGroups: [], // 默认条件暂时不加条件组
@@ -309,15 +282,15 @@
     try {
       let data;
       switch (type) {
-        case TYPE_AUDITOR:
-          data = createBaseData(TYPE_AUDITOR);
+        case ProcessNodeTypeEnum.APPROVE:
+          data = createBaseData(ProcessNodeTypeEnum.APPROVE);
           emits('update:childNodeP', data);
           break;
-        case TYPE_COPY:
-          data = createBaseData(TYPE_COPY);
+        case ProcessNodeTypeEnum.SEND:
+          data = createBaseData(ProcessNodeTypeEnum.SEND);
           emits('update:childNodeP', data);
           break;
-        case TYPE_ROUTER: // 路由节点，包括排他：Exclusive、并行：Parallel 以及包容：INCLUSIVES
+        case ProcessNodeTypeEnum.GATEWAY: // 路由节点，包括排他：Exclusive、并行：Parallel 以及包容：INCLUSIVES
           if (isNotEmpty(typeName)) {
             switch (typeName) {
               case 'Exclusive':

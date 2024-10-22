@@ -1,0 +1,941 @@
+{
+  "id": "root",
+  "type": 0,
+  "error": false,
+  "settype": "",
+  "errorTip": "",
+  "nodeName": "发起人",
+  "nodeUser": "管理员",
+  "childNode": {
+      "id": "node_068303331369",
+      "type": 1,
+      "error": false,
+      "noUser": "autoPass",
+      "settype": 1,
+      "errorTip": "",
+      "nodeName": "审核人11",
+      "parentId": "root",
+      "childNode": {
+          "id": "node_691166478681_exclusive",
+          "type": 4,
+          "nodeName": "排他网关",
+          "parentId": "node_068303331369",
+          "typeName": "Exclusive",
+          "childNode": {
+              "id": "node_691166472671",
+              "type": "7",
+              "nodeName": "排他网关聚合",
+              "parentId": "node_691166478681_exclusive",
+              "typeName": "Exclusive"
+          },
+          "conditionNodes": [
+              {
+                  "id": "node_691166472121",
+                  "icon": "iconfont icon-bumen",
+                  "type": 3,
+                  "error": false,
+                  "errorTip": "",
+                  "nodeName": "条件1",
+                  "parentId": "node_691166478681_exclusive",
+                  "childNode": {
+                      "id": "node_691474303255",
+                      "type": 1,
+                      "error": false,
+                      "noUser": "autoPass",
+                      "settype": 1,
+                      "errorTip": "",
+                      "nodeName": "条件1-审核人1",
+                      "parentId": "node_691166472121",
+                      "selectMode": 0,
+                      "approveType": "togetherCountersign",
+                      "examineMode": 1,
+                      "selectRange": 0,
+                      "nodeUserList": [
+                          {
+                              "id": "1",
+                              "name": "admin",
+                              "type": "user"
+                          }
+                      ],
+                      "directorLevel": 1,
+                      "formPermission": [
+                          {
+                              "id": "field4697106823200",
+                              "icon": "iconfont icon-danhangwenben",
+                              "name": "InputText",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "formula",
+                                      "value": "",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "readonly": false,
+                                  "required": true,
+                                  "placeholder": ""
+                              },
+                              "title": "单行文本",
+                              "value": "",
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "String"
+                          },
+                          {
+                              "id": "field3747206826532",
+                              "icon": "iconfont icon-shuzi",
+                              "name": "InputNumber",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "formula",
+                                      "value": "",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "readonly": false,
+                                  "required": true,
+                                  "precision": 2
+                              },
+                              "title": "数字",
+                              "value": 0,
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "Number"
+                          },
+                          {
+                              "id": "field1429819430981",
+                              "icon": "iconfont icon-danhangwenben",
+                              "name": "InputText",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "formula",
+                                      "value": "",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "readonly": false,
+                                  "required": false,
+                                  "placeholder": ""
+                              },
+                              "title": "单行文本2",
+                              "value": "",
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "String"
+                          },
+                          {
+                              "id": "field3527757595243",
+                              "icon": "iconfont icon-yonghu",
+                              "name": "UserPicker",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "fixed",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "options": [],
+                                  "multiple": false,
+                                  "readonly": false,
+                                  "required": true,
+                                  "expansion": false,
+                                  "canselected": {
+                                      "ids": [],
+                                      "type": "user"
+                                  },
+                                  "placeholder": "请选择人员"
+                              },
+                              "title": "人员",
+                              "value": [
+                                  "1"
+                              ],
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "User"
+                          },
+                          {
+                              "id": "field6858757596544",
+                              "icon": "iconfont icon-bumendanxuan",
+                              "name": "DeptPicker",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "fixed",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "options": [],
+                                  "multiple": false,
+                                  "readonly": false,
+                                  "required": true,
+                                  "expansion": false,
+                                  "canselected": {
+                                      "ids": [],
+                                      "type": "dept"
+                                  },
+                                  "placeholder": "请选择部门"
+                              },
+                              "title": "部门",
+                              "value": [
+                                  "1736567503762767874"
+                              ],
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "Dept"
+                          }
+                      ],
+                      "noHanderAction": 1,
+                      "buttonPermission": [
+                          {
+                              "name": "agree",
+                              "status": true,
+                              "operation": "同意"
+                          },
+                          {
+                              "name": "disagree",
+                              "status": true,
+                              "operation": "不同意"
+                          },
+                          {
+                              "name": "revoke",
+                              "status": true,
+                              "operation": "撤销"
+                          },
+                          {
+                              "name": "forward",
+                              "status": true,
+                              "operation": "转交"
+                          },
+                          {
+                              "name": "addNode",
+                              "status": true,
+                              "operation": "加签"
+                          }
+                      ],
+                      "examineEndDirectorLevel": 0
+                  },
+                  "groupType": "AND",
+                  "isDefault": false,
+                  "nodeUserList": [],
+                  "priorityLevel": 1,
+                  "conditionGroups": [
+                      {
+                          "groupType": "AND",
+                          "conditionList": [
+                              {
+                                  "id": "field4697106823200",
+                                  "name": "InputText",
+                                  "props": {
+                                      "hidden": "",
+                                      "default": {
+                                          "type": "formula",
+                                          "value": "",
+                                          "linkage": {
+                                              "dataFill": "",
+                                              "formCode": [],
+                                              "conditions": []
+                                          }
+                                      },
+                                      "readonly": false,
+                                      "required": true,
+                                      "placeholder": ""
+                                  },
+                                  "title": "单行文本",
+                                  "value": "",
+                                  "compare": "EQ",
+                                  "valueType": "String",
+                                  "compareVal": [
+                                      "test"
+                                  ]
+                              },
+                              {
+                                  "id": "field3527757595243",
+                                  "name": "UserPicker",
+                                  "props": {
+                                      "hidden": "",
+                                      "default": {
+                                          "type": "fixed",
+                                          "linkage": {
+                                              "dataFill": "",
+                                              "formCode": [],
+                                              "conditions": []
+                                          }
+                                      },
+                                      "options": [],
+                                      "multiple": false,
+                                      "readonly": false,
+                                      "required": true,
+                                      "expansion": false,
+                                      "canselected": {
+                                          "ids": [],
+                                          "type": "user"
+                                      },
+                                      "placeholder": "请选择人员"
+                                  },
+                                  "title": "人员",
+                                  "value": [],
+                                  "compare": "IN",
+                                  "valueType": "User",
+                                  "compareVal": [
+                                      {
+                                          "id": "1",
+                                          "name": "admin",
+                                          "type": "user",
+                                          "realName": "admin"
+                                      },
+                                      {
+                                          "id": "10",
+                                          "name": "毛主席",
+                                          "type": "user",
+                                          "realName": "毛主席"
+                                      }
+                                  ]
+                              }
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "id": "node_379116286128",
+                  "icon": "iconfont icon-bumen",
+                  "type": 3,
+                  "error": false,
+                  "errorTip": "",
+                  "nodeName": "条件2",
+                  "parentId": "node_691166478681_exclusive",
+                  "childNode": {
+                      "id": "node_379504092046",
+                      "type": 1,
+                      "error": false,
+                      "noUser": "autoPass",
+                      "settype": 1,
+                      "errorTip": "",
+                      "nodeName": "条件2-审核人2",
+                      "parentId": "node_379116286128",
+                      "selectMode": 0,
+                      "approveType": "togetherCountersign",
+                      "examineMode": 1,
+                      "selectRange": 0,
+                      "nodeUserList": [
+                          {
+                              "id": "1",
+                              "name": "admin",
+                              "type": "user"
+                          }
+                      ],
+                      "directorLevel": 1,
+                      "formPermission": [
+                          {
+                              "id": "field4697106823200",
+                              "icon": "iconfont icon-danhangwenben",
+                              "name": "InputText",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "formula",
+                                      "value": "",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "readonly": false,
+                                  "required": true,
+                                  "placeholder": ""
+                              },
+                              "title": "单行文本",
+                              "value": "",
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "String"
+                          },
+                          {
+                              "id": "field3747206826532",
+                              "icon": "iconfont icon-shuzi",
+                              "name": "InputNumber",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "formula",
+                                      "value": "",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "readonly": false,
+                                  "required": true,
+                                  "precision": 2
+                              },
+                              "title": "数字",
+                              "value": 0,
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "Number"
+                          },
+                          {
+                              "id": "field1429819430981",
+                              "icon": "iconfont icon-danhangwenben",
+                              "name": "InputText",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "formula",
+                                      "value": "",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "readonly": false,
+                                  "required": false,
+                                  "placeholder": ""
+                              },
+                              "title": "单行文本2",
+                              "value": "",
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "String"
+                          },
+                          {
+                              "id": "field3527757595243",
+                              "icon": "iconfont icon-yonghu",
+                              "name": "UserPicker",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "fixed",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "options": [],
+                                  "multiple": false,
+                                  "readonly": false,
+                                  "required": true,
+                                  "expansion": false,
+                                  "canselected": {
+                                      "ids": [],
+                                      "type": "user"
+                                  },
+                                  "placeholder": "请选择人员"
+                              },
+                              "title": "人员",
+                              "value": [
+                                  "1"
+                              ],
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "User"
+                          },
+                          {
+                              "id": "field6858757596544",
+                              "icon": "iconfont icon-bumendanxuan",
+                              "name": "DeptPicker",
+                              "props": {
+                                  "hidden": "",
+                                  "default": {
+                                      "type": "fixed",
+                                      "linkage": {
+                                          "dataFill": "",
+                                          "formCode": [],
+                                          "conditions": []
+                                      }
+                                  },
+                                  "options": [],
+                                  "multiple": false,
+                                  "readonly": false,
+                                  "required": true,
+                                  "expansion": false,
+                                  "canselected": {
+                                      "ids": [],
+                                      "type": "dept"
+                                  },
+                                  "placeholder": "请选择部门"
+                              },
+                              "title": "部门",
+                              "value": [
+                                  "1736567503762767874"
+                              ],
+                              "operation": [
+                                  "readonly"
+                              ],
+                              "valueType": "Dept"
+                          }
+                      ],
+                      "noHanderAction": 1,
+                      "buttonPermission": [
+                          {
+                              "name": "agree",
+                              "status": true,
+                              "operation": "同意"
+                          },
+                          {
+                              "name": "disagree",
+                              "status": true,
+                              "operation": "不同意"
+                          },
+                          {
+                              "name": "revoke",
+                              "status": true,
+                              "operation": "撤销"
+                          },
+                          {
+                              "name": "forward",
+                              "status": true,
+                              "operation": "转交"
+                          },
+                          {
+                              "name": "addNode",
+                              "status": true,
+                              "operation": "加签"
+                          }
+                      ],
+                      "examineEndDirectorLevel": 0
+                  },
+                  "groupType": "OR",
+                  "isDefault": false,
+                  "nodeUserList": [],
+                  "priorityLevel": 2,
+                  "conditionGroups": [
+                      {
+                          "groupType": "AND",
+                          "conditionList": [
+                              {
+                                  "id": "field3747206826532",
+                                  "name": "InputNumber",
+                                  "props": {
+                                      "hidden": "",
+                                      "default": {
+                                          "type": "formula",
+                                          "value": "",
+                                          "linkage": {
+                                              "dataFill": "",
+                                              "formCode": [],
+                                              "conditions": []
+                                          }
+                                      },
+                                      "readonly": false,
+                                      "required": true,
+                                      "precision": 0
+                                  },
+                                  "title": "数字",
+                                  "value": 0,
+                                  "compare": "EQ",
+                                  "valueType": "Number",
+                                  "compareVal": [
+                                      "123.01"
+                                  ]
+                              }
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "id": "node_691166477304",
+                  "icon": "iconfont icon-bumen",
+                  "type": 3,
+                  "error": false,
+                  "errorTip": "",
+                  "nodeName": "默认条件",
+                  "parentId": "node_691166478681_exclusive",
+                  "groupType": "AND",
+                  "isDefault": true,
+                  "nodeUserList": [],
+                  "priorityLevel": 3,
+                  "conditionGroups": []
+              }
+          ]
+      },
+      "selectMode": 0,
+      "approveType": "togetherCountersign",
+      "examineMode": 1,
+      "selectRange": 0,
+      "nodeUserList": [
+          {
+              "id": "1",
+              "name": "admin",
+              "type": "user"
+          }
+      ],
+      "directorLevel": 1,
+      "formPermission": [
+          {
+              "id": "field4697106823200",
+              "icon": "iconfont icon-danhangwenben",
+              "name": "InputText",
+              "props": {
+                  "hidden": "",
+                  "default": {
+                      "type": "formula",
+                      "value": "",
+                      "linkage": {
+                          "dataFill": "",
+                          "formCode": [],
+                          "conditions": []
+                      }
+                  },
+                  "readonly": false,
+                  "required": true,
+                  "placeholder": ""
+              },
+              "title": "单行文本",
+              "value": "",
+              "operation": [
+                  "readonly"
+              ],
+              "valueType": "String"
+          },
+          {
+              "id": "field3747206826532",
+              "icon": "iconfont icon-shuzi",
+              "name": "InputNumber",
+              "props": {
+                  "hidden": "",
+                  "default": {
+                      "type": "formula",
+                      "value": "",
+                      "linkage": {
+                          "dataFill": "",
+                          "formCode": [],
+                          "conditions": []
+                      }
+                  },
+                  "readonly": false,
+                  "required": true,
+                  "precision": 2
+              },
+              "title": "数字",
+              "value": 0,
+              "operation": [
+                  "readonly"
+              ],
+              "valueType": "Number"
+          },
+          {
+              "id": "field1429819430981",
+              "icon": "iconfont icon-danhangwenben",
+              "name": "InputText",
+              "props": {
+                  "hidden": "",
+                  "default": {
+                      "type": "formula",
+                      "value": "",
+                      "linkage": {
+                          "dataFill": "",
+                          "formCode": [],
+                          "conditions": []
+                      }
+                  },
+                  "readonly": false,
+                  "required": false,
+                  "placeholder": ""
+              },
+              "title": "单行文本2",
+              "value": "",
+              "operation": [
+                  "readonly"
+              ],
+              "valueType": "String"
+          },
+          {
+              "id": "field3527757595243",
+              "icon": "iconfont icon-yonghu",
+              "name": "UserPicker",
+              "props": {
+                  "hidden": "",
+                  "default": {
+                      "type": "fixed",
+                      "linkage": {
+                          "dataFill": "",
+                          "formCode": [],
+                          "conditions": []
+                      }
+                  },
+                  "options": [],
+                  "multiple": false,
+                  "readonly": false,
+                  "required": true,
+                  "expansion": false,
+                  "canselected": {
+                      "ids": [],
+                      "type": "user"
+                  },
+                  "placeholder": "请选择人员"
+              },
+              "title": "人员",
+              "value": [
+                  "1"
+              ],
+              "operation": [
+                  "readonly"
+              ],
+              "valueType": "User"
+          },
+          {
+              "id": "field6858757596544",
+              "icon": "iconfont icon-bumendanxuan",
+              "name": "DeptPicker",
+              "props": {
+                  "hidden": "",
+                  "default": {
+                      "type": "fixed",
+                      "linkage": {
+                          "dataFill": "",
+                          "formCode": [],
+                          "conditions": []
+                      }
+                  },
+                  "options": [],
+                  "multiple": false,
+                  "readonly": false,
+                  "required": true,
+                  "expansion": false,
+                  "canselected": {
+                      "ids": [],
+                      "type": "dept"
+                  },
+                  "placeholder": "请选择部门"
+              },
+              "title": "部门",
+              "value": [
+                  "1736567503762767874"
+              ],
+              "operation": [
+                  "readonly"
+              ],
+              "valueType": "Dept"
+          }
+      ],
+      "noHanderAction": 1,
+      "buttonPermission": [
+          {
+              "name": "agree",
+              "status": true,
+              "operation": "同意"
+          },
+          {
+              "name": "disagree",
+              "status": true,
+              "operation": "不同意"
+          },
+          {
+              "name": "revoke",
+              "status": true,
+              "operation": "撤销"
+          },
+          {
+              "name": "forward",
+              "status": true,
+              "operation": "转交"
+          },
+          {
+              "name": "addNode",
+              "status": true,
+              "operation": "加签"
+          }
+      ],
+      "examineEndDirectorLevel": 0
+  },
+  "selectMode": "",
+  "examineMode": "",
+  "selectRange": "",
+  "nodeUserList": [],
+  "directorLevel": "",
+  "priorityLevel": "",
+  "conditionNodes": [],
+  "formPermission": [
+      {
+          "id": "field4697106823200",
+          "icon": "iconfont icon-danhangwenben",
+          "name": "InputText",
+          "props": {
+              "hidden": "",
+              "default": {
+                  "type": "formula",
+                  "value": "",
+                  "linkage": {
+                      "dataFill": "",
+                      "formCode": [],
+                      "conditions": []
+                  }
+              },
+              "readonly": false,
+              "required": true,
+              "placeholder": ""
+          },
+          "title": "单行文本",
+          "value": "",
+          "operation": [
+              "edit"
+          ],
+          "valueType": "String"
+      },
+      {
+          "id": "field3747206826532",
+          "icon": "iconfont icon-shuzi",
+          "name": "InputNumber",
+          "props": {
+              "hidden": "",
+              "default": {
+                  "type": "formula",
+                  "value": "",
+                  "linkage": {
+                      "dataFill": "",
+                      "formCode": [],
+                      "conditions": []
+                  }
+              },
+              "readonly": false,
+              "required": true,
+              "precision": 2
+          },
+          "title": "数字",
+          "value": 0,
+          "operation": [
+              "edit"
+          ],
+          "valueType": "Number"
+      },
+      {
+          "id": "field1429819430981",
+          "icon": "iconfont icon-danhangwenben",
+          "name": "InputText",
+          "props": {
+              "hidden": "",
+              "default": {
+                  "type": "formula",
+                  "value": "",
+                  "linkage": {
+                      "dataFill": "",
+                      "formCode": [],
+                      "conditions": []
+                  }
+              },
+              "readonly": false,
+              "required": false,
+              "placeholder": ""
+          },
+          "title": "单行文本2",
+          "value": "",
+          "operation": [
+              "edit"
+          ],
+          "valueType": "String"
+      },
+      {
+          "id": "field3527757595243",
+          "icon": "iconfont icon-yonghu",
+          "name": "UserPicker",
+          "props": {
+              "hidden": "",
+              "default": {
+                  "type": "fixed",
+                  "linkage": {
+                      "dataFill": "",
+                      "formCode": [],
+                      "conditions": []
+                  }
+              },
+              "options": [],
+              "multiple": false,
+              "readonly": false,
+              "required": true,
+              "expansion": false,
+              "canselected": {
+                  "ids": [],
+                  "type": "user"
+              },
+              "placeholder": "请选择人员"
+          },
+          "title": "人员",
+          "value": [
+              "1"
+          ],
+          "operation": [
+              "edit"
+          ],
+          "valueType": "User"
+      },
+      {
+          "id": "field6858757596544",
+          "icon": "iconfont icon-bumendanxuan",
+          "name": "DeptPicker",
+          "props": {
+              "hidden": "",
+              "default": {
+                  "type": "fixed",
+                  "linkage": {
+                      "dataFill": "",
+                      "formCode": [],
+                      "conditions": []
+                  }
+              },
+              "options": [],
+              "multiple": false,
+              "readonly": false,
+              "required": true,
+              "expansion": false,
+              "canselected": {
+                  "ids": [],
+                  "type": "dept"
+              },
+              "placeholder": "请选择部门"
+          },
+          "title": "部门",
+          "value": [
+              "1736567503762767874"
+          ],
+          "operation": [
+              "edit"
+          ],
+          "valueType": "Dept"
+      }
+  ],
+  "noHanderAction": "",
+  "buttonPermission": [
+      {
+          "name": "submit",
+          "status": true,
+          "operation": "提交"
+      },
+      {
+          "name": "revoke",
+          "status": true,
+          "operation": "撤销"
+      }
+  ],
+  "ccSelfSelectFlag": "",
+  "examineEndDirectorLevel": ""
+}

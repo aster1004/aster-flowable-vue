@@ -14,13 +14,19 @@
       :show-message="showMessage"
     >
       <template #label>
-        <span v-show="showLabel">{{ formItem.title }}</span>
+        <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
       </template>
       <template v-if="mode === 'design'">
         <el-input placeholder="请选择" readonly />
       </template>
       <template v-else-if="mode === 'form'">
-        <el-popover :visible="popoverVisible" placement="bottom" :width="minWidth" trigger="click">
+        <el-popover
+          :visible="popoverVisible"
+          :disabled="_readonly"
+          placement="bottom"
+          :width="minWidth"
+          trigger="click"
+        >
           <template #reference>
             <el-input
               ref="popoverInputRef"
@@ -81,24 +87,25 @@
       </template>
       <form-detail ref="associatedFormDetailRef" />
     </el-form-item>
-    <div v-else class="print-cell">
-      <div class="print-cell-label">
-        <span v-show="showLabel">{{ formItem.title }}</span>
+    <div v-else class="print-cell" ref="printRef">
+      <div class="print-cell-label" :style="{ height: printMaxHeight + 'px' }">
+        <span ref="printLabelRef" v-show="showLabel">{{ formItem.title }}</span>
       </div>
-      <div class="print-cell-value">
-        <span>{{ _value ? _value.label : '' }}</span>
+      <div class="print-cell-value" :style="{ height: printMaxHeight + 'px' }">
+        <span ref="printValueRef">{{ _value ? _value.label : '' }}</span>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, ref, watch } from 'vue';
+  import { computed, nextTick, onMounted, PropType, ref, watch } from 'vue';
   import FormDetail from '../../form/form-detail.vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import { instanceListByCodeApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
+  import { FormPermissionEnum } from '@/enums/workFlowEnum';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -147,6 +154,21 @@
   // 最小宽度
   const minWidth = ref(200);
   const popoverInputRef = ref();
+  // 打印 宽度
+  const printRef = ref();
+  const printLabelRef = ref();
+  const printValueRef = ref();
+  const printMaxHeight = ref(32);
+
+  /**
+   * @description: 更新高度
+   */
+  const updateHeight = () => {
+    const parentHeight = printRef.value.parentNode.offsetHeight;
+    const labelHeight = printLabelRef.value.offsetHeight;
+    const valueHeight = printValueRef.value.offsetHeight;
+    printMaxHeight.value = Math.max(parentHeight, labelHeight, valueHeight);
+  };
 
   /**
    * @description: 隐藏弹窗
@@ -285,8 +307,71 @@
    */
   const handleAssociatedForm = (instanceId: string) => {
     const code = props.formItem.props.formCode[1];
-    associatedFormDetailRef.value.getInstanceInfoByInstanceId(code, instanceId);
+    associatedFormDetailRef.value.getInstanceInfoByInstanceId(code, instanceId, true);
   };
+
+  /**
+   * @description: 组件值
+   */
+  const _value = computed({
+    get() {
+      return props.value;
+    },
+    set(val) {
+      emit('update:value', val);
+    },
+  });
+
+  /**
+   * @description: 是否隐藏, true-隐藏
+   */
+  const _hidden = computed(() => {
+    let r = false;
+    // 解析隐藏条件公式
+    if (props.formItem.props.hidden) {
+      let expression = props.formItem.props.hidden;
+      // 如果是子表中的控件，则需要用到下标
+      if (isNotEmpty(props.tableId)) {
+        expression = expression.replaceAll('?', props.tableIndex);
+      }
+      r = evaluateFormula(expression, props.formData);
+    }
+    // 判断流程节点下该控件是否隐藏
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.HIDDEN;
+    }
+    // 如果是必填则动态添加rule
+    if (props.formItem.props.required) {
+      // 调用form-render的方法
+      mittBus.emit('changeFormRules', {
+        hidden: r,
+        fieldId: isNotEmpty(props.tableId)
+          ? props.tableId + '.' + props.tableIndex + '.' + props.formItem.id
+          : props.formItem.id,
+        fieldName: props.formItem.title,
+        trigger: 'blur',
+      });
+    }
+    return r;
+  });
+
+  /**
+   * @description: 是否只读, true-只读
+   */
+  const _readonly = computed(() => {
+    let r = props.formItem.props.readonly;
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.READONLY;
+    }
+    return r;
+  });
+
+  /**
+   * @description: 监听表单数据变化
+   */
+  const _formData = computed(() => {
+    return JSON.parse(JSON.stringify(props.formData));
+  });
 
   /**
    * @description: 监听关联表单的变化
@@ -328,42 +413,48 @@
   );
 
   /**
-   * @description: 组件值
+   * @description: 监听表单数据变化
    */
-  const _value = computed({
-    get() {
-      return props.value;
-    },
-    set(val) {
-      emit('update:value', val);
-    },
-  });
-
-  /**
-   * @description: 是否隐藏, true-隐藏
-   */
-  const _hidden = computed(() => {
-    let r = false;
-    if (props.formItem.props.hidden) {
-      let expression = props.formItem.props.hidden;
-      // 如果是子表中的控件，则需要用到下标
-      if (isNotEmpty(props.tableId)) {
-        expression = expression.replaceAll('?', props.tableIndex);
+  watch(
+    () => _formData.value,
+    async (nval, oval) => {
+      if (
+        nval &&
+        props.mode === 'form' &&
+        props.formItem &&
+        props.formItem.props.dataScope &&
+        isNotEmpty(props.formItem.props.dataScope.value)
+      ) {
+        // 数据范围限定公式
+        const dataScopeFormula = props.formItem.props.dataScope.value;
+        Object.keys(nval).forEach((key) => {
+          if (dataScopeFormula.indexOf(key) != -1 && oval != undefined && nval[key] != oval[key]) {
+            associatedOptions.value = associatedList.value
+              .filter((item: Process.InstanceInfo) => {
+                return evaluateFormula(dataScopeFormula, { ...item, ...nval });
+              })
+              .map((item: Process.InstanceInfo) => {
+                const labels = props.formItem.props.displayField.map((fieldId: string) => {
+                  return item[fieldId];
+                });
+                return {
+                  value: item.procInstId,
+                  label: labels.join('-'),
+                };
+              });
+          }
+        });
       }
-      r = evaluateFormula(expression, props.formData);
-    }
-    if (props.formItem.props.required) {
-      // 调用form-render的方法
-      mittBus.emit('changeFormRules', {
-        hidden: r,
-        fieldId: isNotEmpty(props.tableId)
-          ? props.tableId + '.' + props.tableIndex + '.' + props.formItem.id
-          : props.formItem.id,
-        fieldName: props.formItem.title,
-        trigger: 'blur',
+    },
+    { immediate: true, deep: true },
+  );
+
+  onMounted(() => {
+    if (props.mode === 'print') {
+      nextTick(() => {
+        updateHeight();
       });
     }
-    return r;
   });
 
   defineExpose({

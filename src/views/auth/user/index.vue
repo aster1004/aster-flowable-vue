@@ -420,7 +420,7 @@
       ElMessage.warning(t('common.selectOne'));
       return;
     }
-    ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
+    ElMessageBox.confirm(t('label.user.resetPwdConfirm'), t('common.tips'), {
       confirmButtonText: t('button.confirm'),
       cancelButtonText: t('button.cancel'),
       type: 'warning',

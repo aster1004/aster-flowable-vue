@@ -8,11 +8,7 @@
           <div class="zoom-in" :class="nowVal == 300 && 'disabled'" @click="zoomSize(2)"></div>
         </div>
         <div class="box-scale" :style="`transform: scale(${nowVal / 100});`">
-          <nodeWrap
-            v-if="isNotEmpty(_process)"
-            v-model:nodeConfig="_process.nodeConfig"
-            v-model:flowPermission="_process.flowPermission"
-          />
+          <nodeWrap v-if="isNotEmpty(_process)" v-model:nodeConfig="_process" />
           <div class="end-node">
             <div class="end-node-circle"></div>
             <div class="end-node-text">流程结束</div>
@@ -22,7 +18,7 @@
     </div>
     <errorDialog v-model:visible="tipVisible" :list="tipList" />
     <promoterDrawer />
-    <approverDrawer :directorMaxLevel="_process.directorMaxLevel" />
+    <approverDrawer />
     <copyerDrawer />
     <conditionDrawer ref="conditionRef" />
   </div>
@@ -53,8 +49,13 @@
   const conditionRef = ref();
   //
 
-  const _process = computed(() => {
-    return workFlowStore.design.process;
+  const _process = computed({
+    get() {
+      return workFlowStore.design.process;
+    },
+    set(value) {
+      workFlowStore.design.process = value;
+    },
   });
 
   const reErr = ({ childNode }: any) => {
@@ -139,7 +140,7 @@
   const validate = async () => {
     return new Promise(async (resolve, reject) => {
       const errs: string[] = []; // 校验未通过时要呈现的err说明
-      nodeConfig.value = _process.value.nodeConfig;
+      nodeConfig.value = _process.value;
       setIsTried(true);
       await validateRootAndApprove(errs);
       conditionRef.value.validate(nodeConfig.value, errs); // 校验条件节点中的条件组、条件表达式是否完善

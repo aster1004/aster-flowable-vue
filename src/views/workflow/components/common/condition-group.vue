@@ -120,7 +120,10 @@
       'GeoLocation', //地理位置
       'Area', //行政区划
       'Signature', //手写签名
+      'SignatureCombine', // 签章
       'AssociatedProperty', //关联属性
+      'DateTime', //日期时间
+      'DateTimeRange', //日期区间
     ].includes(node.name);
   };
   /**
@@ -132,7 +135,11 @@
     formItemList(formItems.value, nodes);
     //排除非必填组件 和 不支持的组件
     nodes = nodes.filter((node: WorkComponent.ComponentConfig) => {
-      return node.props.required === true && !unSupportType(node);
+      const flag = node.props.required === true && !unSupportType(node);
+      if (node.valueType === 'User' || node.valueType === 'Dept') {
+        return node.props.multiple === false && flag;
+      }
+      return flag;
     });
 
     if (nodes.length === 0 || nodes[0].id !== 'root') {

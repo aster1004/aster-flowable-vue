@@ -39,14 +39,15 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { setDefaultValue } from '@/utils/workflow';
+  import { convertDataTypes, setDefaultValue, setFormPermission } from '@/utils/workflow';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { computed, ref } from 'vue';
   import FormRender from './form-render.vue';
   import { useI18n } from 'vue-i18n';
-  import { formSubmitApi } from '@/api/workflow/task';
+  import { formSubmitApi, instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/task';
   import { ResultEnum } from '@/enums/httpEnum';
-
+  import { isNotEmpty } from '@/utils';
+  const emits = defineEmits(['resetQuery']); // 关闭详情弹框
   // 获取工作流store
   const workFlowStore = useWorkFlowStore();
   // 国际化
@@ -60,8 +61,30 @@
   const isFullScreen = ref<boolean>(false);
   // 注册组件
   const formRenderRef = ref();
+  // 表单ID
+  const formId = ref<string>('');
   // 表单数据
   const formData = ref<WorkForm.FormDataModel>({});
+  // 表单权限
+  const formPermission = ref<Process.FormPermissionModel>({});
+
+  // 表单信息
+  const formInfo = ref<WorkForm.FormModel>({
+    icon: 'iconfont icon-gengduo',
+    iconColor: '',
+    labelPosition: 'left',
+    formName: '未命名表单',
+    formItems: [],
+    process: {},
+    labelWidth: 80,
+    listSettings: {
+      queryItems: [],
+      columns: [],
+      sortBy: 'create_time',
+      sortDirection: 'desc',
+      actions: [],
+    },
+  });
 
   /**
    * @description: 抽屉大小
@@ -80,8 +103,11 @@
 
   // 表单项
   const _formItems = computed(() => {
-    const formItems = JSON.stringify(workFlowStore.design.formItems);
-    return JSON.parse(formItems);
+    const formItems = JSON.parse(JSON.stringify(workFlowStore.design.formItems));
+    if (formPermission.value && Object.keys(formPermission.value).length > 0) {
+      setFormPermission(formItems, formPermission.value, 'root');
+    }
+    return formItems;
   });
 
   // 表单基本信息
@@ -95,17 +121,6 @@
     };
     return formInfo;
   });
-
-  /**
-   * @description: 加载实例数据
-   * @param {string} formId 表单主键
-   * @param {string} instanceId 实例主键
-   * @return {*}
-   */
-  const loadFormData = async (formId: string, instanceId?: string) => {
-    console.log('加载实例数据');
-    console.log(formId, instanceId);
-  };
 
   /**
    * @description: 关闭
@@ -161,7 +176,7 @@
     }
     console.log('提交--->', formData.value);
     let submitFormData = {
-      formId: formData.value.formId,
+      formId: formId.value,
       formStatus: '0',
       formData: formData.value,
     };
@@ -174,8 +189,31 @@
           duration: 500,
           onClose: () => {
             visible.value = false;
+            emits('resetQuery'); // 提交成功，刷新列表
           },
         });
+      }
+    });
+  };
+
+  /**
+   * @description: 加载表单信息
+   * @return {*}
+   */
+  const loadFormInfo = async (code: string) => {
+    await instanceInfoApi({ code: code }).then((res) => {
+      if (res.code == ResultEnum.SUCCESS) {
+        // 表单配置信息
+        workFlowStore.design = res.data.formInfo;
+        if (res.data.formInfo.id) {
+          formId.value = res.data.formInfo.id;
+        }
+        // 流程节点的表单权限
+        if (res.data.formPermission) {
+          formPermission.value = res.data.formPermission;
+        }
+      } else {
+        ElMessage.error(res.message);
       }
     });
   };
@@ -184,25 +222,63 @@
    * @description: 初始化
    * @return {*}
    */
-  const init = async (formId: string, instanceId?: string) => {
+  const init = async (code: string) => {
     // 加载表单信息
-    await workFlowStore.loadFormInfo(formId);
-    formData.value.formId = formId;
-    // TODO根据流程配置设置显隐和只读
-    if (instanceId) {
-      // 加载实例数据
-      await loadFormData(formId, instanceId);
-      // 标题
-      drawerTitle.value = _formInfo.value.formName + '-编辑';
-    } else {
-      // 表单项默认值
-      setDefaultValue(_formItems.value, formData.value);
-      // 标题
-      drawerTitle.value = _formInfo.value.formName + '-新增';
-    }
+    await loadFormInfo(code);
+    // 表单项默认值
+    await setDefaultValue(_formItems.value, formData.value);
+    // 标题
+    drawerTitle.value = _formInfo.value.formName + '-新增';
     visible.value = true;
   };
 
-  defineExpose({ init });
+  /**
+   * @description: 再次提交表单数据初始化
+   * @return {*}
+   */
+  const initAgain = async (code: string, procInstId: string) => {
+    // 加载表单信息
+    await getFormData(code, procInstId);
+    // 标题
+    drawerTitle.value = _formInfo.value.formName + '-再次提交';
+  };
+
+  /**
+   * 初始化表单信息
+   * @param code
+   * @param instanceId
+   */
+  const getFormData = async (code: string, instanceId: string) => {
+    await instanceInfoByInstanceIdApi(code, instanceId).then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        // 表单信息
+        formInfo.value = res.data.formInfo;
+        workFlowStore.design = formInfo.value;
+        if (res.data.formInfo.id) {
+          formId.value = res.data.formInfo.id;
+        }
+        // 流程节点的表单权限
+        if (res.data.formPermission) {
+          formPermission.value = res.data.formPermission;
+        }
+        // 表单数据
+        const instanceInfo = res.data.instanceInfo;
+        if (isNotEmpty(instanceInfo)) {
+          for (const key in instanceInfo) {
+            if (key.indexOf('field') != -1) {
+              formData.value[key] = convertDataTypes(
+                formInfo.value.formItems,
+                key,
+                instanceInfo[key],
+              );
+            }
+          }
+        }
+        visible.value = true;
+      }
+    });
+  };
+
+  defineExpose({ init, initAgain });
 </script>
 <style scoped lang="scss"></style>

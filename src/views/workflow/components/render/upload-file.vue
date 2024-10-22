@@ -14,7 +14,7 @@
       :show-message="showMessage"
     >
       <template #label>
-        <span v-show="showLabel">{{ formItem.title }}</span>
+        <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
       </template>
       <div v-if="mode === 'design'">
         <div class="file-empty">
@@ -23,13 +23,13 @@
       </div>
       <div v-else-if="mode === 'form'" style="width: 100%">
         <el-upload
-          v-if="!formItem.props.readonly"
+          v-if="!_readonly"
           list-type="text"
           :file-list="fileList"
           :action="ImageUpload.url"
           :accept="acceptList"
           :limit="formItem.props.maxNumber"
-          :multipl="formItem.props.maxNumber > 1"
+          :multiple="formItem.props.maxNumber > 1"
           :on-exceed="handleExceed"
           :on-success="handleSuccess"
           :on-preview="handlePreview"
@@ -42,7 +42,7 @@
         <div v-else class="file-readonly">
           <el-row v-for="(item, index) in _value" :key="index">
             <el-col :span="24">
-              <span :title="item.name">{{ item.name }}</span>
+              <span :title="item.name" @click="handlePreview(item)">{{ item.name }}</span>
             </el-col>
           </el-row>
         </div>
@@ -58,15 +58,17 @@
         </span>
       </div>
     </el-form-item>
-    <div v-else class="print-file">
-      <div class="print-file-label">
-        <span v-show="showLabel">{{ formItem.title }}</span>
+    <div v-else class="print-file" ref="printRef">
+      <div class="print-file-label" :style="{ height: printMaxHeight + 'px' }">
+        <span ref="printLabelRef" v-show="showLabel">{{ formItem.title }}</span>
       </div>
-      <div class="print-file-value">
-        <div v-for="(item, index) in _value" :key="index">
-          <p>
-            {{ item.name }}
-          </p>
+      <div class="print-file-value" :style="{ height: printMaxHeight + 'px' }">
+        <div ref="printValueRef">
+          <div v-for="(item, index) in _value" :key="index">
+            <p>
+              {{ item.name }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -88,7 +90,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, PropType, ref } from 'vue';
+  import { computed, nextTick, onMounted, PropType, ref } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import { ImageUpload } from '@/config/fileConfig';
@@ -96,6 +98,8 @@
   import { useI18n } from 'vue-i18n';
   import { ResultEnum } from '@/enums/httpEnum';
   import { downloadFileByUrl } from '@/utils/fileUtils';
+  import { FormPermissionEnum } from '@/enums/workFlowEnum';
+  import { Base64 } from 'js-base64';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -143,6 +147,22 @@
   // 可以预览的文件后缀
   const fileExtensions = ref(['.pdf', '.doc,.docx', '.xls,.xlsx', '.ppt,.pptx', '.txt,.csv']);
 
+  // 打印 宽度
+  const printRef = ref();
+  const printLabelRef = ref();
+  const printValueRef = ref();
+  const printMaxHeight = ref(32);
+
+  /**
+   * @description: 更新高度
+   */
+  const updateHeight = () => {
+    const parentHeight = printRef.value.parentNode.offsetHeight;
+    const labelHeight = printLabelRef.value.offsetHeight;
+    const valueHeight = printValueRef.value.offsetHeight;
+    printMaxHeight.value = Math.max(parentHeight, labelHeight, valueHeight);
+  };
+
   // 键
   const formItemProp = computed(() => {
     if (isNotEmpty(props.tableId)) {
@@ -187,6 +207,7 @@
    */
   const _hidden = computed(() => {
     let r = false;
+    // 解析隐藏条件公式
     if (props.formItem.props.hidden) {
       let expression = props.formItem.props.hidden;
       // 如果是子表中的控件，则需要用到下标
@@ -195,6 +216,11 @@
       }
       r = evaluateFormula(expression, props.formData);
     }
+    // 判断流程节点下该控件是否隐藏
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.HIDDEN;
+    }
+    // 如果是必填则动态添加rule
     if (props.formItem.props.required) {
       // 调用form-render的方法
       mittBus.emit('changeFormRules', {
@@ -205,6 +231,17 @@
         fieldName: props.formItem.title,
         trigger: 'blur',
       });
+    }
+    return r;
+  });
+
+  /**
+   * @description: 是否只读, true-只读
+   */
+  const _readonly = computed(() => {
+    let r = props.formItem.props.readonly;
+    if (props.formItem.operation && props.formItem.operation.length > 0) {
+      r = r || props.formItem.operation[0] == FormPermissionEnum.READONLY;
     }
     return r;
   });
@@ -259,6 +296,7 @@
    * @return {*}
    */
   const handlePreview: UploadProps['onPreview'] = (file: any) => {
+    console.info('file:', file);
     const extension = file.url.split('.').pop();
     if (ImageUpload.type.join(',').indexOf(extension) != -1) {
       previewFile.value = {
@@ -268,8 +306,19 @@
       previewImageVisible.value = true;
     } else if (fileExtensions.value.join(',').indexOf(extension) != -1) {
       previewDocumentVisible.value = true;
+      window.open(
+        'http://106.37.75.241:9107/onlinePreview?url=' +
+          encodeURIComponent(Base64.encode(file.url)),
+      );
     } else {
-      console.log('preview--->', file);
+      ElMessageBox.confirm('不支持预览此类型的文件,是否要下载查看?', t('common.tips'), {
+        confirmButtonText: t('button.confirm'),
+        cancelButtonText: t('button.cancel'),
+        type: 'warning',
+        lockScroll: false,
+      }).then(async () => {
+        await downloadFileByUrl(file.url, file.name);
+      });
     }
   };
 
@@ -328,6 +377,14 @@
       ElMessage.error('附件不存在');
     }
   };
+
+  onMounted(() => {
+    if (props.mode === 'print') {
+      nextTick(() => {
+        updateHeight();
+      });
+    }
+  });
 
   defineExpose({
     _hidden,

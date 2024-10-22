@@ -28,8 +28,8 @@ export const CompareOptions = {
     { label: '不含有', value: 'NHAS' },
   ],
   Date: [
-    { label: '在之前<', value: 'BF' },
-    { label: '在之后>', value: 'AF' },
+    { label: '在之前', value: 'BF' },
+    { label: '在之后', value: 'AF' },
     { label: '在之间', value: 'CT' },
     { label: '在之外', value: 'NCT' },
   ],
@@ -38,8 +38,8 @@ export const CompareOptions = {
     { label: '本人不属于', value: 'NIN' },
     { label: '部门属于', value: 'DEPTIN' },
     { label: '部门不属于', value: 'DEPTNIN' },
-    { label: '系统角色属于', value: 'SYSROLEIN' },
-    { label: '系统角色不属于', value: 'SYSROLENIN' },
+    /* { label: '系统角色属于', value: 'SYSROLEIN' },
+    { label: '系统角色不属于', value: 'SYSROLENIN' },*/
     { label: '流程角色属于', value: 'FLOWROLEIN' },
     { label: '流程角色不属于', value: 'FLOWROLENIN' },
   ],
@@ -69,7 +69,6 @@ const getCdName = (cd) => {
 
 //流程条件支持对象
 export const getCdDescription = (cd) => {
-  console.log(cd);
   return `${cd.title} ${getCdName(cd)} ${cd.compareVal.join('、')}`;
 };
 
@@ -202,7 +201,7 @@ export const conditionStr = (nodeConfig, index) => {
           return `${hasMore ? '[' : ''}${conditionsDesc}${hasMore ? ']' : ''}`;
         })
         .join(` ${conditionNodes[index].groupType === 'AND' ? '且' : '或'} `);
-      console.log(desc);
+      // console.log(desc);
       return desc;
     } else if (conditionType && conditionType === 5) {
       return '并行流程分支';
