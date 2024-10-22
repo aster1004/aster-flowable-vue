@@ -12,6 +12,12 @@
   - 后端框架基于[aster-boot](https://gitee.com/lp1791803611/aster-boot)开发，技术采用SpringBoot3.x + Mybatis-Plus + Flowable7.0 + SpringSecurity + Quartz + WebSocket等。
   - 前端框架基于[aster-admin](https://gitee.com/lp1791803611/aster-admin)开发，技术采用Vue3 + TypeScript + Vite + Element-Plus + Pinia等。
 
+### 演示地址
+- http://flowable.aster.vip/#/
+- 超级管理员: admin/123456
+<br />
+ **如遇到Bug，请动动小手，顺手提下ISSUES，万分感谢❤❤❤** 
+
 ### 功能介绍
 
 - 表单设计<br />
