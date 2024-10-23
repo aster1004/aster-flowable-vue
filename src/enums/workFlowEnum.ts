@@ -24,7 +24,7 @@ export enum ProcessNodeTypeEnum {
   // 包容
   INCLUSIVE = 6,
   // 网关聚合节点（后端已占用）
-  EMPTY,
+  EMPTY = 7,
   // 子流程
   SUBPROCESS = 8,
 }

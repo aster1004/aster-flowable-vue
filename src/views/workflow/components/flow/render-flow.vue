@@ -30,6 +30,9 @@
       <template #node-cc-node>
         <CCNode @click="handleClickNode" />
       </template>
+      <template #node-sub-node>
+        <SubNode @click="handleClickNode" />
+      </template>
       <template #node-gateway-node="props">
         <GatewayNode @click="handleClickNode" :data="props" />
       </template>
@@ -63,6 +66,7 @@
   import StartNode from './start-node.vue';
   import ApproveNode from './approve-node.vue';
   import CCNode from './cc-node.vue';
+  import SubNode from './sub-node.vue';
   import EndNode from './end-node.vue';
   import GatewayNode from './gateway-node.vue';
   import GatewayEndNode from './gateway-end-node.vue';
@@ -72,6 +76,7 @@
   import { conditionStr } from '@/utils/ConditionCompare';
   import { isNotEmpty } from '@/utils';
   import { DEFAULT_PRIMARY } from '@/config';
+  import { ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
 
   const { onConnect, addEdges } = useVueFlow();
   const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop();
@@ -147,7 +152,7 @@
     let currentFlag = props.activeNodeId.indexOf(node.id) != -1;
     // console.info('当前节点：' + node.nodeName, currentFlag);
     // 发起人
-    if (node.type == 0) {
+    if (node.type == ProcessNodeTypeEnum.ROOT) {
       nodes.value.push({
         id: node.id,
         parentId: 'root',
@@ -157,7 +162,11 @@
       });
       // console.log(node.nodeName);
       rv(node.childNode);
-    } else if (node.type == 1) {
+    } else if (
+      node.type == ProcessNodeTypeEnum.APPROVE ||
+      node.type == ProcessNodeTypeEnum.SEND ||
+      node.type == ProcessNodeTypeEnum.SUBPROCESS
+    ) {
       // 审核人
       edges.value.push({
         id: node.parentId + '-' + node.id,
@@ -176,7 +185,7 @@
       nodes.value.push({
         id: node.id,
         parentId: node.parentId,
-        type: 'approve-node',
+        type: getNodeType(node.type),
         position: { x: position.x, y: position.y + 150 },
         data: { label: node.nodeName, nodeUserList: node.nodeUserList, current: currentFlag },
       });
@@ -185,7 +194,7 @@
       if (node.childNode && node.childNode != null) {
         rv(node.childNode);
       }
-    } else if (node.type == 3) {
+    } else if (node.type == ProcessNodeTypeEnum.CONDITION) {
       // 条件
       // console.log("条件：" + xindex, JSON.stringify(node));
       let position = getParentNodeCoordinate(node);
@@ -225,7 +234,7 @@
       if (node.childNode && node.childNode != null) {
         rv(node.childNode);
       }
-    } else if (node.type == 4) {
+    } else if (node.type == ProcessNodeTypeEnum.GATEWAY) {
       // 网关
       // 如果是网关
       let position = getParentNodeCoordinate(node);
@@ -262,7 +271,7 @@
       }
       // 渲染子节点
       rv(node.childNode);
-    } else if (node.type == 7) {
+    } else if (node.type == ProcessNodeTypeEnum.EMPTY) {
       // 排他网关聚合
       let parentNode = getParentNode(node);
       // 原始条件节点
@@ -318,6 +327,17 @@
 
   const getColor = (flag) => {
     return flag ? DEFAULT_PRIMARY : '#213547';
+  };
+
+  const getNodeType = (type) => {
+    if (ProcessNodeTypeEnum.APPROVE == type) {
+      return 'approve-node';
+    } else if (ProcessNodeTypeEnum.SEND == type) {
+      return 'cc-node';
+    } else if (ProcessNodeTypeEnum.SUBPROCESS == type) {
+      return 'sub-node';
+    }
+    return 'approve-node';
   };
 
   /**
