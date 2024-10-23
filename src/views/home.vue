@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="home">
-    <div class="w-full h-full">
+    <el-scrollbar class="w-full h-full">
       <el-row :gutter="10" class="w-full">
         <el-col :span="16">
           <el-row :gutter="10">
@@ -101,8 +101,8 @@
               <el-card class="home-card-small">
                 <div class="card-title">
                   <div class="card-title--content">
-                    <i class="iconfont icon-niannianyouyu"></i>
-                    <span>我的本年度办件统计</span>
+                    <i class="iconfont icon-shenpi"></i>
+                    <span>我的本年度已办理件数</span>
                   </div>
                   <el-button type="primary" link size="small" @click="handleMoreTask">
                     更多
@@ -169,14 +169,14 @@
           <el-card class="home-card-default">
             <div class="card-title pb-2px">
               <div class="card-title--content">
-                <i class="iconfont icon-niannianyouyu"></i>
-                <span>办件统计</span>
+                <i class="iconfont icon-test"></i>
+                <span>办件时间统计</span>
               </div>
             </div>
             <div class="card-content--echarts" :style="_echartStyle">
               <aster-echarts
                 ref="diskRef"
-                :height="300"
+                :height="250"
                 :option="operationOption"
                 :resize="false"
               />
@@ -211,7 +211,7 @@
           </el-card>
         </el-col>
       </el-row>
-    </div>
+    </el-scrollbar>
 
     <el-dialog
       v-model="visible"
@@ -523,7 +523,10 @@
             },
           },
           axisLabel: {
-            interval: 4,
+            interval: 1,
+          },
+          axisTick: {
+            alignWithLabel: true,
           },
         },
       ],
@@ -584,6 +587,13 @@
           smooth: true,
         },
       ],
+      grid: {
+        left: '5%',
+        right: '5%',
+        bottom: '5%',
+        top: '25%',
+        containLabel: true,
+      },
     };
   };
 
@@ -621,9 +631,6 @@
     // background-repeat: no-repeat;
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .home-card-small {
