@@ -23,6 +23,10 @@ export enum ProcessNodeTypeEnum {
   PARALLEL = 5,
   // 包容
   INCLUSIVE = 6,
+  // 网关聚合节点（后端已占用）
+  EMPTY,
+  // 子流程
+  SUBPROCESS = 8,
 }
 
 /**
