@@ -27,11 +27,11 @@
       <template #node-approve-node="props">
         <ApproveNode @click="handleClickNode" :data="props" />
       </template>
-      <template #node-cc-node>
-        <CCNode @click="handleClickNode" />
+      <template #node-cc-node="props">
+        <CCNode @click="handleClickNode" :data="props" />
       </template>
-      <template #node-sub-node>
-        <SubNode @click="handleClickNode" />
+      <template #node-sub-node="props">
+        <SubNode @click="handleClickNode" :data="props" />
       </template>
       <template #node-gateway-node="props">
         <GatewayNode @click="handleClickNode" :data="props" />

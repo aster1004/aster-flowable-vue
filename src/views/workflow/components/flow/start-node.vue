@@ -63,7 +63,7 @@
   }
 
   .flow-node:hover {
-    border-color: #213547;
+    //border-color: #213547;
   }
 
   .node-header {
