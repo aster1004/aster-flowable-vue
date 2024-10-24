@@ -138,3 +138,15 @@ export enum ProcessResultEnum {
   // 结束,流程正常结束
   END = 'end',
 }
+
+/**
+ *  子流程发起人枚举
+ */
+export enum StartUserEnum {
+  // 同主流程
+  ROOT = 'root',
+  // 指定人员
+  SELECT = 'select',
+  // 从表单选择
+  FORM = 'form',
+}

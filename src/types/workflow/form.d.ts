@@ -171,6 +171,7 @@ declare namespace WorkForm {
     ccSelfSelectFlag: string;
     nodeUserList: [];
     childNode: {};
+    sbuProcessNode?: {}; // 子流程属性配置
     conditionNodes: [];
     formPermission?: [];
     buttonPermission?: ButtonPermission[];

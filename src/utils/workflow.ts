@@ -1077,3 +1077,18 @@ const normalizeDate = (raw: any): Date => {
 
   return raw;
 };
+export const unSupportType = (node: WorkComponent.ComponentConfig) => {
+  return [
+    'SelectMultiple', //下拉多选
+    'UploadImage', //上传图片
+    'UploadFile', //上传附件
+    'AssociatedForm', // 关联表单
+    'GeoLocation', //地理位置
+    'Area', //行政区划
+    'Signature', //手写签名
+    'SignatureCombine', // 签章
+    'AssociatedProperty', //关联属性
+    'DateTime', //日期时间
+    'DateTimeRange', //日期区间
+  ].includes(node.name);
+};
