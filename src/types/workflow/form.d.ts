@@ -32,6 +32,15 @@ declare namespace WorkForm {
   }
 
   /**
+   * @description: 打印模板
+   */
+  export interface PrintTemplate {
+    id: string;
+    title: string;
+    templateContent: string;
+  }
+
+  /**
    * @description: 表单扩展信息
    */
   export interface FormSettings {
@@ -50,6 +59,8 @@ declare namespace WorkForm {
     submitValidates?: SubmitValidate[];
     // 关联列表
     associationList?: WorkComponent.TreeNode[];
+    // 打印模板
+    printTemplates?: PrintTemplate[];
   }
 
   /**

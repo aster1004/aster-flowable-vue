@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-08-25 14:05:59
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-10-15 14:58:23
+ * @LastEditTime: 2024-10-25 17:51:49
  * @FilePath: \aster-flowable-vue\src\views\workflow\components\process\drawer\subProcessDrawer.vue
 -->
 <template>
@@ -548,7 +548,7 @@
     getTreeData();
   });
 </script>
-<style lang="scss">
+<style scoped lang="scss">
   .custom-title {
     display: flex;
     justify-content: space-between;

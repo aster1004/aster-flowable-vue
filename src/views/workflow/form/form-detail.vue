@@ -88,7 +88,7 @@
       :proc-inst-id="procInstId"
     />
 
-    <print-template
+    <print-template-preview
       ref="printTemplateRef"
       :form-data="formData"
       :form-items="_formItems"
@@ -130,7 +130,7 @@
   import { convertDataTypes, setFormPermission } from '@/utils/workflow';
   import FormInfo from './form-info.vue';
   import ListAssociation from '../list/list-association.vue';
-  import PrintTemplate from '../settings/print-template.vue';
+  import PrintTemplatePreview from '../settings/print-template/print-template-preview.vue';
   import ApproveTask from '@/views/workflow/components/common/approve-task.vue';
 
   const emits = defineEmits(['resetQuery']); // 关闭详情弹框

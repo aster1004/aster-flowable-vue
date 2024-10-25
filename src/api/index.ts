@@ -7,6 +7,7 @@
  */
 import request from '@/config/axios';
 import { PORT1 } from './config';
+import { ImageUpload } from '@/config/fileConfig';
 
 /**
  * @description: 激励列表
@@ -22,14 +23,9 @@ export const setComment = (params: { content: string; type: string }) => {
   return request.post<object>(PORT1 + '/inspire/comment', params, { noLoading: true });
 };
 
-// 图片上传
-export const uploadImg = (params: FormData) => {
-  return request.post<Upload.ResFileUrl>(PORT1 + `/file/upload/img`, params);
-};
-
-// 视频上传
-export const uploadVideo = (params: FormData) => {
-  return request.post<Upload.ResFileUrl>(PORT1 + `/file/upload/video`, params);
+// 文件上传
+export const uploadFile = (params: FormData) => {
+  return request.post<Upload.ResFileUrl>(ImageUpload.url, params);
 };
 
 /**

@@ -47,7 +47,7 @@
   import BusinessRule from './business-rule.vue';
   import MessageReminder from './message-reminder.vue';
   import AssociationList from './association-list.vue';
-  import PrintTemplate from './print-template.vue';
+  import PrintTemplate from './print-template/index.vue';
   import { ref } from 'vue';
 
   // 活动菜单
