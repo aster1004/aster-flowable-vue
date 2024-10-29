@@ -53,57 +53,6 @@
     emits('click');
   };
 </script>
-<style scoped>
-  .flow-node {
-    width: 200px;
-    height: 90px;
-    background-color: #ffffff;
-    border: 2px solid #213547;
-    border-radius: 10px;
-  }
-
-  .flow-node:hover {
-    //border-color: #213547;
-  }
-
-  .node-header {
-    height: 30px;
-    /* background-color: red; */
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-  }
-
-  .node-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    background-color: #213547;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .current-node-icon {
-    background-color: #f56c6c;
-  }
-
-  .current-node {
-    border-color: #f56c6c;
-  }
-  .node-name {
-    font-size: 14px;
-    font-weight: 600;
-    padding-left: 5px;
-  }
-
-  .node {
-    background-color: #213547;
-  }
-
-  .start-node-body {
-    padding: 0px 8px 8px 8px;
-    font-size: 12px;
-    font-weight: 500;
-  }
+<style>
+  @import '@/assets/styles/flow.css';
 </style>

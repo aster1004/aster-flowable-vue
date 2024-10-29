@@ -53,48 +53,5 @@
   };
 </script>
 <style scoped>
-  .flow-node {
-    width: 200px;
-    height: 90px;
-    background-color: #ffffff;
-    border: 2px solid #2a9838;
-    border-radius: 10px;
-  }
-
-  .node-header {
-    height: 30px;
-    /* background-color: red; */
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-  }
-
-  .node-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    background-color: #2a9838;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .node-name {
-    font-size: 14px;
-    font-weight: 600;
-    padding-left: 5px;
-    white-space: nowrap; /* 不换行 */
-    overflow: hidden; /* 隐藏超出的内容 */
-    text-overflow: ellipsis; /* 用省略号表示被隐藏的部分 */
-  }
-
-  .node {
-    background-color: #2a9838;
-  }
-
-  .node-body span {
-    font-size: 12px;
-    font-weight: 500;
-    margin-left: 3px;
-  }
+  @import '@/assets/styles/flow.css';
 </style>

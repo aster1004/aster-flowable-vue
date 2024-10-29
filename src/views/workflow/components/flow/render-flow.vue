@@ -329,6 +329,10 @@
     return flag ? DEFAULT_PRIMARY : '#213547';
   };
 
+  /**
+   * 获取节点类型
+   * @param {*} type
+   */
   const getNodeType = (type) => {
     if (ProcessNodeTypeEnum.APPROVE == type) {
       return 'approve-node';
