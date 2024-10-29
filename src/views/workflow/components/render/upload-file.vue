@@ -42,7 +42,12 @@
         <div v-else class="file-readonly">
           <el-row v-for="(item, index) in _value" :key="index">
             <el-col :span="24">
-              <span :title="item.name" @click="handlePreview(item)">{{ item.name }}</span>
+              <el-tooltip effect="dark" :content="'点击浏览：' + item.name" placement="top-start">
+                <span class="file-name" :title="item.name" @click="handlePreview(item)">{{
+                  item.name
+                }}</span>
+              </el-tooltip>
+              <el-link class="download" :href="item.url" target="_blank">下载</el-link>
             </el-col>
           </el-row>
         </div>
@@ -296,7 +301,6 @@
    * @return {*}
    */
   const handlePreview: UploadProps['onPreview'] = (file: any) => {
-    console.info('file:', file);
     const extension = file.url.split('.').pop();
     if (ImageUpload.type.join(',').indexOf(extension) != -1) {
       previewFile.value = {
@@ -406,6 +410,14 @@
     align-items: center;
     width: 100%;
     height: 100%;
+  }
+
+  .file-name {
+    cursor: pointer;
+  }
+
+  .download {
+    margin-left: 8px;
   }
 
   ::v-deep(.el-upload-list__item .el-icon--close-tip) {
