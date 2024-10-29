@@ -258,6 +258,12 @@
         } else {
           return 'icon-chulizhong';
         }
+      } else if (item[0].type === '8') {
+        if (isNotEmpty(item[0].finishTime)) {
+          return 'icon-tongyi';
+        } else {
+          return 'icon-chulizhong';
+        }
       }
     } else {
       return ''; //getTaskResult(item[0]).icon;
@@ -318,6 +324,8 @@
       // 判断是否是抄送，抄送也是一个节点
       if (item[0].type === '2') {
         return new URL(`../../../../../assets/images/cc.png`, import.meta.url).href;
+      } else if (item[0].type === '8') {
+        return new URL(`../../../../../assets/images/subprocess.png`, import.meta.url).href;
       } else {
         return item[0].user?.avatar;
       }

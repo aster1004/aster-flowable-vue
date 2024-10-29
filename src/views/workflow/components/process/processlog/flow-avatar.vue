@@ -86,4 +86,7 @@
     background: var(--el-color-white);
     border: 2px solid var(--el-color-white);
   }
+  .el-image {
+    background-color: #ffffff;
+  }
 </style>
