@@ -47,7 +47,9 @@
                   item.name
                 }}</span>
               </el-tooltip>
-              <el-link class="download" :href="item.url" target="_blank">下载</el-link>
+              <el-link class="download" type="primary" :href="item.url" target="_blank"
+                >下载</el-link
+              >
             </el-col>
           </el-row>
         </div>
@@ -104,6 +106,7 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { downloadFileByUrl } from '@/utils/fileUtils';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
+  import { PREVIEW_URL } from '@/config';
   import { Base64 } from 'js-base64';
 
   const emit = defineEmits(['update:value']);
@@ -310,10 +313,7 @@
       previewImageVisible.value = true;
     } else if (fileExtensions.value.join(',').indexOf(extension) != -1) {
       previewDocumentVisible.value = true;
-      window.open(
-        'http://106.37.75.241:9107/onlinePreview?url=' +
-          encodeURIComponent(Base64.encode(file.url)),
-      );
+      window.open(PREVIEW_URL + encodeURIComponent(Base64.encode(file.url)));
     } else {
       ElMessageBox.confirm('不支持预览此类型的文件,是否要下载查看?', t('common.tips'), {
         confirmButtonText: t('button.confirm'),

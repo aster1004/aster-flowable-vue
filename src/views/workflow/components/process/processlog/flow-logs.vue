@@ -118,15 +118,20 @@
                       <div class="comment-task-image" v-if="isNotEmpty(comment?.imageList)">
                         <div class="image-preview">
                           <div class="image-list" v-for="img in comment?.imageList">
-                            <img class="image-item" :src="img.url" alt="加载失败" />
-                            <span class="image-actions">
+                            <el-image
+                              class="image-item"
+                              :src="img.url"
+                              :preview-src-list="[img.url]"
+                              alt="加载失败"
+                            />
+                            <!-- <span class="image-actions">
                               <span title="预览" @click="handlePreview(img)">
                                 <i class="iconfont icon-zoom-in px-3px"></i>
                               </span>
                               <span title="下载" @click="handleDownload(img)">
                                 <i class="iconfont icon-xiazai px-3px"></i>
                               </span>
-                            </span>
+                            </span> -->
                           </div>
                         </div>
                       </div>
@@ -136,12 +141,20 @@
                           <div class="file-preview-top">
                             <i class="iconfont icon-fujian px-3px"></i>
                             <span class="px-3px">
-                              {{ file.name }}
+                              <el-link @click="handlePreviewFile(file)">{{ file.name }}</el-link>
                             </span>
                           </div>
                           <div class="file-preview-bottom">
-                            <span class="pl-20px" @click="handlePreviewFile(file)">预览</span>
-                            <span class="pl-20px" @click="handleDownloadFile(file)">下载</span>
+                            <span class="pl-20px">
+                              <el-link type="primary" @click="handlePreviewFile(file)"
+                                >预览</el-link
+                              >
+                            </span>
+                            <span class="pl-20px">
+                              <el-link type="primary" @click="handleDownloadFile(file)"
+                                >下载</el-link
+                              >
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -198,8 +211,10 @@
   import { reactive, ref, watchEffect, computed, PropType } from 'vue';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { downloadFileByUrl } from '@/utils/fileUtils';
-  import { ImageUpload } from '@/config/fileConfig';
+  // import { ImageUpload } from '@/config/fileConfig';
   import { useI18n } from 'vue-i18n';
+  import { PREVIEW_URL } from '@/config';
+  import { Base64 } from 'js-base64';
   const { t } = useI18n();
 
   const props = defineProps({
@@ -225,11 +240,11 @@
     url: '',
   });
   // 显示文档预览
-  const previewDocumentVisible = ref<boolean>(false);
+  // const previewDocumentVisible = ref<boolean>(false);
   // 显示图片预览
   const previewImageVisible = ref<boolean>(false);
   // 可以预览的文件后缀
-  const fileExtensions = ref(['.pdf', '.doc,.docx', '.xls,.xlsx', '.ppt,.pptx', '.txt,.csv']);
+  // const fileExtensions = ref(['.pdf', '.doc,.docx', '.xls,.xlsx', '.ppt,.pptx', '.txt,.csv']);
 
   /**
    * 获取任务处理结果、图标、颜色等
@@ -344,13 +359,13 @@
    * @description: 预览图片
    * @return {*}
    */
-  const handlePreview = (file: any) => {
+  /* const handlePreview = (file: any) => {
     previewFile.value = {
       name: file.name,
       url: file.url,
     };
     previewVisible.value = true;
-  };
+  }; */
 
   /**
    * @description: 下载图片
@@ -377,7 +392,8 @@
    * @return {*}
    */
   const handlePreviewFile = (file: any) => {
-    const extension = file.url.split('.').pop();
+    window.open(PREVIEW_URL + encodeURIComponent(Base64.encode(file.url)));
+    /* const extension = file.url.split('.').pop();
     if (ImageUpload.type.join(',').indexOf(extension) != -1) {
       previewFile.value = {
         name: file.name,
@@ -395,7 +411,7 @@
       }).then(async () => {
         await downloadFileByUrl(file.url, file.name);
       });
-    }
+    } */
   };
 
   /**
