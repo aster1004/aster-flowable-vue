@@ -198,14 +198,12 @@
       // 条件
       // console.log("条件：" + xindex, JSON.stringify(node));
       let position = getParentNodeCoordinate(node);
-      console.info('父：', position);
       // console.log("条件--->", position);
       // 你得先确定最长的一行有几个节点
       // 如果是单数
       // 中间值
       if (xlen % 2 == 1) {
         let median = Math.floor((xlen - 1) / 2);
-        console.info(median, xindex);
         if (xindex < median) {
           xlen = 250 - 250 * (median - xindex);
         } else if (xindex == median) {
@@ -216,7 +214,6 @@
       } else {
         // 如果是双数
         let median = Math.floor(xlen / 2);
-        console.info('是双数,中间数：', median);
         if (xindex < median) {
           xlen = 250 - 200 * (median - xindex);
         } else {
