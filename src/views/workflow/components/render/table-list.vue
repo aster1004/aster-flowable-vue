@@ -80,7 +80,7 @@
         </el-col>
       </el-row>
     </el-form>
-    <div v-else-if="mode == 'form'">
+    <div v-else-if="mode == 'form'" class="table-list">
       <div class="table-list-main" :id="formItem.id">
         <div class="flex items-center justify-between pb-5px">
           <span class="text-sm font-600" style="line-height: normal">{{ formItem.title }}</span>
@@ -571,6 +571,7 @@
     .table-list-main {
       background: var(--el-fill-color-blank);
       color: #606266;
+      padding: 10px 0;
     }
 
     .table-list-title {

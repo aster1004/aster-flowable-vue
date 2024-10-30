@@ -100,14 +100,7 @@
   };
 
   const textFormat = (title, value) => {
-    return (
-      ' <span class="field-content"><span class="field-content--label">' +
-      title +
-      ':</span>' +
-      '${' +
-      value +
-      '}</span> '
-    );
+    return ' <span class="field-content">' + '${' + title + ':' + value + '}</span> ';
   };
 
   const createTable = (field) => {

@@ -51,8 +51,8 @@
       <div class="main-container">
         <div class="main-header" ref="mainHeaderRef">
           <p>
-            提示：从左侧拖拽字段到下方编辑器中，类似<span>名称: ${xxx}</span
-            >的数据将在打印时替换成实际数据!
+            提示：从左侧拖拽字段到下方编辑器中，类似
+            <span>${名称:xxx}</span>的数据将在打印时替换成实际数据!
           </p>
         </div>
         <div class="main-content">

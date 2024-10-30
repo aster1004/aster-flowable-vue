@@ -14,13 +14,22 @@
     width="60%"
     height="100%"
   >
-    <div id="defaultPrint">
-      <default-print
-        :form-data="formData"
-        :form-items="formItems"
-        :form-info="formInfo"
-        :form-status="formStatus"
-      />
+    <default-print
+      v-if="printType === 'default'"
+      :visible="printType === 'default'"
+      :form-data="formData"
+      :form-items="formItems"
+      :form-info="formInfo"
+      :form-status="formStatus"
+    />
+    <div v-else-if="printType === 'custom'">
+      <div
+        id="printLoading"
+        v-if="printLoading"
+        v-loading="printLoading"
+        element-loading-text="数据加载中……"
+      ></div>
+      <div id="custom" v-else v-html="templateContent"></div>
     </div>
     <template #footer>
       <el-button type="primary" v-print="printObj">打印</el-button>
@@ -29,11 +38,13 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { PropType, ref } from 'vue';
+  import { computed, PropType, reactive, ref, watch } from 'vue';
   import DefaultPrint from '../../components/print/default-print.vue';
   import print from 'vue3-print-nb';
+  import { fillFormData, templateFillValue } from '@/utils/print';
+  import { flatFormItems } from '@/utils/workflow';
 
-  defineProps({
+  const props = defineProps({
     formData: {
       type: Object as PropType<WorkForm.FormDataModel>,
       default: () => ({}),
@@ -60,18 +71,54 @@
 
   // 是否显示打印预览
   const printVisible = ref<boolean>(false);
+  // 加载中
+  const printLoading = ref<boolean>(false);
+  // 模板类型
+  const printType = ref<'default' | 'custom'>('default');
+  // 自定义模板内容
+  const templateContent = ref<string>('');
   // 注册打印插件
   const vPrint = print;
   // 打印配置
-  const printObj = ref({
-    id: 'defaultPrint',
+  const printObj = reactive({
+    id: 'default',
     popTitle: '&nbsp', // 页眉
   });
 
+  /**
+   * @description: 表单平铺
+   * @return {*}
+   */
+  const _formItems = computed(() => {
+    return flatFormItems(props.formItems);
+  });
+
   // 打印预览
-  const init = () => {
+  const init = async (type: 'default' | 'custom', content?: string) => {
+    console.log('type--->', type);
+    printType.value = type;
+    if (type === 'custom' && content) {
+      printLoading.value = true;
+      templateContent.value = content;
+      const templateValue = ref({});
+      await templateFillValue(props.formData, _formItems.value, templateValue.value);
+      console.log('v--->', templateValue.value);
+      await fillFormData('custom', templateValue.value, content);
+      printLoading.value = false;
+    }
     printVisible.value = true;
   };
+
+  // 监听类型变化
+  watch(
+    () => printType.value,
+    (val) => {
+      if (val) {
+        printObj.id = val;
+      }
+    },
+    { immediate: true, deep: true },
+  );
 
   defineExpose({ init });
 </script>
@@ -148,6 +195,19 @@
       .template-content:hover {
         border: 1px dashed var(--el-menu-active-color);
         background: var(--el-menu-active-bg-color);
+      }
+    }
+  }
+</style>
+<style lang="scss">
+  #custom {
+    table {
+      border: 1px solid gray !important;
+      tr {
+        border: 1px solid gray !important;
+        td {
+          border: 1px solid gray !important;
+        }
       }
     }
   }

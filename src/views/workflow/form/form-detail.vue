@@ -37,9 +37,28 @@
               </el-tooltip>
             </div>
             <div class="form-header-action">
-              <el-tooltip content="打印" placement="bottom">
-                <i class="iconfont icon-dayinji" @click="printFormInfo"></i>
-              </el-tooltip>
+              <el-popover placement="bottom" :width="100" trigger="click">
+                <ul>
+                  <li class="py-2px">
+                    <el-button type="primary" link size="small" @click="printFormInfo('default')">
+                      默认打印模板
+                    </el-button>
+                  </li>
+                  <li class="py-2px" v-for="(item, index) in _printTemplates" :key="index">
+                    <el-button
+                      type="primary"
+                      link
+                      size="small"
+                      @click="printFormInfo('custom', item)"
+                    >
+                      {{ item.title }}
+                    </el-button>
+                  </li>
+                </ul>
+                <template #reference>
+                  <i class="iconfont icon-dayinji"></i>
+                </template>
+              </el-popover>
             </div>
             <div class="form-header-action">
               <el-tooltip content="关闭" placement="bottom">
@@ -88,13 +107,6 @@
       :proc-inst-id="procInstId"
     />
 
-    <print-template-preview
-      ref="printTemplateRef"
-      :form-data="formData"
-      :form-items="_formItems"
-      :form-info="_baseFormInfo"
-      :form-status="formStatus"
-    />
     <template #footer v-if="isFooter || buttonPermission.length > 0">
       <div v-if="isFooter">
         <el-button type="primary" @click="submit">{{ $t('button.confirm') }}</el-button>
@@ -108,16 +120,24 @@
         </template>
       </div>
     </template>
-  </el-drawer>
 
-  <approve-task
-    v-if="isNotEmpty(taskId)"
-    ref="approveTaskRef"
-    :task-id="taskId"
-    :form-id="formInfo.id"
-    @cancel="cancel"
-    :form-data="formData"
-  />
+    <print-template-preview
+      ref="printTemplateRef"
+      :form-data="formData"
+      :form-items="_formItems"
+      :form-info="_baseFormInfo"
+      :form-status="formStatus"
+    />
+
+    <approve-task
+      v-if="isNotEmpty(taskId)"
+      ref="approveTaskRef"
+      :task-id="taskId"
+      :form-id="formInfo.id"
+      :form-data="formData"
+      @cancel="cancel"
+    />
+  </el-drawer>
 </template>
 <script setup lang="ts">
   import { instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/task';
@@ -188,6 +208,7 @@
     procDefId: '',
   });
   const taskId = ref('');
+
   // 是否显示关联表单
   const isShowAssociationList = computed(() => {
     return (
@@ -269,8 +290,12 @@
    * @description: 打印
    * @return {*}
    */
-  const printFormInfo = () => {
-    printTemplateRef.value.init();
+  const printFormInfo = (type: 'default' | 'custom', template?: WorkForm.PrintTemplate) => {
+    if (template) {
+      printTemplateRef.value.init(type, template.templateContent);
+    } else {
+      printTemplateRef.value.init(type);
+    }
   };
 
   /**
@@ -505,6 +530,15 @@
   // 流程设计
   const _process = computed(() => {
     return JSON.parse(JSON.stringify(formInfo.value.process));
+  });
+
+  // 自定义模板
+  const _printTemplates = computed(() => {
+    if (formInfo.value.settings && formInfo.value.settings.printTemplates) {
+      return JSON.parse(JSON.stringify(formInfo.value.settings.printTemplates));
+    } else {
+      return [];
+    }
   });
 
   defineExpose({

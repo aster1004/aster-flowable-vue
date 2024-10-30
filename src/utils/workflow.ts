@@ -874,8 +874,8 @@ export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: 
   if (value == undefined) {
     return formItem.value;
   }
-  // 特殊处理创建人员
-  if (formItem.id === 'create_by') {
+  // 特殊处理创建人员和所属部门
+  if (formItem.id === 'create_by' || formItem.id === 'create_by_org') {
     return Array.isArray(value) ? value : [value];
   }
   if (formItem.valueType === ValueType.string) {

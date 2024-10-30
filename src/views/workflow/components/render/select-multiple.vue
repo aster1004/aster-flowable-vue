@@ -303,7 +303,6 @@
   const _label = computed(() => {
     let label = '';
     if (isNotEmpty(_value.value)) {
-      label = _value.value.join(',');
       _value.value.forEach((val) => {
         const node = options.value.find((o) => o.value === val);
         if (node) {

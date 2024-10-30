@@ -331,6 +331,11 @@
   }
 }
 
-.el-form-item--label-left .el-form-item__label {
-  align-items: center;
+.form-render {
+  .el-form-item--label-left {
+    align-items: center;
+  }
+  .el-form-item--label-left .el-form-item__label {
+    height: 100%;
+  }
 }
