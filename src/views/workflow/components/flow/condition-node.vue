@@ -2,7 +2,7 @@
   <el-tooltip class="box-item" effect="dark" :content="props.data.data.label" placement="top">
     <div class="condition-node" @click="handleClickNode">
       <div class="node-header">
-        <div class="node-icon">
+        <div class="node-header-icon">
           <el-icon :size="15" color="#ffffff">
             <Operation />
           </el-icon>

@@ -6,7 +6,7 @@
       @click="handleClickNode"
     >
       <div class="node-header">
-        <div class="node-icon" :class="props.data.data.current ? 'current-node-icon' : ''">
+        <div class="node-header-icon" :class="props.data.data.current ? 'current-node-icon' : ''">
           <el-icon :size="15" color="#ffffff">
             <User />
           </el-icon>
@@ -53,6 +53,6 @@
     emits('click');
   };
 </script>
-<style>
+<style scoped>
   @import '@/assets/styles/flow.css';
 </style>
