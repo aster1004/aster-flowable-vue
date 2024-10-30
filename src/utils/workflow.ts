@@ -944,7 +944,7 @@ export const getInstanceNodeResult = (instanceList: WorkForm.InstanceLogsList) =
       return {
         nodeName: instance.nodeName, //节点名称
         startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
-        text: '系统', //办理人
+        text: '(系统)', //办理人
         result: '抄送', // 处理结果
       };
     } else if (instance.type === '8') {
@@ -952,8 +952,8 @@ export const getInstanceNodeResult = (instanceList: WorkForm.InstanceLogsList) =
       return {
         nodeName: instance.nodeName, //节点名称
         startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
-        text: '', //办理人
-        result: '', // 处理结果
+        text: '(子流程)', //办理人
+        result: instance.remark, // 处理结果
       };
     } else {
       return {

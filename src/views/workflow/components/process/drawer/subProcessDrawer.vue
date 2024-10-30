@@ -99,7 +99,10 @@
           </el-form-item>-->
 
           <el-form-item label="子流程发起人" prop="approveUser">
-            <el-radio-group v-model="subProcessConfig.value.subProcessNode.startUser.type">
+            <el-radio-group
+              @change="selectChanged"
+              v-model="subProcessConfig.value.subProcessNode.startUser.type"
+            >
               <el-radio :value="StartUserEnum.ROOT">同主流程发起人</el-radio>
               <el-radio :value="StartUserEnum.SELECT">指定人员</el-radio>
               <el-radio :value="StartUserEnum.FORM">从表单获取</el-radio>
@@ -544,6 +547,15 @@
     });
   };
 
+  /**
+   * 流程发起人选择
+   * @param val
+   */
+  const selectChanged = (val: string) => {
+    // 如果改变，则清空value值，因为每个类型对应的value不一样
+    console.log(val);
+    subProcessConfig.value.value.subProcessNode.startUser.value = null;
+  };
   onMounted(() => {
     getTreeData();
   });
