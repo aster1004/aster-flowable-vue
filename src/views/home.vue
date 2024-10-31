@@ -32,7 +32,7 @@
                     >
                       <i :class="['iconfont', item.icon]"></i>
                     </div>
-                    <div class="app-name">{{ item.name }}</div>
+                    <div class="app-name single-line-text">{{ item.name }}</div>
                   </div>
                 </div>
               </el-card>
@@ -73,25 +73,25 @@
                 <div class="card-content flex justify-evenly">
                   <div class="chart-info chart-info--todo" @click="handleAnnualTaskClick('todo')">
                     <span class="font-600">{{ annualTask.todoNum }}</span>
-                    <span class="pt-10px text-sm">我的待办</span>
+                    <span class="pt-5px text-sm">我的待办</span>
                   </div>
                   <div
                     class="chart-info chart-info--complete"
                     @click="handleAnnualTaskClick('complete')"
                   >
                     <span class="font-600">{{ annualTask.completeNum }}</span>
-                    <span class="pt-10px text-sm">我的办结</span>
+                    <span class="pt-5px text-sm">我的办结</span>
                   </div>
                   <div
                     class="chart-info chart-info--started"
                     @click="handleAnnualTaskClick('started')"
                   >
                     <span class="font-600">{{ annualTask.startedNum }}</span>
-                    <span class="pt-10px text-sm">我发起的</span>
+                    <span class="pt-5px text-sm">我发起的</span>
                   </div>
                   <div class="chart-info chart-info--cc" @click="handleAnnualTaskClick('cc')">
                     <span class="font-600">{{ annualTask.ccNum }}</span>
-                    <span class="pt-10px text-sm">抄送我的</span>
+                    <span class="pt-5px text-sm">抄送我的</span>
                   </div>
                 </div>
               </el-card>
@@ -711,7 +711,8 @@
       justify-content: center;
       align-items: center;
       border-radius: 10px;
-      padding: 15px 20px;
+      width: 23%;
+      padding: 15px 5px;
       color: var(--el-text-color-regular);
       cursor: pointer;
 
@@ -748,19 +749,22 @@
       padding-top: 5px;
 
       .app-icon {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         text-align: center;
         border-radius: 10px;
         cursor: pointer;
         i {
-          font-size: 28px;
+          font-size: 22px;
+          line-height: 42px;
           color: var(--el-color-white);
         }
       }
       .app-name {
         padding-top: 5px;
-        font-size: 0.875rem;
+        width: 100%;
+        text-align: center;
+        font-size: 0.8rem;
       }
     }
   }
