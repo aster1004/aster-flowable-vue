@@ -104,7 +104,7 @@
       {
         id: 'formName',
         title: '表单名称',
-        name: 'formName',
+        name: 'InputText',
         icon: workFlowStore.design.icon,
         value: workFlowStore.design.formName,
         valueType: 'string',

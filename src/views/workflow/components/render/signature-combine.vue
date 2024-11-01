@@ -56,7 +56,7 @@
           <el-row>
             <el-col :span="12">
               <el-button
-                type="primary"
+                type="info"
                 link
                 @click="signVisible = true"
                 :disabled="_readonly"
@@ -76,7 +76,7 @@
           </el-row>
           <el-row class="sign-combine-date">
             <div class="flex justify-end w-full">
-              <el-button type="primary" link @click="dateVisible = true" :disabled="_readonly">
+              <el-button type="info" link @click="dateVisible = true" :disabled="_readonly">
                 <p>{{ _signDates[0] }} 年 {{ _signDates[1] }} 月 {{ _signDates[2] }} 日</p>
               </el-button>
             </div>

@@ -15,6 +15,7 @@
     height="100%"
   >
     <default-print
+      id="default"
       v-if="printType === 'default'"
       :visible="printType === 'default'"
       :form-data="formData"
@@ -23,13 +24,7 @@
       :form-status="formStatus"
     />
     <div v-else-if="printType === 'custom'">
-      <div
-        id="printLoading"
-        v-if="printLoading"
-        v-loading="printLoading"
-        element-loading-text="数据加载中……"
-      ></div>
-      <div id="custom" v-else v-html="templateContent"></div>
+      <div id="custom" v-show="printType === 'custom'" v-html="templateContent"></div>
     </div>
     <template #footer>
       <el-button type="primary" v-print="printObj">打印</el-button>
@@ -38,8 +33,9 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { computed, PropType, reactive, ref, watch } from 'vue';
-  import DefaultPrint from '../../components/print/default-print.vue';
+  import { computed, nextTick, PropType, reactive, ref, watch } from 'vue';
+  import DefaultPrint from '@/views/workflow/components/print/default-print.vue';
+  import { defaultComponentConfig } from '@/views/workflow/components/component-config-export';
   import print from 'vue3-print-nb';
   import { fillFormData, templateFillValue } from '@/utils/print';
   import { flatFormItems } from '@/utils/workflow';
@@ -71,12 +67,12 @@
 
   // 是否显示打印预览
   const printVisible = ref<boolean>(false);
-  // 加载中
-  const printLoading = ref<boolean>(false);
   // 模板类型
   const printType = ref<'default' | 'custom'>('default');
   // 自定义模板内容
   const templateContent = ref<string>('');
+  // 自定义模板变量的值
+  const templateValue = ref({});
   // 注册打印插件
   const vPrint = print;
   // 打印配置
@@ -90,24 +86,57 @@
    * @return {*}
    */
   const _formItems = computed(() => {
-    return flatFormItems(props.formItems);
+    const items = flatFormItems(props.formItems);
+    return [
+      ...items,
+      ...defaultComponentConfig,
+      {
+        id: 'formName',
+        title: '表单名称',
+        name: 'InputText',
+        icon: props.formInfo.icon,
+        value: props.formInfo.formName,
+        valueType: 'string',
+        props: {},
+      },
+    ];
+  });
+
+  /**
+   * @description: 表单数据
+   */
+  const _formData = computed(() => {
+    let data = JSON.parse(JSON.stringify(props.formData));
+    data['create_by'] = [data['create_by']];
+    data['create_by_org'] = [data['create_by_org']];
+    data['formName'] = props.formInfo.formName;
+    return data;
   });
 
   // 打印预览
-  const init = async (type: 'default' | 'custom', content?: string) => {
-    console.log('type--->', type);
+  const init = (type: 'default' | 'custom', content?: string) => {
+    printVisible.value = true;
     printType.value = type;
     if (type === 'custom' && content) {
-      printLoading.value = true;
-      templateContent.value = content;
-      const templateValue = ref({});
-      await templateFillValue(props.formData, _formItems.value, templateValue.value);
-      console.log('v--->', templateValue.value);
-      await fillFormData('custom', templateValue.value, content);
-      printLoading.value = false;
+      nextTick(async () => {
+        templateContent.value = content;
+        await templateFillValue(_formData.value, _formItems.value, templateValue.value);
+        await fillFormData('custom', templateValue.value, templateContent.value);
+      });
     }
-    printVisible.value = true;
   };
+
+  watch(
+    () => templateValue.value,
+    (val) => {
+      if (val && document.getElementById('custom')) {
+        nextTick(async () => {
+          await fillFormData('custom', val, templateContent.value);
+        });
+      }
+    },
+    { immediate: true, deep: true },
+  );
 
   // 监听类型变化
   watch(
