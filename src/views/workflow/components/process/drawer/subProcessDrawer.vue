@@ -161,6 +161,8 @@
               >
                 <el-col :span="8">
                   <el-select
+                    placeholder="选择父流程表单字段"
+                    @change="handleParentChange($event, i)"
                     v-model="subProcessConfig.value.subProcessNode.parentToChild[i].pFieldId"
                   >
                     <el-option
@@ -183,7 +185,7 @@
                     v-model="subProcessConfig.value.subProcessNode.parentToChild[i].cFieldId"
                   >
                     <el-option
-                      v-for="(item, index) in subProcessOptions"
+                      v-for="(item, index) in subOptionsArr[i]"
                       :key="index"
                       :label="item.label"
                       :value="item.value"
@@ -195,7 +197,7 @@
                   <i
                     class="iconfont icon-shanchu"
                     style="color: var(--el-color-error)"
-                    @click="subProcessConfig.value.subProcessNode.parentToChild.splice(i, 1)"
+                    @click="deleteItem('p2c', i)"
                   >
                   </i>
                 </el-col>
@@ -222,6 +224,8 @@
               >
                 <el-col :span="8">
                   <el-select
+                    placeholder="选择子流程表单字段"
+                    @change="handleSubChange($event, i)"
                     v-model="subProcessConfig.value.subProcessNode.childToParent[i].cFieldId"
                   >
                     <el-option
@@ -244,7 +248,7 @@
                     v-model="subProcessConfig.value.subProcessNode.childToParent[i].pFieldId"
                   >
                     <el-option
-                      v-for="(item, index) in currentOptions"
+                      v-for="(item, index) in parentOptionsArr[i]"
                       :key="index"
                       :label="item.label"
                       :value="item.value"
@@ -256,7 +260,7 @@
                   <i
                     class="iconfont icon-shanchu"
                     style="color: var(--el-color-error)"
-                    @click="subProcessConfig.value.subProcessNode.parentToChild.splice(i, 1)"
+                    @click="deleteItem('c2p', i)"
                   ></i>
                 </el-col>
               </el-row>
@@ -288,7 +292,7 @@
 <script setup lang="ts">
   import { ref, computed, watch, onMounted, watchEffect } from 'vue';
   import { processStore } from '@/stores/modules/process';
-  import { isNotEmpty, isEmpty, isUnDef, isDef } from '@/utils';
+  import { isNotEmpty, isDef } from '@/utils';
   import FormPermission from '../permission/form-permission.vue';
   import { getFormFieldData } from '@/utils/process/process';
   import { appFormTreeApi } from '@/api/workflow/app';
@@ -299,8 +303,8 @@
   import {
     formItemList,
     unSupportType,
-    flatFormItemsExclude,
     dataFillOptionsByFormItems,
+    filterDataFillOptionsFilter,
   } from '@/utils/workflow';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { StartUserEnum } from '@/enums/workFlowEnum';
@@ -327,6 +331,9 @@
   const currentOptions = ref<WorkComponent.DataFillOption[]>([]);
   // 关联表单的表单选项
   const subProcessOptions = ref<WorkComponent.DataFillOption[]>([]);
+  const subOptionsArr = ref<[WorkComponent.DataFillOption[]]>([[]]);
+  const parentOptionsArr = ref<[WorkComponent.DataFillOption[]]>([[]]);
+
   // 选中的子流程code
   const subProcessCode = ref('');
   // 审核节点标题
@@ -492,25 +499,46 @@
   );
   watch(
     () => subProcessCode.value,
-    (val) => {
-      console.log('watch---', val);
+    async (val) => {
       if (isDef(val) && isNotEmpty(val)) {
         console.log(val);
+        parentOptionsArr.value = [[]];
+        subOptionsArr.value = [[]];
         currentOptions.value = dataFillOptionsByFormItems(formItems.value, true);
-        getAssociatedFormInfo(val);
+
+        await getAssociatedFormInfo(val);
+        // 初始化选项数据
+        initOptionsData();
+      } else {
+        // 说明没选子流程，先重置
+        parentOptionsArr.value = [[]];
+        subOptionsArr.value = [[]];
+        subProcessOptions.value = [];
+        currentOptions.value = [];
       }
     },
     { immediate: true, deep: true },
-  ); /*watchEffect(() => {
-    console.log('watcheffect');
+  );
 
-    //加载目标表单信息
-    /!*if (isNotEmpty(subProcessConfig.value.value?.subProcessNode?.subProcessCode)) {
-      console.log(subProcessConfig.value.value.subProcessNode.subProcessCode);
-      currentOptions.value = dataFillOptionsByFormItems(formItems.value, true);
-      getAssociatedFormInfo(subProcessConfig.value.value.subProcessNode.subProcessCode);
-    }*!/
-  });*/
+  /**
+   * 初始化数据流转规则，保持类型的一致性
+   */
+  const initOptionsData = () => {
+    // 父流程-->子流程
+    const p2cOption = subProcessConfig.value.value.subProcessNode.parentToChild;
+    // 子流程->父流程
+    const c2pOption = subProcessConfig.value.value.subProcessNode.childToParent;
+
+    parentOptionsArr.value[0] = currentOptions.value;
+    subOptionsArr.value[0] = subProcessOptions.value;
+
+    p2cOption.forEach((node, index) => {
+      handleParentChange(node.pFieldId, index);
+    });
+    c2pOption.forEach((node, index) => {
+      handleSubChange(node.cFieldId, index);
+    });
+  };
   // 父到子添加
   const p2cAdd = () => {
     subProcessConfig.value.value.subProcessNode.parentToChild.push({
@@ -556,6 +584,74 @@
     console.log(val);
     subProcessConfig.value.value.subProcessNode.startUser.value = null;
   };
+
+  /**
+   * @description: 父到子表单数据改变
+   * @param {string} e 表单字段的值
+   * @return {*}
+   */
+  const handleParentChange = (e: string, index: number) => {
+    const associatedItem = currentOptions.value.find((item) => item.value == e);
+    if (associatedItem == undefined) {
+      return;
+    }
+    // 深拷贝，不影响原数据
+    const tempOptions = JSON.parse(JSON.stringify(subProcessOptions.value));
+    // 根据关联表单字段的类型，筛选可填充的当前表单字段
+    subOptionsArr.value[index] = tempOptions.filter((item: WorkComponent.DataFillOption) => {
+      const disabled = filterDataFillOptionsFilter(
+        associatedItem.type,
+        associatedItem.name,
+        item.type,
+        item.name,
+      );
+      item['disabled'] = !disabled;
+      return item;
+    });
+  };
+
+  /**
+   * @description: 子到父表单数据改变
+   * @param {string} e 表单字段的值
+   * @return {*}
+   */
+  const handleSubChange = (e: string, index: number) => {
+    const associatedItem = subProcessOptions.value.find((item) => item.value == e);
+    if (associatedItem == undefined) {
+      return;
+    }
+    // 深拷贝，不影响原数据
+    const tempOptions = JSON.parse(JSON.stringify(currentOptions.value));
+    // 根据关联表单字段的类型，筛选可填充的当前表单字段
+    parentOptionsArr.value[index] = tempOptions.filter((item: WorkComponent.DataFillOption) => {
+      const disabled = filterDataFillOptionsFilter(
+        associatedItem.type,
+        associatedItem.name,
+        item.type,
+        item.name,
+      );
+      item['disabled'] = !disabled;
+      return item;
+    });
+  };
+
+  /**
+   * 删除
+   * @param type c2p | p2c
+   * @param index
+   */
+  const deleteItem = (type: string, index: number) => {
+    if (type === 'p2c') {
+      subOptionsArr.value.splice(index, 1);
+      subProcessConfig.value.value.subProcessNode.parentToChild.splice(index, 1);
+    } else if (type === 'c2p') {
+      parentOptionsArr.value.splice(index, 1);
+      subProcessConfig.value.value.subProcessNode.childToParent.splice(index, 1);
+    } else {
+      ElMessage.error('未知的类型！！！');
+    }
+  };
+
   onMounted(() => {
     getTreeData();
   });
