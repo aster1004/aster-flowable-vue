@@ -168,10 +168,13 @@
             {{ convertMilliSecond(scope.row.duration) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="90" align="center" class-name="operation">
+        <el-table-column label="操作" min-width="160" align="center" class-name="operation">
           <template #default="scope">
-            <el-button size="small" type="primary" text @click="handleAddAgin(scope.row)">
-              再次提交
+            <el-button size="small" link type="primary" @click="handleAddAgin(scope.row)">
+              <i class="iconfont icon-fabu"></i>再次提交
+            </el-button>
+            <el-button size="small" link type="danger" @click="handleDelete(scope.row)">
+              <i class="iconfont icon-shanchu"></i>{{ $t('button.delete') }}
             </el-button>
           </template>
         </el-table-column>
@@ -195,7 +198,7 @@
 </template>
 <script setup lang="ts">
   import { ResultEnum } from '@/enums/httpEnum';
-  import { ElMessage } from 'element-plus';
+  import { ElMessage, ElMessageBox } from 'element-plus';
   import { ref, reactive, onMounted } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { getMyStartedApi } from '@/api/workflow/task';
@@ -205,6 +208,8 @@
   import DictSelect from '@/components/dict/dict-select.vue';
   import DictTag from '@/components/dict/dict-tag.vue';
   import FormInitiation from '@/views/workflow/form/form-initiation.vue';
+  import { menuDeleteApi } from '@/api/sys/menu';
+  import { delProcessInstanceApi } from '@/api/workflow/process';
 
   const { t } = useI18n();
 
@@ -355,6 +360,26 @@
     } else {
       ElMessage.error('表单编码和流程实例id不能为空');
     }
+  };
+
+  /**
+   * @description: 删除流程实例及历史数据
+   * @return {*}
+   */
+  const handleDelete = (row: WorkTask.MyStartedModel) => {
+    ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
+      confirmButtonText: t('button.confirm'),
+      cancelButtonText: t('button.cancel'),
+      type: 'warning',
+      lockScroll: false,
+    })
+      .then(() => {
+        delProcessInstanceApi(row.procInstId).then(() => {
+          ElMessage.success(t('delete.success'));
+          handleQuery();
+        });
+      })
+      .catch(() => {});
   };
   onMounted(() => {
     getTreeData();

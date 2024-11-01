@@ -63,3 +63,13 @@ export const instanceListByCodeApi = (code: String, status: string) => {
 export const selectPageApi = (pageQuery: any) => {
   return request.post<any>(PORT5 + `/process/selectPage`, pageQuery, { noLoading: true });
 };
+
+/**
+ * 删除流程实例及历史数据
+ * @param roleId
+ */
+export const delProcessInstanceApi = (procInstId: string) => {
+  return request.post<any>(PORT5 + `/process/delProcess/${procInstId}`, {
+    noLoading: false,
+  });
+};
