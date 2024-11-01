@@ -51,7 +51,7 @@
         <el-image
           ref="printValueRef"
           v-if="isNotEmpty(_value)"
-          style="height: 100px"
+          style="height: 50px"
           :src="_value"
         />
       </div>
@@ -227,7 +227,7 @@
   }
 
   .sign-form-image {
-    height: 100px;
+    height: 50px;
     margin-top: 10px;
     border: 1px dashed #ccc;
   }

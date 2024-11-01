@@ -114,7 +114,20 @@
                     v-for="(item, index) in _completeStatistics"
                     :key="index"
                   >
-                    <span class="complete-info--title single-line-text">{{ item.formName }} </span>
+                    <el-tooltip
+                      v-if="item.formName.length > 6"
+                      effect="dark"
+                      :content="item.formName"
+                      placement="top"
+                    >
+                      <span class="complete-info--title single-line-text">
+                        {{ item.formName }}
+                      </span>
+                    </el-tooltip>
+                    <span v-else class="complete-info--title">
+                      {{ item.formName }}
+                    </span>
+
                     <span class="complete-info--value">{{ item.completeNum }}</span>
                   </div>
                 </div>

@@ -80,6 +80,7 @@
   import { ImageUpload } from '@/config/fileConfig';
   import { ElMessage, UploadProps } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
+  import { compressBase64Image } from '@/utils/fileUtils';
 
   const emits = defineEmits(['success']);
 
@@ -171,8 +172,10 @@
     // 如果不是本地签名
     if (!showLocalSign.value) {
       signPanelRef.value.generate().then((res: any) => {
-        resultImg.value = res.value;
-        emits('success', resultImg.value);
+        compressBase64Image(res.value, 0.3).then((img: string) => {
+          resultImg.value = img;
+          emits('success', resultImg.value);
+        });
         visible.value = false;
       });
     } else {

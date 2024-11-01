@@ -173,7 +173,7 @@ const fieldFillValue = async (
         break;
       case 'Signature':
         value =
-          `<img style="width: 100px; height: 100px; padding: 2px;" src="` +
+          `<img style="width: 120px; height: 50px; padding: 2px;" src="` +
           formData[formItem.id] +
           `"/>`;
         break;

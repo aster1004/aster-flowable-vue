@@ -96,3 +96,29 @@ export const downloadFileByUrl = async (
       ElMessage.error(err.message);
     });
 };
+
+/**
+ * @description 图片压缩
+ * @param {String} base64Image 图片的base64编码
+ * @param {Number} compressionRatio 压缩比例，默认为0.5，即压缩到原来的50%
+ */
+export function compressBase64Image(base64Image, compressionRatio = 0.5) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = base64Image;
+    img.onload = function () {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * compressionRatio;
+      canvas.height = img.height * compressionRatio;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      // 将Canvas上的图像转换为PNG格式的Base64
+      const compressedBase64 = canvas.toDataURL('image/png', 1);
+      resolve(compressedBase64);
+    };
+
+    img.onerror = function () {
+      reject('无法加载图像');
+    };
+  });
+}

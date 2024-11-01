@@ -25,11 +25,11 @@
   const props = defineProps({
     width: {
       type: Number,
-      default: 800,
+      default: 500,
     },
     height: {
       type: Number,
-      default: 300,
+      default: 200,
     },
     lineWidth: {
       type: Number,
