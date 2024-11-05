@@ -374,7 +374,7 @@
       lockScroll: false,
     })
       .then(() => {
-        delProcessInstanceApi(row.procInstId).then(() => {
+        delProcessInstanceApi(row.procInstId, row.formCode).then(() => {
           ElMessage.success(t('delete.success'));
           handleQuery();
         });

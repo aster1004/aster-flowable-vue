@@ -66,10 +66,11 @@ export const selectPageApi = (pageQuery: any) => {
 
 /**
  * 删除流程实例及历史数据
- * @param roleId
+ * @param procInstId
+ * @param formCode
  */
-export const delProcessInstanceApi = (procInstId: string) => {
-  return request.post<any>(PORT5 + `/process/delProcess/${procInstId}`, {
+export const delProcessInstanceApi = (procInstId: string, formCode: string) => {
+  return request.post<any>(PORT5 + `/process/delProcess/${procInstId}/${formCode}`, {
     noLoading: false,
   });
 };
