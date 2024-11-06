@@ -39,15 +39,15 @@ export const fillFormData = async (
     const tbody = td.children[0];
     let tr = '';
     if (tbody.children.length === 1) {
-      //可能是没有表头，就直接扫首行
+      // 可能是没有表头，就直接扫首行
       tr = tbody.children[0].outerHTML;
     } else {
-      //按最后一行来处理
+      // 按最后一行来处理
       tr = tbody.children[tbody.children.length - 1].outerHTML;
     }
-    //判断有没有变量存在，没有就不处理
+    // 判断有没有变量存在，没有就不处理
     if (exp.test(tr)) {
-      //行循环
+      // 行循环
       let tbHtml = '',
         thHtml = '';
       (formData[td.className] || []).forEach((row) => {
@@ -55,7 +55,7 @@ export const fillFormData = async (
           return formData[match.split(':')[1].trim()] || match;
         });
       });
-      //取表头部分
+      // 取表头部分
       for (let i = 0; i < tbody.children.length - 1; i++) {
         thHtml += tbody.children[i].outerHTML;
       }
@@ -179,13 +179,13 @@ const fieldFillValue = async (
         break;
       case 'SignatureCombine':
         value =
-          '<div style="width: 100%; height: 150px; position: relative;">' +
+          '<div style="width: 100%; height: 100%; position: relative;">' +
           '  <div style="width: 100%"> ' +
           '    <span>' +
           (formData[formItem.id].comment || '') +
           '    </span>' +
           '  </div>' +
-          '  <div style="position: absolute; bottom: 0; right: 30px; width: 200px; color: #909399;">' +
+          '  <div style="position: absolute; bottom: 0; right: 30px; width: 250px; color: #909399;">' +
           '    <div style="box-sizing: border-box; display: flex; flex-wrap: wrap; position: relative;">' +
           '      <div style="display: flex; flex: 0 0 50%; max-width: 50%; align-items: end;">' +
           '        <span>(签字并盖章)</span>' +
