@@ -1,4 +1,14 @@
 /**
+ * @description：单行文本控件的格式列表
+ */
+export const InputTextFormats = [
+  { label: '普通文本', value: 'text' },
+  { label: '邮箱', value: 'email' },
+  { label: '身份证', value: 'idcard' },
+  { label: '固话/手机', value: 'mobile' },
+];
+
+/**
  * @description：流程设计器弹出宽度
  */
 export enum DrawerEnum {

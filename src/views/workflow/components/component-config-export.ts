@@ -112,6 +112,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         readonly: false,
         // 提示语
         placeholder: '',
+        // 格式
+        format: 'text',
         // 默认值配置
         default: {
           // 类型: 计算公式formula和数据联动data-linkage

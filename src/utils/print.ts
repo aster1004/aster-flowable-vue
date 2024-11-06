@@ -178,6 +178,14 @@ const fieldFillValue = async (
           `"/>`;
         break;
       case 'SignatureCombine':
+        let signLabel = '';
+        if (formItem.props.showSignature && formItem.props.showSignatureCombine) {
+          signLabel = '(签字并盖章)';
+        } else if (formItem.props.showSignature) {
+          signLabel = '(签字)';
+        } else if (formItem.props.showSignatureCombine) {
+          signLabel = '(盖章)';
+        }
         value =
           '<div style="width: 100%; height: 100%; position: relative;">' +
           '  <div style="width: 100%"> ' +
@@ -188,7 +196,9 @@ const fieldFillValue = async (
           '  <div style="position: absolute; bottom: 0; right: 30px; width: 250px; color: #909399;">' +
           '    <div style="box-sizing: border-box; display: flex; flex-wrap: wrap; position: relative;">' +
           '      <div style="display: flex; flex: 0 0 50%; max-width: 50%; align-items: end;">' +
-          '        <span>(签字并盖章)</span>' +
+          '        <span>' +
+          signLabel +
+          '</span>' +
           '      </div>' +
           '      <div style="display: block; flex: 0 0 50%; max-width: 50%;">' +
           '        <div style="position: relative; width: 100px; height: 100px; background-image: url(' +
