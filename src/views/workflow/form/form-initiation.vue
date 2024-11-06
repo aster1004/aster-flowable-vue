@@ -182,7 +182,6 @@
     };
     // 提交表单
     formSubmitApi(submitFormData).then((res) => {
-      console.info(res);
       if (res.code == ResultEnum.SUCCESS) {
         ElMessage.success({
           message: t('common.success'),

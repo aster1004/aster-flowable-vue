@@ -291,7 +291,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       title: '日期',
       name: 'DateTime',
       icon: 'iconfont icon-riqi',
-      value: '',
+      value: null,
       valueType: ValueType.date,
       props: {
         // 必填

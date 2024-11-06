@@ -883,8 +883,7 @@ export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: 
   } else if (formItem.valueType === ValueType.number) {
     return isNotEmpty(value) ? Number(value) : null;
   } else if (formItem.valueType === ValueType.date) {
-    console.log(value);
-    return isNotEmpty(value) ? value.replace('T', ' ') : null;
+    return isNotEmpty(value) && value.length > 1 ? value.replace('T', ' ') : null;
   } else if (formItem.valueType === ValueType.object) {
     if (typeof value === 'string' && isNotEmpty(value) && value.indexOf('{') != -1) {
       return JSON.parse(value);
