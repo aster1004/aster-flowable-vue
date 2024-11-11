@@ -52,7 +52,7 @@ export const fillFormData = async (
         thHtml = '';
       (formData[td.className] || []).forEach((row) => {
         tbHtml += tr.replace(exp, (match) => {
-          return formData[match.split(':')[1].trim()] || match;
+          return row[match.split(':')[1].trim().replace('}', '')] || match;
         });
       });
       // 取表头部分
@@ -100,10 +100,11 @@ const fieldFillValue = async (
       case 'TableList':
         value = [];
         formData[formItem.id].forEach((row, i) => {
-          value.push({});
+          let childValue = {};
           formItem.props.columns.forEach((col) => {
-            fieldFillValue(row, col, value[i]);
+            fieldFillValue(row, col, childValue);
           });
+          value.push(childValue);
         });
         break;
       case 'SelectSingle':
@@ -187,7 +188,7 @@ const fieldFillValue = async (
           signLabel = '(盖章)';
         }
         value =
-          '<div style="width: 100%; height: 100%; position: relative;">' +
+          '<div style="width: 100%; height: 100%; position: relative; padding: 5px;">' +
           '  <div style="width: 100%"> ' +
           '    <span>' +
           (formData[formItem.id].comment || '') +
@@ -227,6 +228,9 @@ const fieldFillValue = async (
         break;
       case 'GeoLocation':
         value = formData[formItem.id].address || '';
+        break;
+      case 'InputTextarea':
+        value = '<div style="padding: 0 5px">' + formData[formItem.id] + '</div>';
         break;
       default:
         value = formData[formItem.id];

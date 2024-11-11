@@ -119,7 +119,7 @@
     printType.value = type;
     if (type === 'custom' && content) {
       nextTick(async () => {
-        templateContent.value = content;
+        templateContent.value = content.replace(/class="field-content"/g, 'style="padding: 0 5px"');
         await templateFillValue(_formData.value, _formItems.value, templateValue.value);
         await fillFormData('custom', templateValue.value, templateContent.value);
       });

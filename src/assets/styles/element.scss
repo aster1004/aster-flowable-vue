@@ -339,3 +339,9 @@
     height: 100%;
   }
 }
+
+.list-render .table-search .grid-column {
+  .el-form-item--label-left .el-form-item__label {
+    align-items: center;
+  }
+}
