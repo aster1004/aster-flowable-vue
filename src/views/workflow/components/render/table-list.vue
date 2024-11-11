@@ -138,7 +138,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="!formItem.props.readonly"
+            v-if="!_readonly"
             :label="$t('label.operate')"
             fixed="right"
             width="80"
@@ -197,7 +197,11 @@
           <el-button @click="prevRowInfo(rowIndex)" :disabled="rowIndex === 0">
             {{ $t('workflow.prevRow') }}
           </el-button>
-          <el-button type="primary" @click="nextRowInfo(rowIndex)">
+          <el-button
+            type="primary"
+            @click="nextRowInfo(rowIndex)"
+            :disabled="_readonly ? rowIndex === _value.length - 1 : false"
+          >
             {{ $t('workflow.nextRow') }}
           </el-button>
         </template>
