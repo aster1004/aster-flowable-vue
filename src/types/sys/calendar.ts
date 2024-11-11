@@ -32,4 +32,12 @@ declare namespace AsterCalendar {
     start?: string;
     end?: string;
   }
+
+  /** 日程信息 */
+  export interface EventInfo {
+    id?: string;
+    label: string;
+    value: string;
+    sort: number;
+  }
 }

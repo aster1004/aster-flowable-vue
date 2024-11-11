@@ -186,7 +186,6 @@
         newEvent.id = res.data;
         // 刷新日历显示
         calendarApi.addEvent(newEvent);
-        console.log(calendarApi);
       } else {
         ElMessage.error(res.message);
       }
