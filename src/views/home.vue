@@ -395,7 +395,7 @@
    * @return {*}
    */
   const handleMoreSchedule = () => {
-    ElMessage.warning('日程管理暂未开发！');
+    router.push('/system/calendar');
   };
 
   /**
