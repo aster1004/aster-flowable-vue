@@ -89,13 +89,13 @@
             {{ activity.label }}
           </el-timeline-item>
         </el-timeline>
-        <el-empty v-else description="暂无日程数据" image-size="100" />
+        <el-empty v-else description="暂无日程数据" :image-size="100" />
       </el-scrollbar>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-  import { isEmpty, isNotEmpty } from '@/utils';
+  import { isNotEmpty } from '@/utils';
   import moment from 'moment';
   import { computed, onMounted, reactive, ref } from 'vue';
   import { calendarListApi } from '@/api/sys/calendar';
