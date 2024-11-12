@@ -1,4 +1,14 @@
 /**
+ * @description：单行文本控件的格式列表
+ */
+export const InputTextFormats = [
+  { label: '普通文本', value: 'text' },
+  { label: '邮箱', value: 'email' },
+  { label: '身份证', value: 'idcard' },
+  { label: '固话/手机', value: 'mobile' },
+];
+
+/**
  * @description：流程设计器弹出宽度
  */
 export enum DrawerEnum {
@@ -23,6 +33,10 @@ export enum ProcessNodeTypeEnum {
   PARALLEL = 5,
   // 包容
   INCLUSIVE = 6,
+  // 网关聚合节点（后端已占用）
+  EMPTY = 7,
+  // 子流程
+  SUBPROCESS = 8,
 }
 
 /**
@@ -133,4 +147,16 @@ export enum ProcessResultEnum {
   DISAGREE_END = 'disagree-end',
   // 结束,流程正常结束
   END = 'end',
+}
+
+/**
+ *  子流程发起人枚举
+ */
+export enum StartUserEnum {
+  // 同主流程
+  ROOT = 'root',
+  // 指定人员
+  SELECT = 'select',
+  // 从表单选择
+  FORM = 'form',
 }

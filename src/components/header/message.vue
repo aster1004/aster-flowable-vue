@@ -9,9 +9,10 @@
   <div class="message" id="message">
     <el-popover placement="bottom" :width="320" trigger="click">
       <template #reference>
-        <el-badge :value="total" class="item">
+        <el-badge v-if="total > 0" :value="total" class="item">
           <i class="iconfont icon-xiaoxizhongxin toolBar-icon"></i>
         </el-badge>
+        <i v-else class="iconfont icon-xiaoxizhongxin toolBar-icon"></i>
       </template>
       <el-tabs v-model="activeName" @tab-change="handleTabChange">
         <!-- 消息 -->
@@ -52,7 +53,8 @@
   const noticeList = ref<Notice.NoticeItem[]>([]);
   /** 消息总数 */
   const total = computed(() => {
-    return messageList.value.length + noticeList.value.length;
+    // return messageList.value.length + noticeList.value.length;
+    return 0;
   });
 
   const messageRef = ref();

@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div class="print-container">
+  <div class="print-container" v-show="visible">
     <div class="print-header">
       {{ formInfo.formName }}
     </div>
@@ -36,7 +36,7 @@
             />
           </div>
           <div class="form-complete" v-if="formStatus === '9'">
-            <img src="@/assets/images/process-complete.png" alt="审批通过" />
+            <!-- <img src="@/assets/images/process-complete.png" alt="审批通过" /> -->
           </div>
         </div>
       </el-scrollbar>
@@ -48,6 +48,10 @@
   import FormDesignRender from '../../form/form-design-render.vue';
 
   defineProps({
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     formData: {
       type: Object as PropType<WorkForm.FormDataModel>,
       default: () => ({}),

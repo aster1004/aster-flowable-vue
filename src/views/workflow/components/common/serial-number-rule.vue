@@ -115,11 +115,10 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { flatFormItemsExclude, generateFieldId } from '@/utils/workflow';
+  import { flatFormItems, generateFieldId } from '@/utils/workflow';
   import moment from 'moment';
   import { computed, ref } from 'vue';
   import draggable from 'vuedraggable';
-  import { ValueType } from '../component-config-export';
   import SerialNumberPopover from './serial-number-popover.vue';
 
   const emits = defineEmits(['saveRules']);
@@ -178,22 +177,28 @@
     visible.value = true;
   };
 
+  /**
+   * @description: 扁平化表单控件
+   * @return {*}
+   */
+  const _flatFormItem = computed(() => {
+    return flatFormItems(workFlowStore.design.formItems).filter(
+      (item) =>
+        item.name === 'InputText' ||
+        item.name === 'InputNumber' ||
+        item.name === 'SelectSingle' ||
+        item.name === 'SelectMultiple',
+    );
+  });
+
   // 表单控件
   const _controlOptions = computed(() => {
-    return flatFormItemsExclude(workFlowStore.design.formItems)
-      .filter((item) => {
-        return (
-          item.valueType != ValueType.array &&
-          item.valueType != ValueType.object &&
-          item.name != 'SerialNumber'
-        );
-      })
-      .map((item) => {
-        return {
-          label: item.title,
-          value: item.id,
-        };
-      });
+    return _flatFormItem.value.map((item) => {
+      return {
+        label: item.title,
+        value: item.id,
+      };
+    });
   });
 
   // 移除
@@ -206,7 +211,7 @@
     let serialNumber = '';
     rules.value.forEach((rule) => {
       if (rule.type === 'control') {
-        const item = workFlowStore.design.formItems.find((item) => item.id === rule.value);
+        const item = _flatFormItem.value.find((item) => item.id === rule.value);
         if (item) {
           serialNumber += item.title + '(值)';
         }

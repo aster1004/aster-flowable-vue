@@ -41,7 +41,11 @@
           </el-row>
         </div>
       </div>
-      <div class="sign-combine-container sign-combine-form" v-else-if="mode === 'form'">
+      <div
+        class="sign-combine-container sign-combine-form"
+        :style="{ minHeight: _whStyle.height }"
+        v-else-if="mode === 'form'"
+      >
         <div class="sign-combine-content">
           <el-input
             v-model="_value.comment"
@@ -52,31 +56,25 @@
             :placeholder="formItem.props.placeholder"
           />
         </div>
-        <div class="sign-combine-footer">
-          <el-row>
-            <el-col :span="12">
-              <el-button
-                type="primary"
-                link
-                @click="signVisible = true"
-                :disabled="_readonly"
-                style="position: absolute; bottom: 0"
-              >
+        <div class="sign-combine-footer" :style="{ width: _whStyle.width }">
+          <div class="flex">
+            <div class="w-100px flex justify-end items-end">
+              <el-button type="info" link @click="signVisible = true" :disabled="_readonly">
                 {{ _signTip }}
               </el-button>
-            </el-col>
-            <el-col :span="12">
+            </div>
+            <div>
               <div class="sign-combine-preview" :style="_signStyle">
                 <img
                   v-if="isNotEmpty(_value.signatureCombine) && formItem.props.showSignatureCombine"
                   :src="_value.signatureCombine"
                 />
               </div>
-            </el-col>
-          </el-row>
+            </div>
+          </div>
           <el-row class="sign-combine-date">
             <div class="flex justify-end w-full">
-              <el-button type="primary" link @click="dateVisible = true" :disabled="_readonly">
+              <el-button type="info" link @click="dateVisible = true" :disabled="_readonly">
                 <p>{{ _signDates[0] }} 年 {{ _signDates[1] }} 月 {{ _signDates[2] }} 日</p>
               </el-button>
             </div>
@@ -90,27 +88,27 @@
     </el-form-item>
 
     <div v-else class="print-sign-combine">
-      <div class="print-sign-combine-label">
+      <div class="print-sign-combine-label" :style="{ minHeight: _whStyle.height }">
         <span v-show="showLabel">{{ formItem.title }}</span>
       </div>
-      <div class="print-sign-combine-value">
+      <div class="print-sign-combine-value" :style="{ minHeight: _whStyle.height }">
         <div>
           {{ _value.comment }}
         </div>
-        <div class="sign-combine-footer">
-          <el-row>
-            <el-col :span="12">
-              <div style="position: absolute; bottom: 0"> {{ _signTip }} </div>
-            </el-col>
-            <el-col :span="12">
+        <div class="sign-combine-footer" :style="{ width: _whStyle.width }">
+          <div class="flex">
+            <div class="w-100px flex justify-end items-end">
+              <span> {{ _signTip }} </span>
+            </div>
+            <div>
               <div class="sign-combine-preview" :style="_signStyle">
                 <img
                   v-if="isNotEmpty(_value.signatureCombine) && formItem.props.showSignatureCombine"
                   :src="_value.signatureCombine"
                 />
               </div>
-            </el-col>
-          </el-row>
+            </div>
+          </div>
           <el-row>
             <div class="flex justify-end w-full">
               <p>{{ _signDates[0] }} 年 {{ _signDates[1] }} 月 {{ _signDates[2] }} 日</p>
@@ -286,6 +284,18 @@
     }
     return true;
   };
+
+  /**
+   * @description: 宽高样式
+   */
+  const _whStyle = computed(() => {
+    const w = props.formItem.props.signSize + 100;
+    const h = props.formItem.props.signSize + 50;
+    return {
+      width: w + 'px',
+      height: h + 'px',
+    };
+  });
 
   /**
    * @description: 签章样式

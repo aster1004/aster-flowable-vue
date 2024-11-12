@@ -70,7 +70,7 @@
   import { ref, computed } from 'vue';
   const emit = defineEmits(['update:conditionGroup', 'delete']);
   import ConditionItem from '@/views/workflow/components/common/condition-item.vue';
-  import { formItemList } from '@/utils/workflow';
+  import { formItemList, unSupportType } from '@/utils/workflow';
   import { Delete, Plus } from '@element-plus/icons-vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   // 工作流store
@@ -107,25 +107,6 @@
     return workFlowStore.design.formItems;
   });
 
-  /**
-   * @description: 排除不支持的组件
-   * @param node
-   */
-  const unSupportType = (node: WorkComponent.ComponentConfig) => {
-    return [
-      'SelectMultiple', //下拉多选
-      'UploadImage', //上传图片
-      'UploadFile', //上传附件
-      'AssociatedForm', // 关联表单
-      'GeoLocation', //地理位置
-      'Area', //行政区划
-      'Signature', //手写签名
-      'SignatureCombine', // 签章
-      'AssociatedProperty', //关联属性
-      'DateTime', //日期时间
-      'DateTimeRange', //日期区间
-    ].includes(node.name);
-  };
   /**
    * @description: form表单数据
    * @return {*}

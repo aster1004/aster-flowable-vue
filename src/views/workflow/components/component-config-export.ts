@@ -112,6 +112,8 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
         readonly: false,
         // 提示语
         placeholder: '',
+        // 格式
+        format: 'text',
         // 默认值配置
         default: {
           // 类型: 计算公式formula和数据联动data-linkage
@@ -291,7 +293,7 @@ const baseComponentConfig: WorkComponent.ComponentConfigGroup = {
       title: '日期',
       name: 'DateTime',
       icon: 'iconfont icon-riqi',
-      value: '',
+      value: null,
       valueType: ValueType.date,
       props: {
         // 必填
@@ -752,15 +754,28 @@ export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
         type: 'user', // 可选类型，user（选人) | dept(选部门) | sysRole(系统角色) | flowRole(流程角色)
         ids: [], // 对应类型的ids
       },
+      // 默认值配置
+      default: {
+        // 类型: 固定值fixed和数据联动data-linkage
+        type: 'fixed',
+        linkage: {
+          // 联动目标表单编码
+          formCode: [],
+          // 联动条件
+          conditions: [],
+          // 联动填充
+          dataFill: '',
+        },
+      },
     },
   },
   {
-    id: 'create_time',
-    title: '创建时间',
-    name: 'DateTimeRange',
-    icon: 'iconfont icon-riqifanwei',
+    id: 'create_by_org',
+    title: '所属部门',
+    name: 'DeptPicker',
+    icon: 'iconfont icon-bumendanxuan',
     value: [],
-    valueType: 'DateRange',
+    valueType: ValueType.dept,
     props: {
       // 必填
       required: false,
@@ -768,10 +783,60 @@ export const defaultComponentConfig: WorkComponent.ComponentConfig[] = [
       hidden: '',
       // 只读
       readonly: false,
-      // 格式
+      placeholder: '请选择部门',
+      multiple: false,
+      expansion: false,
+      options: [],
+      // 可被选择的部门
+      canselected: {
+        type: 'dept', // 可选类型,固定位dept
+        ids: [],
+      },
+      // 默认值配置
+      default: {
+        // 类型: 固定值fixed和数据联动data-linkage
+        type: 'fixed',
+        linkage: {
+          // 联动目标表单编码
+          formCode: [],
+          // 联动条件
+          conditions: [],
+          // 联动填充
+          dataFill: '',
+        },
+      },
+    },
+  },
+  {
+    id: 'create_time',
+    title: '创建时间',
+    name: 'DateTime',
+    icon: 'iconfont icon-riqi',
+    value: '',
+    valueType: ValueType.date,
+    props: {
+      // 必填
+      required: false,
+      // 隐藏
+      hidden: '',
+      // 只读
+      readonly: false,
+      // 日期格式
       format: 'YYYY-MM-DD',
-      // 时长
-      showLength: false,
+      // 默认值配置
+      default: {
+        // 类型: 计算公式formula和数据联动data-linkage
+        type: 'formula',
+        value: '',
+        linkage: {
+          // 联动目标表单编码
+          formCode: [],
+          // 联动条件
+          conditions: [],
+          // 联动填充
+          dataFill: '',
+        },
+      },
     },
   },
 ];

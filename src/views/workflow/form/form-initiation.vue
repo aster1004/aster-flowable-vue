@@ -143,12 +143,8 @@
    * @description: 验证表单
    * @return {*}
    */
-  const validateForm = async () => {
-    let formValidate = false;
-    await formRenderRef.value.validate(() => {
-      formValidate = true;
-    });
-    return formValidate;
+  const validateForm = async (callback: Function) => {
+    await formRenderRef.value.validate(callback);
   };
 
   /**
@@ -157,11 +153,9 @@
    */
   const handleSave = () => {
     console.log('暂存，只保存不发起流程');
-    if (!validateForm()) {
-      ElMessage.error('表单校验失败！');
-      return;
-    }
-    console.log('暂存--->', formData.value);
+    validateForm(() => {
+      console.log('暂存--->', formData.value);
+    });
   };
 
   /**
@@ -169,30 +163,26 @@
    * @return {*}
    */
   const handleSubmit = () => {
-    console.log('提交，发起流程');
-    if (!validateForm()) {
-      ElMessage.error('表单校验失败！');
-      return;
-    }
-    console.log('提交--->', formData.value);
-    let submitFormData = {
-      formId: formId.value,
-      formStatus: '0',
-      formData: formData.value,
-    };
-    // 提交表单
-    formSubmitApi(submitFormData).then((res) => {
-      console.info(res);
-      if (res.code == ResultEnum.SUCCESS) {
-        ElMessage.success({
-          message: t('common.success'),
-          duration: 500,
-          onClose: () => {
-            visible.value = false;
-            emits('resetQuery'); // 提交成功，刷新列表
-          },
-        });
-      }
+    validateForm(() => {
+      console.log('提交--->', formData.value);
+      let submitFormData = {
+        formId: formId.value,
+        formStatus: '0',
+        formData: formData.value,
+      };
+      // 提交表单
+      formSubmitApi(submitFormData).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          ElMessage.success({
+            message: t('common.success'),
+            duration: 500,
+            onClose: () => {
+              visible.value = false;
+              emits('resetQuery'); // 提交成功，刷新列表
+            },
+          });
+        }
+      });
     });
   };
 

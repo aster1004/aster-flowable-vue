@@ -874,8 +874,8 @@ export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: 
   if (value == undefined) {
     return formItem.value;
   }
-  // 特殊处理创建人员
-  if (formItem.id === 'create_by') {
+  // 特殊处理创建人员和所属部门
+  if (formItem.id === 'create_by' || formItem.id === 'create_by_org') {
     return Array.isArray(value) ? value : [value];
   }
   if (formItem.valueType === ValueType.string) {
@@ -883,8 +883,7 @@ export const convertDataType = (formItem: WorkComponent.ComponentConfig, value: 
   } else if (formItem.valueType === ValueType.number) {
     return isNotEmpty(value) ? Number(value) : null;
   } else if (formItem.valueType === ValueType.date) {
-    console.log(value);
-    return isNotEmpty(value) ? value.replace('T', ' ') : null;
+    return isNotEmpty(value) && value.length > 1 ? value.replace('T', ' ') : null;
   } else if (formItem.valueType === ValueType.object) {
     if (typeof value === 'string' && isNotEmpty(value) && value.indexOf('{') != -1) {
       return JSON.parse(value);
@@ -944,8 +943,16 @@ export const getInstanceNodeResult = (instanceList: WorkForm.InstanceLogsList) =
       return {
         nodeName: instance.nodeName, //节点名称
         startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
-        text: '系统', //办理人
+        text: '(系统)', //办理人
         result: '抄送', // 处理结果
+      };
+    } else if (instance.type === '8') {
+      // 子流程
+      return {
+        nodeName: instance.nodeName, //节点名称
+        startTime: dateFormat(instance.startTime, 'MM-DD HH:mm'), // 开始时间
+        text: '(子流程)', //办理人
+        result: instance.remark, // 处理结果
       };
     } else {
       return {
@@ -1076,4 +1083,19 @@ const normalizeDate = (raw: any): Date => {
   }
 
   return raw;
+};
+export const unSupportType = (node: WorkComponent.ComponentConfig) => {
+  return [
+    'SelectMultiple', //下拉多选
+    'UploadImage', //上传图片
+    'UploadFile', //上传附件
+    'AssociatedForm', // 关联表单
+    'GeoLocation', //地理位置
+    'Area', //行政区划
+    'Signature', //手写签名
+    'SignatureCombine', // 签章
+    'AssociatedProperty', //关联属性
+    'DateTime', //日期时间
+    'DateTimeRange', //日期区间
+  ].includes(node.name);
 };

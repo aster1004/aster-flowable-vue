@@ -19,7 +19,16 @@ declare interface ResultData<T = any> extends Result {
 // 文件上传模块
 declare namespace Upload {
   export interface ResFileUrl {
-    fileUrl: string;
+    // 文件名称
+    name: string;
+    // 文件地址
+    url: string;
+    // 文件大小
+    size: number;
+    // 文件扩展名
+    extension: string;
+    // 存储平台
+    platform: string;
   }
 }
 

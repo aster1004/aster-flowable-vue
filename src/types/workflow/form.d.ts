@@ -32,6 +32,15 @@ declare namespace WorkForm {
   }
 
   /**
+   * @description: 打印模板
+   */
+  export interface PrintTemplate {
+    id: string;
+    title: string;
+    templateContent: string;
+  }
+
+  /**
    * @description: 表单扩展信息
    */
   export interface FormSettings {
@@ -50,6 +59,8 @@ declare namespace WorkForm {
     submitValidates?: SubmitValidate[];
     // 关联列表
     associationList?: WorkComponent.TreeNode[];
+    // 打印模板
+    printTemplates?: PrintTemplate[];
   }
 
   /**
@@ -171,6 +182,7 @@ declare namespace WorkForm {
     ccSelfSelectFlag: string;
     nodeUserList: [];
     childNode: {};
+    sbuProcessNode?: {}; // 子流程属性配置
     conditionNodes: [];
     formPermission?: [];
     buttonPermission?: ButtonPermission[];
@@ -303,6 +315,7 @@ declare namespace WorkForm {
     taskId?: string;
     nodeName: string;
     type: string; //0 发起人 1审批 2抄送 3条件 4路由 5并行分支 6包容网关
+    remark?: string; // 备注，记录子流程的状态
     approveType?: string; //节点会签类型,AND（会签），ORDER（顺序会签），OR（或签）
     user?: User.UserInfo;
     ccUsers?: User.UserInfo[]; // 抄送节点才有值

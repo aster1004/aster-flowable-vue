@@ -68,8 +68,8 @@
     },
     // 支持的格式
     accept: {
-      type: Array,
-      default: [],
+      type: String,
+      default: '',
     },
   });
 

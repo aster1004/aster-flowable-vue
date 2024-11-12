@@ -1,0 +1,171 @@
+.aster-fullcalendar {
+  box-sizing: border-box;
+  overflow-x: hidden;
+  background-color: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 6px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+}
+.aster-fullcalendar::-webkit-scrollbar {
+  display: none; /* 适用于Chrome、Safari和Opera */
+}
+.aster-fullcalendar .fc {
+  width: 100%;
+  height: calc(100% - 52px);
+  padding: 0px 10px 10px 10px;
+  /* override fullcalendar css variables */
+  --fc-border-color: rgba(145, 158, 171, 0.16);
+  --fc-now-indicator-color: #ff5630;
+  --fc-today-bg-color: rgba(145, 158, 171, 0.08);
+  --fc-page-bg-color: var(--fc-page-bg-color);
+  --fc-neutral-bg-color: var(--fc-neutral-bg-color);
+  --fc-list-event-hover-bg-color: rgba(145, 158, 171, 0.08);
+  --fc-highlight-color: rgba(145, 158, 171, 0.08);
+}
+.theme-light .fc {
+  --fc-page-bg-color: #ffffff;
+  --fc-neutral-bg-color: #f4f6f8;
+}
+.theme-dark .fc {
+  --fc-page-bg-color: #161c24;
+  --fc-neutral-bg-color: rgba(145, 158, 171, 0.12);
+}
+.aster-fullcalendar .fc a {
+  color: var(--fc-link-color);
+}
+.theme-light .fc a {
+  --fc-link-color: #212b36;
+}
+.theme-dark .fc a {
+  --fc-link-color: #ffffff;
+}
+.aster-fullcalendar .fc .fc-col-header {
+  box-shadow: rgba(145, 158, 171, 0.2) 0px -1px 0px inset;
+}
+.aster-fullcalendar .fc .fc-col-header th {
+  border-color: transparent;
+}
+.aster-fullcalendar .fc .fc-col-header .fc-col-header-cell-cushion {
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: 'Public Sans', sans-serif;
+  padding: 8px 0px;
+}
+/* view Month Week Day */
+.aster-fullcalendar .fc .fc-dayGridMonth-view,
+.aster-fullcalendar .fc .fc-timeGridWeek-view,
+.aster-fullcalendar .fc .fc-timeGridDay-view {
+  .fc-daygrid-day-number {
+    line-height: 1.57143;
+    font-size: 0.875rem;
+    font-family: 'Public Sans', sans-serif;
+    font-weight: 400;
+    padding: 8px 8px 0px;
+  }
+  .fc-daygrid-event {
+    margin-top: 4px;
+  }
+  .fc-event-start,
+  .fc-event-end {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+  .fc-event {
+    border-color: transparent !important;
+    background-color: transparent !important;
+  }
+  .fc-event-main-wrapper {
+    border-radius: 6px;
+    width: 100%;
+    background-color: #fff;
+  }
+  .fc-event-main-wrapper::before {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    content: '';
+    opacity: 0.24;
+    height: 100%;
+    border-radius: 6px;
+    position: absolute;
+    background-color: currentcolor;
+    transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  }
+  .fc-event-main-frame {
+    font-size: 13px;
+    line-height: 20px;
+    filter: brightness(0.48);
+    display: flex;
+    width: 100%;
+  }
+  .fc-event-time {
+    overflow: unset;
+    font-weight: 700;
+  }
+  .fc-event-title-container {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0px;
+  }
+  .fc-event-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+/* view list */
+.aster-fullcalendar .fc .fc-list {
+  .fc-list-day {
+    th {
+      z-index: 100;
+    }
+  }
+  .fc-list-day-text,
+  .fc-list-day-side-text {
+    line-height: 1.57143;
+    font-size: 0.875rem;
+    font-family: 'Public Sans', sans-serif;
+    font-weight: 400;
+  }
+  .fc-list-event-time {
+    color: var(--fc-list-event-time-color);
+  }
+  .theme-light .fc .fc-list-event-time {
+    --fc-list-event-time-color: rgb(99, 115, 129);
+  }
+  .theme-dark .fc .fc-list-event-time {
+    --fc-list-event-time-color: rgb(145, 158, 171);
+  }
+  .fc-event-title {
+    color: var(--fc-event-title-color);
+  }
+  .theme-light .fc .fc-event-title {
+    --fc-event-title-color: rgb(33, 43, 54);
+  }
+  .theme-dark .fc .fc-event-title {
+    --fc-event-title-color: rgb(255, 255, 255);
+  }
+  .fc-list-table th,
+  .fc-list-table td {
+    border-color: transparent;
+  }
+  .fc-event-main-frame {
+    background-color: transparent;
+  }
+}
+
+.aster-fullcalendar .fc-theme-standard .fc-popover {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color);
+
+  .fc-h-event .fc-event-main {
+    color: var(--fc-event-text-color);
+
+    .fc-event-main-wrapper {
+      color: unset !important;
+    }
+  }
+  .fc-event-time {
+    font-weight: normal;
+  }
+}

@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="home">
-    <div class="w-full h-full">
+    <el-scrollbar class="w-full h-full">
       <el-row :gutter="10" class="w-full">
         <el-col :span="16">
           <el-row :gutter="10">
@@ -32,7 +32,7 @@
                     >
                       <i :class="['iconfont', item.icon]"></i>
                     </div>
-                    <div class="app-name">{{ item.name }}</div>
+                    <div class="app-name single-line-text">{{ item.name }}</div>
                   </div>
                 </div>
               </el-card>
@@ -73,25 +73,25 @@
                 <div class="card-content flex justify-evenly">
                   <div class="chart-info chart-info--todo" @click="handleAnnualTaskClick('todo')">
                     <span class="font-600">{{ annualTask.todoNum }}</span>
-                    <span class="pt-10px text-sm">我的待办</span>
+                    <span class="pt-5px text-sm">我的待办</span>
                   </div>
                   <div
                     class="chart-info chart-info--complete"
                     @click="handleAnnualTaskClick('complete')"
                   >
                     <span class="font-600">{{ annualTask.completeNum }}</span>
-                    <span class="pt-10px text-sm">我的办结</span>
+                    <span class="pt-5px text-sm">我的办结</span>
                   </div>
                   <div
                     class="chart-info chart-info--started"
                     @click="handleAnnualTaskClick('started')"
                   >
                     <span class="font-600">{{ annualTask.startedNum }}</span>
-                    <span class="pt-10px text-sm">我发起的</span>
+                    <span class="pt-5px text-sm">我发起的</span>
                   </div>
                   <div class="chart-info chart-info--cc" @click="handleAnnualTaskClick('cc')">
                     <span class="font-600">{{ annualTask.ccNum }}</span>
-                    <span class="pt-10px text-sm">抄送我的</span>
+                    <span class="pt-5px text-sm">抄送我的</span>
                   </div>
                 </div>
               </el-card>
@@ -101,8 +101,8 @@
               <el-card class="home-card-small">
                 <div class="card-title">
                   <div class="card-title--content">
-                    <i class="iconfont icon-niannianyouyu"></i>
-                    <span>我的本年度办件统计</span>
+                    <i class="iconfont icon-shenpi"></i>
+                    <span>我的本年度已办理件数</span>
                   </div>
                   <el-button type="primary" link size="small" @click="handleMoreTask">
                     更多
@@ -114,7 +114,20 @@
                     v-for="(item, index) in _completeStatistics"
                     :key="index"
                   >
-                    <span class="complete-info--title single-line-text">{{ item.formName }} </span>
+                    <el-tooltip
+                      v-if="item.formName.length > 6"
+                      effect="dark"
+                      :content="item.formName"
+                      placement="top"
+                    >
+                      <span class="complete-info--title single-line-text">
+                        {{ item.formName }}
+                      </span>
+                    </el-tooltip>
+                    <span v-else class="complete-info--title">
+                      {{ item.formName }}
+                    </span>
+
                     <span class="complete-info--value">{{ item.completeNum }}</span>
                   </div>
                 </div>
@@ -169,14 +182,14 @@
           <el-card class="home-card-default">
             <div class="card-title pb-2px">
               <div class="card-title--content">
-                <i class="iconfont icon-niannianyouyu"></i>
-                <span>办件统计</span>
+                <i class="iconfont icon-test"></i>
+                <span>办件时间统计</span>
               </div>
             </div>
             <div class="card-content--echarts" :style="_echartStyle">
               <aster-echarts
                 ref="diskRef"
-                :height="300"
+                :height="250"
                 :option="operationOption"
                 :resize="false"
               />
@@ -211,7 +224,7 @@
           </el-card>
         </el-col>
       </el-row>
-    </div>
+    </el-scrollbar>
 
     <el-dialog
       v-model="visible"
@@ -523,7 +536,10 @@
             },
           },
           axisLabel: {
-            interval: 4,
+            interval: 1,
+          },
+          axisTick: {
+            alignWithLabel: true,
           },
         },
       ],
@@ -584,6 +600,13 @@
           smooth: true,
         },
       ],
+      grid: {
+        left: '5%',
+        right: '5%',
+        bottom: '5%',
+        top: '25%',
+        containLabel: true,
+      },
     };
   };
 
@@ -621,9 +644,6 @@
     // background-repeat: no-repeat;
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .home-card-small {
@@ -704,7 +724,8 @@
       justify-content: center;
       align-items: center;
       border-radius: 10px;
-      padding: 15px 20px;
+      width: 23%;
+      padding: 15px 5px;
       color: var(--el-text-color-regular);
       cursor: pointer;
 
@@ -741,19 +762,22 @@
       padding-top: 5px;
 
       .app-icon {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         text-align: center;
         border-radius: 10px;
         cursor: pointer;
         i {
-          font-size: 28px;
+          font-size: 22px;
+          line-height: 42px;
           color: var(--el-color-white);
         }
       }
       .app-name {
         padding-top: 5px;
-        font-size: 0.875rem;
+        width: 100%;
+        text-align: center;
+        font-size: 0.8rem;
       }
     }
   }

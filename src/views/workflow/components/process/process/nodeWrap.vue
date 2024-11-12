@@ -1,5 +1,10 @@
 <template>
-  <template v-if="isNotEmpty(nodeConfig) && nodeConfig.type < 3">
+  <template
+    v-if="
+      (isNotEmpty(nodeConfig) && nodeConfig.type < 3) ||
+      nodeConfig.type === ProcessNodeTypeEnum.SUBPROCESS
+    "
+  >
     <condition-node
       :isTried="isTried"
       :currentNode="nodeConfig"
@@ -9,7 +14,7 @@
       @delTerm="delNode"
     />
   </template>
-  <div class="branch-wrap" v-if="nodeConfig.type === 4">
+  <div class="branch-wrap" v-if="nodeConfig.type === ProcessNodeTypeEnum.GATEWAY">
     <div class="branch-box-wrap">
       <div class="branch-box">
         <button class="add-branch" @click="addTerm(nodeConfig.typeName)">添加条件</button>
@@ -61,6 +66,7 @@
   import { isNotEmpty } from '@/utils/index';
   import RootDrawer from '../drawer/rootDrawer.vue';
   import { getRandomId } from '@/utils/workflow';
+  import { ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
   const _uid = getCurrentInstance().uid;
   const store = processStore();
   const {
@@ -68,10 +74,12 @@
     setApprover,
     setCopyer,
     setCondition,
+    setSubProcess,
     setFlowPermission,
     setApproverConfig,
     setCopyerConfig,
     setConditionsConfig,
+    setSubProcessConfig,
   } = store;
   const emits = defineEmits(['update:nodeConfig']);
   const props = defineProps({
@@ -94,9 +102,19 @@
     return placeholderList[props.nodeConfig.type];
   });
   const showText = computed(() => {
-    if (props.nodeConfig.type == 0) return '所有人';
-    if (props.nodeConfig.type == 1) return $func.setApproverStr(props.nodeConfig);
-    return $func.copyerStr(props.nodeConfig);
+    if (props.nodeConfig.type === ProcessNodeTypeEnum.ROOT) {
+      // 发起人
+      return '所有人';
+    } else if (props.nodeConfig.type === ProcessNodeTypeEnum.APPROVE) {
+      // 审核人
+      return $func.setApproverStr(props.nodeConfig);
+    } else if (props.nodeConfig.type === ProcessNodeTypeEnum.SEND) {
+      // 抄送
+      return $func.copyerStr(props.nodeConfig);
+    } else {
+      // 子流程
+      return props.nodeConfig.subProcessNode.subProcessName;
+    }
   });
 
   const isTried = computed(() => {
@@ -114,7 +132,9 @@
   const conditionsConfig1 = computed(() => {
     return store.conditionsConfig1;
   });
-
+  const subProcessConfig1 = computed(() => {
+    return store.subProcessConfig1;
+  });
   const resetConditionNodesErr = () => {
     for (let i = 0; i < props.nodeConfig.conditionNodes.length; i++) {
       let conditionNode = props.nodeConfig.conditionNodes[i];
@@ -156,6 +176,12 @@
   watch(conditionsConfig1, (condition) => {
     if (condition.flag && condition.id === _uid) {
       emits('update:nodeConfig', condition.value);
+    }
+  });
+
+  watch(subProcessConfig1, (subProcess) => {
+    if (subProcess.flag && subProcess.id === props.nodeConfig.id) {
+      emits('update:nodeConfig', subProcess.value);
     }
   });
 
@@ -298,20 +324,17 @@
 
   const setPerson = (priorityLevel, isDefault = false) => {
     const { type, typeName } = props.nodeConfig;
-    // console.info('nodeWrap初始化加载：', JSON.stringify(props.nodeConfig));
-    if (type === 0) {
-      // rootVisible.value = true;
-      // let formField = getFormFieldData(val);
-      // rootValue.value = JSON.parse(JSON.stringify(props.nodeConfig));
-      /* let flowPermission = JSON.parse(JSON.stringify(props.nodeConfig));
-      props.flowPermission = flowPermission */
+
+    if (type === ProcessNodeTypeEnum.ROOT) {
+      // 发起人
       setPromoter(true);
       setFlowPermission({
         value: JSON.parse(JSON.stringify(props.nodeConfig)),
         flag: false,
         id: _uid,
       });
-    } else if (type === 1) {
+    } else if (type === ProcessNodeTypeEnum.APPROVE) {
+      //审批人
       setApprover(true);
       setApproverConfig({
         value: {
@@ -321,9 +344,18 @@
         flag: false,
         id: props.nodeConfig.id,
       });
-    } else if (type === 2) {
+    } else if (type === ProcessNodeTypeEnum.SEND) {
+      // 抄送
       setCopyer(true);
       setCopyerConfig({
+        value: JSON.parse(JSON.stringify(props.nodeConfig)),
+        flag: false,
+        id: _uid,
+      });
+    } else if (type === ProcessNodeTypeEnum.SUBPROCESS) {
+      // 子流程
+      setSubProcess(true);
+      setSubProcessConfig({
         value: JSON.parse(JSON.stringify(props.nodeConfig)),
         flag: false,
         id: _uid,

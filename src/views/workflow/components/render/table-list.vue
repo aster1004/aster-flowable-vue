@@ -80,7 +80,7 @@
         </el-col>
       </el-row>
     </el-form>
-    <div v-else-if="mode == 'form'">
+    <div v-else-if="mode == 'form'" class="table-list">
       <div class="table-list-main" :id="formItem.id">
         <div class="flex items-center justify-between pb-5px">
           <span class="text-sm font-600" style="line-height: normal">{{ formItem.title }}</span>
@@ -138,7 +138,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="!formItem.props.readonly"
+            v-if="!_readonly"
             :label="$t('label.operate')"
             fixed="right"
             width="80"
@@ -197,7 +197,11 @@
           <el-button @click="prevRowInfo(rowIndex)" :disabled="rowIndex === 0">
             {{ $t('workflow.prevRow') }}
           </el-button>
-          <el-button type="primary" @click="nextRowInfo(rowIndex)">
+          <el-button
+            type="primary"
+            @click="nextRowInfo(rowIndex)"
+            :disabled="_readonly ? rowIndex === _value.length - 1 : false"
+          >
             {{ $t('workflow.nextRow') }}
           </el-button>
         </template>
@@ -571,6 +575,7 @@
     .table-list-main {
       background: var(--el-fill-color-blank);
       color: #606266;
+      padding: 10px 0;
     }
 
     .table-list-title {

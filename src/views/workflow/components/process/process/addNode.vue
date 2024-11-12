@@ -33,6 +33,15 @@
               <p>包容分支</p>
             </div>
           </a>
+          <a
+            class="add-node-popover-item subprocess"
+            @click="addType(ProcessNodeTypeEnum.SUBPROCESS, 'SubProcess')"
+          >
+            <div class="item-wrapper">
+              <span class="iconfont icon-ziliucheng"></span>
+              <p>子流程</p>
+            </div>
+          </a>
         </div>
         <template #reference>
           <button class="btn" type="button">
@@ -104,6 +113,33 @@
           formPermission: [],
           parentId: props.parentId,
         };
+
+      // 子流程
+      case ProcessNodeTypeEnum.SUBPROCESS:
+        return {
+          id: getRandomId(),
+          nodeName: '子流程',
+          type: ProcessNodeTypeEnum.SUBPROCESS,
+          error: false,
+          errorTip: '',
+          childNode: props.childNodeP,
+          subProcessNode: {
+            multiInstanceType: 'None', // 多实例类型，暂时不用，None-默认单实例顺执行，Prallel-并行，Sequential-顺序执行
+            isAsync: false, // 是否异步,子流程是否异步发起，默认为同步，false
+            subProcessCode: '',
+            subProcessName: '',
+            // 发起人
+            startUser: {
+              type: 'ROOT',
+              value: null,
+            },
+            parentToChild: [{ pFieldId: '', cFieldId: '', mode: 'fill' }],
+            childToParent: [{ pFieldId: '', cFieldId: '', mode: 'fill' }],
+          }, // 子流程属性配置
+          nodeUserList: [],
+          formPermission: [],
+          parentId: props.parentId,
+        };
       default:
         throw new Error(`Unsupported type: ${type}`);
     }
@@ -128,7 +164,7 @@
             parentId: exclusiveId,
             typeName: typeName,
             nodeName: '排他网关聚合',
-            type: '7',
+            type: ProcessNodeTypeEnum.EMPTY,
             childNode: props.childNodeP,
           },
           typeName: typeName,
@@ -182,7 +218,7 @@
             parentId: parallelId,
             typeName: typeName,
             nodeName: '并行网关聚合',
-            type: '7',
+            type: ProcessNodeTypeEnum.EMPTY,
             childNode: props.childNodeP,
           },
           typeName: typeName,
@@ -229,7 +265,7 @@
             parentId: inclusiveId,
             typeName: typeName,
             nodeName: '包容网关聚合',
-            type: '7',
+            type: ProcessNodeTypeEnum.EMPTY,
             childNode: props.childNodeP,
           },
           typeName: typeName,
@@ -282,15 +318,20 @@
     try {
       let data;
       switch (type) {
+        // 审核节点
         case ProcessNodeTypeEnum.APPROVE:
           data = createBaseData(ProcessNodeTypeEnum.APPROVE);
           emits('update:childNodeP', data);
           break;
+
+        // 抄送节点
         case ProcessNodeTypeEnum.SEND:
           data = createBaseData(ProcessNodeTypeEnum.SEND);
           emits('update:childNodeP', data);
           break;
-        case ProcessNodeTypeEnum.GATEWAY: // 路由节点，包括排他：Exclusive、并行：Parallel 以及包容：INCLUSIVES
+
+        // 路由节点，包括排他：Exclusive、并行：Parallel 以及包容：INCLUSIVES
+        case ProcessNodeTypeEnum.GATEWAY:
           if (isNotEmpty(typeName)) {
             switch (typeName) {
               case 'Exclusive':
@@ -309,6 +350,11 @@
           }
           break;
 
+        //子流程
+        case ProcessNodeTypeEnum.SUBPROCESS:
+          data = createBaseData(ProcessNodeTypeEnum.SUBPROCESS);
+          emits('update:childNodeP', data);
+          break;
         default:
           throw new Error(`Unsupported type: ${type}`);
       }
@@ -426,6 +472,12 @@
       &.notifier {
         .item-wrapper {
           color: #409eff;
+        }
+      }
+
+      &.subprocess {
+        .item-wrapper {
+          color: #9274e7;
         }
       }
 

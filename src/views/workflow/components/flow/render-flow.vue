@@ -1,3 +1,10 @@
+<!--
+ * @Author: Aster lipian1004@163.com
+ * @Date: 2024-10-12 14:59:55
+ * @FilePath: \aster-flowable-vue\src\views\workflow\components\flow\render-flow.vue
+ * @Description: 流程图渲染
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
+-->
 <template>
   <div class="flow-container" @drop="onDrop">
     <VueFlow
@@ -8,8 +15,8 @@
       @dragover="onDragOver"
       @dragleave="onDragLeave"
       :style="{
-        height: '100vh',
-        width: '100vw',
+        width: '100%',
+        height: '100%',
         backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',
         transition: 'background-color 0.2s ease',
       }"
@@ -20,8 +27,11 @@
       <template #node-approve-node="props">
         <ApproveNode @click="handleClickNode" :data="props" />
       </template>
-      <template #node-cc-node>
-        <CCNode @click="handleClickNode" />
+      <template #node-cc-node="props">
+        <CCNode @click="handleClickNode" :data="props" />
+      </template>
+      <template #node-sub-node="props">
+        <SubNode @click="handleClickNode" :data="props" />
       </template>
       <template #node-gateway-node="props">
         <GatewayNode @click="handleClickNode" :data="props" />
@@ -56,6 +66,7 @@
   import StartNode from './start-node.vue';
   import ApproveNode from './approve-node.vue';
   import CCNode from './cc-node.vue';
+  import SubNode from './sub-node.vue';
   import EndNode from './end-node.vue';
   import GatewayNode from './gateway-node.vue';
   import GatewayEndNode from './gateway-end-node.vue';
@@ -64,7 +75,8 @@
   import useDragAndDrop from '@/utils/useDnD.js';
   import { conditionStr } from '@/utils/ConditionCompare';
   import { isNotEmpty } from '@/utils';
-  import * as processData from '@/data/render_flow_demo.json';
+  import { DEFAULT_PRIMARY } from '@/config';
+  import { ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
 
   const { onConnect, addEdges } = useVueFlow();
   const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop();
@@ -75,6 +87,10 @@
       type: Object,
       default: () => ({}),
     },
+    activeNodeId: {
+      type: Array,
+      default: () => [],
+    },
   });
 
   const drawer = ref(false);
@@ -82,7 +98,8 @@
   const edges = ref([]);
 
   onMounted(() => {
-    if (isNotEmpty(processData)) {
+    // console.log('props.data', props.data);
+    if (isNotEmpty(props.data)) {
       renderFlow();
     }
   });
@@ -97,7 +114,7 @@
   // 渲染流程图
   const renderFlow = () => {
     // 递归渲染流程图
-    rv(processData);
+    rv(props.data);
     // 获取第一个节点用于获取x轴坐标
     let firstNode = nodes.value[0];
     // 获取最后一个节点用于获取y轴坐标
@@ -117,7 +134,7 @@
       target: 'end',
       label: '',
       type: 'step',
-      style: { stroke: '#fb5923' },
+      style: { stroke: getColor(false) },
       animated: false,
       labelBgStyle: { fill: 'orange' },
       markerEnd: MarkerType.ArrowClosed,
@@ -132,18 +149,24 @@
    * @param {*} xindex
    */
   const rv = (node, xlen, xindex) => {
+    let currentFlag = props.activeNodeId.indexOf(node.id) != -1;
+    // console.info('当前节点：' + node.nodeName, currentFlag);
     // 发起人
-    if (node.type == 0) {
+    if (node.type == ProcessNodeTypeEnum.ROOT) {
       nodes.value.push({
         id: node.id,
         parentId: 'root',
         type: 'start-node',
         position: { x: 250, y: 5 },
-        data: { label: node.nodeName, nodeUser: node.nodeUser },
+        data: { label: node.nodeName, nodeUser: node.nodeUser, current: currentFlag },
       });
       // console.log(node.nodeName);
       rv(node.childNode);
-    } else if (node.type == 1) {
+    } else if (
+      node.type == ProcessNodeTypeEnum.APPROVE ||
+      node.type == ProcessNodeTypeEnum.SEND ||
+      node.type == ProcessNodeTypeEnum.SUBPROCESS
+    ) {
       // 审核人
       edges.value.push({
         id: node.parentId + '-' + node.id,
@@ -151,8 +174,8 @@
         target: node.id,
         label: '',
         type: 'step',
-        style: { stroke: '#fb5923' },
-        animated: false,
+        style: { stroke: getColor(currentFlag) },
+        animated: currentFlag,
         labelBgStyle: { fill: 'orange' },
         markerEnd: MarkerType.ArrowClosed,
         sourceHandle: 'c',
@@ -162,29 +185,40 @@
       nodes.value.push({
         id: node.id,
         parentId: node.parentId,
-        type: 'approve-node',
+        type: getNodeType(node.type),
         position: { x: position.x, y: position.y + 150 },
-        data: { label: node.nodeName, nodeUserList: node.nodeUserList },
+        data: { label: node.nodeName, nodeUserList: node.nodeUserList, current: currentFlag },
       });
       // console.log(node.nodeName);
       // 判断子节点不为空
       if (node.childNode && node.childNode != null) {
         rv(node.childNode);
       }
-    } else if (node.type == 3) {
+    } else if (node.type == ProcessNodeTypeEnum.CONDITION) {
       // 条件
       // console.log("条件：" + xindex, JSON.stringify(node));
       let position = getParentNodeCoordinate(node);
       // console.log("条件--->", position);
       // 你得先确定最长的一行有几个节点
+      // 如果是单数
       // 中间值
-      let median = Math.floor((xlen - 1) / 2);
-      if (xindex < median) {
-        xlen = 250 - 250 * (median - xindex);
-      } else if (xindex == median) {
-        xlen = 250;
+      if (xlen % 2 == 1) {
+        let median = Math.floor((xlen - 1) / 2);
+        if (xindex < median) {
+          xlen = 250 - 250 * (median - xindex);
+        } else if (xindex == median) {
+          xlen = 250;
+        } else {
+          xlen = 250 + 250 * (xindex - median);
+        }
       } else {
-        xlen = 250 + 250 * (xindex - median);
+        // 如果是双数
+        let median = Math.floor(xlen / 2);
+        if (xindex < median) {
+          xlen = 250 - 200 * (median - xindex);
+        } else {
+          xlen = 250 + 200 * (xindex - median + 1);
+        }
       }
 
       nodes.value.push({
@@ -192,7 +226,7 @@
         parentId: node.parentId,
         type: 'condition-node',
         position: { x: xlen, y: position.y + 150 },
-        data: { label: node.nodeName, conditionStr: node.conditionStr },
+        data: { label: node.nodeName, conditionStr: node.conditionStr, current: currentFlag },
       });
 
       edges.value.push({
@@ -201,8 +235,8 @@
         target: node.id,
         label: '',
         type: 'step',
-        style: { stroke: '#fb5923' },
-        animated: false,
+        style: { stroke: getColor(currentFlag) },
+        animated: currentFlag,
         labelBgStyle: { fill: 'orange' },
         markerEnd: MarkerType.ArrowClosed,
         sourceHandle: 'c',
@@ -211,7 +245,7 @@
       if (node.childNode && node.childNode != null) {
         rv(node.childNode);
       }
-    } else if (node.type == 4) {
+    } else if (node.type == ProcessNodeTypeEnum.GATEWAY) {
       // 网关
       // 如果是网关
       let position = getParentNodeCoordinate(node);
@@ -221,7 +255,7 @@
         type: 'gateway-node',
         conditionNodes: node.conditionNodes,
         position: { x: position.x + 50, y: position.y + 150 },
-        data: { label: node.nodeName },
+        data: { label: node.nodeName, current: currentFlag },
       });
 
       edges.value.push({
@@ -230,8 +264,8 @@
         target: node.id,
         label: '',
         type: 'step',
-        style: { stroke: '#fb5923' },
-        animated: false,
+        style: { stroke: getColor(currentFlag) },
+        animated: currentFlag,
         labelBgStyle: { fill: 'orange' },
         markerEnd: MarkerType.ArrowClosed,
         sourceHandle: 'c',
@@ -248,7 +282,7 @@
       }
       // 渲染子节点
       rv(node.childNode);
-    } else if (node.type == 7) {
+    } else if (node.type == ProcessNodeTypeEnum.EMPTY) {
       // 排他网关聚合
       let parentNode = getParentNode(node);
       // 原始条件节点
@@ -283,8 +317,8 @@
           target: node.id,
           label: '',
           type: 'step',
-          style: { stroke: '#fb5923' },
-          animated: false,
+          style: { stroke: getColor(currentFlag) },
+          animated: currentFlag,
           labelBgStyle: { fill: 'orange' },
           markerEnd: MarkerType.ArrowClosed,
           sourceHandle: 'c',
@@ -297,9 +331,28 @@
         parentId: node.parentId,
         type: 'gateway-end-node',
         position: { x: x, y: y + 180 },
-        data: { label: node.nodeName },
+        data: { label: node.nodeName, current: currentFlag },
       });
     }
+  };
+
+  const getColor = (flag) => {
+    return flag ? DEFAULT_PRIMARY : '#213547';
+  };
+
+  /**
+   * 获取节点类型
+   * @param {*} type
+   */
+  const getNodeType = (type) => {
+    if (ProcessNodeTypeEnum.APPROVE == type) {
+      return 'approve-node';
+    } else if (ProcessNodeTypeEnum.SEND == type) {
+      return 'cc-node';
+    } else if (ProcessNodeTypeEnum.SUBPROCESS == type) {
+      return 'sub-node';
+    }
+    return 'approve-node';
   };
 
   /**
@@ -379,7 +432,8 @@
   @import '@vue-flow/core/dist/theme-default.css';
   @import '@vue-flow/controls/dist/style.css';
   @import '@vue-flow/minimap/dist/style.css';
-
+</style>
+<style scoped type="scss">
   body {
     margin: 0px;
   }

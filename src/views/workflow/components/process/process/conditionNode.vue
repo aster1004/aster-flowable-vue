@@ -1,24 +1,20 @@
 <!--条件节点组件渲染-->
 
 <template>
-  <div v-if="type < 3" class="node-wrap">
+  <div v-if="type < 3 || type == ProcessNodeTypeEnum.SUBPROCESS" class="node-wrap">
     <div
       class="node-wrap-box"
       :class="
         (type == 0 ? 'start-node ' : '') + (isTried && currentNode.error ? 'active error' : '')
       "
     >
-      <div class="title" :style="`background: rgb(${bgColors[type]});`">
-        <span v-if="type == 0">{{ currentNode.nodeName }}</span>
+      <div class="title" :style="`background: ${nodeConfig[type].color};`">
+        <span v-if="type == 0">
+          <i :class="nodeConfig[type].icon"> </i>
+          {{ currentNode.nodeName }}
+        </span>
         <template v-else>
-          <i
-            :class="
-              type == 1
-                ? ['iconfont', 'node-icon', 'icon-shenpi']
-                : ['iconfont', 'node-icon', 'icon-chaosongwode']
-            "
-          >
-          </i>
+          <i :class="nodeConfig[type].icon"> </i>
           <input
             autofocus
             v-if="isEdit"
@@ -78,7 +74,7 @@
           />
 
           <div v-else class="editable-title" @click="clickEvent()">
-            <span :class="currentNode.icon"></span>{{ currentNode.nodeName }}</div
+            <i :class="currentNode.icon"></i>{{ currentNode.nodeName }}</div
           >
           <span
             v-if="typeName !== 'Parallel'"
@@ -124,7 +120,8 @@
 
 <script setup lang="ts">
   import { ref, watch, nextTick, computed } from 'vue';
-  import { bgColors, placeholderList } from '@/utils/const';
+  import { nodeConfig, placeholderList } from '@/utils/const';
+  import { ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
   const emits = defineEmits(['delTerm', 'arrTransfer', 'setPerson']);
   const props = defineProps({
     currentNode: {
@@ -173,6 +170,9 @@
     }
   });
   const defaultText = computed(() => {
+    if (props.type === ProcessNodeTypeEnum.SUBPROCESS) {
+      return '子流程';
+    }
     return placeholderList[props.type];
   });
   /**

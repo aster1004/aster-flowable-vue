@@ -85,7 +85,7 @@
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
   import { getDictDataList, isNotEmpty } from '@/utils';
-  import { computed, onMounted, PropType, ref } from 'vue';
+  import { computed, PropType, ref, watch } from 'vue';
   import draggable from 'vuedraggable';
   import type { CascaderProps } from 'element-plus';
   import { appFormTreeApi } from '@/api/workflow/app';
@@ -105,7 +105,7 @@
   // 字典
   const appStore = useAppStore();
   // 页签名称
-  const activeName = ref<string>(props.formItem.props.type);
+  const activeName = ref<string>('');
   // 选项
   const options = ref<any[]>([]);
   // 动态表单树
@@ -295,11 +295,10 @@
 
   // 监听页签变化
   const handleTabChange = async (val: string) => {
-    // 页签变化清除默认值
-    if (props.formItem.props.type != val) {
-      _formItem.value.value = _formItem.value.valueType === 'Array' ? [] : '';
-    }
+    activeName.value = val;
     _formItem.value.props.type = val;
+    // 页签变化清除默认值
+    _formItem.value.value = _formItem.value.valueType === 'Array' ? [] : '';
     if (val === 'static') {
       options.value = _formItem.value.props.options.map((item) => {
         return {
@@ -325,9 +324,15 @@
     _formItem.value.value = e;
   };
 
-  onMounted(() => {
-    handleTabChange(props.formItem.props.type);
-  });
+  watch(
+    () => _formItem.value.id,
+    (val) => {
+      if (val && isNotEmpty(val)) {
+        handleTabChange(_formItem.value.props.type);
+      }
+    },
+    { immediate: true, deep: true },
+  );
 </script>
 <style scoped lang="scss">
   .select-config {

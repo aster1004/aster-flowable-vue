@@ -20,7 +20,7 @@
         v-if="mode === 'design'"
         type="textarea"
         :model-value="_value"
-        :rows="formItem.props.rows"
+        :rows="_rows"
         :placeholder="formItem.props.placeholder"
         readonly
       />
@@ -29,7 +29,7 @@
         v-model="_value"
         type="textarea"
         clearable
-        :rows="formItem.props.rows"
+        :rows="_rows"
         :placeholder="formItem.props.placeholder"
         :readonly="_readonly"
       />
@@ -55,7 +55,7 @@
   import { evaluateFormula } from '@/utils/workflow';
   import { computed, nextTick, onMounted, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
-  import { isNotEmpty } from '@/utils';
+  import { isNotEmpty, isString } from '@/utils';
   import { instanceInfoByCustomParamsApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
@@ -90,6 +90,14 @@
       type: Boolean,
       default: true,
     },
+  });
+
+  // 列数
+  const _rows = computed(() => {
+    isString;
+    return isString(props.formItem.props.rows)
+      ? Number(props.formItem.props.rows)
+      : props.formItem.props.rows;
   });
 
   // 打印 宽度

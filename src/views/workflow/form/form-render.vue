@@ -126,7 +126,6 @@
         await callback();
       } else {
         ElMessage.error('表单校验失败!');
-        return false;
       }
     });
   };
