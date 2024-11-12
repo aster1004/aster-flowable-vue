@@ -38,9 +38,9 @@
   import TreeFilter from '@/components/tree/tree-filter.vue';
   import { ref, reactive, onMounted } from 'vue';
   import { formListApi } from '@/api/workflow/form';
-  import { appListApi } from '@/api/workflow/app';
+  import { appActiveListApi } from '@/api/workflow/app';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { isDef, isNotEmpty } from '@/utils';
+  import { isDef, isEmpty, isNotEmpty } from '@/utils';
   import { useRoute } from 'vue-router';
   import { ElMessage } from 'element-plus';
 
@@ -80,11 +80,18 @@
    * @return {*}
    */
   const handleQueryApp = () => {
-    appListApi({}).then((res) => {
+    appActiveListApi().then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
         appList.value = res.data;
-        // 获取表单list
-        getFormList();
+        // 校验传送过来的appId是否存在
+        const validates = appList.value.filter((item) => item.id === queryParams.appId);
+        if (isEmpty(validates)) {
+          ElMessage.error('应用信息不存在, 请关闭后重新尝试');
+          handleFormClick('');
+        } else {
+          // 获取表单list
+          getFormList();
+        }
       } else {
         ElMessage.error(res.message);
       }
