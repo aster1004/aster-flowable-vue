@@ -263,7 +263,7 @@
   import { useAppStore } from '@/stores/modules/app';
   import { isNotEmpty, getDictLabelByValue } from '@/utils';
   import { dateFormat } from '@/utils/workflow';
-  import { appListApi } from '@/api/workflow/app';
+  import { appActiveListApi } from '@/api/workflow/app';
   import { TaskStatusEnum } from '@/enums/workFlowEnum';
   import { getTaskPageApi, getAnnualTaskApi, getCompleteStatisticskApi } from '@/api/workflow/task';
   import FormDetail from './workflow/form/form-detail.vue';
@@ -450,7 +450,7 @@
    * 查询应用信息
    */
   const handleQueryApp = async () => {
-    await appListApi({}).then((res) => {
+    await appActiveListApi().then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
         if (res.data.length > 12) {
           appList.value = res.data.slice(0, 12);
