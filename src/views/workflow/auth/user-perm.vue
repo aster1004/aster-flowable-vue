@@ -58,10 +58,19 @@
                   <el-checkbox
                     v-model="item.checked"
                     :label="item.formName"
-                    @change="handleCheckedForm"
+                    @change="handleCheckedForm(item)"
                   />
                 </td>
-                <td> </td>
+                <td>
+                  <el-checkbox-group v-model="item.formPerms" :disabled="!item.checked">
+                    <el-checkbox
+                      v-for="(perm, i) in formPerms"
+                      :key="i"
+                      :label="perm.label"
+                      :value="perm.value"
+                    />
+                  </el-checkbox-group>
+                </td>
                 <td>
                   <el-checkbox
                     v-model="listCheckedAll[index]"
@@ -267,6 +276,11 @@
     name: '',
   });
 
+  // 表单权限列表
+  const formPerms = ref<WorkForm.FunctionButton[]>([
+    { label: '新增', value: 'add', icon: 'iconfont icon-xinzeng', click: 'handleAdd' },
+  ]);
+
   // 列表权限列表
   const listPerms = ref<WorkForm.FunctionButton[]>([
     { label: '刷新', value: 'refresh', icon: 'iconfont icon-shuaxin', click: 'handleQuery' },
@@ -275,6 +289,7 @@
     { label: '导出', value: 'export', icon: 'iconfont icon-xiazai', click: 'handleExport' },
     { label: '显示', value: 'column', icon: 'iconfont icon-liebiao', click: 'handleShowColumns' },
   ]);
+
   // 数据权限列表
   const dataPerms = ref<WorkComponent.TreeNode[]>([
     { label: '本人', value: 'user' },
@@ -305,10 +320,16 @@
   /**
    * @description: 表单选中
    */
-  const handleCheckedForm = () => {
+  const handleCheckedForm = (perm: WorkAuth.RolePermission) => {
     const checkedCount = formList.value.filter((item) => item.checked).length;
     formCheckedAll.value = formList.value.length == checkedCount;
     formIndeterminate.value = checkedCount > 0 && checkedCount < formList.value.length;
+    // 默认选中表单权限
+    if (perm.checked) {
+      perm.formPerms = formPerms.value.map((item) => item.value);
+    } else {
+      perm.formPerms = [];
+    }
   };
 
   /**

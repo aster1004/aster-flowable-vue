@@ -69,8 +69,8 @@ export const selectPageApi = (pageQuery: any) => {
  * @param procInstId
  * @param formCode
  */
-export const delProcessInstanceApi = (procInstId: string, formCode: string) => {
-  return request.post<any>(PORT5 + `/process/delProcess/${procInstId}/${formCode}`, {
+export const instanceDeleteApi = (params: Process.InstanceQueryParams[]) => {
+  return request.post<any>(PORT5 + `/process/instance/delete`, params, {
     noLoading: false,
   });
 };
