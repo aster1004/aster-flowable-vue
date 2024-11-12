@@ -30,9 +30,10 @@
   import { nextTick, computed, inject, shallowRef, onBeforeUnmount } from 'vue';
   import { IToolbarConfig, IEditorConfig } from '@wangeditor/editor';
   import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
-  import { uploadImg, uploadVideo } from '@/api';
+  import { uploadFile } from '@/api';
   import '@wangeditor/editor/dist/css/style.css';
-  import { formContextKey, formItemContextKey } from 'element-plus';
+  import { ElMessage, formContextKey, formItemContextKey } from 'element-plus';
+  import { ImageUpload } from '@/config/fileConfig';
 
   // 富文本 DOM 元素
   const editorRef = shallowRef();
@@ -110,8 +111,8 @@
       let formData = new FormData();
       formData.append('file', file);
       try {
-        const { data } = await uploadImg(formData);
-        insertFn(data.fileUrl);
+        const { data } = await uploadFile(formData);
+        insertFn(data.url);
       } catch (error) {
         console.log(error);
       }
@@ -120,7 +121,15 @@
 
   // 图片上传前判断
   const uploadImgValidate = (file: File): boolean => {
-    console.log(file);
+    // 判断图片类型
+    if (!ImageUpload.type.includes(file.type)) {
+      ElMessage.error('上传文件必须是图片格式');
+      return false;
+    } else if (file.size / 1024 / 1024 > ImageUpload.maxSize) {
+      // 判断图片大小
+      ElMessage.error('上传图片大小不能超过' + ImageUpload.maxSize + 'MB');
+      return false;
+    }
     return true;
   };
 
@@ -136,8 +145,8 @@
       let formData = new FormData();
       formData.append('file', file);
       try {
-        const { data } = await uploadVideo(formData);
-        insertFn(data.fileUrl);
+        const { data } = await uploadFile(formData);
+        insertFn(data.url);
       } catch (error) {
         console.log(error);
       }

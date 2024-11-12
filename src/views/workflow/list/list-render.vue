@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div class="table-box">
+  <div class="list-render table-box">
     <!-- 查询条件 -->
     <div class="card table-search" v-show="showSearch">
       <el-form

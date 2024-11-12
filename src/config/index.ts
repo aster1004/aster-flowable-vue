@@ -20,3 +20,6 @@ export const ROUTER_WHITE_LIST: string[] = ['/500'];
 
 // 默认头像
 export const AVATAR_URL = './src/assets/images/avatar.png';
+
+// 浏览附件服务器
+export const PREVIEW_URL = 'http://106.37.75.241:9107/onlinePreview?url=';

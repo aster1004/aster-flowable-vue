@@ -2,14 +2,22 @@
   <el-tooltip class="box-item" effect="dark" :content="props.data.data.label" placement="top">
     <div class="flow-node" @click="handleClickNode">
       <div class="node-header">
-        <div class="node-icon">
+        <div class="node-header-icon">
           <el-icon :size="15" color="#ffffff">
-            <Connection />
+            <Promotion />
           </el-icon>
         </div>
-        <div class="node-name">抄送人</div>
+        <div class="node-name">{{ props.data.data.label }}</div>
       </div>
-      <div class="node-body"></div>
+      <div class="node-body">
+        <template v-for="(item, index) in props.data.data.nodeUserList">
+          <span v-if="index != 0">,</span>
+          <span :index="index" v-if="item.type == 'user'">用户：</span>
+          <span :index="index" v-if="item.type == 'dept'">部门：</span>
+          <span :index="index" v-if="item.type == 'role'">角色：</span>
+          <span>{{ item.name }}</span>
+        </template>
+      </div>
     </div>
   </el-tooltip>
   <Handle id="b" class="node" type="source" :position="Position.Top" />
@@ -18,10 +26,17 @@
 <script setup>
   import { ref } from 'vue';
   import { Handle, Position, useVueFlow } from '@vue-flow/core';
-  import { Connection } from '@element-plus/icons-vue';
+  import { Promotion } from '@element-plus/icons-vue';
   const { updateNodeData, getConnectedEdges } = useVueFlow();
 
   const emits = defineEmits(['click']);
+
+  const props = defineProps({
+    data: {
+      type: Object,
+      default: () => ({}),
+    },
+  });
 
   const onSelect = (color) => {
     updateNodeData(props.id, { color, isGradient: false });
@@ -33,47 +48,10 @@
   };
 
   const handleClickNode = () => {
-    console.log('click node');
+    // console.log('click node');
     emits('click');
   };
 </script>
 <style scoped>
-  .flow-node {
-    width: 200px;
-    height: 90px;
-    background-color: #ffffff;
-    border: 2px solid #2a9838;
-    border-radius: 10px;
-  }
-
-  .node-header {
-    height: 30px;
-    /* background-color: red; */
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-  }
-
-  .node-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    background-color: #2a9838;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .node-name {
-    font-size: 10px;
-    font-weight: 500;
-    padding-left: 5px;
-    white-space: nowrap; /* 不换行 */
-    overflow: hidden; /* 隐藏超出的内容 */
-    text-overflow: ellipsis; /* 用省略号表示被隐藏的部分 */
-  }
-
-  .node {
-    background-color: #2a9838;
-  }
+  @import '@/assets/styles/flow.css';
 </style>

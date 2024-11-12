@@ -506,7 +506,7 @@
     const ids = _canselected.value?.ids;
     const type = _canselected.value?.type;
     // 判断ids是否有值，有则需要做权限筛选，获取需要过滤的用户id（userIds）
-    if (isNotEmpty(ids)) {
+    if (ids && isNotEmpty(ids)) {
       switch (type) {
         case 'user':
           userIds.value = ids;
@@ -527,7 +527,6 @@
           break;
       }
     }
-
     userPageApi(queryParams).then(async ({ data }) => {
       // console.log('过滤用户id', userIds.value);
       dataList.value = [];

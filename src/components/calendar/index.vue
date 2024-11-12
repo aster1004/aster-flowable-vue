@@ -80,7 +80,7 @@
     </div>
     <div class="aster-calendar--footer">
       <el-scrollbar :style="_footerStyle">
-        <el-timeline>
+        <el-timeline v-if="scheduleList.length > 0">
           <el-timeline-item
             v-for="(activity, index) in scheduleList"
             :key="index"
@@ -89,14 +89,17 @@
             {{ activity.label }}
           </el-timeline-item>
         </el-timeline>
+        <el-empty v-else description="暂无日程数据" image-size="100" />
       </el-scrollbar>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-  import { isNotEmpty } from '@/utils';
+  import { isEmpty, isNotEmpty } from '@/utils';
   import moment from 'moment';
   import { computed, onMounted, reactive, ref } from 'vue';
+  import { calendarListApi } from '@/api/sys/calendar';
+  import { ResultEnum } from '@/enums/httpEnum';
 
   /**
    * @description: 配置
@@ -130,7 +133,9 @@
   } as any);
 
   // 日程列表
-  const scheduleList = ref<CommonModel.NodeInfo[]>([]);
+  const scheduleList = ref<AsterCalendar.EventInfo[]>([]);
+  // 查询条件
+  const scheduleParams = ref<AsterCalendar.CalendarParams>({});
 
   /**
    * @description: 上个月
@@ -349,18 +354,87 @@
     getCurrentDay();
   };
 
+  // 处理数据
+  const handleScheduleData = (day: string, data: AsterCalendar.CalendarEventModel[]) => {
+    scheduleList.value = [];
+    if (isNotEmpty(data)) {
+      let allDays: AsterCalendar.EventInfo[] = data
+        .filter((item) => item.allDay)
+        .map((item) => {
+          return {
+            id: item.id,
+            label: '00:00 - 00:00',
+            value: item.title,
+            sort: 0,
+          };
+        });
+      let scheduleInfos: AsterCalendar.EventInfo[] = [];
+
+      data
+        .filter((item) => !item.allDay && isNotEmpty(item.start) && isNotEmpty(item.end))
+        .forEach((item) => {
+          let scheduleInfo: AsterCalendar.EventInfo = {
+            id: item.id,
+            label: '',
+            value: item.title,
+            sort: 999,
+          };
+          const startTime = moment(item.start).format('YYYY-MM-DD');
+          const endTime = moment(item.end).format('YYYY-MM-DD');
+          // 日期相等
+          if (
+            startTime === day &&
+            endTime === day &&
+            moment(item.end).isAfter(moment(day + ' 00:00:00'))
+          ) {
+            scheduleInfo.label =
+              moment(item.start).format('HH:mm') + ' - ' + moment(item.end).format('HH:mm');
+            scheduleInfo.sort = Number(moment(item.start).format('HH'));
+            scheduleInfos.push(scheduleInfo);
+          } else if (
+            moment(startTime).isBefore(moment(day)) &&
+            moment(endTime).isAfter(moment(day))
+          ) {
+            // 开始日期小于当前日期，结束日期大于当前日期
+            scheduleInfo.label = '00:00 - 00:00';
+            scheduleInfo.sort = 0;
+            allDays.push(scheduleInfo);
+          } else if (
+            moment(startTime).isBefore(moment(day)) &&
+            endTime === day &&
+            moment(item.end).isAfter(moment(day + ' 00:00:00'))
+          ) {
+            // 开始日期小于当前日期，结束日期等于当前日期
+            scheduleInfo.label = '00:00 - ' + moment(item.end).format('HH:mm');
+            scheduleInfo.sort = 0;
+            scheduleInfos.push(scheduleInfo);
+          } else if (startTime === day && moment(endTime).isAfter(moment(day))) {
+            // 开始日期等于当前日期，结束日期大于当前日期
+            scheduleInfo.label = moment(item.start).format('HH:mm') + ' - 00:00';
+            scheduleInfo.sort = Number(moment(item.start).format('H'));
+            scheduleInfos.push(scheduleInfo);
+          }
+          scheduleInfos.sort((a, b) => a.sort - b.sort);
+          scheduleList.value = [...allDays, ...scheduleInfos];
+        });
+    }
+  };
+
   /**
    * @description: 获取日程列表
    * @return {*}
    */
-  const getScheduleList = (day: string) => {
-    console.log('scheduleList--->', day);
-    scheduleList.value = [
-      { label: '00:00 - 23:59', value: '全天值班' },
-      { label: '10:30 - 11:00', value: '部门工作周报提交' },
-      { label: '14:00 - 15:00', value: '参加月度总结项目会议' },
-      { label: '15:30 - 16:30', value: '关于公开征求《市财政专项资金管理的实施意见》' },
-    ];
+  const getScheduleList = async (day: string) => {
+    console.log('day--->', day);
+    scheduleParams.value.startTime = day + ' 00:00:00';
+    scheduleParams.value.endTime = moment(day).add(1, 'days').format('YYYY-MM-DD') + +' 00:00:00';
+    await calendarListApi(scheduleParams.value).then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        handleScheduleData(day, res.data);
+      } else {
+        console.log('eror--->', res.message);
+      }
+    });
   };
 
   /**

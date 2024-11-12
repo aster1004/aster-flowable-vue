@@ -29,6 +29,8 @@
   .flow-end-node {
     width: 50px;
     height: 50px;
+    font-size: 14px;
+    font-weight: 600;
     line-height: 50px;
     text-align: center;
     border-radius: 50%;

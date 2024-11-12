@@ -12,6 +12,7 @@
       :prop="formItemProp"
       :label-width="labelWidth"
       :show-message="showMessage"
+      :rules="_rules"
     >
       <template #label>
         <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
@@ -52,7 +53,7 @@
   import { evaluateFormula } from '@/utils/workflow';
   import { computed, nextTick, onMounted, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
-  import { isNotEmpty } from '@/utils';
+  import { isEmpty, isNotEmpty } from '@/utils';
   import { instanceInfoByCustomParamsApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
@@ -186,6 +187,72 @@
       r = r || props.formItem.operation[0] == FormPermissionEnum.READONLY;
     }
     return r;
+  });
+
+  /**
+   * @description: 邮箱校验
+   */
+  const validateEmail = (rule, value, callback) => {
+    if (isEmpty(value)) {
+      callback();
+    }
+    const reg = /^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}$/;
+    if (reg.test(value)) {
+      callback();
+    } else {
+      callback(new Error('请输入正确的邮箱'));
+    }
+  };
+
+  /**
+   * @description: 身份证校验
+   */
+  const validateIdCard = (rule, value, callback) => {
+    if (isEmpty(value)) {
+      callback();
+    }
+    const reg = /^(^\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
+    if (reg.test(value)) {
+      callback();
+    } else {
+      callback(new Error('请输入正确的身份证'));
+    }
+  };
+
+  /**
+   * @description: 固话/手机校验
+   */
+  const validateMobile = (rule, value, callback) => {
+    if (isEmpty(value)) {
+      callback();
+    }
+    // 固话号码正则表达式，格式如 010-12345678 或 02112345678
+    const landlineRegex = /^(0\d{2,3}-?\d{7,8})$/;
+    // 手机号码正则表达式，格式如 13812345678
+    const mobileRegex = /^1[3-9]\d{9}$/;
+    if (landlineRegex.test(value) || mobileRegex.test(value)) {
+      callback();
+    } else {
+      callback(new Error('请输入正确的固话/手机'));
+    }
+  };
+
+  /**
+   * @description: 校验规则
+   */
+  const _rules = computed(() => {
+    if (props.mode != 'form' || !props.formItem.props.format) {
+      return [];
+    }
+    if (props.formItem.props.format === 'email') {
+      return [{ validator: validateEmail, trigger: 'blur' }];
+    } else if (props.formItem.props.format === 'idcard') {
+      return [{ validator: validateIdCard, trigger: 'blur' }];
+    } else if (props.formItem.props.format === 'mobile') {
+      return [{ validator: validateMobile, trigger: 'blur' }];
+    } else {
+      return [];
+    }
   });
 
   /**

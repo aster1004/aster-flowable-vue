@@ -21,6 +21,7 @@
     <approverDrawer />
     <copyerDrawer />
     <conditionDrawer ref="conditionRef" />
+    <subProcessDrawer />
   </div>
 </template>
 
@@ -32,6 +33,7 @@
   import approverDrawer from '@/views/workflow/components/process/drawer/approverDrawer.vue';
   import copyerDrawer from '@/views/workflow/components/process/drawer/copyerDrawer.vue';
   import conditionDrawer from '@/views/workflow/components/process/drawer/conditionDrawer.vue';
+  import subProcessDrawer from '@/views/workflow/components/process/drawer/subProcessDrawer.vue';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { isNotEmpty, isEmpty, isDef } from '@/utils';
   import { ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
@@ -168,7 +170,7 @@
     if (isDef(childNode) && isNotEmpty(childNode)) {
       let { id, type, conditionNodes } = childNode;
       childNode.parentId = parentId;
-      if (type <= 3) {
+      if (type <= 3 || type == 8) {
         rectifyNodeId(childNode, id);
       } else if (type == 4) {
         if (conditionNodes) {

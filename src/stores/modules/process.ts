@@ -24,6 +24,8 @@ export const processStore = defineStore('store', {
     approverConfig1: {},
     copyerDrawer: false,
     copyerConfig1: {},
+    subProcessDrawer: false,
+    subProcessConfig1: {},
     conditionDrawer: false,
     conditionsConfig1: {
       conditionNodes: [],
@@ -53,6 +55,12 @@ export const processStore = defineStore('store', {
     },
     setCopyerConfig(payload) {
       this.copyerConfig1 = payload;
+    },
+    setSubProcess(payload) {
+      this.subProcessDrawer = payload;
+    },
+    setSubProcessConfig(payload) {
+      this.subProcessConfig1 = payload;
     },
     setCondition(payload) {
       this.conditionDrawer = payload;

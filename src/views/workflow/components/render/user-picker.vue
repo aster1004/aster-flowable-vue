@@ -214,7 +214,10 @@
    */
   const _value = computed({
     get() {
-      return props.value;
+      if (props.value && isArray(props.value)) {
+        return props.value;
+      }
+      return [];
     },
     set(val) {
       emit('update:value', val);

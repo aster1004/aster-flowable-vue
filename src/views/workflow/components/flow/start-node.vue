@@ -1,8 +1,12 @@
 <template>
   <el-tooltip class="box-item" effect="dark" content="发起人" placement="top">
-    <div class="flow-node" @click="handleClickNode">
+    <div
+      class="flow-node"
+      :class="props.data.data.current ? 'current-node' : ''"
+      @click="handleClickNode"
+    >
       <div class="node-header">
-        <div class="node-icon">
+        <div class="node-header-icon" :class="props.data.data.current ? 'current-node-icon' : ''">
           <el-icon :size="15" color="#ffffff">
             <User />
           </el-icon>
@@ -10,7 +14,7 @@
         <div class="node-name">发起人</div>
       </div>
       <div class="start-node-body">
-        {{ props.data.data.nodeUser }}
+        <!-- {{ props.data.data.nodeUser }} -->
       </div>
     </div>
   </el-tooltip>
@@ -50,49 +54,5 @@
   };
 </script>
 <style scoped>
-  .flow-node {
-    width: 200px;
-    height: 90px;
-    background-color: #ffffff;
-    border: 2px solid #fb5923;
-    border-radius: 10px;
-  }
-
-  .flow-node:hover {
-    border-color: red;
-  }
-
-  .node-header {
-    height: 30px;
-    /* background-color: red; */
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-  }
-
-  .node-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    background-color: #f56c6c;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .node-name {
-    font-size: 10px;
-    font-weight: 500;
-    padding-left: 5px;
-  }
-
-  .node {
-    background-color: #f56c6c;
-  }
-
-  .start-node-body {
-    padding: 0px 8px 8px 8px;
-    font-size: 14px;
-    font-weight: bold;
-  }
+  @import '@/assets/styles/flow.css';
 </style>

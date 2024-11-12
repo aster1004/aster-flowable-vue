@@ -46,7 +46,11 @@
                 v-loading="loadingInstance"
                 element-loading-text="数据加载中……"
               ></div>
-
+              <div v-else class="w-full flex justify-end items-center">
+                <el-button type="primary" link size="small" @click="flowRenderVisible = true">
+                  查看流程图
+                </el-button>
+              </div>
               <flow-logs ref="flowLogsRef" :process-result="processResult" />
             </div>
           </el-tab-pane>
@@ -60,6 +64,16 @@
         </div>
       </div>
     </div>
+    <el-drawer
+      v-if="flowRenderVisible"
+      v-model="flowRenderVisible"
+      size="60%"
+      title="查看流程图"
+      append-to-body
+      :lock-scroll="false"
+    >
+      <render-flow :data="props.process" :active-node-id="activeNodeId" />
+    </el-drawer>
   </div>
 </template>
 <script setup lang="ts">
@@ -70,6 +84,9 @@
   import { ResultEnum } from '@/enums/httpEnum';
   import { isNotEmpty } from '@/utils';
   import FlowLogs from '@/views/workflow/components/process/processlog/flow-logs.vue';
+  import RenderFlow from '@/views/workflow/components/flow/render-flow.vue';
+  import { ProcessResultEnum } from '@/enums/workFlowEnum';
+
   const emits = defineEmits(['update:formData']);
 
   const props = defineProps({
@@ -95,11 +112,17 @@
       type: String,
       default: '',
     },
+    process: {
+      type: Object,
+      default: () => ({}),
+    },
     procInstId: {
       type: String,
       default: '',
     },
   });
+
+  const activeNodeId = ref<string[]>([]);
 
   // 流程日志
   const processResult = ref<WorkForm.ProcessResult>({
@@ -113,6 +136,8 @@
   const loadingInstance = ref<boolean>(true);
   // 活动标签
   const processActiveName = ref<string>('log');
+  // 显示流程图
+  const flowRenderVisible = ref<boolean>(false);
 
   // 表单数据
   const _formData = computed({
@@ -154,6 +179,12 @@
       if (res.code == ResultEnum.SUCCESS) {
         processResult.value = res.data;
         loadingInstance.value = false;
+        // 如果是正在进行中
+        if (processResult.value.approveResult == ProcessResultEnum.PROCESSING) {
+          let instanceLogs = processResult.value.instanceLogs;
+          console.info(instanceLogs[instanceLogs.length - 1][0]);
+          activeNodeId.value = [instanceLogs[instanceLogs.length - 1][0].nodeId];
+        }
       } else {
         ElMessage.error(res.message);
         loadingInstance.value = false;

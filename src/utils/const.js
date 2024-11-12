@@ -5,7 +5,21 @@
  * @FilePath: /Workflow-Vue3/src/utils/const.js
  */
 
-export let bgColors = ['87, 106, 149', '255, 148, 62', '50, 150, 250'];
+/**
+ * 节点的颜色和图标配置
+ */
+export const nodeConfig = [
+  { color: '#576A95', icon: 'node-icon iconfont icon-yonghu' }, //0、发起人
+  { color: '#FF9B26', icon: 'node-icon iconfont icon-shenpi' }, //1、审批人
+  { color: '#409EFF', icon: 'node-icon iconfont icon-chaosongwode' }, //2、抄送人
+  { color: '#67C23A', icon: 'node-icon iconfont icon-bumen' }, //3、排他网关
+  { color: '#576A95', icon: 'node-icon iconfont icon-shenpi' }, //4、网关
+  { color: '#E6A23C', icon: 'node-icon iconfont icon-jiekou' }, //5、并行网关
+  { color: '#345DA2', icon: 'node-icon iconfont icon-liucheng1' }, //6、包容网关
+  { color: '#c96bff', icon: 'node-icon iconfont icon-ziliucheng' }, //7、网关聚合
+  { color: '#c96bff', icon: 'node-icon iconfont icon-ziliucheng' }, //8、子流程
+];
+
 export let placeholderList = ['发起人', '审核人', '抄送人'];
 
 export let setTypes = [

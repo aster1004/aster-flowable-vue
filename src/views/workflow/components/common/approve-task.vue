@@ -15,9 +15,19 @@
     destroy-on-close
     @closed="cancleApprove"
   >
-    <el-form :model="approveParams" label-width="90px" style="max-width: 700px">
+    <el-form
+      ref="approveParamsRef"
+      :model="approveParams"
+      label-width="90px"
+      style="max-width: 700px"
+    >
       <!--   转交   -->
-      <el-form-item v-if="showTransferAndCountersign" :label="labelTitle">
+      <el-form-item
+        v-if="showTransferAndCountersign"
+        :label="labelTitle"
+        :rules="[{ required: true, message: '人员不能为空！！', trigger: 'change' }]"
+        prop="transferUser"
+      >
         <el-input
           style="width: 50%"
           @click="showTransferDialog"
@@ -31,7 +41,12 @@
       </el-form-item>
 
       <!--   退回   -->
-      <el-form-item v-if="showBackNode" :label="labelTitle">
+      <el-form-item
+        v-if="showBackNode"
+        :label="labelTitle"
+        prop="backNode"
+        :rules="[{ required: true, message: '退回节点不能为空！', trigger: 'change' }]"
+      >
         <el-select
           v-model="backNodeName"
           placeholder="请选择"
@@ -68,7 +83,7 @@
 
       <!--   添加意见   -->
       <el-form-item label="添加意见">
-        <el-input v-model="commentInfo.opinion" rows="5" type="textarea" />
+        <el-input v-model="commentInfo.opinion" :rows="5" type="textarea" />
       </el-form-item>
 
       <!--   添加图片   -->
@@ -180,27 +195,33 @@
       operationType: operationTypeInfo.value,
     },
   });
+  const approveParamsRef = ref();
 
   /**
    * @description: 保存
    * @return {*}
    */
   const handleSubmit = () => {
-    console.log(approveParams.value);
-    commentInfo.value.operationType = operationTypeInfo.value;
-    approveParams.value.taskId = props.taskId;
-    approveParams.value.formId = props.formId;
-    approveParams.value.comment = commentInfo.value;
-    console.info('处理待办：', props.taskId);
-    completeTaskApi(approveParams.value).then((res) => {
-      console.info(res);
-      if (res.code == ResultEnum.SUCCESS) {
-        visible.value = false;
-        emits('cancel'); // 处理成功，关闭详
-        // 重置表单数据，防止下次提交还有数据
-        resetApproveParams();
+    approveParamsRef.value.validate((valid: boolean) => {
+      if (valid) {
+        commentInfo.value.operationType = operationTypeInfo.value;
+        approveParams.value.taskId = props.taskId;
+        approveParams.value.formId = props.formId;
+        approveParams.value.comment = commentInfo.value;
+
+        completeTaskApi(approveParams.value).then((res) => {
+          console.info(res);
+          if (res.code == ResultEnum.SUCCESS) {
+            visible.value = false;
+            emits('cancel'); // 处理成功，关闭详
+            // 重置表单数据，防止下次提交还有数据
+            resetApproveParams();
+          } else {
+            ElMessage.error(res.message);
+          }
+        });
       } else {
-        ElMessage.error(res.message);
+        console.error('表单校验不通过');
       }
     });
   };
@@ -283,7 +304,6 @@
    * @return {*}
    */
   const handleDefaultSuccess = (val: User.UserInfo[]) => {
-    console.log('选人', val);
     if (val.length > 0) {
       val.forEach((item: User.UserInfo) => {
         selectedInfos.value.push(item);
@@ -307,9 +327,7 @@
   };
 
   watchEffect(() => {
-    console.log('watchEffect--------', buttonInfo.value);
     if (isNotEmpty(buttonInfo.value) && isDef(buttonInfo.value)) {
-      console.log(buttonInfo.value);
       // 根据按钮类型判断显示哪些组件
       switch (buttonInfo.value?.name) {
         case 'agree': // 同意
@@ -346,7 +364,6 @@
       }
       console.info(res);
     });
-    console.log('getBackNodeList');
   };
 
   /**
@@ -362,7 +379,6 @@
     buttonInfo.value = item;
     approveParams.value.approveType = buttonInfo.value?.name;
     operationTypeInfo.value.approveType = approveParams.value.approveType;
-    console.log('init', approveParams.value.approveType);
     if (approveParams.value.approveType === 'recall') {
       getBackNodeList();
     }

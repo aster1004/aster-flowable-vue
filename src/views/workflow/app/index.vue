@@ -161,7 +161,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { appPageApi } from '@/api/workflow/app';
+  import { appDeleteApi, appPageApi } from '@/api/workflow/app';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ref, reactive, onMounted } from 'vue';
@@ -292,12 +292,12 @@
       lockScroll: false,
     })
       .then(() => {
-        /* appDeleteApi(val).then((res) => {
+        appDeleteApi(val).then((res) => {
           if (res.code == ResultEnum.SUCCESS) {
             ElMessage.success(t('delete.success'));
             handleQuery();
           }
-        }); */
+        });
       })
       .catch(() => {});
   };

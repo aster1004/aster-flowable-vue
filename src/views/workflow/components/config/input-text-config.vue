@@ -30,6 +30,16 @@
     <el-form-item label="提示语">
       <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
     </el-form-item>
+    <el-form-item label="格式">
+      <el-select v-model="_formItem.props.format">
+        <el-option
+          v-for="(item, index) in InputTextFormats"
+          :key="index"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+    </el-form-item>
     <el-form-item label="是否必填">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
@@ -50,6 +60,7 @@
   import Formula from '../common/formula.vue';
   import DataLinkage from '../common/data-linkage.vue';
   import { ElMessage } from 'element-plus';
+  import { InputTextFormats } from '@/enums/workFlowEnum';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();

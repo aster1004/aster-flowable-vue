@@ -32,6 +32,7 @@
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, ref, watch } from 'vue';
   import FormRender from './form-render.vue';
+  import { setDefaultValue } from '@/utils/workflow';
 
   const workFlowStore = useWorkFlowStore();
 
@@ -50,11 +51,7 @@
    */
   const init = () => {
     visible.value = true;
-    formData.value = JSON.parse(
-      JSON.stringify(
-        workFlowStore.design.formItems.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.value }), {}),
-      ),
-    );
+    setDefaultValue(_formItems.value, formData.value);
   };
 
   const _formItems = computed(() => {
