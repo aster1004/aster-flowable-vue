@@ -67,6 +67,7 @@
   import RootDrawer from '../drawer/rootDrawer.vue';
   import { getRandomId } from '@/utils/workflow';
   import { ProcessNodeTypeEnum } from '@/enums/workFlowEnum';
+  import { ElMessage } from 'element-plus';
   const _uid = getCurrentInstance().uid;
   const store = processStore();
   const {
