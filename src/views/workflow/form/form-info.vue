@@ -54,7 +54,9 @@
               <flow-logs ref="flowLogsRef" :process-result="processResult" />
             </div>
           </el-tab-pane>
-          <el-tab-pane label="评论" name="comment">Config</el-tab-pane>
+          <el-tab-pane label="评论" name="comment">
+            <form-comment :procInstId="procInstId" />
+          </el-tab-pane>
         </el-tabs>
       </el-scrollbar>
       <div class="menu-collapse">
@@ -85,6 +87,7 @@
   import { isNotEmpty } from '@/utils';
   import FlowLogs from '@/views/workflow/components/process/processlog/flow-logs.vue';
   import RenderFlow from '@/views/workflow/components/flow/render-flow.vue';
+  import FormComment from './form-comment.vue';
   import { ProcessResultEnum } from '@/enums/workFlowEnum';
 
   const emits = defineEmits(['update:formData']);
