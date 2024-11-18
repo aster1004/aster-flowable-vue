@@ -19,6 +19,9 @@
     <el-form-item label="显示边框">
       <el-switch v-model="_formItem.props.showBorder" />
     </el-form-item>
+    <el-form-item label="默认显示行数">
+      <el-input-number v-model="_formItem.props.rows" :min="0" :max="10" />
+    </el-form-item>
     <el-form-item label="字段排序">
       <draggable
         :list="_formItem.props.columns"

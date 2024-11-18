@@ -187,22 +187,33 @@ const fieldFillValue = async (
         } else if (formItem.props.showSignatureCombine) {
           signLabel = '(盖章)';
         }
+        let signSize = formItem.props.signSize ? formItem.props.signSize : 100;
+        let minHeight = signSize + 50;
+        let minWidth = signSize + 100;
         value =
-          '<div style="width: 100%; height: 100%; position: relative; padding: 5px;">' +
+          '<div style="width: 100%; height: 100%; position: relative; padding: 5px; min-height: ' +
+          minHeight +
+          'px;">' +
           '  <div style="width: 100%"> ' +
           '    <span>' +
           (formData[formItem.id].comment || '') +
           '    </span>' +
           '  </div>' +
-          '  <div style="position: absolute; bottom: 0; right: 30px; width: 250px; color: #909399;">' +
-          '    <div style="box-sizing: border-box; display: flex; flex-wrap: wrap; position: relative;">' +
-          '      <div style="display: flex; flex: 0 0 50%; max-width: 50%; align-items: end;">' +
+          '  <div style="position: absolute; bottom: 0; right: 30px; width: 250px; color: #909399; width: ' +
+          minWidth +
+          'px;">' +
+          '    <div style="display: flex; position: relative;">' +
+          '      <div style="display: flex; justify-content: flex-end; align-items: flex-end; width: 100px">' +
           '        <span>' +
           signLabel +
           '</span>' +
           '      </div>' +
-          '      <div style="display: block; flex: 0 0 50%; max-width: 50%;">' +
-          '        <div style="position: relative; width: 100px; height: 100px; background-image: url(' +
+          '      <div>' +
+          '        <div style="position: relative; width: ' +
+          signSize +
+          'px; height: ' +
+          signSize +
+          'px; background-image: url(' +
           (formData[formItem.id].signature || '') +
           '); ' +
           'background-size: 100%; background-repeat: no-repeat; background-color: rgba(255, 255, 255, 0.5); background-position: center center;">' +

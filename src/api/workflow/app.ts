@@ -32,6 +32,16 @@ export const appListApi = (params: WorkApp.QueryParams) => {
 };
 
 /**
+ * @param params 查询已启用的应用
+ * @returns
+ */
+export const appActiveListApi = () => {
+  return request.get<WorkApp.AppInfo[]>(PORT5 + `/app/active`, {
+    noLoading: true,
+  });
+};
+
+/**
  * @description: 单条信息
  * @return {*}
  */

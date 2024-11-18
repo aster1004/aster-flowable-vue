@@ -208,8 +208,7 @@
   import DictSelect from '@/components/dict/dict-select.vue';
   import DictTag from '@/components/dict/dict-tag.vue';
   import FormInitiation from '@/views/workflow/form/form-initiation.vue';
-  import { menuDeleteApi } from '@/api/sys/menu';
-  import { delProcessInstanceApi } from '@/api/workflow/process';
+  import { instanceDeleteApi } from '@/api/workflow/process';
 
   const { t } = useI18n();
 
@@ -374,9 +373,14 @@
       lockScroll: false,
     })
       .then(() => {
-        delProcessInstanceApi(row.procInstId, row.formCode).then(() => {
-          ElMessage.success(t('delete.success'));
-          handleQuery();
+        const deleteParams = [{ code: row.formCode!, procInstId: row.procInstId }];
+        instanceDeleteApi(deleteParams).then((res) => {
+          if (res.code === ResultEnum.SUCCESS) {
+            ElMessage.success(t('delete.success'));
+            handleQuery();
+          } else {
+            ElMessage.error(res.message);
+          }
         });
       })
       .catch(() => {});

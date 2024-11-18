@@ -32,7 +32,7 @@
 </template>
 <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import { appListApi } from '@/api/workflow/app';
+  import { appActiveListApi } from '@/api/workflow/app';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useRouter } from 'vue-router';
   // 路由
@@ -44,7 +44,7 @@
    * 查询应用信息
    */
   const handleQueryApp = () => {
-    appListApi({}).then((res) => {
+    appActiveListApi().then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
         appList.value = res.data;
       }

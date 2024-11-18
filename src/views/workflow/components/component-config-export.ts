@@ -70,6 +70,8 @@ const layoutComponentConfig: WorkComponent.ComponentConfigGroup = {
         readonly: false,
         // 边框
         showBorder: true,
+        // 默认行数
+        rows: 0,
       },
     },
     {

@@ -49,7 +49,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, nextTick, onMounted, PropType, ref } from 'vue';
+  import { computed, onMounted, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import { areaList } from '@vant/area-data';
@@ -262,12 +262,20 @@
 
   onMounted(() => {
     loadTreeData();
-    if (props.mode === 'print') {
-      nextTick(() => {
-        updateHeight();
-      });
-    }
   });
+
+  /**
+   * @description: 监听打印高度
+   */
+  watch(
+    () => [props.mode, printRef.value],
+    () => {
+      if (printRef.value && props.mode === 'print') {
+        updateHeight();
+      }
+    },
+    { immediate: true, deep: true },
+  );
 
   defineExpose({
     _hidden,

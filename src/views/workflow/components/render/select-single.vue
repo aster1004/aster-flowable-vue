@@ -126,7 +126,7 @@
 <script setup lang="ts">
   import { useAppStore } from '@/stores/modules/app';
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, nextTick, onMounted, PropType, ref, watch } from 'vue';
+  import { computed, onMounted, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { getDictDataList, isNotEmpty } from '@/utils';
   import { instanceListByCodeApi } from '@/api/workflow/process';
@@ -368,15 +368,23 @@
     return r;
   });
 
+  /**
+   * @description: 监听打印高度
+   */
+  watch(
+    () => [props.mode, printRef.value],
+    () => {
+      if (printRef.value && props.mode === 'print') {
+        updateHeight();
+      }
+    },
+    { immediate: true, deep: true },
+  );
+
   onMounted(() => {
     const dataStr = JSON.stringify(props.formData);
     if (!props.formItem.id || dataStr.indexOf(props.formItem.id) == -1) {
       _value.value = props.formItem.value;
-    }
-    if (props.mode === 'print') {
-      nextTick(() => {
-        updateHeight();
-      });
     }
   });
 
