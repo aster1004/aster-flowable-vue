@@ -39,7 +39,12 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { convertDataTypes, setDefaultValue, setFormPermission } from '@/utils/workflow';
+  import {
+    convertDataTypes,
+    evaluateFormula,
+    setDefaultValue,
+    setFormPermission,
+  } from '@/utils/workflow';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { computed, ref } from 'vue';
   import FormRender from './form-render.vue';
@@ -55,20 +60,20 @@
 
   /** 显示 */
   const visible = ref<boolean>(false);
-  // 抽屉标题
+  /** 抽屉标题 */
   const drawerTitle = ref<string>('');
-  // 抽屉全屏
+  /** 抽屉全屏 */
   const isFullScreen = ref<boolean>(false);
   // 注册组件
   const formRenderRef = ref();
-  // 表单ID
+  /** 表单ID */
   const formId = ref<string>('');
-  // 表单数据
+  /** 表单数据 */
   const formData = ref<WorkForm.FormDataModel>({});
-  // 表单权限
+  /** 表单权限 */
   const formPermission = ref<Process.FormPermissionModel>({});
 
-  // 表单信息
+  /** 表单信息 */
   const formInfo = ref<WorkForm.FormModel>({
     icon: 'iconfont icon-gengduo',
     iconColor: '',
@@ -101,7 +106,9 @@
     return isFullScreen.value ? 'iconfont icon-suoxiao' : 'iconfont icon-quanping';
   });
 
-  // 表单项
+  /**
+   * @description: 表单项
+   */
   const _formItems = computed(() => {
     const formItems = JSON.parse(JSON.stringify(workFlowStore.design.formItems));
     if (formPermission.value && Object.keys(formPermission.value).length > 0) {
@@ -110,7 +117,9 @@
     return formItems;
   });
 
-  // 表单基本信息
+  /**
+   * @description 表单基本信息
+   */
   const _formInfo = computed(() => {
     const formInfo: WorkForm.BaseInfo = {
       formName: workFlowStore.design.formName,
@@ -140,11 +149,38 @@
   };
 
   /**
+   * @description: 提交校验
+   * @return {*}
+   */
+  const submitValidate = () => {
+    if (workFlowStore.design.settings && workFlowStore.design.settings.submitValidates) {
+      const validates = workFlowStore.design.settings.submitValidates;
+      for (let i = 0; i < validates.length; i++) {
+        const v = validates[i];
+        if (v.enable) {
+          const r = evaluateFormula(v.formula, formData.value);
+          if (r) {
+            ElMessage.error(v.errorMessage);
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  };
+
+  /**
    * @description: 验证表单
    * @return {*}
    */
   const validateForm = async (callback: Function) => {
-    await formRenderRef.value.validate(callback);
+    // 表单校验
+    await formRenderRef.value.validate(() => {
+      // 提交校验
+      if (submitValidate()) {
+        callback();
+      }
+    });
   };
 
   /**
