@@ -13,6 +13,7 @@
           <form-render
             ref="formRenderRef"
             v-model:form-data="_formData"
+            :mode="mode"
             :form-items="formItems"
             :form-info="formInfo"
             style="margin: 8px"
@@ -93,6 +94,10 @@
   const emits = defineEmits(['update:formData']);
 
   const props = defineProps({
+    mode: {
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
+      default: 'form',
+    },
     formData: {
       type: Object as PropType<WorkForm.FormDataModel>,
       default: () => ({}),

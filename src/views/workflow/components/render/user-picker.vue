@@ -71,7 +71,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, nextTick, onMounted, PropType, ref, watch, watchEffect } from 'vue';
+  import { computed, onMounted, PropType, ref, watch, watchEffect } from 'vue';
   import mittBus from '@/utils/mittBus';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { selectUsersByIdsApi } from '@/api/sys/user';
@@ -357,13 +357,21 @@
     { immediate: true, deep: true },
   );
 
+  /**
+   * @description: 监听打印高度
+   */
+  watch(
+    () => [props.mode, printRef.value],
+    () => {
+      if (printRef.value && props.mode === 'print') {
+        updateHeight();
+      }
+    },
+    { immediate: true, deep: true },
+  );
+
   onMounted(async () => {
     await selectUsersByIds(_value.value);
-    if (props.mode === 'print') {
-      nextTick(() => {
-        updateHeight();
-      });
-    }
   });
 
   defineExpose({

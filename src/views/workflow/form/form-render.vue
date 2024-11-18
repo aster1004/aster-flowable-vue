@@ -22,7 +22,7 @@
           "
           v-model:value="_formData"
           :ref="item.id"
-          mode="form"
+          :mode="mode"
           :formData="_formData"
           :formItem="item"
         />
@@ -30,7 +30,7 @@
           v-else
           v-model:value="_formData[item.id]"
           :ref="item.id"
-          mode="form"
+          :mode="mode"
           :formData="_formData"
           :formItem="item"
         />
@@ -46,6 +46,10 @@
 
   const emits = defineEmits(['update:formData']);
   const props = defineProps({
+    mode: {
+      type: String as PropType<'design' | 'form' | 'search' | 'table' | 'print'>,
+      default: 'form',
+    },
     formData: {
       type: Object as PropType<WorkForm.FormDataModel>,
       default: () => {},

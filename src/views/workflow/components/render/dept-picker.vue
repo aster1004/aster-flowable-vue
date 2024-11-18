@@ -71,7 +71,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula } from '@/utils/workflow';
-  import { computed, nextTick, onMounted, PropType, ref, watch, watchEffect } from 'vue';
+  import { computed, onMounted, PropType, ref, watch, watchEffect } from 'vue';
   import mittBus from '@/utils/mittBus';
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import { ResultEnum } from '@/enums/httpEnum';
@@ -357,15 +357,23 @@
   );
 
   /**
+   * @description: 监听打印高度
+   */
+  watch(
+    () => [props.mode, printRef.value],
+    () => {
+      if (printRef.value && props.mode === 'print') {
+        updateHeight();
+      }
+    },
+    { immediate: true, deep: true },
+  );
+
+  /**
    * @description: 监听_value值变化,获取对象全量信息，用于表单回显
    */
   onMounted(() => {
     selectDeptsByIds(_value.value);
-    if (props.mode === 'print') {
-      nextTick(() => {
-        updateHeight();
-      });
-    }
   });
 
   defineExpose({
