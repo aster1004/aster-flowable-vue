@@ -7,12 +7,14 @@
 -->
 <template>
   <el-dialog
-    title="打印预览"
+    v-if="printType === 'default'"
     v-model="printVisible"
-    :close-on-click-modal="false"
-    :lock-scroll="false"
+    title="打印预览"
     width="60%"
     height="100%"
+    :close-on-click-modal="false"
+    :lock-scroll="false"
+    :destroy-on-close="true"
   >
     <default-print
       id="default"
@@ -23,22 +25,26 @@
       :form-info="formInfo"
       :form-status="formStatus"
     />
-    <div v-else-if="printType === 'custom'">
-      <div id="custom" v-show="printType === 'custom'" v-html="templateContent"></div>
-    </div>
     <template #footer>
-      <el-button type="primary" v-print="printObj">打印</el-button>
-      <el-button @click="printVisible = false">{{ $t('button.cancel') }}</el-button>
+      <el-button type="primary" ref="printButtonRef" v-print="printObj">打印</el-button>
+      <el-button @click="handleCancel">{{ $t('button.cancel') }}</el-button>
     </template>
   </el-dialog>
+  <div v-else-if="printType === 'custom'" v-show="false">
+    <div id="custom" v-html="templateContent"></div>
+    <el-button type="primary" ref="printButtonRef" v-print="printObj">打印</el-button>
+  </div>
 </template>
 <script setup lang="ts">
-  import { computed, nextTick, PropType, reactive, ref, watch } from 'vue';
+  import { computed, nextTick, onBeforeUnmount, PropType, reactive, ref, watch } from 'vue';
   import DefaultPrint from '@/views/workflow/components/print/default-print.vue';
   import { defaultComponentConfig } from '@/views/workflow/components/component-config-export';
   import print from 'vue3-print-nb';
   import { fillFormData, templateFillValue } from '@/utils/print';
   import { flatFormItems } from '@/utils/workflow';
+  import { ElLoading } from 'element-plus';
+
+  const emits = defineEmits(['end']);
 
   const props = defineProps({
     formData: {
@@ -65,6 +71,7 @@
     },
   });
 
+  const printButtonRef = ref();
   // 是否显示打印预览
   const printVisible = ref<boolean>(false);
   // 模板类型
@@ -73,12 +80,24 @@
   const templateContent = ref<string>('');
   // 自定义模板变量的值
   const templateValue = ref({});
+  // 定时器
+  const timer = ref();
   // 注册打印插件
   const vPrint = print;
   // 打印配置
   const printObj = reactive({
     id: 'default',
     popTitle: '&nbsp', // 页眉
+    beforeOpenCallback() {
+      console.log('开始打印之前！');
+    }, // 开始打印之前的callback
+    openCallback() {
+      console.log('执行打印了！');
+    },
+    closeCallback() {
+      emits('end');
+      console.log('关闭了打印工具');
+    },
   });
 
   /**
@@ -113,16 +132,36 @@
     return data;
   });
 
+  /**
+   * @description: 取消
+   * @return {*}
+   */
+  const handleCancel = () => {
+    printVisible.value = false;
+    emits('end');
+  };
+
   // 打印预览
   const init = (type: 'default' | 'custom', content?: string) => {
-    printVisible.value = true;
     printType.value = type;
     if (type === 'custom' && content) {
       nextTick(async () => {
+        const loadingInstance = ElLoading.service({
+          lock: true,
+          text: '正在生成打印模板，请稍等',
+          background: 'rgba(0, 0, 0, 0.7)',
+        });
         templateContent.value = content.replace(/class="field-content"/g, 'style="padding: 0 5px"');
         await templateFillValue(_formData.value, _formItems.value, templateValue.value);
         await fillFormData('custom', templateValue.value, templateContent.value);
+
+        timer.value = setTimeout(() => {
+          loadingInstance.close();
+          printButtonRef.value.$el.click();
+        }, 2000);
       });
+    } else {
+      printVisible.value = true;
     }
   };
 
@@ -148,6 +187,11 @@
     },
     { immediate: true, deep: true },
   );
+
+  /** 页面销毁前清除定时器 */
+  onBeforeUnmount(() => {
+    clearInterval(timer.value);
+  });
 
   defineExpose({ init });
 </script>

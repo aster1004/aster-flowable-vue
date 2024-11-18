@@ -80,6 +80,7 @@
         <form-info
           ref="formInfoRef"
           v-model:form-data="formData"
+          :mode="mode"
           :form-items="_formItems"
           :form-info="_baseFormInfo"
           :form-status="formStatus"
@@ -100,6 +101,7 @@
       v-else
       ref="formInfoRef"
       v-model:form-data="formData"
+      :mode="mode"
       :form-items="_formItems"
       :form-info="_baseFormInfo"
       :form-status="formStatus"
@@ -127,6 +129,7 @@
       :form-items="_formItems"
       :form-info="_baseFormInfo"
       :form-status="formStatus"
+      @end="printCallback"
     />
 
     <approve-task
@@ -160,6 +163,8 @@
   const approveTaskRef = ref();
   // 抽屉全屏
   const isFullScreen = ref<boolean>(false);
+  // 表单类型
+  const mode = ref<'design' | 'form' | 'search' | 'table' | 'print'>('form');
   // 表单数据
   const formData = ref<WorkForm.FormDataModel>({});
   // 表单状态
@@ -299,6 +304,14 @@
   };
 
   /**
+   * @description: 打印回调
+   * @return {*}
+   */
+  const printCallback = () => {
+    mode.value = 'form';
+  };
+
+  /**
    * @description: 关闭
    * @return {*}
    */
@@ -316,7 +329,6 @@
    * @return {*}
    */
   const handleBeforeClose = (done: () => void) => {
-    console.log('b--->');
     formInfoRef.value.isCollapse = true;
     done();
   };

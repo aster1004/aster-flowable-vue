@@ -54,7 +54,7 @@
 </template>
 <script setup lang="ts">
   import { evaluateFormula, getDateLength, getDateTypeByFormat } from '@/utils/workflow';
-  import { computed, nextTick, onMounted, PropType, ref } from 'vue';
+  import { computed, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
   import { isNotEmpty } from '@/utils';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
@@ -204,13 +204,18 @@
     return getDateLength(_value.value, props.formItem.props.format);
   });
 
-  onMounted(() => {
-    if (props.mode === 'print') {
-      nextTick(() => {
+  /**
+   * @description: 监听打印高度
+   */
+  watch(
+    () => [props.mode, printRef.value],
+    () => {
+      if (printRef.value && props.mode === 'print') {
         updateHeight();
-      });
-    }
-  });
+      }
+    },
+    { immediate: true, deep: true },
+  );
 
   defineExpose({
     _hidden,
