@@ -92,7 +92,7 @@
           :cell-style="cellStyle"
           :key="Math.random()"
           style="width: 100%"
-          max-height="250px"
+          max-height="300px"
         >
           <el-table-column
             type="index"

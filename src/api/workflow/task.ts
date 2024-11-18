@@ -110,7 +110,7 @@ export const getMyStartedApi = (params: WorkTask.TaskQuery) => {
   return request.post<Page.ResPage<WorkTask.MyStartedModel>>(
     PORT5 + `/processTask/started`,
     params,
-    { noLoading: true },
+    { noLoading: false },
   );
 };
 

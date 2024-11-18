@@ -169,9 +169,9 @@
 <script setup lang="ts">
   import TreeFilter from '@/components/tree/tree-filter.vue';
   import { useRouter } from 'vue-router';
-  import { onBeforeMount, onMounted, reactive, ref } from 'vue';
+  import { onBeforeMount, reactive, ref } from 'vue';
   import { formPageApi, formDeleteApi, deploymentApi } from '@/api/workflow/form';
-  import { appListApi } from '@/api/workflow/app';
+  import { appActiveListApi } from '@/api/workflow/app';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useI18n } from 'vue-i18n';
@@ -323,7 +323,7 @@
    * 渲染DOM前加载
    */
   onBeforeMount(() => {
-    appListApi({}).then((res) => {
+    appActiveListApi().then((res) => {
       if (res.code == ResultEnum.SUCCESS) {
         appList.value = res.data;
         queryParams.appId = res.data[0].id;

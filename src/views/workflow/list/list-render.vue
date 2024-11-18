@@ -59,8 +59,11 @@
       <!-- 表格头部 操作按钮 -->
       <div class="table-header">
         <div class="header-button-lf">
-          <el-button type="primary" @click="handleAdd">
+          <el-button type="primary" @click="handleAdd" v-if="_addPermission">
             <i class="iconfont icon-xinzeng pr-5px"></i>{{ $t('button.add') }}
+          </el-button>
+          <el-button type="primary" @click="handleDelete" v-if="userStore.isSuperAdmin">
+            <i class="iconfont icon-shanchu pr-5px"></i>{{ $t('button.delete') }}
           </el-button>
         </div>
         <div class="header-button-ri">
@@ -90,8 +93,21 @@
           </el-tooltip>
         </div>
       </div>
-      <el-table ref="listTableRef" :data="dataList" :border="true" row-key="id">
-        <el-table-column fixed type="index" width="50" align="center" />
+      <el-table
+        ref="listTableRef"
+        :data="dataList"
+        :border="true"
+        row-key="id"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          v-if="userStore.isSuperAdmin"
+          type="selection"
+          header-align="center"
+          align="center"
+          width="50"
+        />
+        <el-table-column v-else fixed type="index" width="50" align="center" />
         <template v-if="type === 'design'">
           <el-table-column
             prop="dataTitle"
@@ -232,10 +248,15 @@
   import { convertDataType, selectFormItemByFieldId } from '@/utils/workflow';
   import { isEmpty, isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { ElMessage } from 'element-plus';
+  import { ElMessage, ElMessageBox } from 'element-plus';
   import vClickOutside from 'element-plus/es/directives/click-outside/index';
-  import { instancePageApi } from '@/api/workflow/process';
+  import { instanceDeleteApi, instancePageApi } from '@/api/workflow/process';
   import { permFormDataApi } from '@/api/workflow/auth';
+  import { useUserStore } from '@/stores/modules/user';
+  import { useI18n } from 'vue-i18n';
+
+  const userStore = useUserStore();
+  const { t } = useI18n();
 
   const props = defineProps({
     type: {
@@ -309,6 +330,8 @@
     code: props.code,
     isAdmin: false,
   });
+  // 选中参数
+  const selectedParams = ref<Process.InstanceQueryParams[]>([]);
 
   /**
    * @description: 查询
@@ -470,6 +493,21 @@
   };
 
   /**
+   * @description: 选中
+   * @return {*}
+   */
+  const handleSelectionChange = (selecteds: any[]) => {
+    const code = queryParams.code;
+    selectedParams.value = selecteds.map((item) => {
+      return {
+        id: item.id,
+        code: code,
+        procDefId: item['proc_def_id'],
+      };
+    });
+  };
+
+  /**
    * @description: 新增
    * @return {*}
    */
@@ -479,6 +517,28 @@
       return;
     }
     formInitiationRef.value.init(props.code);
+  };
+
+  /**
+   * @description: 删除
+   * @return {*}
+   */
+  const handleDelete = () => {
+    ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
+      confirmButtonText: t('button.confirm'),
+      cancelButtonText: t('button.cancel'),
+      type: 'warning',
+      lockScroll: false,
+    }).then(() => {
+      instanceDeleteApi(selectedParams.value).then((res) => {
+        if (res.code === ResultEnum.SUCCESS) {
+          ElMessage.success(t('delete.success'));
+          handleQuery();
+        } else {
+          ElMessage.error(res.message);
+        }
+      });
+    });
   };
 
   /**
@@ -503,6 +563,14 @@
       loadFormInfoByStore(settings.columns);
     }
     return settings;
+  });
+
+  // 新增权限
+  const _addPermission = computed(() => {
+    return (
+      formDataPermission.value.isAdmin ||
+      (formDataPermission.value.formPerms && formDataPermission.value.formPerms.includes('add'))
+    );
   });
 
   // 功能按钮

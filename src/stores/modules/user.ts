@@ -36,9 +36,11 @@ export const useUserStore = defineStore({
 
     // 显示名称
     displayName: (state) => {
-      return isNotEmpty(state.userInfo.realName)
+      return state.userInfo.realName && isNotEmpty(state.userInfo.realName)
         ? state.userInfo.realName
-        : state.userInfo.nickName;
+        : state.userInfo.nickName
+          ? state.userInfo.nickName
+          : '';
     },
   },
   actions: {

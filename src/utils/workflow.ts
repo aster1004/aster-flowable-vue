@@ -9,7 +9,7 @@
 import { ValueType } from '@/views/workflow/components/component-config-export';
 import { ElMessage } from 'element-plus';
 import moment, { Moment } from 'moment';
-import { isEmpty, isNotEmpty, isObject } from '.';
+import { generateUUID, isEmpty, isNotEmpty, isObject } from '.';
 import { evaluate, parse } from './formula';
 import { ApprovalModeEnum, FormPermissionEnum, ProcessButtonTypeEnum } from '@/enums/workFlowEnum';
 
@@ -505,7 +505,11 @@ export const setDefaultValue = (
   const items = flatFormItems(formItems);
   // 先给所有项默认空值
   items.forEach((item) => {
-    formData[item.id] = item.value;
+    if (item.name === 'TableList') {
+      formData[item.id] = tableListDefaultValue(item);
+    } else {
+      formData[item.id] = item.value;
+    }
   });
   // 处理默认值
   items.forEach((item) => {
@@ -523,6 +527,27 @@ export const setDefaultValue = (
       }
     }
   });
+};
+
+/**
+ * @description: 明细表默认值
+ * @param {WorkComponent.ComponentConfig} form
+ */
+const tableListDefaultValue = (formItem: WorkComponent.ComponentConfig) => {
+  if (formItem.props.hasOwnProperty('rows')) {
+    const rows = formItem.props.rows;
+    let value: any[] = [];
+    for (let i = 0; i < rows; i++) {
+      let rowData = {
+        id: generateUUID(),
+      };
+      setDefaultValue(formItem.props.columns, rowData);
+      value.push(rowData);
+    }
+    return value;
+  } else {
+    return formItem.value;
+  }
 };
 
 /**
