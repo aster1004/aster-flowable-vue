@@ -160,3 +160,91 @@ export enum StartUserEnum {
   // 从表单选择
   FORM = 'form',
 }
+
+/**
+ * @description: 业务规则触发事件选项
+ */
+export const businessEventOptions = [
+  {
+    label: '流程启动时',
+    value: 'start',
+  },
+  {
+    label: '流程完成时',
+    value: 'completed',
+  },
+  {
+    label: '流程作废时',
+    value: 'cancel',
+  },
+];
+
+/**
+ * @description: 业务规则操作类型选项
+ */
+export const businessOperationOptions = [
+  {
+    label: '仅更新数据',
+    value: 'update',
+  },
+  {
+    label: '仅插入数据',
+    value: 'insert',
+  },
+  {
+    label: '更新和插入数据',
+    value: 'save',
+  },
+  {
+    label: '仅删除数据',
+    value: 'delete',
+  },
+] as WorkComponent.TreeNode[];
+
+/**
+ * @description: 业务规则过滤操作符选项
+ */
+export const businessFilterOperators = [
+  {
+    label: '等于',
+    value: 'eq',
+  },
+  {
+    label: '不等于',
+    value: 'neq',
+  },
+  {
+    label: '大于',
+    value: 'gt',
+  },
+  {
+    label: '大于等于',
+    value: 'gte',
+  },
+  {
+    label: '小于',
+    value: 'lt',
+  },
+  {
+    label: '小于等于',
+    value: 'lte',
+  },
+] as WorkComponent.TreeNode[];
+
+/**
+ * @description: 业务规则操作操作符选项
+ */
+export const businessOperateOperators = [
+  {
+    label: '等于',
+    value: 'eq',
+  },
+  {
+    label: '累加',
+    value: 'plus',
+  },
+  {
+    label: '扣减',
+    value: 'minus',
+  },
+] as WorkComponent.TreeNode[];

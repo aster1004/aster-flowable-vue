@@ -199,8 +199,8 @@
         <el-col :span="8">
           <el-card class="home-card-default">
             <p>
-              基于SpringBoot3、Flowable7.0、Mybatis-Plus、Vue3、ElementPlus、Vite等开发的工作流管理系统，仿钉钉/氚云设计，
-              支持表单设计、流程设计、流程权限、流程管理、任务调度、WebSocket等。
+              基于SpringBoot3、Flowable7.0、Mybatis-Plus、Vue3、ElementPlus等开发的工作流管理系统，仿钉钉设计，
+              支持表单设计、流程设计、流程权限、流程管理等。
             </p>
             <p class="pt-5px">
               <span class="font-bold">演示地址：</span>
@@ -211,15 +211,15 @@
             <p> 超级管理员: admin/123456 </p>
             <p class="pt-5px font-bold">支持</p>
             <p>
-              如果觉得还不错，希望您可以去
+              帮忙点个
               <a
                 href="https://gitee.com/lp1791803611/aster-flowable-vue"
                 target="_blank"
                 class="text-blue-500"
               >
-                码云
+                ⭐ Star
               </a>
-              帮作者点个 ⭐ Star，这将是对作者极大的鼓励与支持。
+              ，作者更有动力。
             </p>
           </el-card>
         </el-col>
