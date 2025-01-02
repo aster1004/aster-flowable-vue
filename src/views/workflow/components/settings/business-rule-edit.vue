@@ -175,7 +175,7 @@
   import { isEmpty, isNotEmpty } from '@/utils';
   import { dataFillOptionsByFormItems } from '@/utils/workflow';
   import { ElMessage } from 'element-plus';
-  import { computed, onMounted, ref } from 'vue';
+  import { computed, ref } from 'vue';
   import { ValueType } from '../component-config-export';
   import {
     businessEventOptions,
