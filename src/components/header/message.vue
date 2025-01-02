@@ -42,19 +42,20 @@
   const activeName = ref(NoticeTypeEnum.MESSAGE);
 
   /** 消息 */
-  const messageList = ref<Notice.NoticeItem[]>([
+  /*const messageList = ref<Notice.NoticeItem[]>([
     { key: '1', content: '一键三连❤❤❤', time: '2023年8月18日', read: false, type: '3' },
     { key: '2', content: '一键三连❤❤❤', time: '2023年8月18日', read: false, type: '3' },
     { key: '3', content: '一键三连❤❤❤', time: '2023年8月18日', read: false, type: '3' },
     { key: '4', content: '一键三连❤❤❤', time: '2023年8月18日', read: false, type: '3' },
     { key: '5', content: '一键三连❤❤❤', time: '2023年8月18日', read: false, type: '3' },
-  ]);
+  ]);*/
+  const messageList = noticeStore.state.value.notices;
   /** 通知 */
   const noticeList = ref<Notice.NoticeItem[]>([]);
   /** 消息总数 */
   const total = computed(() => {
-    // return messageList.value.length + noticeList.value.length;
-    return 0;
+    return messageList.length + noticeList.value.length;
+    // return 0;
   });
 
   const messageRef = ref();

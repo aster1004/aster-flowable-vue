@@ -32,6 +32,25 @@ declare namespace WorkForm {
   }
 
   /**
+   * @description: 业务规则
+   */
+  export interface BusinessRule {
+    id: string;
+    // 触发事件
+    event: string;
+    // 目标表单
+    target: { label: string; value: string; isTableList: boolean };
+    // 操作类型
+    operationType: string;
+    // 过滤条件
+    filters: { target: string; current: string; operator: string }[];
+    // 具体操作
+    operations: { target: string; current: string; operator: string }[];
+    // 是否启用
+    enable: boolean;
+  }
+
+  /**
    * @description: 打印模板
    */
   export interface PrintTemplate {
@@ -57,6 +76,8 @@ declare namespace WorkForm {
     };
     // 提交校验
     submitValidates?: SubmitValidate[];
+    // 业务规则
+    businessRules?: BusinessRule[];
     // 关联列表
     associationList?: WorkComponent.TreeNode[];
     // 打印模板

@@ -75,8 +75,10 @@ class RequestHttp {
         // 登陆失效
         if (data.code == ResultEnum.OVERDUE) {
           userStore.setToken('');
-          router.replace(LOGIN_URL);
-          console.log(data.message);
+          router.push({
+            path: LOGIN_URL,
+            query: { redirect: router.currentRoute.value.fullPath },
+          });
           return Promise.reject(data);
         }
         // 全局错误信息拦截（防止下载文件的时候返回数据流，没有 code 直接报错）

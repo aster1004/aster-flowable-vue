@@ -74,3 +74,13 @@ export const appDeleteApi = (ids: any) => {
 export const appFormTreeApi = () => {
   return request.get<WorkComponent.TreeNode[]>(PORT5 + `/app/tree`, { noLoading: true });
 };
+
+/**
+ * @description: 应用表单树含表单项
+ * @return {*}
+ */
+export const appFormTreeWithFormItemApi = () => {
+  return request.get<WorkComponent.FormTreeNode[]>(PORT5 + `/app/treeWithFormItem`, {
+    noLoading: true,
+  });
+};
