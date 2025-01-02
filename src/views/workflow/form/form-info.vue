@@ -131,7 +131,8 @@
   });
 
   const activeNodeId = ref<string[]>([]);
-
+  // 注册组件
+  const formRenderRef = ref();
   // 流程日志
   const processResult = ref<WorkForm.ProcessResult>({
     instanceLogs: [],
@@ -210,8 +211,17 @@
     }
   };
 
+  /**
+   * @description: 表单校验
+   * @return {*}
+   */
+  const validate = async (callback: Function) => {
+    await formRenderRef.value.validate(callback);
+  };
+
   defineExpose({
     isCollapse,
+    validate,
   });
 </script>
 <style scoped lang="scss">

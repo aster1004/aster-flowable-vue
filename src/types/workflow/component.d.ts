@@ -71,6 +71,17 @@ declare namespace WorkComponent {
   }
 
   /**
+   * @description: 表单树节点含表单项
+   */
+  export interface FormTreeNode {
+    label: string;
+    value: string;
+    leaf?: boolean;
+    formItems?: WorkComponent.ComponentConfig[];
+    children?: FormTreeNode[];
+  }
+
+  /**
    * @description: 数据填充模型
    */
   export interface DataFillModel {

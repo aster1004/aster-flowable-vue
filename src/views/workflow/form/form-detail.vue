@@ -150,7 +150,7 @@
   import { computed, reactive, ref } from 'vue';
   import DictTag from '@/components/dict/dict-tag.vue';
   import { ElMessage, TabPaneName } from 'element-plus';
-  import { convertDataTypes, setFormPermission } from '@/utils/workflow';
+  import { convertDataTypes, evaluateFormula, setFormPermission } from '@/utils/workflow';
   import FormInfo from './form-info.vue';
   import ListAssociation from '../list/list-association.vue';
   import PrintTemplatePreview from '../settings/print-template/print-template-preview.vue';
@@ -268,6 +268,41 @@
   };
 
   /**
+   * @description: 提交校验
+   * @return {*}
+   */
+  const submitValidate = () => {
+    if (formInfo.value.settings && formInfo.value.settings.submitValidates) {
+      const validates = formInfo.value.settings.submitValidates;
+      for (let i = 0; i < validates.length; i++) {
+        const v = validates[i];
+        if (v.enable) {
+          const r = evaluateFormula(v.formula, formData.value);
+          if (r) {
+            ElMessage.error(v.errorMessage);
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  };
+
+  /**
+   * @description: 验证表单
+   * @return {*}
+   */
+  const validateForm = async (callback: Function) => {
+    // 表单校验
+    await formInfoRef.value.validate(() => {
+      // 提交校验
+      if (submitValidate()) {
+        callback();
+      }
+    });
+  };
+
+  /**
    * @description: 编辑
    * @return {*}
    */
@@ -280,7 +315,9 @@
    * @return {*}
    */
   const submit = () => {
-    console.log('submit');
+    validateForm(() => {
+      console.log('submit');
+    });
   };
 
   /**
@@ -289,7 +326,9 @@
    */
   const handleAction = (item: WorkForm.ButtonPermission) => {
     console.log('handleAction', item);
-    approveTaskRef.value.init(item);
+    validateForm(() => {
+      approveTaskRef.value.init(item);
+    });
   };
   /**
    * @description: 打印
