@@ -27,6 +27,9 @@ export const useNoticeStore = defineStore('notice', () => {
     state.notices.forEach((item) => {
       if (item.key == key) {
         item.read = true;
+        // TODO 更新数据库中的已读状态
+        // 从state.notices中删除key 对应的item
+        removeNotice(item);
       }
     });
     ElMessage.success('已读成功');
