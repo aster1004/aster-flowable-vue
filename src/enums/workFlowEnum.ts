@@ -207,27 +207,27 @@ export const businessOperationOptions = [
 export const businessFilterOperators = [
   {
     label: '等于',
-    value: 'eq',
+    value: 'EQ',
   },
   {
     label: '不等于',
-    value: 'neq',
+    value: 'NEQ',
   },
   {
     label: '大于',
-    value: 'gt',
+    value: 'GT',
   },
   {
     label: '大于等于',
-    value: 'gte',
+    value: 'GT_EQ',
   },
   {
     label: '小于',
-    value: 'lt',
+    value: 'LT',
   },
   {
     label: '小于等于',
-    value: 'lte',
+    value: 'LT_EQ',
   },
 ] as WorkComponent.TreeNode[];
 
@@ -237,14 +237,14 @@ export const businessFilterOperators = [
 export const businessOperateOperators = [
   {
     label: '等于',
-    value: 'eq',
+    value: 'EQ',
   },
   {
     label: '累加',
-    value: 'plus',
+    value: 'PLUS',
   },
   {
     label: '扣减',
-    value: 'minus',
+    value: 'MINUS',
   },
 ] as WorkComponent.TreeNode[];
