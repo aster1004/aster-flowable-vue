@@ -337,11 +337,11 @@
   const handleOperationChange = (val: string) => {
     if (val === 'insert') {
       if (rule.value.target.isTableList) {
-        rule.value.filters = [{ target: '', operator: '=', current: '' }];
+        rule.value.filters = [{ target: '', operator: 'EQ', current: '' }];
       } else {
         rule.value.filters = [];
       }
-      rule.value.operations = [{ target: '', operator: '=', current: '' }];
+      rule.value.operations = [{ target: '', operator: 'EQ', current: '' }];
       // 若是明细表, 则通过主表的条件来确认是哪些流程实例的明细表需要新增数据
       if (rule.value.target.isTableList) {
         operateTargetFormItems.value = dataFillOptionsByFormItems(targetSubFormItems.value, true);
@@ -351,7 +351,7 @@
         filterTargetFormItems.value = [];
       }
     } else if (val === 'delete') {
-      rule.value.filters = [{ target: '', operator: '=', current: '' }];
+      rule.value.filters = [{ target: '', operator: 'EQ', current: '' }];
       rule.value.operations = [];
       // 若是明细表，则根据明细表的条件来确认哪些实例的明细表的某一行数据需要删除
       if (rule.value.target.isTableList) {
@@ -362,8 +362,8 @@
         operateTargetFormItems.value = [];
       }
     } else {
-      rule.value.filters = [{ target: '', operator: '=', current: '' }];
-      rule.value.operations = [{ target: '', operator: '=', current: '' }];
+      rule.value.filters = [{ target: '', operator: 'EQ', current: '' }];
+      rule.value.operations = [{ target: '', operator: 'EQ', current: '' }];
 
       filterTargetFormItems.value = dataFillOptionsByFormItems(targetFormItems.value, false);
       operateTargetFormItems.value = dataFillOptionsByFormItems(targetFormItems.value, true);
@@ -378,7 +378,7 @@
   const handleAddFilter = () => {
     rule.value.filters.push({
       target: '',
-      operator: '',
+      operator: 'EQ',
       current: '',
     });
     filterOperatorOptions.value.push(businessFilterOperators);
@@ -428,10 +428,10 @@
     filterOperatorOptions.value[index] = filterOperatorOptions.value[index].map((item) => {
       if (targetItem.type !== ValueType.number) {
         if (
-          item.value === '>' ||
-          item.value === '>=' ||
-          item.value === '<' ||
-          item.value === '<='
+          item.value === 'GT' ||
+          item.value === 'GT_EQ' ||
+          item.value === 'LT' ||
+          item.value === 'LT_EQ'
         ) {
           item.disabled = true;
         }
@@ -457,7 +457,7 @@
   const handleAddOperate = () => {
     rule.value.operations.push({
       target: '',
-      operator: '',
+      operator: 'EQ',
       current: '',
     });
     operateOperatorOptions.value.push(businessOperateOperators);
@@ -483,7 +483,7 @@
     // 根据目标表单字段类型，筛选操作符
     operateOperatorOptions.value[index] = operateOperatorOptions.value[index].map((item) => {
       if (targetItem.type !== ValueType.number) {
-        if (item.value === '+' || item.value === '-') {
+        if (item.value === 'PLUS' || item.value === 'MINUS') {
           item.disabled = true;
         }
       } else {
@@ -588,7 +588,7 @@
           (item) => item.value == rule.value.target.value,
         );
         if (targetItems && targetItems.formItems) {
-          targetFormItems.value = dataFillOptionsByFormItems(targetItems.formItems, false);
+          targetFormItems.value = JSON.parse(JSON.stringify(targetItems.formItems));
         }
         if (isNotEmpty(rule.value.filters)) {
           rule.value.filters.forEach(() => {
