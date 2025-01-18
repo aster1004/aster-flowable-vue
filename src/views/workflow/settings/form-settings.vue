@@ -14,6 +14,9 @@
             <el-menu-item index="submitValidate">
               <i class="iconfont icon-feedback pr-5px"></i>提交校验
             </el-menu-item>
+            <el-menu-item index="dynamicValidate">
+              <i class="iconfont icon-hanshu pr-5px"></i>动态校验
+            </el-menu-item>
             <el-menu-item index="businessRule">
               <i class="iconfont icon-shujuguanli pr-5px"></i>业务规则
             </el-menu-item>
@@ -34,6 +37,7 @@
     <el-main class="settings-main">
       <div class="main-container">
         <submit-validate ref="submitValidateRef" v-if="activeMenu == 'submitValidate'" />
+        <dynamic-validate ref="dynamicValidateRef" v-if="activeMenu == 'dynamicValidate'" />
         <business-rule ref="businessRuleRef" v-if="activeMenu == 'businessRule'" />
         <message-reminder ref="messageReminderRef" v-if="activeMenu == 'messageReminder'" />
         <association-list ref="associationListRef" v-if="activeMenu == 'associationList'" />
@@ -48,6 +52,7 @@
   import MessageReminder from './message-reminder.vue';
   import AssociationList from './association-list.vue';
   import PrintTemplate from './print-template/index.vue';
+  import DynamicValidate from './dynamic-validate/index.vue';
   import { ref } from 'vue';
 
   // 活动菜单
