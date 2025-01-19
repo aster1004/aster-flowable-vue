@@ -12,7 +12,7 @@
       <el-button
         v-if="submitValidates && submitValidates.length > 0"
         type="primary"
-        @click="addFormula"
+        @click="addRule"
       >
         新增规则
       </el-button>
@@ -67,6 +67,8 @@
       </div>
     </div>
 
+    <add-or-edit ref="addOrEditRef" v-if="visible" />
+
     <!-- <formula
       ref="formulaRef"
       title="表单提交校验"
@@ -82,13 +84,19 @@
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { isNotEmpty } from '@/utils';
   import { flatFormItems, generateFieldId, restorationFormulaByFormItems } from '@/utils/workflow';
-  import { computed, ref } from 'vue';
+  import { computed, ref, nextTick } from 'vue';
+  import AddOrEdit from './add-or-edit.vue';
   // import Formula from '../components/common/formula.vue';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
-  // 注册组件
-  const formulaRef = ref();
+
+  // 新增或修改动态校验规则
+  const addOrEditRef = ref();
+
+  // 表单显示
+  const visible = ref<boolean>(false);
+
   // 校验规则
   const submitValidate = ref<WorkForm.SubmitValidate>({
     id: '',
@@ -145,27 +153,6 @@
   };
 
   /**
-   * @description: 新增规则
-   */
-  const addFormula = () => {
-    submitValidate.value = {
-      id: '',
-      formula: '',
-      errorMessage: '',
-      enable: true,
-    };
-    showFormula();
-  };
-
-  /**
-   * @description: 编辑规则
-   */
-  const handleEdit = (element: WorkForm.SubmitValidate) => {
-    submitValidate.value = element;
-    showFormula();
-  };
-
-  /**
    * @description: 删除规则
    */
   const handleDelete = (element: WorkForm.SubmitValidate) => {
@@ -179,13 +166,6 @@
    */
   const convertFormula = (val: string) => {
     return restorationFormulaByFormItems(val, _flatFormItems.value);
-  };
-
-  /**
-   * @description: 显示公式
-   */
-  const showFormula = () => {
-    formulaRef.value.init(submitValidate.value);
   };
 
   /**
@@ -216,6 +196,13 @@
         ];
       }
     }
+  };
+
+  const addRule = () => {
+    visible.value = true;
+    nextTick(() => {
+      addOrEditRef.value.init({});
+    });
   };
 </script>
 <style scoped lang="scss">
