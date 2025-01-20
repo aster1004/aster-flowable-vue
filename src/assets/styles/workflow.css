@@ -601,7 +601,7 @@ textarea.ant-input {
   min-height: 72px;
   -ms-flex-negative: 0;
   flex-shrink: 0;
-  background: #fff;
+  background: var(--el-fill-color-light);
   border-radius: 4px;
   cursor: pointer;
 }
@@ -618,7 +618,7 @@ textarea.ant-input {
   border-radius: 4px;
   border: 1px solid transparent;
   transition: all 0.1s cubic-bezier(0.645, 0.045, 0.355, 1);
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: var(--el-box-shadow-light);
 }
 
 .node-wrap-box.active:after,
@@ -636,7 +636,7 @@ textarea.ant-input {
 
 .node-wrap-box.error:after {
   border: 1px solid #f25643;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: var(--el-box-shadow-light);
 }
 
 .node-wrap-box .title {
@@ -725,7 +725,7 @@ textarea.ant-input {
   border-style: solid;
   border-width: 8px 6px 4px;
   border-color: #cacaca transparent transparent;
-  background: #f5f5f7;
+  background: var(--el-bg-color-page);
 }
 
 .node-wrap-box.start-node:before {
@@ -741,7 +741,7 @@ textarea.ant-input {
   position: absolute;
   height: 8px;
   width: 50%;
-  background-color: #f5f5f7;
+  background-color: var(--el-bg-color-page);
   top: -4px;
 }
 
@@ -758,7 +758,7 @@ textarea.ant-input {
   position: absolute;
   height: 8px;
   width: 50%;
-  background-color: #f5f5f7;
+  background-color: var(--el-bg-color-page);
   bottom: -4px;
 }
 
@@ -768,7 +768,7 @@ textarea.ant-input {
 
 .dingflow-design {
   width: 100%;
-  background-color: #f5f5f7;
+  background-color: var(--el-bg-color-page);
   overflow: auto;
   position: absolute;
   bottom: 0;
@@ -794,7 +794,7 @@ textarea.ant-input {
   min-width: -webkit-min-content;
   min-width: -moz-min-content;
   min-width: min-content;
-  background-color: #f5f5f7;
+  background-color: var(--el-bg-color-page);
   transform-origin: 50% 0px 0px;
 }
 
@@ -849,7 +849,7 @@ textarea.ant-input {
 }
 
 .dingflow-design .branch-box .col-box {
-  background: #f5f5f7;
+  background: var(--el-bg-color-page);
 }
 
 .dingflow-design .branch-box .col-box:before {
@@ -954,7 +954,7 @@ textarea.ant-input {
   position: relative;
   width: 220px;
   min-height: 72px;
-  background: #fff;
+  background: var(--el-fill-color-light);
   border-radius: 4px;
   padding: 14px 19px;
   cursor: pointer;
@@ -972,7 +972,7 @@ textarea.ant-input {
   border-radius: 4px;
   border: 1px solid transparent;
   transition: all 0.1s cubic-bezier(0.645, 0.045, 0.355, 1);
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: var(--el-box-shadow-light);
 }
 
 .dingflow-design .auto-judge.active:after,
@@ -990,7 +990,7 @@ textarea.ant-input {
 
 .dingflow-design .auto-judge.error:after {
   border: 1px solid #f25643;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: var(--el-box-shadow-light);
 }
 
 .dingflow-design .auto-judge .title-wrapper {
@@ -1013,7 +1013,7 @@ textarea.ant-input {
   display: inline-block;
   float: right;
   margin-right: 10px;
-  color: rgba(25, 31, 37, 0.56);
+  color: var(--el-text-color-secondary);
 }
 
 .dingflow-design .auto-judge .placeholder {
@@ -1037,7 +1037,6 @@ textarea.ant-input {
 
 .dingflow-design .auto-judge .content {
   font-size: 14px;
-  color: #191f25;
   text-align: left;
   margin-top: 6px;
   overflow: hidden;
