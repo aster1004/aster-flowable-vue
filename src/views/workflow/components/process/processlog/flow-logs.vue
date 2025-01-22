@@ -466,6 +466,7 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    flex-wrap: wrap;
     font-weight: normal;
     margin-left: -35px;
     margin-top: 15px;

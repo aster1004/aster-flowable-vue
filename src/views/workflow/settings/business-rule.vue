@@ -184,6 +184,9 @@
     if (rules.value) {
       if (isEmpty(element.id)) {
         element.id = generateFieldId('rule');
+      } else {
+        // 先移除已存在的rule, 再添加
+        rules.value = rules.value.filter((item) => item.id !== element.id);
       }
       rules.value = [...rules.value, JSON.parse(JSON.stringify(element))];
     }

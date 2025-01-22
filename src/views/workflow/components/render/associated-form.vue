@@ -36,21 +36,23 @@
               @clear="clearPopover"
             />
           </template>
-          <div
-            ref="selectRef"
-            class="el-select-dropdown"
-            v-click-outside:="hidePopover"
-            @mouseleave="hidePopover"
-          >
+          <div ref="selectRef" class="el-select-dropdown" v-click-outside:="hidePopover">
             <div class="el-scrollbar">
               <div
                 class="el-select-dropdown__wrap el-scrollbar__wrap el-scrollbar__wrap--hidden-default"
               >
+                <el-input
+                  ref="popoverSearchRef"
+                  v-model="searchValue"
+                  clearable
+                  :suffix-icon="Search"
+                  @input="handlePopoverSearch"
+                />
               </div>
             </div>
             <ul class="el-scrollbar__view el-select-dropdown__list">
               <li
-                v-for="(item, index) in associatedOptions"
+                v-for="(item, index) in popoverOptions"
                 :key="index"
                 :class="['el-select-dropdown__item', isActive(item.value) ? 'is-hovering' : '']"
                 @mouseenter="hoverItem(item.value, true)"
@@ -106,6 +108,7 @@
   import { instanceListByCodeApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
+  import { Search } from '@element-plus/icons-vue';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -149,6 +152,8 @@
   const associatedList = ref<Process.InstanceInfo[]>([]);
   // 关联表单的流程实例选项
   const associatedOptions = ref<any[]>([]);
+  // 弹窗选项
+  const popoverOptions = ref<any[]>([]);
   // 活动选项
   const activeItem = ref('');
   // 最小宽度
@@ -159,6 +164,8 @@
   const printLabelRef = ref();
   const printValueRef = ref();
   const printMaxHeight = ref(32);
+  // 搜索值
+  const searchValue = ref('');
 
   /**
    * @description: 更新高度
@@ -201,6 +208,21 @@
   };
 
   /**
+   * @description: 搜索
+   * @return {*}
+   */
+  const handlePopoverSearch = () => {
+    if (isNotEmpty(searchValue.value)) {
+      const options = associatedOptions.value.filter((item) => {
+        return item.label.indexOf(searchValue.value) > -1;
+      });
+      popoverOptions.value = JSON.parse(JSON.stringify(options));
+    } else {
+      popoverOptions.value = JSON.parse(JSON.stringify(associatedOptions.value));
+    }
+  };
+
+  /**
    * @description: 是否是活动选项
    * @return {*}
    */
@@ -215,6 +237,9 @@
   const popoverClick = () => {
     popoverVisible.value = !popoverVisible.value;
     popoverWidth();
+    // 重置搜索值和选项
+    searchValue.value = '';
+    popoverOptions.value = JSON.parse(JSON.stringify(associatedOptions.value));
   };
 
   /**
@@ -225,6 +250,10 @@
     minWidth.value = popoverInputRef.value.$el.offsetWidth;
   };
 
+  /**
+   * @description: 清除
+   * @return {*}
+   */
   const clearPopover = () => {
     _value.value = { label: '', value: '' };
   };
@@ -405,6 +434,7 @@
             } else {
               associatedOptions.value = [];
             }
+            popoverOptions.value = JSON.parse(JSON.stringify(associatedOptions.value));
           }
         });
       }
@@ -442,6 +472,7 @@
                   label: labels.join('-'),
                 };
               });
+            popoverOptions.value = JSON.parse(JSON.stringify(associatedOptions.value));
           }
         });
       }
