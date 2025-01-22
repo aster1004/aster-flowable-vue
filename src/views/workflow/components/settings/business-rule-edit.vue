@@ -52,7 +52,13 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <div v-if="isNotEmpty(rule.operationType) && rule.operationType !== 'insert'">
+    <div
+      v-if="
+        isNotEmpty(rule.operationType) &&
+        (rule.operationType !== 'insert' ||
+          (rule.operationType === 'insert' && rule.target.isTableList))
+      "
+    >
       <div class="dialog-tip">
         <p>
           操作范围
@@ -71,10 +77,10 @@
               @change="handleFilterChange($event, index)"
             >
               <el-option
-                v-for="item in targetFormItems"
+                v-for="item in filterTargetFormItems"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value"
+                :value="item"
                 :disabled="item.disabled"
               />
             </el-select>
@@ -96,7 +102,7 @@
                 v-for="item in filterCurrentFormItems[index]"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value"
+                :value="item"
                 :disabled="item.disabled"
               />
             </el-select>
@@ -125,10 +131,10 @@
               @change="handleOperateChange($event, index)"
             >
               <el-option
-                v-for="item in targetFormItems"
+                v-for="item in operateTargetFormItems"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value"
+                :value="item"
                 :disabled="item.disabled"
               />
             </el-select>
@@ -150,7 +156,7 @@
                 v-for="item in operateCurrentFormItems[index]"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value"
+                :value="item"
                 :disabled="item.disabled"
               />
             </el-select>
@@ -196,12 +202,18 @@
   // 扁平化目标表单选项
   const flatTargetOptions = ref<WorkComponent.FormTreeNode[]>([]);
   // 目标表单的表单项
-  const targetFormItems = ref<WorkComponent.DataFillOption[]>([]);
+  const targetFormItems = ref<WorkComponent.ComponentConfig[]>([]);
+  // 目标表单的子表表单项
+  const targetSubFormItems = ref<WorkComponent.ComponentConfig[]>([]);
+  // 过滤条件的目标表单的表单项
+  const filterTargetFormItems = ref<WorkComponent.DataFillOption[]>([]);
   // 过滤条件的操作符
   const filterOperatorOptions = ref<WorkComponent.TreeNode[][]>([]);
   // 过滤条件的当前表单的表单项
   const filterCurrentFormItems = ref<WorkComponent.DataFillOption[][]>([]);
-  // 过滤条件的操作符
+  // 操作条件的目标表单的表单项
+  const operateTargetFormItems = ref<WorkComponent.DataFillOption[]>([]);
+  // 操作条件的操作符
   const operateOperatorOptions = ref<WorkComponent.TreeNode[][]>([]);
   // 操作条件的当前表单的表单项
   const operateCurrentFormItems = ref<WorkComponent.DataFillOption[][]>([]);
@@ -286,17 +298,17 @@
   /**
    * @description: 节点点击
    */
-  const handleNodeClick = (node: WorkComponent.FormTreeNode) => {
+  const handleNodeClick = (node: WorkComponent.FormTreeNode, property: any) => {
     rule.value.target.label = node.label;
     rule.value.target.value = node.value;
-    // 目标表单的表单项
-    if (node.formItems) {
-      targetFormItems.value = dataFillOptionsByFormItems(node.formItems, false);
-    }
-    // 清空过滤条件和具体操作
-    clearFilterOperator();
     // 若是明细表，则设置操作类型只能为仅插入和仅删除
     if (node.value.indexOf('-field') != -1) {
+      // 目标表单的主表表单项
+      targetFormItems.value = property.parent.data.formItems;
+      // 明细表的表单项
+      if (node.formItems) {
+        targetSubFormItems.value = node.formItems;
+      }
       rule.value.target.isTableList = true;
       businessOperationOptions.forEach((item) => {
         if (item.value !== 'delete' && item.value !== 'insert') {
@@ -306,11 +318,17 @@
         }
       });
     } else {
+      if (node.formItems) {
+        targetFormItems.value = node.formItems;
+        targetSubFormItems.value = [];
+      }
       rule.value.target.isTableList = false;
       businessOperationOptions.forEach((item) => {
         item.disabled = false;
       });
     }
+    // 清空过滤条件和具体操作
+    clearFilterOperator();
   };
 
   /**
@@ -318,15 +336,40 @@
    */
   const handleOperationChange = (val: string) => {
     if (val === 'insert') {
-      rule.value.filters = [];
-      rule.value.operations = [{ target: '', operator: '', current: '' }];
+      if (rule.value.target.isTableList) {
+        rule.value.filters = [{ target: '', operator: 'EQ', current: '' }];
+      } else {
+        rule.value.filters = [];
+      }
+      rule.value.operations = [{ target: '', operator: 'EQ', current: '' }];
+      // 若是明细表, 则通过主表的条件来确认是哪些流程实例的明细表需要新增数据
+      if (rule.value.target.isTableList) {
+        operateTargetFormItems.value = dataFillOptionsByFormItems(targetSubFormItems.value, true);
+        filterTargetFormItems.value = dataFillOptionsByFormItems(targetFormItems.value, false);
+      } else {
+        operateTargetFormItems.value = dataFillOptionsByFormItems(targetFormItems.value, true);
+        filterTargetFormItems.value = [];
+      }
     } else if (val === 'delete') {
-      rule.value.filters = [{ target: '', operator: '', current: '' }];
+      rule.value.filters = [{ target: '', operator: 'EQ', current: '' }];
       rule.value.operations = [];
+      // 若是明细表，则根据明细表的条件来确认哪些实例的明细表的某一行数据需要删除
+      if (rule.value.target.isTableList) {
+        filterTargetFormItems.value = dataFillOptionsByFormItems(targetFormItems.value, true);
+        operateTargetFormItems.value = [];
+      } else {
+        filterTargetFormItems.value = dataFillOptionsByFormItems(targetFormItems.value, false);
+        operateTargetFormItems.value = [];
+      }
     } else {
-      rule.value.filters = [{ target: '', operator: '', current: '' }];
-      rule.value.operations = [{ target: '', operator: '', current: '' }];
+      rule.value.filters = [{ target: '', operator: 'EQ', current: '' }];
+      rule.value.operations = [{ target: '', operator: 'EQ', current: '' }];
+
+      filterTargetFormItems.value = dataFillOptionsByFormItems(targetFormItems.value, false);
+      operateTargetFormItems.value = dataFillOptionsByFormItems(targetFormItems.value, true);
     }
+    console.log('------------------');
+    console.log(targetFormItems.value);
   };
 
   /**
@@ -335,7 +378,7 @@
   const handleAddFilter = () => {
     rule.value.filters.push({
       target: '',
-      operator: '',
+      operator: 'EQ',
       current: '',
     });
     filterOperatorOptions.value.push(businessFilterOperators);
@@ -369,7 +412,7 @@
    * @description: 过滤条件变化
    */
   const handleFilterChange = (val: string, index: number) => {
-    const targetItem = targetFormItems.value.find((item) => item.value == val);
+    const targetItem = filterTargetFormItems.value.find((item) => item.value == val);
     if (targetItem == undefined) {
       return;
     }
@@ -385,10 +428,10 @@
     filterOperatorOptions.value[index] = filterOperatorOptions.value[index].map((item) => {
       if (targetItem.type !== ValueType.number) {
         if (
-          item.value === 'gt' ||
-          item.value === 'gte' ||
-          item.value === 'lt' ||
-          item.value === 'lte'
+          item.value === 'GT' ||
+          item.value === 'GT_EQ' ||
+          item.value === 'LT' ||
+          item.value === 'LT_EQ'
         ) {
           item.disabled = true;
         }
@@ -414,7 +457,7 @@
   const handleAddOperate = () => {
     rule.value.operations.push({
       target: '',
-      operator: '',
+      operator: 'EQ',
       current: '',
     });
     operateOperatorOptions.value.push(businessOperateOperators);
@@ -425,7 +468,7 @@
    * @description: 操作条件变化
    */
   const handleOperateChange = (val: string, index: number) => {
-    const targetItem = targetFormItems.value.find((item) => item.value == val);
+    const targetItem = operateTargetFormItems.value.find((item) => item.value == val);
     if (targetItem == undefined) {
       return;
     }
@@ -440,7 +483,7 @@
     // 根据目标表单字段类型，筛选操作符
     operateOperatorOptions.value[index] = operateOperatorOptions.value[index].map((item) => {
       if (targetItem.type !== ValueType.number) {
-        if (item.value === 'plus' || item.value === 'minus') {
+        if (item.value === 'PLUS' || item.value === 'MINUS') {
           item.disabled = true;
         }
       } else {
@@ -545,7 +588,7 @@
           (item) => item.value == rule.value.target.value,
         );
         if (targetItems && targetItems.formItems) {
-          targetFormItems.value = dataFillOptionsByFormItems(targetItems.formItems, false);
+          targetFormItems.value = JSON.parse(JSON.stringify(targetItems.formItems));
         }
         if (isNotEmpty(rule.value.filters)) {
           rule.value.filters.forEach(() => {

@@ -1,12 +1,16 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-04-11 11:28:24
- * @FilePath: \aster-admin\src\components\dict\dict-checkbox.vue
+ * @FilePath: \aster-flowable-vue\src\components\dict\dict-checkbox.vue
  * @Description: 字典多选框
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-checkbox-group :model-value="modelValue" @change="$emit('update:modelValue', $event)">
+  <el-checkbox-group
+    :model-value="modelValue"
+    @change="$emit('update:modelValue', $event)"
+    :disabled="disabled"
+  >
     <el-checkbox
       v-for="data in dataList"
       :key="data.dictValue"
@@ -30,6 +34,10 @@
     dictType: {
       type: String,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   });
 

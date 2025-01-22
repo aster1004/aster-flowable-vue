@@ -6,7 +6,11 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-radio-group :model-value="modelValue + ''" @change="$emit('update:modelValue', $event)">
+  <el-radio-group
+    :model-value="modelValue + ''"
+    @change="$emit('update:modelValue', $event)"
+    :disabled="disabled"
+  >
     <el-radio v-for="data in dataList" :key="data.dictValue" :value="data.dictValue">
       {{ data.dictLabel }}
     </el-radio>
@@ -27,6 +31,10 @@
     dictType: {
       type: String,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   });
 

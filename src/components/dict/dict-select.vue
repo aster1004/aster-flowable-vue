@@ -11,6 +11,7 @@
     :placeholder="placeholder"
     :multiple="multiple"
     :clearable="clearable"
+    :disabled="disabled"
     @change="$emit('update:modelValue', $event)"
   >
     <el-option
@@ -52,6 +53,10 @@
       type: String,
       required: false,
       default: () => '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   });
 

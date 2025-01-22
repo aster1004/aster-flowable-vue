@@ -6,6 +6,7 @@
 
 <script setup>
   import { computed, reactive, watch, ref, onMounted } from 'vue'; //全屏
+  import { useGlobalStore } from '@/stores/modules/global';
   import { ImageUpload } from '@/config/fileConfig';
   import { uploadFile } from '@/api';
   import tinymce from 'tinymce/tinymce';
@@ -70,8 +71,14 @@
     },
   });
 
+  const globalStore = useGlobalStore();
   const tinymceEditor = ref();
   const tinymceId = ref('vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + ''));
+
+  // 主题
+  const _skinUrl = computed(() => {
+    return globalStore.isDark ? '/tinymce/skins/ui/oxide-dark' : '/tinymce/skins/ui/oxide';
+  });
 
   // 上传图片
   const handleUploadImage = function (blobInfo, success, failure) {
@@ -99,10 +106,19 @@
     });
   };
 
+  /**
+   * @description 构造文本
+   * @param {String} title 标题
+   * @param {String} value 值
+   */
   const textFormat = (title, value) => {
     return '<span class="field-content">' + '${' + title + ':' + value + '}</span>';
   };
 
+  /**
+   * @description 构造表格
+   * @param {Object} field 表格字段
+   */
   const createTable = (field) => {
     //const height = 40;
     const table = document.createElement('table');
@@ -134,14 +150,26 @@
     return tableDom;
   };
 
+  /**
+   * @description 插入文本
+   * @param {String} text 文本
+   */
   const insertText = (text) => {
     tinymceEditor.value.execCommand('mceInsertContent', false, text);
   };
 
+  /**
+   * @description 插入dom
+   * @param {Object} dom dom
+   */
   const insertDom = (dom) => {
     insertText(dom.innerHTML);
   };
 
+  /**
+   * @description 拖拽到编辑器上
+   * @param {Object} ev 事件
+   */
   const dropElOnEditor = (ev) => {
     tinymce.activeEditor.focus();
     const text = ev.dataTransfer.getData('text');
@@ -155,6 +183,10 @@
     ev.preventDefault();
   };
 
+  /**
+   * @description 初始化
+   * @param {Object} editor 编辑器实例
+   */
   const handleSetup = (editor) => {
     editor.on('init', (e) => {
       console.log('编辑器初始化完成...', editor);
@@ -171,7 +203,7 @@
     content_css: '/tinymce/skins/content/default/content.css', //以css文件方式自定义可编辑区域的css样式，css文件需自己创建并引入
     language_url: '/tinymce/langs/zh_CN.js', // 语言包的路径，具体路径看自己的项目
     language: 'zh_CN',
-    skin_url: '/tinymce/skins/ui/oxide', // skin路径，具体路径看自己的项目
+    skin_url: _skinUrl.value, // skin路径，具体路径看自己的项目
     height: props.height,
     promotion: false, // 隐藏右上角upgrade按钮
     branding: false, // 隐藏右下角“Powered by TinyMCE”
