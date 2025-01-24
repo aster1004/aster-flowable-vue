@@ -149,3 +149,20 @@ export const getCompleteStatisticskApi = () => {
     },
   );
 };
+
+/**
+ * @description: 超级管理员提交表单
+ * @param {String} code 表单code
+ * @param {WorkForm.FormDataModel} formData 表单数据
+ * @return {*}
+ */
+export const superAdminSubmitApi = (code: string, formData: WorkForm.FormDataModel) => {
+  return request.post<string>(
+    PORT5 + `/processTask/submitBySuperAdmin`,
+    {
+      code: code,
+      formData: formData,
+    },
+    { noLoading: false },
+  );
+};
