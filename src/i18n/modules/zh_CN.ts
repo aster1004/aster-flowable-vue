@@ -23,6 +23,7 @@ export default {
     selectOne: '请选择数据！',
     status0: '正常',
     status1: '停用',
+    confirmSubmit: '确定提交吗?',
   },
   calendar: {
     perpetualCalendar: '万年历',

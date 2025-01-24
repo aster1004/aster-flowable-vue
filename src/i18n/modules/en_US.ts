@@ -23,6 +23,7 @@ export default {
     selectOne: 'Please select data!',
     status0: 'Enable',
     status1: 'Disable',
+    confirmSubmit: 'Are you sure you want to submit?',
   },
   calendar: {
     perpetualCalendar: 'Perpetual Calendar',
