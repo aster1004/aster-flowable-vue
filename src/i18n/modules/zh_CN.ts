@@ -520,5 +520,10 @@ export default {
     addRowBelow: '在下面添加行',
     prevRow: '上一条',
     nextRow: '下一条',
+    label: {
+      appName: '应用名称',
+      appIcon: '应用图标',
+      appIconColor: '图标颜色',
+    },
   },
 };

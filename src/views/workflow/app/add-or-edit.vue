@@ -16,18 +16,17 @@
     >
       <el-row>
         <el-col :span="24">
-          <el-form-item prop="name" label="应用名称">
-            <el-input v-model="formData.name" placeholder="应用名称" />
+          <el-form-item prop="name" :label="$t('workflow.label.appName')">
+            <el-input v-model="formData.name" :placeholder="$t('workflow.label.appName')" />
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item prop="icon" label="图标">
+          <el-form-item prop="icon" :label="$t('workflow.label.appIcon')">
             <icon-select ref="iconSelectRef" v-model:icon="formData.icon" />
-            <!-- <el-input v-model="formData.icon" placeholder="图标" /> -->
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item prop="iconColor" label="图标颜色">
+          <el-form-item prop="iconColor" :label="$t('workflow.label.appIconColor')">
             <el-color-picker v-model="formData.iconColor" />
           </el-form-item>
         </el-col>
