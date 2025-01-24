@@ -27,8 +27,9 @@
           </div>
           <div class="form-header-right">
             <div class="form-header-action" v-if="isEdit">
-              <el-tooltip content="编辑" placement="bottom">
-                <i class="iconfont icon-bianji" @click="handleEdit"></i>
+              <el-tooltip :content="isFooter ? '关闭编辑' : '编辑'" placement="bottom">
+                <i class="iconfont icon-guanbixiugai" v-if="isFooter" @click="handleEdit"></i>
+                <i class="iconfont icon-xiugai" v-else @click="handleEdit"></i>
               </el-tooltip>
             </div>
             <div class="form-header-action">
@@ -111,7 +112,7 @@
 
     <template #footer v-if="isFooter || buttonPermission.length > 0">
       <div v-if="isFooter">
-        <el-button type="primary" @click="submit">{{ $t('button.confirm') }}</el-button>
+        <el-button type="primary" @click="superAdminSubmit">{{ $t('button.confirm') }}</el-button>
         <el-button @click="cancel">{{ $t('button.cancel') }}</el-button>
       </div>
       <div v-if="!isFooter && buttonPermission.length > 0">
@@ -143,24 +144,31 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-  import { instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/task';
+  import {
+    instanceInfoApi,
+    instanceInfoByInstanceIdApi,
+    superAdminSubmitApi,
+  } from '@/api/workflow/task';
   import { associationListInstanceNumberApi } from '@/api/workflow/assocaition';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isEmpty, isNotEmpty } from '@/utils';
   import { computed, reactive, ref } from 'vue';
   import DictTag from '@/components/dict/dict-tag.vue';
-  import { ElMessage, TabPaneName } from 'element-plus';
+  import { ElMessage, ElMessageBox, TabPaneName } from 'element-plus';
   import { convertDataTypes, evaluateFormula, setFormPermission } from '@/utils/workflow';
   import FormInfo from './form-info.vue';
   import ListAssociation from '../list/list-association.vue';
   import PrintTemplatePreview from '../settings/print-template/print-template-preview.vue';
   import ApproveTask from '@/views/workflow/components/common/approve-task.vue';
+  import { useUserStore } from '@/stores/modules/user';
+  import { useI18n } from 'vue-i18n';
 
-  const emits = defineEmits(['resetQuery']); // 关闭详情弹框
+  const userStore = useUserStore();
+  const { t } = useI18n();
+
+  const emits = defineEmits(['resetQuery']);
   // 显示抽屉
   const visible = ref(false);
-  // 显示审核弹框
-  const approveTaskRef = ref();
   // 抽屉全屏
   const isFullScreen = ref<boolean>(false);
   // 表单类型
@@ -173,8 +181,8 @@
   const formInstanceId = ref<string>('');
   // 流程实例id
   const procInstId = ref<string>('');
-
-  const buttonPermission = ref<WorkForm.ButtonPermission[]>([]); //{name: "agree", operation: "同意", status: true}
+  // 按钮权限 格式: {name: "agree", operation: "同意", status: true}
+  const buttonPermission = ref<WorkForm.ButtonPermission[]>([]);
   // 表单信息
   const formInfo = ref<WorkForm.FormModel>({
     icon: 'iconfont icon-gengduo',
@@ -206,6 +214,7 @@
   const associationListRefs: any[] = [];
   const printTemplateRef = ref();
   const formInfoRef = ref();
+  const approveTaskRef = ref();
   // 查询参数
   const queryParams = reactive<Process.InstanceQueryParams>({
     id: '',
@@ -224,12 +233,11 @@
   });
 
   /**
-   * @description: 是否可编辑
+   * @description: 超管显示编辑按钮
    * @return {*}
    */
   const isEdit = computed(() => {
-    //TODO 表单详情编辑权限
-    return true;
+    return userStore.isSuperAdmin;
   });
 
   /**
@@ -311,12 +319,34 @@
   };
 
   /**
-   * @description: 提交
+   * @description: 超管编辑后的提交
    * @return {*}
    */
-  const submit = () => {
+  const superAdminSubmit = () => {
     validateForm(() => {
-      console.log('submit');
+      if (!formInfo.value.code || isEmpty(formInfo.value.code)) {
+        ElMessage.error('表单编码不能为空');
+        return;
+      } else if (!formData.value || isEmpty(formData.value.id)) {
+        ElMessage.error('表单id不能为空');
+        return;
+      } else {
+        ElMessageBox.confirm(t('common.confirmSubmit'), t('common.tips'), {
+          confirmButtonText: t('button.confirm'),
+          cancelButtonText: t('button.cancel'),
+          type: 'warning',
+        }).then(() => {
+          superAdminSubmitApi(formInfo.value.code!, formData.value).then((res) => {
+            if (res.code === ResultEnum.SUCCESS) {
+              ElMessage.success(res.message);
+              visible.value = false;
+              emits('resetQuery');
+            } else {
+              ElMessage.error(res.message);
+            }
+          });
+        });
+      }
     });
   };
 
@@ -359,7 +389,8 @@
     visible.value = false;
     // 延迟400ms后刷新列表，防止流程状态还没更改过来查询到的数据还是旧的数据
     setTimeout(() => {
-      emits('resetQuery'); // 提交成功，刷新
+      // 提交成功，刷新
+      emits('resetQuery');
     }, 400);
   };
 
@@ -570,11 +601,16 @@
   // 表单项
   const _formItems = computed(() => {
     const formItems = JSON.parse(JSON.stringify(formInfo.value.formItems));
-    if (formPermission.value) {
-      if (isAssociated.value) {
-        setFormPermission(formItems, {}, 'other');
-      } else {
-        setFormPermission(formItems, formPermission.value, 'other');
+    // 超管拥有修改表单数据的权限
+    if (isFooter.value) {
+      setFormPermission(formItems, {}, 'root');
+    } else {
+      if (formPermission.value) {
+        if (isAssociated.value) {
+          setFormPermission(formItems, {}, 'other');
+        } else {
+          setFormPermission(formItems, formPermission.value, 'other');
+        }
       }
     }
     return formItems;

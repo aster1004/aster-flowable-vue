@@ -213,7 +213,8 @@
           console.info(res);
           if (res.code == ResultEnum.SUCCESS) {
             visible.value = false;
-            emits('cancel'); // 处理成功，关闭详
+            // 处理成功，关闭详情弹框
+            emits('cancel');
             // 重置表单数据，防止下次提交还有数据
             resetApproveParams();
           } else {
