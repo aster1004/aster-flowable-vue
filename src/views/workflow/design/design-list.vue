@@ -8,7 +8,7 @@
 <template>
   <div class="main-box">
     <tree-filter
-      title="应用信息"
+      :title="$t('workflow.label.appInfo')"
       label="name"
       :data="appList"
       :default-value="appList[0]?.id"
@@ -20,8 +20,12 @@
         <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
           <div class="grid-box">
             <div class="grid-column">
-              <el-form-item label="表单名称" prop="formName">
-                <el-input v-model="queryParams.formName" placeholder="请输入表单名称" clearable />
+              <el-form-item prop="formName" :label="$t('workflow.label.formName')">
+                <el-input
+                  v-model="queryParams.formName"
+                  :placeholder="$t('workflow.label.formName')"
+                  clearable
+                />
               </el-form-item>
             </div>
             <div class="grid-operation">
@@ -87,10 +91,15 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" header-align="center" align="center" width="50" />
-          <el-table-column prop="formName" label="表单名称" header-align="center" align="center" />
+          <el-table-column
+            prop="formName"
+            :label="$t('workflow.label.formName')"
+            header-align="center"
+            align="center"
+          />
           <el-table-column
             prop="icon"
-            label="图标"
+            :label="$t('workflow.label.formIcon')"
             header-align="center"
             align="center"
             width="100"
@@ -105,14 +114,14 @@
           </el-table-column>
           <el-table-column
             prop="sort"
-            label="排序"
+            :label="$t('label.sort')"
             width="100"
             header-align="center"
             align="center"
           />
           <el-table-column
             prop="version"
-            label="版本号"
+            :label="$t('workflow.label.formVersion')"
             width="100"
             header-align="center"
             align="center"
@@ -134,13 +143,13 @@
           </el-table-column>
           <el-table-column
             :label="$t('label.operate')"
-            width="200"
+            width="220"
             align="center"
             class-name="operation"
           >
             <template #default="scope">
               <el-button size="small" link type="primary" @click="handleDeployment(scope.row.id)">
-                <i class="iconfont icon-fuxuankuang"></i>部署
+                <i class="iconfont icon-fuxuankuang"></i>{{ $t('button.deploy') }}
               </el-button>
               <el-button size="small" link type="primary" @click="handleEdit(scope.row.id)">
                 <i class="iconfont icon-bianji"></i>{{ $t('button.edit') }}

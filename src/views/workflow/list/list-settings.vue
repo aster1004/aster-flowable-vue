@@ -8,7 +8,7 @@
 <template>
   <div class="list-container">
     <el-form label-position="top">
-      <el-form-item label="排序字段">
+      <el-form-item :label="t('workflow.list.sortField')">
         <el-select v-model="sortBy" placeholder="请选择">
           <el-option
             v-for="(item, index) in _formItem"
@@ -18,7 +18,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="排序方式">
+      <el-form-item :label="t('workflow.list.sortDirection')">
         <el-select v-model="sortDirection" placeholder="请选择">
           <el-option
             v-for="(item, index) in sortDirections"
@@ -31,7 +31,7 @@
       <el-form-item>
         <template #label>
           <div class="flex justify-between items-center">
-            <span>功能按钮</span>
+            <span>{{ t('workflow.list.functionBtn') }}</span>
             <el-popover placement="left-start" trigger="click" :width="240" :show-arrow="false">
               <template #reference>
                 <i class="iconfont icon-xinzeng"></i>
@@ -111,7 +111,10 @@
   import { defaultComponentConfig } from '../components/component-config-export';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import draggable from 'vuedraggable';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 

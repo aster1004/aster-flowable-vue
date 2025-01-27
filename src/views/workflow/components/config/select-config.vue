@@ -7,14 +7,14 @@
 -->
 <template>
   <div class="select-config">
-    <el-form-item label="选项配置">
+    <el-form-item :label="t('workflow.component.optionConfig')">
       <el-tabs
         v-model="activeName"
         @tab-change="handleTabChange"
         type="border-card"
         class="select-tabs"
       >
-        <el-tab-pane label="静态" name="static">
+        <el-tab-pane :label="t('workflow.component.optionStatic')" name="static">
           <draggable
             :list="_formItem.props.options"
             item-key=""
@@ -39,7 +39,7 @@
             <el-button text type="primary" @click="addOption">添加选项</el-button>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="字典" name="dict">
+        <el-tab-pane :label="t('workflow.component.optionDict')" name="dict">
           <el-select
             v-model="_formItem.props.dictType"
             placeholder="请选择字典"
@@ -54,7 +54,7 @@
             />
           </el-select>
         </el-tab-pane>
-        <el-tab-pane label="动态" name="dynamic">
+        <el-tab-pane :label="t('workflow.component.optionDynamic')" name="dynamic">
           <el-cascader
             v-model="_formItem.props.dynamic.value"
             :props="dynamicProps"
@@ -65,7 +65,7 @@
         </el-tab-pane>
       </el-tabs>
     </el-form-item>
-    <el-form-item label="默认值">
+    <el-form-item :label="t('workflow.component.defaultValue')">
       <el-select
         v-model="_formItem.value"
         :multiple="_formItem.valueType == 'Array'"
@@ -74,10 +74,10 @@
         <el-option v-for="(item, i) in options" :key="i" :label="item.label" :value="item.value" />
       </el-select>
     </el-form-item>
-    <el-form-item label="是否展开">
+    <el-form-item :label="t('workflow.component.isExpand')">
       <el-switch v-model="_formItem.props.expand" />
     </el-form-item>
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
   </div>
@@ -93,7 +93,10 @@
   import { formInfoByCodeApi } from '@/api/workflow/form';
   import { flatFormItems } from '@/utils/workflow';
   import { instanceListByCodeApi } from '@/api/workflow/process';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   const emits = defineEmits(['update:formItem']);
   const props = defineProps({
     formItem: {

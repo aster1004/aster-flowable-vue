@@ -2,7 +2,7 @@
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-04-16 09:53:20
  * @FilePath: \aster-flowable-vue\src\views\workflow\design\design-header.vue
- * @Description: 设计页头部信息
+ * @Description: 流程设计页头部信息
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
@@ -31,10 +31,10 @@
     </el-col>
     <el-col :span="12" class="header-center">
       <el-menu :default-active="modelValue" @select="handleSelect" mode="horizontal">
-        <el-menu-item index="formDesign">表单设计</el-menu-item>
-        <el-menu-item index="processDesign">流程设计</el-menu-item>
-        <el-menu-item index="listDesign">列表设计</el-menu-item>
-        <el-menu-item index="formSettings">表单设置</el-menu-item>
+        <el-menu-item index="formDesign">{{ t('workflow.formDesign') }}</el-menu-item>
+        <el-menu-item index="processDesign">{{ t('workflow.processDesign') }}</el-menu-item>
+        <el-menu-item index="listDesign">{{ t('workflow.listDesign') }}</el-menu-item>
+        <el-menu-item index="formSettings">{{ t('workflow.formSetting') }}</el-menu-item>
       </el-menu>
     </el-col>
     <el-col :span="6" class="header-right">
@@ -56,14 +56,16 @@
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { useRouter } from 'vue-router';
-  import { computed, onMounted, PropType, ref } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import IconSelect from '@/components/icon/icon-select.vue';
   import { isNotEmpty } from '@/utils';
   import { useGlobalStore } from '@/stores/modules/global';
+  import { useI18n } from 'vue-i18n';
 
   const workFlowStore = useWorkFlowStore();
   const router = useRouter();
   const globalStore = useGlobalStore();
+  const { t } = useI18n();
 
   // 事件
   const emits = defineEmits(['update:modelValue', 'save', 'publish']);

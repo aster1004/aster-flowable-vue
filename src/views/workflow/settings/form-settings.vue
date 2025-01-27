@@ -12,22 +12,28 @@
         <el-scrollbar style="height: 100%">
           <el-menu :default-active="activeMenu" @select="handleSelect">
             <el-menu-item index="submitValidate">
-              <i class="iconfont icon-feedback pr-5px"></i>提交校验
+              <i class="iconfont icon-feedback pr-5px"></i>
+              {{ t('workflow.settings.submitValidate') }}
             </el-menu-item>
             <el-menu-item index="dynamicValidate">
-              <i class="iconfont icon-hanshu pr-5px"></i>动态校验
+              <i class="iconfont icon-hanshu pr-5px"></i>
+              {{ t('workflow.settings.dynamicValidate') }}
             </el-menu-item>
             <el-menu-item index="businessRule">
-              <i class="iconfont icon-shujuguanli pr-5px"></i>业务规则
+              <i class="iconfont icon-shujuguanli pr-5px"></i>
+              {{ t('workflow.settings.businessRule') }}
             </el-menu-item>
             <el-menu-item index="messageReminder">
-              <i class="iconfont icon-xiaoxizhongxin pr-5px"></i>消息提醒
+              <i class="iconfont icon-xiaoxizhongxin pr-5px"></i>
+              {{ t('workflow.settings.messageReminder') }}
             </el-menu-item>
             <el-menu-item index="associationList">
-              <i class="iconfont icon-guanlianliucheng pr-5px"></i>关联列表
+              <i class="iconfont icon-guanlianliucheng pr-5px"></i>
+              {{ t('workflow.settings.associationList') }}
             </el-menu-item>
             <el-menu-item index="printTemplate">
-              <i class="iconfont icon-dayinji pr-5px"></i>打印模板
+              <i class="iconfont icon-dayinji pr-5px"></i>
+              {{ t('workflow.settings.printTemplate') }}
             </el-menu-item>
           </el-menu>
         </el-scrollbar>
@@ -47,14 +53,17 @@
   </el-container>
 </template>
 <script setup lang="ts">
+  import { ref } from 'vue';
   import SubmitValidate from './submit-validate.vue';
   import BusinessRule from './business-rule.vue';
   import MessageReminder from './message-reminder.vue';
   import AssociationList from './association-list.vue';
   import PrintTemplate from './print-template/index.vue';
   import DynamicValidate from './dynamic-validate/index.vue';
-  import { ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 活动菜单
   const activeMenu = ref('submitValidate');
 

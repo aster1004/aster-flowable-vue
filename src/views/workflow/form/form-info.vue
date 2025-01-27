@@ -29,16 +29,16 @@
       <div class="vertical-menu" v-if="isCollapse">
         <div @click="handleShowTabs('log')">
           <i class="iconfont icon-shenpi"></i>
-          <span>流程日志</span>
+          <span>{{ $t('workflow.form.flowLog') }}</span>
         </div>
         <div @click="handleShowTabs('comment')">
           <i class="iconfont icon-xinxi"></i>
-          <span>评论</span>
+          <span>{{ $t('workflow.form.comment') }}</span>
         </div>
       </div>
       <el-scrollbar v-else class="process-content">
         <el-tabs v-model="processActiveName" @tab-change="handleTabChange" class="process-tabs">
-          <el-tab-pane label="流程日志" name="log">
+          <el-tab-pane :label="$t('workflow.form.flowLog')" name="log">
             <div style="height: 100%; max-width: 600px">
               <!-- 数据加载中..  -->
               <div
@@ -49,13 +49,13 @@
               ></div>
               <div v-else class="w-full flex justify-end items-center">
                 <el-button type="primary" link size="small" @click="flowRenderVisible = true">
-                  查看流程图
+                  {{ $t('workflow.form.viewFlowChart') }}
                 </el-button>
               </div>
               <flow-logs ref="flowLogsRef" :process-result="processResult" />
             </div>
           </el-tab-pane>
-          <el-tab-pane label="评论" name="comment">
+          <el-tab-pane :label="$t('workflow.form.comment')" name="comment">
             <form-comment :procInstId="procInstId" />
           </el-tab-pane>
         </el-tabs>
@@ -71,7 +71,7 @@
       v-if="flowRenderVisible"
       v-model="flowRenderVisible"
       size="60%"
-      title="查看流程图"
+      :title="$t('workflow.form.viewFlowChart')"
       append-to-body
       :lock-scroll="false"
     >

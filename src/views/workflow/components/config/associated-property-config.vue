@@ -7,10 +7,10 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">关联属性</span>
         </div>
       </template>
@@ -19,7 +19,7 @@
         注：关联其他表单的某个字段，且会跟随关联表单对应的字段值实时变化
       </span>
     </el-form-item>
-    <el-form-item label="关联表单字段">
+    <el-form-item :label="t('workflow.component.associatedProperty')">
       <el-select
         v-model="_formItem.props.associatedForm.fieldId"
         :clearable="true"
@@ -35,7 +35,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
   </div>
@@ -48,7 +48,10 @@
   import { flatFormItems, flatFormItemsExclude } from '@/utils/workflow';
   import { ElMessage } from 'element-plus';
   import { computed, ref, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 关联表单字段选项

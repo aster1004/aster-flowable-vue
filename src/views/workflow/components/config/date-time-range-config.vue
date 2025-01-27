@@ -7,16 +7,16 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">日期</span>
         </div>
       </template>
       <el-input v-model="_formItem.title" />
     </el-form-item>
-    <el-form-item label="日期格式">
+    <el-form-item :label="t('workflow.component.dateFormat')">
       <el-select v-model="_formItem.props.format" placeholder="请选择日期格式">
         <el-option
           v-for="(item, index) in formatOptions"
@@ -26,10 +26,10 @@
         />
       </el-select>
     </el-form-item>
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
-    <el-form-item label="展示时长">
+    <el-form-item :label="t('workflow.component.displayDuration')">
       <el-switch v-model="_formItem.props.showLength" />
     </el-form-item>
   </div>
@@ -37,7 +37,10 @@
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 

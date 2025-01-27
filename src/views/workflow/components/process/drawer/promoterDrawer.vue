@@ -15,15 +15,15 @@
     :before-close="savePromoter"
   >
     <el-tabs v-model="activeName">
-      <el-tab-pane label="节点属性" name="nodeProps">
-        <el-form-item label="节点ID" prop="id">
+      <el-tab-pane :label="t('workflow.process.nodeProperty')" name="nodeProps">
+        <el-form-item :label="t('workflow.process.nodeId')" prop="id">
           <el-input readonly v-model="rootNode.id" />
         </el-form-item>
       </el-tab-pane>
-      <el-tab-pane label="表单权限" name="formPermission">
+      <el-tab-pane :label="t('workflow.process.formPermission')" name="formPermission">
         <form-permission v-model:value="rootNode.formPermission" :headerConfig="headerConfig" />
       </el-tab-pane>
-      <el-tab-pane label="操作权限" name="buttonPermission">
+      <el-tab-pane :label="t('workflow.process.buttonPermission')" name="buttonPermission">
         <button-permission v-model:value="rootNode.buttonPermission" />
       </el-tab-pane>
     </el-tabs>
@@ -35,7 +35,10 @@
   import FormPermission from '../permission/form-permission.vue';
   import ButtonPermission from '../permission/button-permission.vue';
   import { getFormFieldData } from '@/utils/process/process';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   let store = processStore();
   let { setPromoter, setFlowPermission } = store;
 

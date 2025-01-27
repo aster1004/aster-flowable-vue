@@ -7,21 +7,21 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="分组标题">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>分组标题</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">分组标题</span>
         </div>
       </template>
       <el-input v-model="_formItem.title" />
     </el-form-item>
-    <el-form-item label="字体大小">
+    <el-form-item :label="t('workflow.component.fontSize')">
       <el-select v-model="_formItem.props.fontSize">
         <el-option v-for="(item, i) in fontSizeOptions" :key="i" :label="item" :value="item" />
       </el-select>
     </el-form-item>
-    <el-form-item label="字体粗细">
+    <el-form-item :label="t('workflow.component.fontWeight')">
       <el-select v-model="_formItem.props.fontWeight">
         <el-option
           v-for="(item, i) in fontWeightOptions"
@@ -31,7 +31,7 @@
         />
       </el-select>
     </el-form-item>
-    <el-form-item label="对齐方式">
+    <el-form-item :label="t('workflow.component.justifiy')">
       <el-select v-model="_formItem.props.justify">
         <el-option
           v-for="(item, i) in justifyOptions"
@@ -46,7 +46,10 @@
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 

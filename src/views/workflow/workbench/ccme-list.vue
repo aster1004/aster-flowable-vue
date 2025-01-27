@@ -1,7 +1,7 @@
 <!--
  * @Author: Aster lipian1004@163.com
  * @Date: 2024-05-22 16:11:38
- * @FilePath: \aster-flowable-vue\src\views\workflow\workbench\started-list.vue
+ * @FilePath: \aster-flowable-vue\src\views\workflow\workbench\ccme-list.vue
  * @Description: 我发起的
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
@@ -12,7 +12,7 @@
       <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
         <div class="grid-box">
           <div class="grid-column">
-            <el-form-item label="所属表单" prop="appId">
+            <el-form-item :label="t('workflow.label.belongForm')" prop="appId">
               <el-cascader
                 v-model="selectedNode"
                 :options="treeNodes"
@@ -26,12 +26,12 @@
             </el-form-item>
           </div>
           <div class="grid-column">
-            <el-form-item label="表单名称" prop="title">
+            <el-form-item :label="t('workflow.label.formName')" prop="title">
               <el-input v-model="queryParams.title" placeholder="请输入表单名称" clearable />
             </el-form-item>
           </div>
           <div class="grid-column" v-show="!searchCollapsed">
-            <el-form-item label="状态" prop="status">
+            <el-form-item prop="status" :label="$t('label.status')">
               <dict-select
                 dict-type="task_end_status"
                 v-model="queryParams.status"
@@ -41,7 +41,7 @@
             </el-form-item>
           </div>
           <div class="grid-column" v-show="!searchCollapsed">
-            <el-form-item label="时间范围" prop="startTime">
+            <el-form-item :label="t('workflow.label.dateRange')" prop="startTime">
               <el-date-picker
                 v-model="dateValue"
                 type="daterange"
@@ -103,7 +103,7 @@
         <el-table-column fixed type="index" width="50" header-align="center" align="center" />
         <el-table-column
           prop="dataTitle"
-          label="数据标题"
+          :label="t('workflow.label.dataTitle')"
           fixed
           header-align="center"
           align="center"
@@ -118,7 +118,7 @@
         </el-table-column>
         <el-table-column
           prop="formStatus"
-          label="流程状态"
+          :label="t('workflow.label.formStatus')"
           fixed
           header-align="center"
           align="center"
@@ -130,7 +130,7 @@
         </el-table-column>
         <el-table-column
           prop="formName"
-          label="所属表单"
+          :label="t('workflow.label.belongForm')"
           header-align="center"
           align="center"
           min-width="120"
@@ -138,22 +138,21 @@
         />
         <el-table-column
           prop="nodeName"
-          label="当前节点"
+          :label="t('workflow.label.currentNode')"
           header-align="center"
           align="center"
           min-width="100"
         />
         <el-table-column
           prop="startTime"
-          label="开始时间"
+          :label="t('workflow.label.startTime')"
           header-align="center"
           align="center"
           min-width="120"
         />
-
         <el-table-column
           prop="endTime"
-          label="结束时间"
+          :label="t('workflow.label.endTime')"
           header-align="center"
           align="center"
           min-width="120"

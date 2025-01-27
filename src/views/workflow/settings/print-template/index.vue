@@ -8,15 +8,17 @@
 <template>
   <div class="template-container">
     <div class="template-title">
-      <span>打印模板</span>
+      <span>{{ t('workflow.settings.printTemplate') }}</span>
       <div>
-        <el-button type="info" link @click="printVisible = true"> 默认模板预览 </el-button>
+        <el-button type="info" link @click="printVisible = true">
+          {{ t('workflow.settings.printPreview') }}
+        </el-button>
         <el-button
           v-if="printTemplates && printTemplates.length > 0"
           type="primary"
           @click="handleAdd"
         >
-          新增模板
+          {{ t('workflow.settings.printAdd') }}
         </el-button>
       </div>
     </div>
@@ -25,7 +27,7 @@
         v-if="printTemplates && isNotEmpty(printTemplates)"
         style="height: 100%; margin: 10px"
       >
-        <div class="template-tip"> 说明：可以对表单内的字段进行自由的排版用于日常单据的打印 </div>
+        <div class="template-tip"> {{ t('workflow.settings.printDesc') }} </div>
         <div
           class="template-content"
           v-for="(item, index) in printTemplates"
@@ -55,11 +57,13 @@
         <el-empty :image-size="80">
           <template #description>
             <div class="template-empty-text">
-              <span class="text-sm pb-5px">您还没添加任何自定义打印模板</span>
-              <span class="text-xs pb-5px">可以对表单内的字段进行自由的排版用于日常单据的打印</span>
+              <span class="text-sm pb-5px">{{ t('workflow.settings.printEmpty') }}</span>
+              <span class="text-xs pb-5px">{{ t('workflow.settings.printEmptyTip') }}</span>
             </div>
           </template>
-          <el-button type="primary" @click="handleAdd"> 立即设置 </el-button>
+          <el-button type="primary" @click="handleAdd">
+            {{ t('workflow.settings.immediatelySet') }}
+          </el-button>
         </el-empty>
       </div>
     </div>
@@ -102,7 +106,10 @@
   import { isNotEmpty } from '@/utils';
   import { generateFieldId } from '@/utils/workflow';
   import { ElMessageBox } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 是否显示设计模板

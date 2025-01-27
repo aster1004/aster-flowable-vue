@@ -7,10 +7,10 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">图片</span>
         </div>
       </template>
@@ -19,7 +19,7 @@
 
     <el-form-item>
       <template #label>
-        <span>图片大小</span>
+        <span>{{ t('workflow.component.imageSize') }}</span>
         <el-tooltip content="限制单个图片最大大小-MB（为0则不限制）" placement="top">
           <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
         </el-tooltip>
@@ -33,7 +33,7 @@
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span>图片数量</span>
+        <span>{{ t('workflow.component.imageNum') }}</span>
         <el-tooltip content="限制最大上传数量（为0则不限制）" placement="top">
           <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
         </el-tooltip>
@@ -45,11 +45,11 @@
         placeholder="最多上传几张图片"
       />
     </el-form-item>
-    <el-form-item label="图片压缩">
+    <el-form-item :label="t('workflow.component.imageZip')">
       <el-switch v-model="_formItem.props.enableZip" />
     </el-form-item>
 
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
   </div>
@@ -57,7 +57,10 @@
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 

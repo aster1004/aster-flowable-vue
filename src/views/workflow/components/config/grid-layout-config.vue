@@ -7,10 +7,16 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
-      <el-input v-model="_formItem.title" disabled />
+    <el-form-item :label="t('workflow.component.name')">
+      <template #label>
+        <div class="flex justify-between items-center">
+          <span>{{ t('workflow.component.name') }}</span>
+          <span class="text-xs font-normal">一行多列</span>
+        </div>
+      </template>
+      <el-input v-model="_formItem.title" />
     </el-form-item>
-    <el-form-item label="对齐方式">
+    <el-form-item :label="t('workflow.component.justifiy')">
       <el-select v-model="_formItem.props.justify">
         <el-option
           v-for="item in justifyOptions"
@@ -20,10 +26,10 @@
         />
       </el-select>
     </el-form-item>
-    <el-form-item label="分栏间隔">
+    <el-form-item :label="t('workflow.component.columnGutter')">
       <el-input v-model="_gutter" type="number" placeholder="请输入分栏间隔" />
     </el-form-item>
-    <el-form-item label="分栏列数">
+    <el-form-item :label="t('workflow.component.columnCount')">
       <el-select v-model="_formItem.props.cols">
         <el-option value="12,12" label="一行两列[1:1]">
           <el-row
@@ -98,7 +104,10 @@
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 

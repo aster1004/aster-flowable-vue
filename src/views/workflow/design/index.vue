@@ -73,6 +73,7 @@
   import { useI18n } from 'vue-i18n';
   import { WarningFilled, Loading } from '@element-plus/icons-vue';
 
+  // 国际化
   const { t } = useI18n();
   //获取当前组件实例对象数组
   const currentInstances: any = getCurrentInstance();

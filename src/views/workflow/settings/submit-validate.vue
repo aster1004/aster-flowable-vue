@@ -8,13 +8,13 @@
 <template>
   <div class="validate-container">
     <div class="validate-title">
-      <span>提交校验</span>
+      <span>{{ t('workflow.settings.submitValidate') }}</span>
       <el-button
         v-if="submitValidates && submitValidates.length > 0"
         type="primary"
         @click="addFormula"
       >
-        新增规则
+        {{ t('workflow.settings.addRule') }}
       </el-button>
     </div>
     <div class="validate-main">
@@ -23,7 +23,7 @@
         style="height: 100%; margin: 10px"
       >
         <div class="validate-tip">
-          说明：在提交表单时满足以下校验规则的数据将不允许提交，多条规则之间请避免输入互斥条件，以免前台校验出错
+          {{ t('workflow.settings.submitDesc') }}
         </div>
         <div
           class="validate-content"
@@ -58,18 +58,20 @@
         <el-empty :image-size="80">
           <template #description>
             <div class="validate-empty-text">
-              <span class="text-sm pb-5px">暂无提交校验</span>
-              <span class="text-xs pb-5px">在提交表单时，满足校验规则的数据将不允许提交</span>
+              <span class="text-sm pb-5px">{{ t('workflow.settings.submitEmpty') }}</span>
+              <span class="text-xs pb-5px">{{ t('workflow.settings.submitEmptyTip') }}</span>
             </div>
           </template>
-          <el-button type="primary" @click="showFormula"> 立即设置 </el-button>
+          <el-button type="primary" @click="showFormula">
+            {{ t('workflow.settings.immediatelySet') }}
+          </el-button>
         </el-empty>
       </div>
     </div>
 
     <formula
       ref="formulaRef"
-      title="表单提交校验"
+      :title="t('workflow.settings.submitValidate')"
       type="validate"
       header-title="当满足以下条件时表单不允许提交"
       placeholder="例：报销金额 > 10000"
@@ -84,7 +86,10 @@
   import { flatFormItems, generateFieldId, restorationFormulaByFormItems } from '@/utils/workflow';
   import { computed, ref } from 'vue';
   import Formula from '../components/common/formula.vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 注册组件

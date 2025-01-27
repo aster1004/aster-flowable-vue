@@ -25,7 +25,11 @@
       </div>
       <div class="tab-container">
         <el-tabs v-model="activeName">
-          <el-tab-pane label="用户" name="user" v-if="type.indexOf('user') != -1">
+          <el-tab-pane
+            :label="t('workflow.process.user')"
+            name="user"
+            v-if="type.indexOf('user') != -1"
+          >
             <div class="select-card">
               <el-row>
                 <el-col :span="18">
@@ -59,7 +63,11 @@
               </el-row>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="部门" name="dept" v-if="type.indexOf('dept') != -1">
+          <el-tab-pane
+            :label="t('workflow.process.dept')"
+            name="dept"
+            v-if="type.indexOf('dept') != -1"
+          >
             <div class="select-card">
               <el-scrollbar>
                 <el-tree
@@ -79,7 +87,11 @@
               </el-scrollbar>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="角色" name="role" v-if="type.indexOf('role') != -1">
+          <el-tab-pane
+            :label="t('workflow.process.role')"
+            name="role"
+            v-if="type.indexOf('role') != -1"
+          >
             <div class="select-card"> </div>
           </el-tab-pane>
         </el-tabs>
@@ -97,7 +109,10 @@
   import { selectUsersByDeptIdsApi } from '@/api/sys/user';
   import { isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 回调函数
   const emits = defineEmits(['submit']);
   // 属性

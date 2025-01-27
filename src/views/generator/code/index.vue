@@ -271,6 +271,7 @@
       confirmButtonText: t('button.confirm'),
       cancelButtonText: t('button.cancel'),
       type: 'warning',
+      lockScroll: false,
     })
       .then(() => {
         if (!row.id) {
