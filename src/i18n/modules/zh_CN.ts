@@ -641,7 +641,7 @@ export default {
       dataTitleRule: '请选择数据标题',
       edit: '编 辑',
       closeEdit: '关闭编辑',
-      defaultTemplate: 'Default Print Template',
+      defaultTemplate: '默认打印模板',
       flowLog: '流程日志',
       comment: '评    论',
       viewFlowChart: '查看流程图',

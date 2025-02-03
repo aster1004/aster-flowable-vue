@@ -10,7 +10,7 @@
     <div class="template-title">
       <span>{{ t('workflow.settings.printTemplate') }}</span>
       <div>
-        <el-button type="info" link @click="printVisible = true">
+        <el-button type="info" link @click="defaultTemplatePreview">
           {{ t('workflow.settings.printPreview') }}
         </el-button>
         <el-button
@@ -97,12 +97,22 @@
         <el-button @click="designVisible = false">{{ $t('button.cancel') }}</el-button>
       </template>
     </el-dialog>
+
+    <print-template-preview
+      ref="printTemplateRef"
+      :form-data="{}"
+      :form-items="_formItems"
+      :form-info="_baseFormInfo"
+      :form-status="''"
+      @end="() => {}"
+    />
   </div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, ref } from 'vue';
   import PrintTemplateDesign from './print-template-design.vue';
+  import PrintTemplatePreview from './print-template-preview.vue';
   import { isNotEmpty } from '@/utils';
   import { generateFieldId } from '@/utils/workflow';
   import { ElMessageBox } from 'element-plus';
@@ -128,6 +138,8 @@
   });
   // 选中模板ID
   const selectedTemplateId = ref('');
+  // 默认打印模板
+  const printTemplateRef = ref();
 
   /**
    * @description: 保存打印模板
@@ -221,6 +233,16 @@
     }
   };
 
+  /**
+   * @description: 默认打印模板预览
+   * @return {*}
+   */
+  const defaultTemplatePreview = () => {
+    if (printTemplateRef.value) {
+      printTemplateRef.value.init('default');
+    }
+  };
+
   // 打印模板
   const printTemplates = computed({
     get() {
@@ -239,6 +261,23 @@
         workFlowStore.design.settings.printTemplates = val;
       }
     },
+  });
+
+  // 表单项
+  const _formItems = computed(() => {
+    return workFlowStore.design.formItems;
+  });
+
+  // 基础表单信息
+  const _baseFormInfo = computed(() => {
+    const info: WorkForm.BaseInfo = {
+      formName: workFlowStore.design.formName,
+      icon: workFlowStore.design.icon,
+      iconColor: workFlowStore.design.iconColor,
+      labelPosition: workFlowStore.design.labelPosition,
+      labelWidth: workFlowStore.design.labelWidth,
+    };
+    return info;
   });
 </script>
 <style scoped lang="scss">
