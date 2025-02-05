@@ -394,6 +394,7 @@
   const cancel = () => {
     isFooter.value = false;
     visible.value = false;
+    formInfoRef.value.isCollapse = true;
     // 延迟400ms后刷新列表，防止流程状态还没更改过来查询到的数据还是旧的数据
     setTimeout(() => {
       // 提交成功，刷新
