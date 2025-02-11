@@ -1,14 +1,15 @@
 <!--
+ * @Author: Aster lipian1004@163.com
  * @Date: 2023-03-15 14:44:17
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-08-09 17:25:43
  * @FilePath: \aster-flowable-vue\src\views\workflow\components\process\drawer\conditionDrawer.vue
+ * @Description: 条件设置
+ * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 
 <template>
   <el-drawer
     :append-to-body="true"
-    title="条件设置"
+    :title="t('workflow.process.condition')"
     v-model="visible"
     class="condition_copyer"
     :show-close="false"
@@ -16,7 +17,9 @@
     :before-close="saveCondition"
   >
     <template #header="{ titleId, titleClass }">
-      <h3 :id="titleId" :class="titleClass" style="font-size: 17px">条件设置</h3>
+      <h3 :id="titleId" :class="titleClass" style="font-size: 17px">
+        {{ t('workflow.process.condition') }}
+      </h3>
       <el-select v-model="conditionConfig.priorityLevel" class="priority_level">
         <!--  默认条件优先级放到最后，故conditionsConfig.conditionNodes.length - 1  -->
         <template v-if="showPriorityLevel">
@@ -69,6 +72,10 @@
   import { ElMessage } from 'element-plus';
   import { conditionStr } from '@/utils/ConditionCompare';
   import { isEmpty } from '@/utils/index';
+  import { useI18n } from 'vue-i18n';
+
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   /**

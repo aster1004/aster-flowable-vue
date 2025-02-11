@@ -11,7 +11,7 @@
           <nodeWrap v-if="isNotEmpty(_process)" v-model:nodeConfig="_process" />
           <div class="end-node">
             <div class="end-node-circle"></div>
-            <div class="end-node-text">流程结束</div>
+            <div class="end-node-text">{{ $t('workflow.process.processCompleted') }}</div>
           </div>
         </div>
       </section>

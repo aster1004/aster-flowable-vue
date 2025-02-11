@@ -33,13 +33,15 @@
   import { computed, ref, watch } from 'vue';
   import FormRender from './form-render.vue';
   import { setDefaultValue } from '@/utils/workflow';
+  import { useI18n } from 'vue-i18n';
 
+  const { t } = useI18n();
   const workFlowStore = useWorkFlowStore();
 
   /** 显示 */
   const visible = ref(false);
   /** 标题 */
-  const title = ref('预览');
+  const title = ref(t('button.preview'));
   // 表单数据
   const formData = ref<WorkForm.FormDataModel>({});
   // 注册组件

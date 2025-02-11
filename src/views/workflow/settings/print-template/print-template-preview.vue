@@ -9,7 +9,7 @@
   <el-dialog
     v-if="printType === 'default'"
     v-model="printVisible"
-    title="打印预览"
+    :title="$t('button.printPreview')"
     width="60%"
     height="100%"
     :close-on-click-modal="false"
@@ -26,13 +26,17 @@
       :form-status="formStatus"
     />
     <template #footer>
-      <el-button type="primary" ref="printButtonRef" v-print="printObj">打印</el-button>
+      <el-button type="primary" ref="printButtonRef" v-print="printObj">
+        {{ $t('button.print') }}
+      </el-button>
       <el-button @click="handleCancel">{{ $t('button.cancel') }}</el-button>
     </template>
   </el-dialog>
   <div v-else-if="printType === 'custom'" v-show="false">
     <div id="custom" v-html="templateContent"></div>
-    <el-button type="primary" ref="printButtonRef" v-print="printObj">打印</el-button>
+    <el-button type="primary" ref="printButtonRef" v-print="printObj">
+      {{ $t('button.print') }}
+    </el-button>
   </div>
 </template>
 <script setup lang="ts">

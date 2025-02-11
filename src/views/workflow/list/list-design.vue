@@ -13,10 +13,10 @@
     <el-aside class="list-aside">
       <el-scrollbar style="height: 100%">
         <el-tabs v-model="activeTab" class="right-tabs">
-          <el-tab-pane label="字段设置" name="field">
+          <el-tab-pane :label="t('workflow.list.fieldSetting')" name="field">
             <field-settings ref="fieldSettingsRef" />
           </el-tab-pane>
-          <el-tab-pane label="列表设置" name="list">
+          <el-tab-pane :label="t('workflow.list.listSetting')" name="list">
             <list-settings ref="listSettingsRef" />
           </el-tab-pane>
         </el-tabs>
@@ -29,7 +29,10 @@
   import FieldSettings from './field-settings.vue';
   import ListSettings from './list-settings.vue';
   import ListRender from './list-render.vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 默认选中字段设置
   const activeTab = ref('field');
 </script>

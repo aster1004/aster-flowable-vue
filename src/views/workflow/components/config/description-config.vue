@@ -7,32 +7,32 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="描述说明">
+    <el-form-item :label="t('workflow.component.description')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>描述说明</span>
+          <span>{{ t('workflow.component.description') }}</span>
           <span class="text-xs font-normal">描述说明</span>
         </div>
       </template>
       <el-input type="textarea" v-model="_formItem.title" :rows="2" />
     </el-form-item>
-    <el-form-item label="字体大小">
+    <el-form-item :label="t('workflow.component.fontSize')">
       <el-select v-model="_formItem.props.fontSize">
         <el-option v-for="(item, i) in fontSizeOptions" :key="i" :label="item" :value="item" />
       </el-select>
     </el-form-item>
-    <el-form-item label="字体颜色">
+    <el-form-item :label="t('workflow.component.fontColor')">
       <color-picker ref="colorPickerRef" v-model="_formItem.props.color" />
     </el-form-item>
-    <el-form-item label="显示图标">
+    <el-form-item :label="t('workflow.component.showIcon')">
       <icon-select
         ref="iconSelectRef"
         v-model:icon="_formItem.props.icon"
-        type="button"
+        type="icon"
         :z-index="9999"
       />
     </el-form-item>
-    <el-form-item label="对齐方式">
+    <el-form-item :label="t('workflow.component.justifiy')">
       <el-select v-model="_formItem.props.justify">
         <el-option
           v-for="(item, i) in justifyOptions"
@@ -49,7 +49,10 @@
   import ColorPicker from '@/components/color/color-picker.vue';
   import IconSelect from '@/components/icon/icon-select.vue';
   import { computed, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 

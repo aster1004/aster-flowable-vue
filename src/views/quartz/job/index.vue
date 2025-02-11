@@ -377,6 +377,7 @@
       confirmButtonText: t('button.confirm'),
       cancelButtonText: t('button.cancel'),
       type: 'warning',
+      lockScroll: false,
     })
       .then(() => {
         jobRunApi(row).then(() => {
@@ -396,6 +397,7 @@
       confirmButtonText: t('button.confirm'),
       cancelButtonText: t('button.cancel'),
       type: 'warning',
+      lockScroll: false,
     })
       .then(() => {
         row.status = status;

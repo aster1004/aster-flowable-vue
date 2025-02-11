@@ -7,17 +7,17 @@
 -->
 <template>
   <div style="width: 100%" v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">省市区</span>
         </div>
       </template>
       <el-input v-model="_formItem.title" />
     </el-form-item>
-    <el-form-item label="地区级别">
-      <el-select v-model="_formItem.props.level" placeholder="请选择">
+    <el-form-item :label="t('workflow.component.areaLevel')">
+      <el-select v-model="_formItem.props.level">
         <el-option
           v-for="(item, index) in levelOptions"
           :key="index"
@@ -26,10 +26,10 @@
         />
       </el-select>
     </el-form-item>
-    <el-form-item label="提示文字">
+    <el-form-item :label="t('workflow.component.placeholder')">
       <el-input v-model="_formItem.props.placeholder" />
     </el-form-item>
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
   </div>
@@ -37,6 +37,10 @@
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
+
+  // 国际化
+  const { t } = useI18n();
 
   // 地区级别
   const levelOptions = [

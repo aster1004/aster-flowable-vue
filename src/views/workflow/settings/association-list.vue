@@ -7,11 +7,11 @@
 -->
 <template>
   <div class="association-container">
-    <div class="association-title"> 关联列表 </div>
+    <div class="association-title"> {{ t('workflow.settings.associationList') }} </div>
     <div class="association-main">
       <div style="height: 100%" v-if="associations.length > 0">
         <div class="association-tip">
-          说明：当前表单有被其他表单中关联控件关联时，可在此处配置关联列表，实现对其他表单数据的快捷查看与新增
+          {{ t('workflow.settings.listDesc') }}
         </div>
         <div class="association-content">
           <el-card class="association-card mr-120px">
@@ -78,8 +78,8 @@
         <el-empty :image-size="80">
           <template #description>
             <div class="association-empty-text">
-              <span class="text-sm pb-5px">当前表单暂未被其他表单所关联</span>
-              <span class="text-xs pb-5px">请在其他表单的关联控件关联该表单时，再进行设置</span>
+              <span class="text-sm pb-5px">{{ t('workflow.settings.listEmpty') }}</span>
+              <span class="text-xs pb-5px">{{ t('workflow.settings.listEmptyTip') }}</span>
             </div>
           </template>
         </el-empty>
@@ -94,7 +94,10 @@
   import { assocaitionListApi } from '@/api/workflow/assocaition';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isNotEmpty } from '@/utils';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 注册组件

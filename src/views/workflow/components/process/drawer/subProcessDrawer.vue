@@ -1,7 +1,7 @@
 <!--
  * @Date: 2024-08-25 14:05:59
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-10-25 17:51:49
+ * @LastEditTime: 2025-01-27 12:53:37
  * @FilePath: \aster-flowable-vue\src\views\workflow\components\process\drawer\subProcessDrawer.vue
 -->
 <template>
@@ -33,8 +33,8 @@
       status-icon
     >
       <el-tabs v-model="activeName">
-        <el-tab-pane label="节点属性" name="nodeProps">
-          <el-form-item label="节点ID" prop="id">
+        <el-tab-pane :label="t('workflow.process.nodeProperty')" name="nodeProps">
+          <el-form-item :label="t('workflow.process.nodeId')" prop="id">
             <el-input readonly v-model="subProcessConfig.id" />
           </el-form-item>
 
@@ -272,7 +272,7 @@
             </el-tab-pane>
           </el-tabs>
         </el-tab-pane>
-        <el-tab-pane label="表单权限" name="formPermission">
+        <el-tab-pane :label="t('workflow.process.formPermission')" name="formPermission">
           <form-permission
             v-model:value="subProcessConfig.value.formPermission"
             :headerConfig="headerConfig"
@@ -283,7 +283,7 @@
   </el-drawer>
   <member-select
     ref="memberSelectRef"
-    title="选择审批人"
+    :title="t('workflow.process.selectApprover')"
     :type="['user']"
     :value="[]"
     @submit="handleSubmitMember"
@@ -308,7 +308,10 @@
   } from '@/utils/workflow';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { StartUserEnum } from '@/enums/workFlowEnum';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   let store = processStore();
   let { setSubProcessConfig, setSubProcess } = store;
   // 工作流store

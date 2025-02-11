@@ -23,11 +23,10 @@
     commentTreeApi,
   } from '@/api/workflow/comment';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { ElMessage, ElMessageBox } from 'element-plus';
+  import { ElMessage } from 'element-plus';
   import { uploadFile } from '@/api';
-  import { useI18n } from 'vue-i18n';
 
-  const { t } = useI18n();
+  // 用户store
   const userStore = useUserStore();
 
   const props = defineProps({

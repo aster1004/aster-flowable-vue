@@ -8,15 +8,17 @@
 <template>
   <div class="template-container">
     <div class="template-title">
-      <span>打印模板</span>
+      <span>{{ t('workflow.settings.printTemplate') }}</span>
       <div>
-        <el-button type="info" link @click="printVisible = true"> 默认模板预览 </el-button>
+        <el-button type="info" link @click="defaultTemplatePreview">
+          {{ t('workflow.settings.printPreview') }}
+        </el-button>
         <el-button
           v-if="printTemplates && printTemplates.length > 0"
           type="primary"
           @click="handleAdd"
         >
-          新增模板
+          {{ t('workflow.settings.printAdd') }}
         </el-button>
       </div>
     </div>
@@ -25,7 +27,7 @@
         v-if="printTemplates && isNotEmpty(printTemplates)"
         style="height: 100%; margin: 10px"
       >
-        <div class="template-tip"> 说明：可以对表单内的字段进行自由的排版用于日常单据的打印 </div>
+        <div class="template-tip"> {{ t('workflow.settings.printDesc') }} </div>
         <div
           class="template-content"
           v-for="(item, index) in printTemplates"
@@ -55,11 +57,13 @@
         <el-empty :image-size="80">
           <template #description>
             <div class="template-empty-text">
-              <span class="text-sm pb-5px">您还没添加任何自定义打印模板</span>
-              <span class="text-xs pb-5px">可以对表单内的字段进行自由的排版用于日常单据的打印</span>
+              <span class="text-sm pb-5px">{{ t('workflow.settings.printEmpty') }}</span>
+              <span class="text-xs pb-5px">{{ t('workflow.settings.printEmptyTip') }}</span>
             </div>
           </template>
-          <el-button type="primary" @click="handleAdd"> 立即设置 </el-button>
+          <el-button type="primary" @click="handleAdd">
+            {{ t('workflow.settings.immediatelySet') }}
+          </el-button>
         </el-empty>
       </div>
     </div>
@@ -93,16 +97,29 @@
         <el-button @click="designVisible = false">{{ $t('button.cancel') }}</el-button>
       </template>
     </el-dialog>
+
+    <print-template-preview
+      ref="printTemplateRef"
+      :form-data="{}"
+      :form-items="_formItems"
+      :form-info="_baseFormInfo"
+      :form-status="''"
+      @end="() => {}"
+    />
   </div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, ref } from 'vue';
   import PrintTemplateDesign from './print-template-design.vue';
+  import PrintTemplatePreview from './print-template-preview.vue';
   import { isNotEmpty } from '@/utils';
   import { generateFieldId } from '@/utils/workflow';
   import { ElMessageBox } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 是否显示设计模板
@@ -121,6 +138,8 @@
   });
   // 选中模板ID
   const selectedTemplateId = ref('');
+  // 默认打印模板
+  const printTemplateRef = ref();
 
   /**
    * @description: 保存打印模板
@@ -214,6 +233,16 @@
     }
   };
 
+  /**
+   * @description: 默认打印模板预览
+   * @return {*}
+   */
+  const defaultTemplatePreview = () => {
+    if (printTemplateRef.value) {
+      printTemplateRef.value.init('default');
+    }
+  };
+
   // 打印模板
   const printTemplates = computed({
     get() {
@@ -232,6 +261,23 @@
         workFlowStore.design.settings.printTemplates = val;
       }
     },
+  });
+
+  // 表单项
+  const _formItems = computed(() => {
+    return workFlowStore.design.formItems;
+  });
+
+  // 基础表单信息
+  const _baseFormInfo = computed(() => {
+    const info: WorkForm.BaseInfo = {
+      formName: workFlowStore.design.formName,
+      icon: workFlowStore.design.icon,
+      iconColor: workFlowStore.design.iconColor,
+      labelPosition: workFlowStore.design.labelPosition,
+      labelWidth: workFlowStore.design.labelWidth,
+    };
+    return info;
   });
 </script>
 <style scoped lang="scss">

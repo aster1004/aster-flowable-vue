@@ -8,26 +8,30 @@
 <template>
   <div class="form-component-properties" v-if="_formItem">
     <el-form label-position="top">
-      <el-form-item label="控件编码">
+      <el-form-item :label="t('workflow.component.code')">
         <el-input v-model="_formItem.id" readonly />
       </el-form-item>
       <component :is="_formItem.name" :ref="_formItem?.id + 'ConfigRef'" />
       <el-form-item v-if="_formItem.props.hasOwnProperty('hidden')">
         <template #label>
-          <span>隐藏条件</span>
-          <el-tooltip content="隐藏条件，满足条件时隐藏控件" placement="top">
+          <span>{{ t('workflow.component.hidden') }}</span>
+          <el-tooltip :content="t('workflow.component.hiddenTip')" placement="top">
             <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
           </el-tooltip>
         </template>
-        <el-input type="button" model-value="请设置隐藏条件" @click="showFormula" />
+        <el-input
+          type="button"
+          :model-value="t('workflow.component.hiddenBtn')"
+          @click="showFormula"
+        />
       </el-form-item>
     </el-form>
 
     <formula
       ref="formulaRef"
-      title="隐藏条件"
+      :title="t('workflow.component.hidden')"
       v-model:formula="_formItem.props.hidden"
-      placeholder="当表达式值解析为true时, 当前控件隐藏"
+      :placeholder="t('workflow.component.hiddenPlaceholder')"
     />
   </div>
 </template>
@@ -42,9 +46,12 @@
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, ref } from 'vue';
   import Formula from './common/formula.vue';
+  import { useI18n } from 'vue-i18n';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
+  // 国际化
+  const { t } = useI18n();
   // 注册组件
   const formulaRef = ref();
 

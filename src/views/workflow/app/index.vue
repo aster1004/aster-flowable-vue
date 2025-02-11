@@ -5,16 +5,20 @@
       <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
         <div class="grid-box">
           <div class="grid-column">
-            <el-form-item label="应用名称" prop="name">
-              <el-input v-model="queryParams.name" placeholder="应用名称" clearable />
+            <el-form-item :label="$t('workflow.label.appName')" prop="name">
+              <el-input
+                v-model="queryParams.name"
+                :placeholder="$t('workflow.label.appName')"
+                clearable
+              />
             </el-form-item>
           </div>
           <div class="grid-column">
-            <el-form-item label="启用状态" prop="status">
+            <el-form-item :label="$t('label.status')" prop="status">
               <dict-select
                 v-model="queryParams.status"
                 dict-type="status"
-                placeholder="启用状态"
+                :placeholder="$t('label.status')"
                 clearable
               />
             </el-form-item>
@@ -80,8 +84,19 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" header-align="center" align="center" width="50" />
-        <el-table-column prop="name" label="应用名称" header-align="center" align="center" />
-        <el-table-column prop="icon" label="图标" header-align="center" align="center" width="120">
+        <el-table-column
+          prop="name"
+          :label="$t('workflow.label.appName')"
+          header-align="center"
+          align="center"
+        />
+        <el-table-column
+          prop="icon"
+          :label="$t('workflow.label.appIcon')"
+          header-align="center"
+          align="center"
+          width="120"
+        >
           <template #default="scope">
             <i
               :class="[scope.row.icon, 'iconStyle']"
@@ -92,21 +107,21 @@
         </el-table-column>
         <el-table-column
           prop="sort"
-          label="排序"
+          :label="$t('label.sort')"
           header-align="center"
           align="center"
           width="100"
         />
         <el-table-column
           prop="createTime"
-          label="创建时间"
+          :label="$t('label.createTime')"
           header-align="center"
           align="center"
           width="180"
         />
         <el-table-column
           prop="status"
-          label="启用状态"
+          :label="$t('label.status')"
           header-align="center"
           align="center"
           width="150"
@@ -115,7 +130,12 @@
             <dict-tag dict-type="status" :value="scope.row.status" />
           </template>
         </el-table-column>
-        <el-table-column prop="remark" label="备注信息" header-align="center" align="center" />
+        <el-table-column
+          prop="remark"
+          :label="$t('label.remark')"
+          header-align="center"
+          align="center"
+        />
         <el-table-column
           :label="$t('label.operate')"
           align="center"

@@ -35,9 +35,7 @@
               :formItem="item"
             />
           </div>
-          <div class="form-complete" v-if="formStatus === '9'">
-            <!-- <img src="@/assets/images/process-complete.png" alt="审批通过" /> -->
-          </div>
+          <div class="form-complete" v-if="formStatus === '9'"> </div>
         </div>
       </el-scrollbar>
     </div>

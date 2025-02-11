@@ -18,10 +18,13 @@
   >
     <template #header="{ close, titleId, titleClass }">
       <h4 :id="titleId" :class="[titleClass]">{{ drawerTitle }}</h4>
-      <el-tooltip :content="isFullScreen ? '退出全屏' : '全屏'" placement="bottom">
+      <el-tooltip
+        :content="isFullScreen ? t('header.exitFullScreen') : t('header.fullScreen')"
+        placement="bottom"
+      >
         <i :class="[expandClass, 'px-18px']" @click="isFullScreen = !isFullScreen"></i>
       </el-tooltip>
-      <el-tooltip content="关闭" placement="bottom">
+      <el-tooltip :content="t('button.close')" placement="bottom">
         <i class="iconfont icon-close px-18px" @click="close"></i>
       </el-tooltip>
     </template>
@@ -32,8 +35,8 @@
       :form-info="_formInfo"
     />
     <template #footer>
-      <el-button @click="handleSave">暂 存</el-button>
-      <el-button type="primary" @click="handleSubmit">提 交</el-button>
+      <el-button @click="handleSave">{{ t('button.tmp') }}</el-button>
+      <el-button type="primary" @click="handleSubmit">{{ t('button.submit') }}</el-button>
     </template>
   </el-drawer>
 </template>

@@ -7,25 +7,19 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">人员选择</span>
         </div>
       </template>
       <el-input v-model="_formItem.title" />
     </el-form-item>
-    <el-form-item label="提示内容">
-      <template #label>
-        <div class="flex justify-between items-center">
-          <span>提示内容</span>
-          <span class="text-xs font-normal">提示内容</span>
-        </div>
-      </template>
+    <el-form-item :label="t('workflow.component.placeholder')">
       <el-input v-model="_formItem.props.placeholder" />
     </el-form-item>
-    <el-form-item label="默认值">
+    <el-form-item :label="t('workflow.component.defaultValue')">
       <el-select v-model="valueType">
         <el-option label="固定值" value="fixed" />
         <el-option label="数据联动" value="linkage" />
@@ -36,17 +30,17 @@
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item label="仅以下部门可被选择">
+    <el-form-item :label="t('workflow.component.deptFilter')">
       <el-input @click="showSelectedDialog" readonly v-model="_selectedInfos">
         <template #suffix>
           <i class="iconfont icon-xinzeng" style="color: var(--el-color-primary)" />
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
-    <el-form-item label="是否多选">
+    <el-form-item :label="t('workflow.component.isMultiple')">
       <el-switch v-model="_formItem.props.multiple" />
     </el-form-item>
     <user-org-picker
@@ -81,7 +75,10 @@
   import userOrgPicker from '@/views/workflow/components/common/user-dept-picker.vue';
   import DataLinkage from '../common/data-linkage.vue';
   import { ElMessage } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 默认值类型

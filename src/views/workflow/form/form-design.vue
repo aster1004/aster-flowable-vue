@@ -87,10 +87,10 @@
     <el-aside class="form-right">
       <el-scrollbar style="height: 100%">
         <el-tabs v-model="rightActiveTab" class="right-tabs">
-          <el-tab-pane label="控件属性" name="component">
+          <el-tab-pane name="component" :label="$t('workflow.label.componentProperties')">
             <form-component-properties />
           </el-tab-pane>
-          <el-tab-pane label="表单属性" name="form">
+          <el-tab-pane name="form" :label="$t('workflow.label.formProperties')">
             <form-properties ref="formPropertiesRef" />
           </el-tab-pane>
         </el-tabs>
@@ -112,7 +112,9 @@
   import draggable from 'vuedraggable';
   import { useI18n } from 'vue-i18n';
 
+  // 工作流store
   const workFlowStore = useWorkFlowStore();
+  // 国际化
   const { t } = useI18n();
 
   // 注册组件

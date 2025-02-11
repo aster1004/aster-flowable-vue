@@ -108,9 +108,9 @@
    * @description: 更新高度
    */
   const updateHeight = () => {
-    const parentHeight = printRef.value.parentNode.offsetHeight;
-    const labelHeight = printLabelRef.value.offsetHeight;
-    const valueHeight = printValueRef.value.offsetHeight;
+    const parentHeight = printRef.value.parentNode?.offsetHeight;
+    const labelHeight = printLabelRef.value?.offsetHeight;
+    const valueHeight = printValueRef.value?.offsetHeight;
     printMaxHeight.value = Math.max(parentHeight, labelHeight, valueHeight);
   };
 

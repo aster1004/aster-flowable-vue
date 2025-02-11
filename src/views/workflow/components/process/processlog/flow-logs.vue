@@ -124,14 +124,6 @@
                               :preview-src-list="[img.url]"
                               alt="加载失败"
                             />
-                            <!-- <span class="image-actions">
-                              <span title="预览" @click="handlePreview(img)">
-                                <i class="iconfont icon-zoom-in px-3px"></i>
-                              </span>
-                              <span title="下载" @click="handleDownload(img)">
-                                <i class="iconfont icon-xiazai px-3px"></i>
-                              </span>
-                            </span> -->
                           </div>
                         </div>
                       </div>
@@ -146,14 +138,14 @@
                           </div>
                           <div class="file-preview-bottom">
                             <span class="pl-20px">
-                              <el-link type="primary" @click="handlePreviewFile(file)"
-                                >预览</el-link
-                              >
+                              <el-link type="primary" @click="handlePreviewFile(file)">
+                                {{ $t('button.preview') }}
+                              </el-link>
                             </span>
                             <span class="pl-20px">
-                              <el-link type="primary" @click="handleDownloadFile(file)"
-                                >下载</el-link
-                              >
+                              <el-link type="primary" @click="handleDownloadFile(file)">
+                                {{ $t('button.download') }}
+                              </el-link>
                             </span>
                           </div>
                         </div>
@@ -211,10 +203,10 @@
   import { reactive, ref, watchEffect, computed, PropType } from 'vue';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { downloadFileByUrl } from '@/utils/fileUtils';
-  // import { ImageUpload } from '@/config/fileConfig';
   import { useI18n } from 'vue-i18n';
   import { PREVIEW_URL } from '@/config';
   import { Base64 } from 'js-base64';
+
   const { t } = useI18n();
 
   const props = defineProps({

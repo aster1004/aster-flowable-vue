@@ -16,33 +16,32 @@
     >
       <el-row>
         <el-col :span="24">
-          <el-form-item prop="name" label="应用名称">
-            <el-input v-model="formData.name" placeholder="应用名称" />
+          <el-form-item prop="name" :label="$t('workflow.label.appName')">
+            <el-input v-model="formData.name" :placeholder="$t('workflow.label.appName')" />
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item prop="icon" label="图标">
+          <el-form-item prop="icon" :label="$t('workflow.label.appIcon')">
             <icon-select ref="iconSelectRef" v-model:icon="formData.icon" />
-            <!-- <el-input v-model="formData.icon" placeholder="图标" /> -->
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item prop="iconColor" label="图标颜色">
+          <el-form-item prop="iconColor" :label="$t('workflow.label.appIconColor')">
             <el-color-picker v-model="formData.iconColor" />
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="图标浏览">
+          <el-form-item :label="$t('workflow.label.appIconView')">
             <i :class="formData.icon" :style="[iconStyle]" v-show="isNotEmpty(formData.icon)"></i>
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item prop="sort" label="排序">
+          <el-form-item prop="sort" :label="$t('label.sort')">
             <el-input-number
               v-model="formData.sort"
               controls-position="right"
               :min="0"
-              placeholder="排序"
+              :placeholder="$t('label.sort')"
             />
           </el-form-item>
         </el-col>
@@ -120,11 +119,11 @@
   /** 表单规则 */
   const formRules = computed(() => {
     return {
-      name: [{ required: true, message: '应用名称不能为空', trigger: 'blur' }],
-      icon: [{ required: true, message: '图标不能为空', trigger: 'blur' }],
-      iconColor: [{ required: true, message: '图标颜色不能为空', trigger: 'blur' }],
-      sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
-      status: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
+      name: [{ required: true, message: t('workflow.rule.appName'), trigger: 'blur' }],
+      icon: [{ required: true, message: t('workflow.rule.appIcon'), trigger: 'blur' }],
+      iconColor: [{ required: true, message: t('workflow.rule.appIconColor'), trigger: 'blur' }],
+      sort: [{ required: true, message: t('workflow.rule.appSort'), trigger: 'blur' }],
+      status: [{ required: true, message: t('workflow.rule.appStatus'), trigger: 'blur' }],
     };
   });
 
