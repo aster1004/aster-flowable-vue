@@ -115,7 +115,7 @@
                     :key="index"
                   >
                     <el-tooltip
-                      v-if="item.formName.length > 6"
+                      v-if="item.formName && item.formName.length > 6"
                       effect="dark"
                       :content="item.formName"
                       placement="top"
