@@ -148,9 +148,9 @@
             class-name="operation"
           >
             <template #default="scope">
-              <el-button size="small" link type="primary" @click="handleDeployment(scope.row.id)">
+              <!-- <el-button size="small" link type="primary" @click="handleDeployment(scope.row.id)">
                 <i class="iconfont icon-fuxuankuang"></i>{{ $t('button.deploy') }}
-              </el-button>
+              </el-button> -->
               <el-button size="small" link type="primary" @click="handleEdit(scope.row.id)">
                 <i class="iconfont icon-bianji"></i>{{ $t('button.edit') }}
               </el-button>
@@ -322,6 +322,9 @@
     handleQuery();
   };
 
+  /**
+   * 部署
+   */
   const handleDeployment = (id: String) => {
     deploymentApi(id).then((res) => {
       console.info('部署：', res);

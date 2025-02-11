@@ -38,12 +38,12 @@
       </el-menu>
     </el-col>
     <el-col :span="6" class="header-right">
-      <el-button @click="saveForm">
+      <!-- <el-button @click="saveForm">
         <template #icon>
           <i class="iconfont icon-completed"></i>
         </template>
         {{ $t('button.save') }}
-      </el-button>
+      </el-button> -->
       <el-button type="primary" @click="publishForm">
         <template #icon>
           <i class="iconfont icon-fabu"></i>
