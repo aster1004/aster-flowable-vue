@@ -16,37 +16,44 @@
     >
       <el-form-item prop="formName">
         <template #label>
-          <span class="form-label">表单名称</span>
+          <span class="form-label">{{ t('workflow.label.formName') }}</span>
         </template>
-        <el-input v-model="formInfo.formName" placeholder="请输入表单名称" />
+        <el-input
+          v-model="formInfo.formName"
+          :placeholder="t('workflow.form.formNamePlaceholder')"
+        />
       </el-form-item>
       <el-form-item prop="icon">
         <template #label>
-          <span class="form-label">表单图标</span>
+          <span class="form-label">{{ t('workflow.label.formIcon') }}</span>
         </template>
         <div class="form-icon">
           <div>
-            <span>选择图标</span>
+            <span>{{ t('workflow.form.selectIcon') }}</span>
             <icon-select
               ref="iconSelectRef"
               v-if="showIconSelect"
               v-model:icon="formInfo.icon"
               :icon-style="iconStyle"
-              type="button"
+              type="icon"
               :z-index="9999"
             />
           </div>
           <div class="form-icon__color">
-            <span>颜色</span>
+            <span>{{ t('workflow.form.iconColor') }}</span>
             <color-picker v-if="showIconSelect" v-model="formInfo.iconColor" />
           </div>
         </div>
       </el-form-item>
       <el-form-item prop="dataTitle">
         <template #label>
-          <span class="form-label">数据标题</span>
+          <span class="form-label">{{ t('workflow.label.dataTitle') }}</span>
         </template>
-        <el-select v-model="formInfo.dataTitle" multiple placeholder="请选择数据标题">
+        <el-select
+          v-model="formInfo.dataTitle"
+          multiple
+          :placeholder="t('workflow.form.dataTitlePlaceholder')"
+        >
           <el-option
             v-for="(item, index) in _flatFormItems"
             :key="index"
@@ -57,21 +64,26 @@
       </el-form-item>
       <el-form-item prop="labelPosition">
         <template #label>
-          <span class="form-label">标签位置</span>
+          <span class="form-label">{{ t('workflow.label.labelPosition') }}</span>
         </template>
         <dict-select v-model="formInfo.labelPosition" dict-type="label_position"></dict-select>
       </el-form-item>
       <el-form-item prop="labelWidth">
         <template #label>
-          <span class="form-label">标签宽度</span>
+          <span class="form-label">{{ t('workflow.label.labelWidth') }}</span>
         </template>
         <el-input type="number" v-model="formInfo.labelWidth"></el-input>
       </el-form-item>
       <el-form-item prop="remark">
         <template #label>
-          <span class="form-label">表单描述</span>
+          <span class="form-label">{{ t('workflow.label.formDesc') }}</span>
         </template>
-        <el-input v-model="formInfo.remark" :rows="3" type="textarea" placeholder="请输入描述" />
+        <el-input
+          v-model="formInfo.remark"
+          :rows="3"
+          type="textarea"
+          :placeholder="t('workflow.form.formDescPlaceholder')"
+        />
       </el-form-item>
     </el-form>
   </div>
@@ -83,9 +95,12 @@
   import ColorPicker from '@/components/color/color-picker.vue';
   import { isDef, isNotEmpty } from '@/utils';
   import { flatFormItems } from '@/utils/workflow';
+  import { useI18n } from 'vue-i18n';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
+  // 国际化
+  const { t } = useI18n();
 
   // 是否显示图标下拉选择器
   const showIconSelect = ref(false);
@@ -95,15 +110,15 @@
   // 表单规则
   const formRules = {
     formName: [
-      { required: true, message: '请输入表单名称', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' },
+      { required: true, message: t('workflow.form.formNameRule'), trigger: 'blur' },
+      { min: 2, max: 50, message: t('workflow.form.formNameLength'), trigger: 'blur' },
     ],
-    icon: [{ required: true, message: '请选择图标', trigger: 'blur' }],
-    dataTitle: [{ required: true, message: '请选择数据标题', trigger: 'blur' }],
+    icon: [{ required: true, message: t('workflow.form.formIconRule'), trigger: 'blur' }],
+    dataTitle: [{ required: true, message: t('workflow.form.dataTitleRule'), trigger: 'blur' }],
   };
   // 校验表单
   const validate = async () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       formRef.value
         .validate()
         .then(() => resolve())
@@ -135,7 +150,10 @@
    * @return {*}
    */
   const iconStyle = computed(() => {
-    let style = {};
+    let style: { color: string; backgroundColor: string } = {
+      color: 'none',
+      backgroundColor: 'none',
+    };
     if (isDef(formInfo.value.iconColor) && isNotEmpty(formInfo.value.iconColor)) {
       style = {
         color: '#ffffff',

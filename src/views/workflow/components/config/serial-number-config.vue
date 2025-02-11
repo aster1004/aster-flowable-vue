@@ -7,27 +7,27 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">流水号</span>
         </div>
       </template>
       <el-input v-model="_formItem.title" />
     </el-form-item>
-    <el-form-item label="流水号规则">
+    <el-form-item :label="t('workflow.component.serialRule')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>流水号规则</span>
+          <span>{{ t('workflow.component.serialRule') }}</span>
           <el-button type="primary" link class="text-xs font-normal" @click="showRules">
-            设置
+            {{ t('button.set') }}
           </el-button>
         </div>
       </template>
       <el-input :model-value="displayRule" disabled />
     </el-form-item>
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
     <!-- 配置规则 -->
@@ -38,7 +38,10 @@
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, ref } from 'vue';
   import SerialNumberRule from '../common/serial-number-rule.vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 注册组件

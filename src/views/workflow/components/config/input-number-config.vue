@@ -7,10 +7,10 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">数字</span>
         </div>
       </template>
@@ -18,14 +18,14 @@
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span>数值精度</span>
-        <el-tooltip content="小数点后位数" placement="top">
+        <span>{{ t('workflow.component.numericalPrecision') }}</span>
+        <el-tooltip :content="t('workflow.component.precisionTip')" placement="top">
           <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
         </el-tooltip>
       </template>
       <el-input-number v-model="_formItem.props.precision" :min="0" :max="10" />
     </el-form-item>
-    <el-form-item label="默认值">
+    <el-form-item :label="t('workflow.component.defaultValue')">
       <el-select v-model="valueType">
         <el-option label="计算公式" value="formula" />
         <el-option label="数据联动" value="linkage" />
@@ -36,10 +36,10 @@
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item label="提示语">
+    <el-form-item :label="t('workflow.component.placeholder')">
       <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
     </el-form-item>
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
 
@@ -59,7 +59,10 @@
   import Formula from '../common/formula.vue';
   import DataLinkage from '../common/data-linkage.vue';
   import { ElMessage } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 注册组件

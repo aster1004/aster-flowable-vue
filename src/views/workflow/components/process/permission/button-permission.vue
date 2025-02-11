@@ -2,7 +2,7 @@
   <div class="button-container">
     <el-table :data="_value" :show-header="false" :stripe="true" :border="true" style="width: 100%">
       <el-table-column prop="operation" label="操作按钮" />
-      <el-table-column prop="status" label="状态">
+      <el-table-column prop="status" :label="$t('label.status')">
         <template #default="scope">
           <el-switch
             v-model="scope.row.status"

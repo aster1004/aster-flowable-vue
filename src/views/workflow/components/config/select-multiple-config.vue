@@ -7,10 +7,10 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">复选框</span>
         </div>
       </template>
@@ -23,7 +23,10 @@
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import SelectConfig from './select-config.vue';
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 

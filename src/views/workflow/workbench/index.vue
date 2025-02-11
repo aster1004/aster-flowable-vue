@@ -9,7 +9,7 @@
   <div class="home-container">
     <el-card class="home-card" shadow="never">
       <template #header>
-        <span class="card-header-title">应用信息</span>
+        <span class="card-header-title">{{ t('workflow.label.appInfo') }}</span>
       </template>
       <div class="app-container">
         <el-card
@@ -35,6 +35,10 @@
   import { appActiveListApi } from '@/api/workflow/app';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useRouter } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
+
+  // 国际化
+  const { t } = useI18n();
   // 路由
   const router = useRouter();
   // 应用集合

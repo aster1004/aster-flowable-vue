@@ -7,10 +7,10 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">附件</span>
         </div>
       </template>
@@ -19,7 +19,7 @@
 
     <el-form-item>
       <template #label>
-        <span>附件大小</span>
+        <span>{{ t('workflow.component.fileSize') }}</span>
         <el-tooltip content="限制单个附件最大大小-MB（为0则不限制）" placement="top">
           <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
         </el-tooltip>
@@ -33,7 +33,7 @@
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span>附件数量</span>
+        <span>{{ t('workflow.component.fileNum') }}</span>
         <el-tooltip content="限制最大上传数量（为0则不限制）" placement="top">
           <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
         </el-tooltip>
@@ -47,7 +47,7 @@
     </el-form-item>
     <el-form-item>
       <template #label>
-        <span>附件类型</span>
+        <span>{{ t('workflow.component.fileType') }}</span>
         <el-tooltip content="限制附件上传类型（为空则不限制）" placement="top">
           <span class="tooltip"><i class="iconfont icon-tishi !text-sm"></i></span>
         </el-tooltip>
@@ -62,7 +62,7 @@
       </el-select>
     </el-form-item>
 
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
   </div>
@@ -70,7 +70,10 @@
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 

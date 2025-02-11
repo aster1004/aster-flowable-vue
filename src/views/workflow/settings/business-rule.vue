@@ -8,16 +8,16 @@
 <template>
   <div class="business-container">
     <div class="business-title">
-      <span>业务规则</span>
+      <span>{{ t('workflow.settings.businessRule') }}</span>
       <el-button v-if="rules && rules.length > 0" type="primary" @click="handleAdd">
-        新增规则
+        {{ t('workflow.settings.addRule') }}
       </el-button>
     </div>
 
     <div class="business-main">
       <el-scrollbar v-if="rules && isNotEmpty(rules)" style="height: 100%; margin: 10px">
         <div class="business-tip">
-          说明：业务规则用于处理表单与表单之间的数据关联变更，通过业务规则能对其它表单的数据进行插入、更新、删除等操作
+          {{ t('workflow.settings.businessDesc') }}
         </div>
         <div
           class="business-content"
@@ -57,13 +57,15 @@
         <el-empty :image-size="80">
           <template #description>
             <div class="business-empty-text">
-              <span class="text-sm pb-5px">暂无业务规则</span>
+              <span class="text-sm pb-5px">{{ t('workflow.settings.businessEmpty') }}</span>
               <span class="text-xs pb-5px">
-                设置业务规则能对其它表单的数据进行插入、更新、删除等操作
+                {{ t('workflow.settings.businessEmptyTip') }}
               </span>
             </div>
           </template>
-          <el-button type="primary" @click="handleAdd"> 立即设置 </el-button>
+          <el-button type="primary" @click="handleAdd">
+            {{ t('workflow.settings.immediatelySet') }}
+          </el-button>
         </el-empty>
       </div>
     </div>
@@ -78,7 +80,10 @@
   import { businessEventOptions, businessOperationOptions } from '@/enums/workFlowEnum';
   import { ElMessageBox } from 'element-plus';
   import { generateFieldId } from '@/utils/workflow';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 注册组件
@@ -164,10 +169,11 @@
   const handleDelete = (element: WorkForm.BusinessRule) => {
     console.log(rules.value);
     console.log(element);
-    ElMessageBox.confirm('确定删除该业务规则吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
+      confirmButtonText: t('button.confirm'),
+      cancelButtonText: t('button.cancel'),
       type: 'warning',
+      lockScroll: false,
     })
       .then(() => {
         if (rules.value) {

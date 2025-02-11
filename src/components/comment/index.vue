@@ -82,7 +82,10 @@
   } from 'vue';
   import defaultAvatar from '@/assets/images/avatar.png';
   import { ElMessageBox } from 'element-plus';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // @ts-ignore
   const { proxy } = getCurrentInstance();
 
@@ -322,9 +325,9 @@
     if (typeof props.beforeDelete === 'function') {
       try {
         const data = transformToOriginObj(comment);
-        ElMessageBox.confirm('确定删除该评论？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
+          confirmButtonText: t('button.confirm'),
+          cancelButtonText: t('button.cancel'),
           type: 'warning',
           lockScroll: false,
         })

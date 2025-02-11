@@ -73,6 +73,7 @@
   import { useI18n } from 'vue-i18n';
   import { WarningFilled, Loading } from '@element-plus/icons-vue';
 
+  // 国际化
   const { t } = useI18n();
   //获取当前组件实例对象数组
   const currentInstances: any = getCurrentInstance();
@@ -115,6 +116,7 @@
     { _ref: 'formDesignRef', name: '表单设计', status: '' },
     { _ref: 'processDesignRef', name: '流程设计', status: '' },
   ]);
+
   /**
    * @description 保存
    */
@@ -125,6 +127,7 @@
     //   processDesignRef.value.jsonValue();
     // });
   };
+
   const reloadValidResult = (isSuccess: boolean) => {
     validateResult.value.finished = true;
     validateResult.value.success = isSuccess;

@@ -411,8 +411,8 @@
   /**
    * @description: 过滤条件变化
    */
-  const handleFilterChange = (val: string, index: number) => {
-    const targetItem = filterTargetFormItems.value.find((item) => item.value == val);
+  const handleFilterChange = (option: WorkComponent.DataFillOption, index: number) => {
+    const targetItem = filterTargetFormItems.value.find((item) => item.value == option.value);
     if (targetItem == undefined) {
       return;
     }
@@ -467,8 +467,8 @@
   /**
    * @description: 操作条件变化
    */
-  const handleOperateChange = (val: string, index: number) => {
-    const targetItem = operateTargetFormItems.value.find((item) => item.value == val);
+  const handleOperateChange = (option: WorkComponent.DataFillOption, index: number) => {
+    const targetItem = operateTargetFormItems.value.find((item) => item.value == option.value);
     if (targetItem == undefined) {
       return;
     }

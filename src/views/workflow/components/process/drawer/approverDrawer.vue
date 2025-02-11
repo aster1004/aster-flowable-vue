@@ -27,18 +27,18 @@
       status-icon
     >
       <el-tabs v-model="activeName">
-        <el-tab-pane label="节点属性" name="nodeProps">
-          <el-form-item label="节点ID" prop="id">
+        <el-tab-pane :label="t('workflow.process.nodeProperty')" name="nodeProps">
+          <el-form-item :label="t('workflow.process.nodeId')" prop="id">
             <el-input readonly v-model="approverConfig.id" />
           </el-form-item>
-          <el-form-item label="审核人" prop="approveUser">
+          <el-form-item :label="t('workflow.process.nodeApprover')" prop="approveUser">
             <el-input :value="approveUserText" readonly @click="openUserSelect">
               <template #suffix>
                 <i class="iconfont icon-xinzeng icon-primary" @click="openUserSelect" />
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item label="审批人为空时">
+          <el-form-item :label="t('workflow.process.approverEmpty')">
             <el-select v-model="approverConfig.value.noUser" placeholder="请选择">
               <el-option
                 v-for="item in noUserOption"
@@ -48,7 +48,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="多人审批时审批方式">
+          <el-form-item :label="t('workflow.process.mutiApproverType')">
             <el-select v-model="approverConfig.value.approveType" placeholder="请选择">
               <el-option
                 v-for="item in approveTypeOption"
@@ -59,24 +59,20 @@
             </el-select>
           </el-form-item>
         </el-tab-pane>
-        <el-tab-pane label="表单权限" name="formPermission">
+        <el-tab-pane :label="t('workflow.process.formPermission')" name="formPermission">
           <form-permission
             v-model:value="approverConfig.value.formPermission"
             :headerConfig="headerConfig"
           />
         </el-tab-pane>
-        <el-tab-pane label="操作权限" name="buttonPermission">
+        <el-tab-pane :label="t('workflow.process.buttonPermission')" name="buttonPermission">
           <button-permission v-model:value="approverConfig.value.buttonPermission" />
         </el-tab-pane>
       </el-tabs>
     </el-form>
-    <!-- <template #footer>
-      <el-button type="primary" @click="saveApprover">确 定</el-button>
-      <el-button @click="closeDrawer">取 消</el-button>
-    </template> -->
     <member-select
       ref="memberSelectRef"
-      title="选择审批人"
+      :title="t('workflow.process.selectApprover')"
       :value="approverConfig.value.nodeUserList"
       @submit="handleSubmitMember"
     />
@@ -90,7 +86,10 @@
   import FormPermission from '../permission/form-permission.vue';
   import ButtonPermission from '../permission/button-permission.vue';
   import { getFormFieldData } from '@/utils/process/process';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   let store = processStore();
   let { setApproverConfig, setApprover } = store;
 

@@ -7,16 +7,16 @@
 -->
 <template>
   <div v-if="_formItem">
-    <el-form-item label="控件名称">
+    <el-form-item :label="t('workflow.component.name')">
       <template #label>
         <div class="flex justify-between items-center">
-          <span>控件名称</span>
+          <span>{{ t('workflow.component.name') }}</span>
           <span class="text-xs font-normal">关联表单</span>
         </div>
       </template>
       <el-input v-model="_formItem.title" />
     </el-form-item>
-    <el-form-item label="关联表单">
+    <el-form-item :label="t('workflow.component.associatedForm')">
       <el-cascader
         v-model="_formItem.props.formCode"
         :options="treeNodes"
@@ -28,21 +28,21 @@
         style="width: 100%"
       />
     </el-form-item>
-    <el-form-item label="数据范围限定">
+    <el-form-item :label="t('workflow.component.dataScope')">
       <el-input :value="_formItem.props.dataScope.label" readonly @click="showDataScope">
         <template #suffix>
           <i class="iconfont icon-plus"></i>
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item label="数据填充规则">
+    <el-form-item :label="t('workflow.component.dataFill')">
       <el-input readonly @click="showDataFill">
         <template #suffix>
           <i class="iconfont icon-plus"></i>
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item label="显示字段">
+    <el-form-item :label="t('workflow.component.displayField')">
       <el-select
         v-model="_formItem.props.displayField"
         :multiple="true"
@@ -59,7 +59,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="是否必填">
+    <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
 
@@ -84,7 +84,10 @@
   import DataScope from '../common/data-scope.vue';
   import DataFill from '../common/data-fill.vue';
   import { flatFormItemsExclude } from '@/utils/workflow';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 注册组件

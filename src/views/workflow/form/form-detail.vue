@@ -27,13 +27,19 @@
           </div>
           <div class="form-header-right">
             <div class="form-header-action" v-if="isEdit">
-              <el-tooltip :content="isFooter ? '关闭编辑' : '编辑'" placement="bottom">
+              <el-tooltip
+                :content="isFooter ? t('workflow.form.closeEdit') : t('workflow.form.edit')"
+                placement="bottom"
+              >
                 <i class="iconfont icon-guanbixiugai" v-if="isFooter" @click="handleEdit"></i>
                 <i class="iconfont icon-xiugai" v-else @click="handleEdit"></i>
               </el-tooltip>
             </div>
             <div class="form-header-action">
-              <el-tooltip :content="isFullScreen ? '退出全屏' : '全屏'" placement="bottom">
+              <el-tooltip
+                :content="isFullScreen ? t('header.exitFullScreen') : t('header.fullScreen')"
+                placement="bottom"
+              >
                 <i :class="expandClass" @click="isFullScreen = !isFullScreen"></i>
               </el-tooltip>
             </div>
@@ -42,7 +48,7 @@
                 <ul>
                   <li class="py-2px">
                     <el-button type="primary" link size="small" @click="printFormInfo('default')">
-                      默认打印模板
+                      {{ t('workflow.form.defaultTemplate') }}
                     </el-button>
                   </li>
                   <li class="py-2px" v-for="(item, index) in _printTemplates" :key="index">
@@ -62,7 +68,7 @@
               </el-popover>
             </div>
             <div class="form-header-action">
-              <el-tooltip content="关闭" placement="bottom">
+              <el-tooltip :content="t('button.close')" placement="bottom">
                 <i class="iconfont icon-close" @click="close"></i>
               </el-tooltip>
             </div>
@@ -325,16 +331,17 @@
   const superAdminSubmit = () => {
     validateForm(() => {
       if (!formInfo.value.code || isEmpty(formInfo.value.code)) {
-        ElMessage.error('表单编码不能为空');
+        ElMessage.error(t('workflow.error.formCode'));
         return;
       } else if (!formData.value || isEmpty(formData.value.id)) {
-        ElMessage.error('表单id不能为空');
+        ElMessage.error(t('workflow.error.formId'));
         return;
       } else {
         ElMessageBox.confirm(t('common.confirmSubmit'), t('common.tips'), {
           confirmButtonText: t('button.confirm'),
           cancelButtonText: t('button.cancel'),
           type: 'warning',
+          lockScroll: false,
         }).then(() => {
           superAdminSubmitApi(formInfo.value.code!, formData.value).then((res) => {
             if (res.code === ResultEnum.SUCCESS) {
@@ -387,6 +394,7 @@
   const cancel = () => {
     isFooter.value = false;
     visible.value = false;
+    formInfoRef.value.isCollapse = true;
     // 延迟400ms后刷新列表，防止流程状态还没更改过来查询到的数据还是旧的数据
     setTimeout(() => {
       // 提交成功，刷新
@@ -461,7 +469,7 @@
     isAssociatedForm = false,
   ) => {
     if (isEmpty(id) || isEmpty(code)) {
-      ElMessage.error('参数错误');
+      ElMessage.error(t('workflow.error.params'));
       return;
     }
     isAssociated.value = isAssociatedForm;
@@ -532,7 +540,7 @@
     isAssociatedForm = false,
   ) => {
     if (isEmpty(instanceId) || isEmpty(code)) {
-      ElMessage.error('参数错误');
+      ElMessage.error(t('workflow.error.params'));
       return;
     }
     procInstId.value = instanceId;

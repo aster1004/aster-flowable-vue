@@ -1,7 +1,7 @@
 <!--
  * @Date: 2022-08-25 14:05:59
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-10-12 14:58:23
+ * @LastEditTime: 2025-01-27 12:53:31
  * @FilePath: \aster-flowable-vue\src\views\workflow\components\process\drawer\copyerDrawer.vue
 -->
 <template>
@@ -33,8 +33,8 @@
       status-icon
     >
       <el-tabs v-model="activeName">
-        <el-tab-pane label="节点属性" name="nodeProps">
-          <el-form-item label="节点ID" prop="id">
+        <el-tab-pane :label="t('workflow.process.nodeProperty')" name="nodeProps">
+          <el-form-item :label="t('workflow.process.nodeId')" prop="id">
             <el-input readonly v-model="copyerConfig.id" />
           </el-form-item>
           <el-form-item label="抄送人" prop="approveUser">
@@ -45,7 +45,7 @@
             </el-input>
           </el-form-item>
         </el-tab-pane>
-        <el-tab-pane label="表单权限" name="formPermission">
+        <el-tab-pane :label="t('workflow.process.formPermission')" name="formPermission">
           <form-permission
             v-model:value="copyerConfig.value.formPermission"
             :headerConfig="headerConfig"
@@ -53,13 +53,9 @@
         </el-tab-pane>
       </el-tabs>
     </el-form>
-    <!-- <template #footer>
-      <el-button type="primary" @click="saveCopyer">确 定</el-button>
-      <el-button @click="closeDrawer">取 消</el-button>
-    </template> -->
     <member-select
       ref="memberSelectRef"
-      title="选择审批人"
+      :title="t('workflow.process.selectApprover')"
       :value="copyerConfig.value.nodeUserList"
       @submit="handleSubmitMember"
     />
@@ -72,7 +68,10 @@
   import { isNotEmpty } from '@/utils';
   import FormPermission from '../permission/form-permission.vue';
   import { getFormFieldData } from '@/utils/process/process';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   let store = processStore();
   let { setCopyerConfig, setCopyer } = store;
 

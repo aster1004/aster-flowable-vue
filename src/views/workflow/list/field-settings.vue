@@ -11,7 +11,7 @@
       <el-form-item>
         <template #label>
           <div class="flex justify-between items-center">
-            <span>查询条件</span>
+            <span>{{ t('workflow.list.search') }}</span>
             <el-popover placement="left-start" trigger="click" :width="240" :show-arrow="false">
               <template #reference>
                 <i class="iconfont icon-xinzeng"></i>
@@ -85,7 +85,7 @@
       <el-form-item>
         <template #label>
           <div class="flex justify-between items-center">
-            <span>列表字段</span>
+            <span>{{ t('workflow.list.listField') }}</span>
             <div class="flex justify-center items-center font-normal">
               <span class="pr-10px">全选</span>
               <el-checkbox
@@ -133,7 +133,10 @@
   import draggable from 'vuedraggable';
   import { defaultComponentConfig } from '../components/component-config-export';
   import { isNotEmpty } from '@/utils';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
   // 查询字段全选

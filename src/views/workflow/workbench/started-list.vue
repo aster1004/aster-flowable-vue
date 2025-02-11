@@ -12,7 +12,7 @@
       <el-form ref="queryForm" :model="queryParams" :inline="false" @keyup.enter="handleQuery()">
         <div class="grid-box">
           <div class="grid-column">
-            <el-form-item label="所属表单" prop="appId">
+            <el-form-item :label="t('workflow.label.belongForm')" prop="appId">
               <el-cascader
                 v-model="selectedNode"
                 :options="treeNodes"
@@ -26,12 +26,12 @@
             </el-form-item>
           </div>
           <div class="grid-column">
-            <el-form-item label="表单名称" prop="title">
+            <el-form-item :label="t('workflow.label.formName')" prop="title">
               <el-input v-model="queryParams.title" placeholder="请输入表单名称" clearable />
             </el-form-item>
           </div>
           <div class="grid-column" v-show="!searchCollapsed">
-            <el-form-item label="状态" prop="status">
+            <el-form-item prop="status" :label="$t('label.status')">
               <dict-select
                 dict-type="task_end_status"
                 v-model="queryParams.status"
@@ -41,7 +41,7 @@
             </el-form-item>
           </div>
           <div class="grid-column" v-show="!searchCollapsed">
-            <el-form-item label="时间范围" prop="startTime">
+            <el-form-item :label="t('workflow.label.dateRange')" prop="startTime">
               <el-date-picker
                 v-model="dateValue"
                 type="daterange"
@@ -103,8 +103,7 @@
         <el-table-column fixed type="index" width="50" header-align="center" align="center" />
         <el-table-column
           prop="dataTitle"
-          label="数据标题"
-          fixed
+          :label="t('workflow.label.dataTitle')"
           header-align="center"
           align="center"
           min-width="180"
@@ -118,8 +117,7 @@
         </el-table-column>
         <el-table-column
           prop="formStatus"
-          label="流程状态"
-          fixed
+          :label="t('workflow.label.formStatus')"
           header-align="center"
           align="center"
           min-width="100"
@@ -130,36 +128,36 @@
         </el-table-column>
         <el-table-column
           prop="formName"
-          label="所属表单"
+          :label="t('workflow.label.belongForm')"
           header-align="center"
           align="center"
-          min-width="120"
+          min-width="150"
           show-overflow-tooltip
         />
         <el-table-column
           prop="nodeName"
-          label="当前节点"
+          :label="t('workflow.label.currentNode')"
           header-align="center"
           align="center"
-          min-width="100"
+          min-width="120"
         />
         <el-table-column
           prop="startTime"
-          label="开始时间"
+          :label="t('workflow.label.startTime')"
           header-align="center"
           align="center"
-          min-width="120"
+          min-width="180"
         />
         <el-table-column
           prop="endTime"
-          label="结束时间"
+          :label="t('workflow.label.endTime')"
           header-align="center"
           align="center"
-          min-width="120"
+          min-width="180"
         />
         <el-table-column
           prop="duration"
-          label="任务耗时"
+          :label="t('workflow.label.duration')"
           header-align="center"
           align="center"
           min-width="120"
@@ -168,10 +166,16 @@
             {{ convertMilliSecond(scope.row.duration) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="160" align="center" class-name="operation">
+        <el-table-column
+          :label="$t('label.operate')"
+          fixed="right"
+          min-width="200"
+          align="center"
+          class-name="operation"
+        >
           <template #default="scope">
-            <el-button size="small" link type="primary" @click="handleAddAgin(scope.row)">
-              <i class="iconfont icon-fabu"></i>再次提交
+            <el-button size="small" link type="primary" @click="handleAddAgain(scope.row)">
+              <i class="iconfont icon-fabu"></i>{{ $t('button.submitAgain') }}
             </el-button>
             <el-button size="small" link type="danger" @click="handleDelete(scope.row)">
               <i class="iconfont icon-shanchu"></i>{{ $t('button.delete') }}
@@ -204,7 +208,7 @@
   import { getMyStartedApi } from '@/api/workflow/task';
   import { appFormTreeApi } from '@/api/workflow/app';
   import FormDetail from '../form/form-detail.vue';
-  import { isNotEmpty, parseTime, convertMilliSecond, isEmpty } from '@/utils';
+  import { isNotEmpty, parseTime, convertMilliSecond } from '@/utils';
   import DictSelect from '@/components/dict/dict-select.vue';
   import DictTag from '@/components/dict/dict-tag.vue';
   import FormInitiation from '@/views/workflow/form/form-initiation.vue';
@@ -351,13 +355,13 @@
    * 再次提交
    */
 
-  const handleAddAgin = (row: WorkTask.MyStartedModel) => {
+  const handleAddAgain = (row: WorkTask.MyStartedModel) => {
     const code = row.formCode;
     const procInstId = row.procInstId;
     if (isNotEmpty(code) && isNotEmpty(procInstId)) {
       formInitiationRef.value.initAgain(code, procInstId);
     } else {
-      ElMessage.error('表单编码和流程实例id不能为空');
+      ElMessage.error(t('workflow.error.submitAgain'));
     }
   };
 

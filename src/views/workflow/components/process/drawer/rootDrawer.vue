@@ -1,7 +1,7 @@
 <!--
  * @Date: 2022-08-25 14:05:59
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-08-07 17:35:07
+ * @LastEditTime: 2025-01-26 17:41:22
  * @FilePath: \aster-flowable-vue\src\views\workflow\components\process\drawer\rootDrawer.vue
 -->
 <template>
@@ -15,15 +15,15 @@
     :before-close="closeDrawer"
   >
     <el-tabs v-model="activeName">
-      <el-tab-pane label="节点属性" name="nodeProps">
-        <el-form-item label="节点ID" prop="id">
+      <el-tab-pane :label="t('workflow.process.nodeProperty')" name="nodeProps">
+        <el-form-item :label="t('workflow.process.nodeId')" prop="id">
           <el-input readonly v-model="_value.id" />
         </el-form-item>
       </el-tab-pane>
-      <el-tab-pane label="表单权限" name="formPermission">
+      <el-tab-pane :label="t('workflow.process.formPermission')" name="formPermission">
         <form-permission v-model:value="_value.formPermission" :headerConfig="headerConfig" />
       </el-tab-pane>
-      <el-tab-pane label="操作按钮" name="buttonPermission">
+      <el-tab-pane :label="t('workflow.process.buttonPermission')" name="buttonPermission">
         <button-permission v-model:value="_value.buttonPermission" />
       </el-tab-pane>
     </el-tabs>
@@ -33,7 +33,10 @@
   import { computed, ref } from 'vue';
   import FormPermission from '../permission/form-permission.vue';
   import ButtonPermission from '../permission/button-permission.vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   const emits = defineEmits(['beforeClose']);
 
   const props = defineProps({

@@ -12,7 +12,7 @@
         <!-- 系统字段 -->
         <div class="left-container">
           <div class="left-title">
-            <span>系统字段</span>
+            <span>{{ $t('workflow.settings.systemField') }}</span>
           </div>
           <div class="left-content">
             <div
@@ -30,7 +30,7 @@
         <!-- 表单字段 -->
         <div class="left-container">
           <div class="left-title">
-            <span>表单字段</span>
+            <span>{{ $t('workflow.settings.formField') }}</span>
           </div>
           <div class="left-content">
             <div
