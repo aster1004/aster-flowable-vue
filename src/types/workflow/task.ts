@@ -66,6 +66,28 @@ declare namespace WorkTask {
   }
 
   /**
+   * @description: 抄送给我的
+   */
+  export interface CcMeModel {
+    id: string;
+    procInstId: string;
+    procDefId?: string;
+    appId?: string;
+    formCode?: string;
+    formName?: string;
+    dataTitle?: string;
+    formStatus?: string;
+    version?: number;
+    startUserId?: string;
+    startUserName?: string;
+    startUserAvatar?: string;
+    createTime?: string;
+    startTime?: string;
+    endTime?: string;
+    duration?: number;
+  }
+
+  /**
    * @description: 年度任务统计
    */
   export interface AnnualTaskModel {
