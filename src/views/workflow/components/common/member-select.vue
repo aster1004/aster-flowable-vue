@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-dialog v-model="visible" :title="props.title" :lock-scroll="false" @closed="visible = false">
+  <el-dialog v-model="visible" :title="props.title" :lock-scroll="false" @closed="closeSelect">
     <div class="rang-container">
       <div class="tag-container">
         <el-card shadow="never" style="min-height: 100px">
@@ -19,6 +19,7 @@
           >
             <i class="iconfont icon-yonghu icon-primary" v-if="tagItem.type == 'user'"></i>
             <i class="iconfont icon-jigou1 icon-primary" v-if="tagItem.type == 'dept'"></i>
+            <i class="iconfont icon-zaixianyonghu icon-primary" v-if="tagItem.type == 'role'"></i>
             &nbsp;{{ tagItem[nodeLabel] }}
           </el-tag>
         </el-card>
@@ -92,7 +93,25 @@
             name="role"
             v-if="type.indexOf('role') != -1"
           >
-            <div class="select-card"> </div>
+            <div class="select-card">
+              <el-tree
+                ref="roleTreeRef"
+                node-key="id"
+                v-model="roles"
+                show-checkbox
+                :data="roleTreeList"
+                :expand-on-click-node="true"
+                :render-after-expand="false"
+                :default-expanded-keys="defaultExpandedRole"
+                :default-checked-keys="defaultCheckedRole"
+                :props="{
+                  label: 'name',
+                  children: 'children',
+                }"
+                @check-change="handleRoleCheck"
+              >
+              </el-tree>
+            </div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -107,6 +126,7 @@
   import { ref } from 'vue';
   import { deptListApi } from '@/api/sys/dept';
   import { selectUsersByDeptIdsApi } from '@/api/sys/user';
+  import { roleTreeListApi } from '@/api/workflow/auth';
   import { isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useI18n } from 'vue-i18n';
@@ -114,7 +134,7 @@
   // 国际化
   const { t } = useI18n();
   // 回调函数
-  const emits = defineEmits(['submit']);
+  const emits = defineEmits(['submit', 'close']);
   // 属性
   const props = defineProps({
     title: {
@@ -146,6 +166,8 @@
   const visible = ref(false);
   // 部门树ref
   const deptTreeRef = ref();
+  // 角色数ref
+  const roleTreeRef = ref();
   // tab选中
   const activeName = ref<string>('user');
   // 选中的标签
@@ -160,14 +182,21 @@
   const deptTreeData = ref<Dept.DeptInfo[]>([]);
   // 选中的部门
   const depts = ref<Array<any>>([]);
+  // 选中的角色
+  const roles = ref<Array<any>>([]);
   // 默认展开的部门
   const defaultExpandedDept = ref<string[]>([]);
   // 默认选中的部门
   const defaultCheckedDept = ref<string[]>([]);
+  const defaultCheckedRole = ref<string[]>([]);
+  // 默认展开的角色分组
+  const defaultExpandedRole = ref<string[]>([]);
   // 选中的人员
   const checkedUsers = ref<Array<any>>([]);
   // 所有人员
   const userList = ref<Array<User.UserInfo>>([]);
+  // 角色树
+  const roleTreeList = ref<WorkAuth.RoleInfo[]>([]);
 
   /**
    * 查询部门树数据
@@ -223,6 +252,7 @@
    */
   const handleDeptCheck = (value: any, checked: boolean) => {
     let checkedNodes = deptTreeRef.value.getCheckedNodes();
+    // console.info('handleDeptCheck', checkedNodes);
     if (isNotEmpty(checkedNodes)) {
       if (!props.multiple) {
         if (checked) {
@@ -234,6 +264,28 @@
     }
     // 处理选中的部门
     handleTags(checkedNodes);
+  };
+
+  /**
+   * 处理角色树选中
+   * @param value 选中的对象
+   * @param checked 是否选中
+   */
+  const handleRoleCheck = (value: any, checked: boolean) => {
+    // let checkedNodes = roleTreeRef.value.getCheckedNodes();
+    if (checked && value.pid != 0) {
+      let node = {};
+      node[props.nodeKey] = value.id;
+      node[props.nodeLabel] = value.name;
+      node['type'] = 'role';
+      selectedTags.value.push(node);
+    } else {
+      selectedTags.value.forEach((item, index) => {
+        if (item.type === 'role' && item[props.nodeKey] == value.id) {
+          selectedTags.value.splice(index, 1);
+        }
+      });
+    }
   };
 
   /**
@@ -284,7 +336,7 @@
           return tagItem[props.nodeKey];
         }
       });
-      values.forEach((userId) => {
+      values.forEach((userId: string) => {
         userList.value.forEach((userItem) => {
           if (userItem.id === userId && userTagIds.indexOf(userItem.id) == -1) {
             let node = {};
@@ -307,10 +359,30 @@
   };
 
   /**
+   * 加载角色树
+   */
+  const loadRoleTreeList = async () => {
+    roleTreeList.value = [];
+    await roleTreeListApi({}).then((res) => {
+      if (res.code === ResultEnum.SUCCESS) {
+        roleTreeList.value = res.data;
+      }
+    });
+  };
+
+  /**
    * 删除已选择
    */
   const removeTag = (tag: any) => {
-    console.info('tag: ', tag);
+    if (tag.type === 'user') {
+      if (checkedUsers.value.indexOf(tag.id) != -1) {
+        checkedUsers.value.splice(checkedUsers.value.indexOf(tag.id), 1);
+      }
+    } else if (tag.type === 'dept') {
+      deptTreeRef.value.setChecked(tag.id, false, false);
+    } else if (tag.type === 'role') {
+      roleTreeRef.value.setChecked(tag.id, false, false);
+    }
     selectedTags.value = selectedTags.value.filter(
       (item) => item[props.nodeKey] !== tag[props.nodeKey],
     );
@@ -324,24 +396,38 @@
     visible.value = false;
   };
 
+  const closeSelect = () => {
+    emits('close');
+    visible.value = false;
+  };
+
   /**
    * 初始化
    */
   const init = async () => {
     await queryDeptTree();
+    await loadRoleTreeList();
+    selectedTags.value = [];
     users.value = [];
     depts.value = [];
+    // roleTreeList.value = [];
     checkedUsers.value = [];
     defaultCheckedDept.value = [];
+    defaultCheckedRole.value = [];
     if (props.value && isNotEmpty(props.value)) {
       selectedTags.value = props.value;
+      // console.info(selectedTags.value);
       selectedTags.value.forEach((item) => {
         if (item.type === 'user') {
           users.value.push(item[props.nodeKey]);
           checkedUsers.value.push(item[props.nodeKey]);
         } else if (item.type === 'dept') {
           depts.value.push(item[props.nodeKey]);
+          // deptTreeRef.value.setChecked(item[props.nodeKey], true, true);
           defaultCheckedDept.value.push(item[props.nodeKey]);
+        } else if (item.type === 'role') {
+          defaultCheckedRole.value.push(item[props.nodeKey]);
+          // roleTreeRef.value.setChecked(item[props.nodeKey], true, true);
         }
       });
     }
