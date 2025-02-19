@@ -128,7 +128,7 @@
           min-width="100"
         />
         <el-table-column
-          prop="createTime"
+          prop="startTime"
           :label="t('workflow.label.taskArrivalTime')"
           header-align="center"
           align="center"

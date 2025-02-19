@@ -117,18 +117,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="formStatus"
-          :label="t('workflow.label.formStatus')"
-          fixed
-          header-align="center"
-          align="center"
-          min-width="100"
-        >
-          <template #default="scope">
-            <dict-tag dict-type="task_end_status" :value="scope.row.formStatus" />
-          </template>
-        </el-table-column>
-        <el-table-column
           prop="formName"
           :label="t('workflow.label.belongForm')"
           header-align="center"
@@ -137,25 +125,30 @@
           show-overflow-tooltip
         />
         <el-table-column
-          prop="nodeName"
-          :label="t('workflow.label.currentNode')"
+          prop="formStatus"
+          :label="t('workflow.label.formStatus')"
+          fixed
+          header-align="center"
+          align="center"
+          min-width="100"
+        >
+          <template #default="scope">
+            <dict-tag dict-type="form_status" :value="scope.row.formStatus" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="startUserName"
+          :label="t('workflow.label.initiator')"
           header-align="center"
           align="center"
           min-width="100"
         />
         <el-table-column
-          prop="startTime"
-          :label="t('workflow.label.startTime')"
+          prop="createTime"
+          :label="t('workflow.label.taskArrivalTime')"
           header-align="center"
           align="center"
-          min-width="120"
-        />
-        <el-table-column
-          prop="endTime"
-          :label="t('workflow.label.endTime')"
-          header-align="center"
-          align="center"
-          min-width="120"
+          min-width="180"
         />
       </el-table>
 
@@ -208,7 +201,7 @@
     pageSize: 10,
   });
   /** 数据列表 */
-  const dataList = ref<WorkTask.MyStartedModel[]>();
+  const dataList = ref<WorkTask.CcMeModel[]>();
   /** 总数 */
   const total = ref<number>(0);
   const loading = ref(true);
