@@ -112,8 +112,6 @@
             return '{用户：' + v.name + '}';
           } else if (v.type === 'dept') {
             return '{部门：' + v.name + '}';
-          } else if (v.type === 'role') {
-            return '{角色：' + v.name + '}';
           } else if (v.type === 'form') {
             return '{表单：' + v.name + '}';
           } else {
