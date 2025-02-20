@@ -134,6 +134,8 @@
             return '{角色：' + v.name + '}';
           } else if (v.type === 'form') {
             return '{表单：' + v.name + '}';
+          } else if (v.type === 'leader') {
+            return '{部门主管：' + v.name + '}';
           } else {
             return '未知';
           }

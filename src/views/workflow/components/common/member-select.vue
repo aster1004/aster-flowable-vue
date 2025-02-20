@@ -35,7 +35,7 @@
             <div class="select-card">
               <el-row>
                 <el-col :span="18">
-                  <el-scrollbar>
+                  <el-scrollbar height="258px">
                     <el-tree
                       v-model="users"
                       node-key="id"
@@ -95,33 +95,57 @@
             v-if="type.indexOf('role') != -1"
           >
             <div class="select-card">
-              <el-tree
-                ref="roleTreeRef"
-                node-key="id"
-                v-model="roles"
-                show-checkbox
-                :data="roleTreeList"
-                :expand-on-click-node="true"
-                :render-after-expand="false"
-                :default-expanded-keys="defaultExpandedRole"
-                :default-checked-keys="defaultCheckedRole"
-                :props="{
-                  label: 'name',
-                  children: 'children',
-                }"
-                @check-change="handleRoleCheck"
-              >
-              </el-tree>
+              <el-scrollbar>
+                <el-tree
+                  ref="roleTreeRef"
+                  node-key="id"
+                  v-model="roles"
+                  show-checkbox
+                  :data="roleTreeList"
+                  :expand-on-click-node="true"
+                  :render-after-expand="false"
+                  :default-expanded-keys="defaultExpandedRole"
+                  :default-checked-keys="defaultCheckedRole"
+                  :props="{
+                    label: 'name',
+                    children: 'children',
+                  }"
+                  @check-change="handleRoleCheck"
+                >
+                </el-tree>
+              </el-scrollbar>
             </div>
           </el-tab-pane>
-          <el-tab-pane :label="t('workflow.process.form')" name="form">
+          <el-tab-pane
+            :label="t('workflow.process.form')"
+            name="form"
+            v-if="type.indexOf('form') != -1"
+          >
             <div class="select-card" style="padding-left: 10px">
-              <el-checkbox-group v-model="forms" @change="handleFormCheckChange">
+              <el-scrollbar>
+                <el-checkbox-group v-model="forms" @change="handleFormCheckChange">
+                  <el-checkbox
+                    :key="formItem.id"
+                    :label="formItem.title"
+                    :value="formItem.id"
+                    v-for="formItem in _flatFormItems"
+                  />
+                </el-checkbox-group>
+              </el-scrollbar>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane
+            :label="t('workflow.process.leader')"
+            name="leader"
+            v-if="type.indexOf('leader') != -1"
+          >
+            <div class="select-card" style="padding-left: 10px">
+              <el-checkbox-group v-model="leaders" @change="handleLeaderCheckChange">
                 <el-checkbox
-                  :key="formItem.id"
-                  :label="formItem.title"
-                  :value="formItem.id"
-                  v-for="formItem in _flatFormItems"
+                  :label="item.name"
+                  :value="item.id"
+                  v-for="(item, index) in leaderData"
+                  :key="index"
                 />
               </el-checkbox-group>
             </div>
@@ -163,7 +187,7 @@
     },
     type: {
       type: Array<String>,
-      default: ['user', 'dept', 'role'],
+      default: ['user', 'dept', 'role', 'form', 'leader'],
     },
     nodeKey: {
       type: String,
@@ -190,6 +214,15 @@
   const selectedTags = ref<Array<any>>([]);
   // 人员的值
   const users = ref<Array<any>>([]);
+
+  const leaderData = ref<Array<any>>([
+    { id: 'leader-1', name: '部门主管' },
+    { id: 'leader-2', name: '二级部门主管' },
+    { id: 'leader-3', name: '三级部门主管' },
+    { id: 'leader-4', name: '四级部门主管' },
+    { id: 'leader-5', name: '五级部门主管' },
+  ]);
+
   // 人员树数据
   const userTreeData = ref<Dept.DeptInfo[]>([]);
   // 默认展开的人员
@@ -200,6 +233,8 @@
   const depts = ref<Array<any>>([]);
   // 选中的角色
   const roles = ref<Array<any>>([]);
+  // 部门主管
+  const leaders = ref<Array<any>>([]);
   // 默认展开的部门
   const defaultExpandedDept = ref<string[]>([]);
   // 默认选中的部门
@@ -418,6 +453,10 @@
       if (forms.value.indexOf(tag.id) != -1) {
         forms.value.splice(forms.value.indexOf(tag.id), 1);
       }
+    } else if (tag.type === 'leader') {
+      if (leaders.value.indexOf(tag.id) != -1) {
+        leaders.value.splice(leaders.value.indexOf(tag.id), 1);
+      }
     }
     selectedTags.value = selectedTags.value.filter(
       (item) => item[props.nodeKey] !== tag[props.nodeKey],
@@ -478,6 +517,46 @@
   };
 
   /**
+   * 处理部门主管选择
+   * @param value
+   */
+  const handleLeaderCheckChange = (value: any) => {
+    // 获取当前已选择的标签
+    let currentSelectTags = selectedTags.value;
+    // 获取当前已选择的主管领导标签id
+    let itemIdList = currentSelectTags
+      .filter((item: any) => {
+        return item.type === 'leader';
+      })
+      .map((item: any) => {
+        return item.id;
+      });
+
+    // 去掉未选择的表单标签
+    selectedTags.value = currentSelectTags.filter((item: any) => {
+      // 当前标签是表单类型并且当前id被选择
+      return item.type != 'leader' || (item.type == 'leader' && value.indexOf(item.id) != -1);
+    });
+
+    value.forEach((leaderId: string) => {
+      // 说明当前已选标签中没有
+      if (itemIdList.indexOf(leaderId) == -1) {
+        let leaderList = leaderData.value.filter((item: any) => {
+          return item.id == leaderId;
+        });
+        if (isNotEmpty(leaderList)) {
+          let leaderItem = leaderList[0];
+          let node = {};
+          node['id'] = leaderItem.id;
+          node['name'] = leaderItem.name;
+          node['type'] = 'leader';
+          selectedTags.value.push(node);
+        }
+      }
+    });
+  };
+
+  /**
    * 初始化
    */
   const init = async () => {
@@ -487,6 +566,7 @@
     users.value = [];
     depts.value = [];
     forms.value = [];
+    leaders.value = [];
     // roleTreeList.value = [];
     checkedUsers.value = [];
     defaultCheckedDept.value = [];
@@ -505,6 +585,8 @@
           defaultCheckedRole.value.push(item[props.nodeKey]);
         } else if (item.type === 'form') {
           forms.value.push(item.id);
+        } else if (item.type === 'leader') {
+          leaders.value.push(item.id);
         }
       });
     }

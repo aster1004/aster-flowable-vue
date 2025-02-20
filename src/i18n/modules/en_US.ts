@@ -678,6 +678,7 @@ export default {
       dept: 'Dept',
       role: 'Role',
       form: 'Form',
+      leader: 'Leader',
     },
     list: {
       fieldSetting: 'Field Settings',

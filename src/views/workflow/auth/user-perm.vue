@@ -13,7 +13,12 @@
       </el-button>
     </div>
     <el-tabs v-model="activeTab" class="right-tabs" style="height: 100%">
-      <el-tab-pane label="角色权限设置" name="auth" style="height: 100%">
+      <el-tab-pane
+        label="角色权限设置"
+        name="auth"
+        v-if="roleType != 'leader'"
+        style="height: 100%"
+      >
         <el-scrollbar>
           <table class="table-list">
             <thead>
@@ -105,7 +110,11 @@
           </table>
         </el-scrollbar>
       </el-tab-pane>
-      <el-tab-pane v-if="roleType === 'custom'" label="角色成员管理" name="member">
+      <el-tab-pane
+        v-if="roleType === 'custom' || roleType === 'leader'"
+        label="角色成员管理"
+        name="member"
+      >
         <!-- 表格头部 操作按钮 -->
         <div class="table-header">
           <div class="header-button-lf">
@@ -237,6 +246,8 @@
 
   // 活动标签
   const activeTab = ref<'auth' | 'member'>('auth');
+  console.info(props.roleType);
+  console.info(activeTab.value);
   // 应用列表
   const appTreeList = ref<WorkComponent.TreeNode[]>([]);
   // 应用加载状态
@@ -638,6 +649,13 @@
       }
     },
     { immediate: true, deep: true },
+  );
+
+  watch(
+    () => props.roleType,
+    (nval) => {
+      activeTab.value = nval === 'leader' ? 'member' : 'auth';
+    },
   );
 
   onMounted(() => {
