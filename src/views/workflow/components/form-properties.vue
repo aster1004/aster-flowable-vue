@@ -140,7 +140,7 @@
   const _flatFormItems = computed(() => {
     const items = flatFormItems(workFlowStore.design.formItems);
     return items.filter((item) => {
-      return item.type !== 'TableList';
+      return item.name !== 'TableList';
     });
   });
 

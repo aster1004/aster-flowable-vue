@@ -72,14 +72,16 @@
     </el-form>
     <member-select
       ref="memberSelectRef"
+      v-if="memberVisible"
       :title="t('workflow.process.selectApprover')"
       :value="approverConfig.value.nodeUserList"
       @submit="handleSubmitMember"
+      @close="handleCloseMemberSelect"
     />
   </el-drawer>
 </template>
 <script setup lang="ts">
-  import { ref, computed, watch, onMounted } from 'vue';
+  import { ref, computed, watch, onMounted, nextTick } from 'vue';
   import { processStore } from '@/stores/modules/process';
   import MemberSelect from '../../common/member-select.vue';
   import { isNotEmpty } from '@/utils';
@@ -95,8 +97,13 @@
 
   // 编辑状态
   const editFlag = ref<boolean>(false);
+
+  // 选择审核人
+  const memberVisible = ref<boolean>(false);
+
   // 注册组件
   const memberSelectRef = ref();
+
   // 当前审核节点的配置
   const approverConfig = ref<any>({});
 
@@ -123,8 +130,12 @@
             return '{用户：' + v.name + '}';
           } else if (v.type === 'dept') {
             return '{部门：' + v.name + '}';
+          } else if (v.type === 'role') {
+            return '{角色：' + v.name + '}';
+          } else if (v.type === 'form') {
+            return '{表单：' + v.name + '}';
           } else {
-            return '';
+            return '未知';
           }
         })
         .join(',');
@@ -251,7 +262,17 @@
    * 打开选择审批人
    */
   const openUserSelect = () => {
-    memberSelectRef.value.init();
+    memberVisible.value = true;
+    nextTick(() => {
+      memberSelectRef.value.init();
+    });
+  };
+
+  /**
+   * 关闭选择审批人
+   */
+  const handleCloseMemberSelect = () => {
+    memberVisible.value = false;
   };
 
   onMounted(() => {});
