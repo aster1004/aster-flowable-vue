@@ -21,6 +21,7 @@
             <i class="iconfont icon-jigou1 icon-primary" v-if="tagItem.type == 'dept'"></i>
             <i class="iconfont icon-zaixianyonghu icon-primary" v-if="tagItem.type == 'role'"></i>
             <i class="iconfont icon-jiemianguanli icon-primary" v-if="tagItem.type == 'form'"></i>
+            <i class="iconfont icon-jiaoseguanli icon-primary" v-if="tagItem.type == 'leader'"></i>
             &nbsp;{{ tagItem[nodeLabel] }}
           </el-tag>
         </el-card>

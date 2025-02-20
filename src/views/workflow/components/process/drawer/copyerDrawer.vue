@@ -106,7 +106,6 @@
     let expression = '';
     let val = copyerConfig.value.value.nodeUserList;
     if (isNotEmpty(val)) {
-      console.info(val);
       expression = val
         .map((v: any) => {
           if (v.type === 'user') {
