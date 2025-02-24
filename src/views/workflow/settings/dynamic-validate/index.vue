@@ -58,17 +58,24 @@
         <el-empty :image-size="80">
           <template #description>
             <div class="validate-empty-text">
-              <span class="text-sm pb-5px">暂无提交校验</span>
+              <span class="text-sm pb-5px">暂无动态校验</span>
+              <span class="text-sm pb-5px"
+                >动态校验规则用于动态查询关联的表单数据校验当前表单数据</span
+              >
               <span class="text-xs pb-5px">在提交表单时，满足校验规则的数据将不允许提交</span>
             </div>
           </template>
-          <el-button type="primary" @click="showFormula"> 立即设置 </el-button>
+          <el-button type="primary" @click="openDynamicValidateRule"> 立即设置 </el-button>
         </el-empty>
       </div>
     </div>
 
     <add-or-edit ref="addOrEditRef" v-if="visible" />
 
+    <dynamic-validate-rule-edit
+      ref="dynamicValidateRuleEditRef"
+      v-if="dynamicValidateRuleVisible"
+    />
     <!-- <formula
       ref="formulaRef"
       title="表单提交校验"
@@ -86,7 +93,7 @@
   import { flatFormItems, generateFieldId, restorationFormulaByFormItems } from '@/utils/workflow';
   import { computed, ref, nextTick } from 'vue';
   import AddOrEdit from './add-or-edit.vue';
-  // import Formula from '../components/common/formula.vue';
+  import DynamicValidateRuleEdit from '../../components/settings/dynamic-validate-rule-edit.vue';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();
@@ -94,8 +101,14 @@
   // 新增或修改动态校验规则
   const addOrEditRef = ref();
 
+  // 动态校验规则
+  const dynamicValidateRuleEditRef = ref();
+
   // 表单显示
   const visible = ref<boolean>(false);
+
+  // 动态校验显隐
+  const dynamicValidateRuleVisible = ref<boolean>(false);
 
   // 校验规则
   const submitValidate = ref<WorkForm.SubmitValidate>({
@@ -203,6 +216,17 @@
     nextTick(() => {
       addOrEditRef.value.init({});
     });
+  };
+
+  const openDynamicValidateRule = () => {
+    dynamicValidateRuleVisible.value = true;
+    nextTick(() => {
+      dynamicValidateRuleEditRef.value.init();
+    });
+    /* visible.value = true;
+    nextTick(() => {
+      addOrEditRef.value.init({});
+    }); */
   };
 </script>
 <style scoped lang="scss">
