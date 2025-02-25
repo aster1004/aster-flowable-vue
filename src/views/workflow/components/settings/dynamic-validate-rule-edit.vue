@@ -17,7 +17,7 @@
       :rules="dynamicValidateFormRules"
     >
       <el-form-item label="触发事件" prop="event">
-        <el-select v-model="rule.event" placeholder="请选择触发事件">
+        <el-select v-model="rule.event" placeholder="请选择触发事件" @change="handleEventChange">
           <el-option
             v-for="item in dynamicValidateEventOptions"
             :key="item.value"
@@ -51,7 +51,7 @@
       </div>
       <div class="dialog-tip">
         <el-button type="primary" link @click="handleAddFilter">
-          <i class="iconfont icon-plus p-5px"></i> 添加过滤条件
+          <i class="iconfont icon-plus p-5px"></i> 添加校验条件
         </el-button>
       </div>
       <div class="dialog-filter">
@@ -62,11 +62,11 @@
           :key="index"
         >
           <el-col :span="4">
-            <el-select v-model="filterItem.judge">
+            <el-select v-model="filterItem.judge" placeholder="逻辑">
               <el-option
+                v-for="(judgeItem, index) in dynamicValidateJudgeOptions"
                 :label="judgeItem.label"
                 :value="judgeItem.value"
-                v-for="(judgeItem, index) in dynamicValidateJudgeOptions"
                 :key="index"
               />
             </el-select>
@@ -75,7 +75,7 @@
             <el-select
               v-model="filterItem.selfField"
               placeholder="当前表单属性"
-              @change="handleOperateChange($event, index)"
+              @change="handleSelfChange($event, index)"
             >
               <el-option
                 :label="fieldItem.title"
@@ -89,7 +89,11 @@
             <div class="text-box"> 值 </div>
           </el-col>
           <el-col :span="6">
-            <el-select v-model="filterItem.equation">
+            <el-select
+              v-model="filterItem.equation"
+              placeholder="比较符号"
+              @change="handleEquationChange($event, index)"
+            >
               <el-option
                 v-for="(optionItem, index) in filterItem.equationOptions"
                 :label="optionItem.label"
@@ -99,7 +103,11 @@
             </el-select>
           </el-col>
           <el-col :span="6">
-            <el-select v-model="filterItem.targetField" placeholder="目标表单属性">
+            <el-select
+              v-model="filterItem.targetField"
+              placeholder="目标表单属性"
+              @change="handleTargetOperateChange($event, index)"
+            >
               <el-option
                 :label="targetItem.label"
                 :value="targetItem.value"
@@ -123,10 +131,9 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { appFormTreeWithFormItemApi } from '@/api/workflow/app';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { isEmpty, isNotEmpty } from '@/utils';
-  import { dataFillOptionsByFormItems, flatFormItems } from '@/utils/workflow';
+  import { isEmpty } from '@/utils';
+  import { flatFormItems } from '@/utils/workflow';
   import { formInfoByCodeApi } from '@/api/workflow/form';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import { computed, ref } from 'vue';
@@ -135,18 +142,14 @@
     dynamicValidateEventOptions,
     dynamicValidateJudgeOptions,
     businessStringFilterOperators,
-    businessEventOptions,
     businessFilterOperators,
-    businessOperateOperators,
-    businessOperationOptions,
   } from '@/enums/workFlowEnum';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { filters } from '@/utils/formula';
   import { useI18n } from 'vue-i18n';
 
   // 国际化
   const { t } = useI18n();
-
+  // 回调方法
   const emits = defineEmits(['submit']);
   // 工作流store
   const workFlowStore = useWorkFlowStore();
@@ -154,31 +157,15 @@
   const ruleVisible = ref(false);
   // 表单数据对象
   const dynamicValidateFormRef = ref();
-  // 目标表单选项
-  const targetOptions = ref<WorkComponent.FormTreeNode[]>([]);
-  // 扁平化目标表单选项
-  const flatTargetOptions = ref<WorkComponent.FormTreeNode[]>([]);
   // 目标表单的表单项
   const targetFormItems = ref<WorkComponent.ComponentConfig[]>([]);
-  // 过滤条件的操作符
-  const filterOperatorOptions = ref<WorkComponent.TreeNode[][]>([]);
-  // 过滤条件的当前表单的表单项
-  const filterCurrentFormItems = ref<WorkComponent.DataFillOption[][]>([]);
-  // 操作条件的操作符
-  const operateOperatorOptions = ref<WorkComponent.TreeNode[][]>([]);
-  // 操作条件的当前表单的表单项
-  const operateCurrentFormItems = ref<WorkComponent.DataFillOption[][]>([]);
   // 业务规则
   const rule = ref<WorkForm.DynamicValidateRule>({
     id: '',
     // 触发事件
     event: '',
-    // 目标表单
-    target: {
-      label: '',
-      value: '',
-      isTableList: false,
-    },
+    // 触发事件文本
+    eventText: '',
     // 操作类型
     operationType: '',
     // 过滤条件
@@ -191,7 +178,10 @@
     prompt: '',
     // 备注
     remark: '',
+    // 关联表单
     associationForm: '',
+    // 关联表单文本
+    associationFormText: '',
   });
 
   /**
@@ -246,13 +236,6 @@
     ],
   });
 
-  /**
-   * @description: 当前表单的表单项
-   */
-  const _formItems = computed(() => {
-    return dataFillOptionsByFormItems(workFlowStore.design.formItems, false);
-  });
-
   // 选择动态当前表单所支持的组件类型
   const formField = ref([
     'InputText',
@@ -283,15 +266,20 @@
    * 选择关联表单
    * @param value
    */
-  const handleAssociationFormChange = (value: any) => {
+  const handleAssociationFormChange = async (value: any) => {
     // 获取所有的表单字段数据
     const fieldItems = flatFormItems(workFlowStore.design.formItems);
     // 获取所选当前表单的字段对象
     let fieldFilterItem = fieldItems.filter((item: any) => {
       return value == item.id;
     });
+    rule.value.filters.forEach((filterItem: any, index: number) => {
+      filterItem.targetField = '';
+    });
     let associationForm = fieldFilterItem[0];
-    getAssociatedFormInfo(associationForm.props.formCode[1]);
+    rule.value.associationFormText = associationForm.title;
+    // 查询表单字段项
+    await getAssociatedFormInfo(associationForm.props.formCode[1]);
   };
 
   /**
@@ -299,9 +287,13 @@
    * @param option 当前表单fieldId
    * @param index 所在行的索引
    */
-  const handleOperateChange = (option: WorkComponent.DataFillOption, index: number) => {
+  const handleSelfChange = (option: WorkComponent.DataFillOption, index: number) => {
     // 获取当前行数据
     let filterItem = rule.value.filters[index];
+    filterItem.equation = '';
+    filterItem.equationText = '';
+    filterItem.targetField = '';
+    filterItem.targetFieldText = '';
     // 获取所有的表单字段数据
     const fieldItems = _currentFormFields.value;
     // 获取所选当前表单的字段对象
@@ -312,6 +304,8 @@
       filterItem.equationOptions = [];
     } else {
       let fieldItem = fieldFilterItem[0];
+      // 当前表单字段文本名称
+      filterItem.selfFieldText = fieldItem['title'];
       if (fieldItem['valueType'] == ValueType.number) {
         // 处理计算符号
         filterItem.equationOptions = businessFilterOperators;
@@ -339,6 +333,60 @@
   };
 
   /**
+   * 选择目标表单属性
+   * @param val
+   * @param index
+   */
+  const handleTargetOperateChange = (val: any, index: number) => {
+    // 获取当前行数据
+    let filterItem = rule.value.filters[index];
+    // 获取所有的表单字段数据
+    const fieldItems = filterItem.targetOptions;
+    // 获取所选当前表单的字段对象
+    let fieldFilterItem = fieldItems.filter((item: any) => {
+      return val == item.value;
+    });
+    if (isEmpty(fieldFilterItem)) {
+      filterItem.targetFieldText = '';
+    } else {
+      filterItem.targetFieldText = fieldFilterItem[0]['label'];
+    }
+  };
+
+  /**
+   * 处理修改比较符
+   * @param val
+   * @param index
+   */
+  const handleEquationChange = (val: any, index: number) => {
+    // 获取当前行数据
+    let filterItem = rule.value.filters[index];
+    // 获取比较符号的选项数据
+    let equationOptions = filterItem.equationOptions;
+    let equationItems = equationOptions.filter((item: any) => {
+      return val == item.value;
+    });
+    if (isEmpty(equationItems)) {
+      filterItem.equationText = '';
+    } else {
+      filterItem.equationText = equationItems[0]['label'];
+    }
+  };
+
+  /**
+   * 处理修改触发事件
+   * @param val
+   */
+  const handleEventChange = (val: string) => {
+    let events = dynamicValidateEventOptions.filter((item: any) => {
+      return val == item.value;
+    });
+    if (!isEmpty(events)) {
+      rule.value.eventText = events[0]['label'];
+    }
+  };
+
+  /**
    * @description: 获取关联表单信息
    * @return {*}
    */
@@ -360,9 +408,12 @@
   const handleAddFilter = () => {
     rule.value.filters.push({
       selfField: '',
+      selfFieldText: '',
       targetField: '',
+      targetFieldText: '',
       judge: '',
       equation: '',
+      equationText: '',
       equationOptions: [],
       targetOptions: [],
     });
@@ -415,20 +466,6 @@
         if (hasError) {
           return;
         }
-        /* filters.forEach((filterItem: any) => {
-          if (isEmpty(filterItem.selfField)) {
-            ElMessage.error('当前表单属性不能为空');
-            return false;
-          }
-          if (isEmpty(filterItem.equation)) {
-            ElMessage.error('比较符号不能为空');
-            return false;
-          }
-          if (isEmpty(filterItem.targetField)) {
-            ElMessage.error('目标表单属性不能为空');
-            return false;
-          }
-        }); */
         emits('submit', rule.value);
         ruleVisible.value = false;
       }
@@ -438,8 +475,53 @@
   /**
    * @description: 初始化
    */
-  const init = async (element?: WorkForm.BusinessRule) => {
+  const init = async (element?: WorkForm.DynamicValidateRule) => {
+    console.info('element：', JSON.stringify(element));
     ruleVisible.value = true;
+    if (element) {
+      // 查询关联表单信息
+      await handleAssociationFormChange(element.associationForm);
+      rule.value = { ...element };
+      // 处理校验条件回显
+      rule.value.filters.forEach((filterItem: any, index: number) => {
+        let filterJsonItem = JSON.parse(JSON.stringify(filterItem));
+        console.info('json:', filterJsonItem);
+        // 处理当前表单选项
+        handleSelfChange(filterItem.selfField, index);
+        // 处理比较符号
+        console.info('equation：', filterJsonItem.equation);
+        handleEquationChange(filterJsonItem.equation, index);
+        // 处理目标表单选项
+        console.info('targetField', filterJsonItem.targetField);
+        handleTargetOperateChange(filterJsonItem.targetField, index);
+        console.info('json2:', filterJsonItem);
+      });
+      console.info('回显的结果：', JSON.stringify(rule.value));
+    } else {
+      rule.value = {
+        id: '',
+        // 触发事件
+        event: '',
+        // 触发事件文本
+        eventText: '',
+        // 操作类型
+        operationType: '',
+        // 过滤条件
+        filters: [],
+        // 具体操作
+        operations: [],
+        // 是否启用
+        enable: true,
+        // 提示信息
+        prompt: '',
+        // 备注
+        remark: '',
+        // 关联表单
+        associationForm: '',
+        // 关联表单文本
+        associationFormText: '',
+      };
+    }
     /* // 获取目标表单的下拉信息
     await getTargetForm(() => {
       if (element) {

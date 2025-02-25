@@ -57,16 +57,19 @@ declare namespace WorkForm {
     id: string;
     // 触发事件
     event: string;
-    // 目标表单
-    target: { label: string; value: string; isTableList: boolean };
+    // 触发事件文本
+    eventText: string;
     // 操作类型
     operationType: string;
     // 过滤条件
     filters: {
       selfField: string;
+      selfFieldText: string;
       targetField: string;
+      targetFieldText: string;
       judge: string;
       equation: string;
+      equationText: string;
       equationOptions: WorkComponent.TreeNode[];
       targetOptions: WorkComponent.TreeNode[];
     }[];
@@ -77,7 +80,8 @@ declare namespace WorkForm {
     // 提示信息
     prompt?: string;
     remark?: string;
-    associationForm: string;
+    associationForm?: string;
+    associationFormText?: string;
   }
 
   /**
@@ -108,6 +112,8 @@ declare namespace WorkForm {
     submitValidates?: SubmitValidate[];
     // 业务规则
     businessRules?: BusinessRule[];
+    // 动态校验规则
+    dynamicValidateRules?: DynamicValidateRule[];
     // 关联列表
     associationList?: WorkComponent.TreeNode[];
     // 打印模板
