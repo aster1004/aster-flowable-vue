@@ -166,12 +166,8 @@
     event: '',
     // 触发事件文本
     eventText: '',
-    // 操作类型
-    operationType: '',
     // 过滤条件
     filters: [],
-    // 具体操作
-    operations: [],
     // 是否启用
     enable: true,
     // 提示信息
@@ -476,14 +472,13 @@
    * @description: 初始化
    */
   const init = async (element?: WorkForm.DynamicValidateRule) => {
-    console.info('element：', JSON.stringify(element));
     ruleVisible.value = true;
     if (element) {
       // 查询关联表单信息
       await handleAssociationFormChange(element.associationForm);
       rule.value = { ...element };
       // 处理校验条件回显
-      rule.value.filters.forEach((filterItem: any, index: number) => {
+      /* rule.value.filters.forEach((filterItem: any, index: number) => {
         let filterJsonItem = JSON.parse(JSON.stringify(filterItem));
         console.info('json:', filterJsonItem);
         // 处理当前表单选项
@@ -496,7 +491,7 @@
         handleTargetOperateChange(filterJsonItem.targetField, index);
         console.info('json2:', filterJsonItem);
       });
-      console.info('回显的结果：', JSON.stringify(rule.value));
+      console.info('回显的结果：', JSON.stringify(rule.value)); */
     } else {
       rule.value = {
         id: '',
@@ -504,12 +499,8 @@
         event: '',
         // 触发事件文本
         eventText: '',
-        // 操作类型
-        operationType: '',
         // 过滤条件
         filters: [],
-        // 具体操作
-        operations: [],
         // 是否启用
         enable: true,
         // 提示信息
@@ -522,51 +513,6 @@
         associationFormText: '',
       };
     }
-    /* // 获取目标表单的下拉信息
-    await getTargetForm(() => {
-      if (element) {
-        rule.value = { ...element };
-        const targetItems = flatTargetOptions.value.find(
-          (item) => item.value == rule.value.target.value,
-        );
-        if (targetItems && targetItems.formItems) {
-          targetFormItems.value = JSON.parse(JSON.stringify(targetItems.formItems));
-        }
-        if (isNotEmpty(rule.value.filters)) {
-          rule.value.filters.forEach(() => {
-            filterCurrentFormItems.value.push(JSON.parse(JSON.stringify(_formItems.value)));
-            filterOperatorOptions.value.push(businessFilterOperators);
-          });
-        }
-        if (isNotEmpty(rule.value.operations)) {
-          rule.value.operations.forEach(() => {
-            operateCurrentFormItems.value.push(JSON.parse(JSON.stringify(_formItems.value)));
-            operateOperatorOptions.value.push(businessOperateOperators);
-          });
-        }
-      } else {
-        rule.value = {
-          id: '',
-          // 触发事件
-          event: '',
-          // 目标表单
-          target: {
-            label: '',
-            value: '',
-            isTableList: false,
-          },
-          // 操作类型
-          operationType: '',
-          // 过滤条件
-          filters: [],
-          // 具体操作
-          operations: [],
-          // 是否启用
-          enable: true,
-        };
-      }
-      ruleVisible.value = true;
-    }); */
   };
 
   defineExpose({ init });

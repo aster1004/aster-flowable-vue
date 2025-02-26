@@ -59,8 +59,6 @@ declare namespace WorkForm {
     event: string;
     // 触发事件文本
     eventText: string;
-    // 操作类型
-    operationType: string;
     // 过滤条件
     filters: {
       selfField: string;
@@ -73,8 +71,6 @@ declare namespace WorkForm {
       equationOptions: WorkComponent.TreeNode[];
       targetOptions: WorkComponent.TreeNode[];
     }[];
-    // 具体操作
-    operations: { target: string; current: string; operator: string }[];
     // 是否启用
     enable: boolean;
     // 提示信息

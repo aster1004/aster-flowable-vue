@@ -76,12 +76,16 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { ElMessageBox } from 'element-plus';
   import { isEmpty, isNotEmpty } from '@/utils';
   import { flatFormItems, generateFieldId, restorationFormulaByFormItems } from '@/utils/workflow';
   import { computed, ref, nextTick } from 'vue';
   import AddOrEdit from './add-or-edit.vue';
   import DynamicValidateRuleEdit from '../../components/settings/dynamic-validate-rule-edit.vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 
@@ -155,9 +159,18 @@
    * @description: 删除规则
    */
   const handleDelete = (element: WorkForm.SubmitValidate) => {
-    if (rules.value) {
-      rules.value = rules.value.filter((item) => item.id !== element.id);
-    }
+    ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
+      confirmButtonText: t('button.confirm'),
+      cancelButtonText: t('button.cancel'),
+      type: 'warning',
+      lockScroll: false,
+    })
+      .then(async () => {
+        if (rules.value) {
+          rules.value = rules.value.filter((item) => item.id !== element.id);
+        }
+      })
+      .catch(() => {});
   };
 
   /**
@@ -192,7 +205,6 @@
    * @param val
    */
   const handleDynamicValidateRuleSubmit = (val: any) => {
-    console.info(val);
     if (rules.value) {
       if (isEmpty(val.id)) {
         val.id = generateFieldId('rule');
