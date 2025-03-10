@@ -666,6 +666,8 @@ export default {
       user: '用户',
       dept: '部门',
       role: '角色',
+      form: '表单',
+      leader: '部门主管',
     },
     list: {
       fieldSetting: '字段设置',

@@ -51,6 +51,36 @@ declare namespace WorkForm {
   }
 
   /**
+   * @description: 业务规则
+   */
+  export interface DynamicValidateRule {
+    id: string;
+    // 触发事件
+    event: string;
+    // 触发事件文本
+    eventText: string;
+    // 过滤条件
+    filters: {
+      selfField: string;
+      selfFieldText: string;
+      targetField: string;
+      targetFieldText: string;
+      judge: string;
+      equation: string;
+      equationText: string;
+      equationOptions: WorkComponent.TreeNode[];
+      targetOptions: WorkComponent.TreeNode[];
+    }[];
+    // 是否启用
+    enable: boolean;
+    // 提示信息
+    prompt?: string;
+    remark?: string;
+    associationForm?: string;
+    associationFormText?: string;
+  }
+
+  /**
    * @description: 打印模板
    */
   export interface PrintTemplate {
@@ -78,6 +108,8 @@ declare namespace WorkForm {
     submitValidates?: SubmitValidate[];
     // 业务规则
     businessRules?: BusinessRule[];
+    // 动态校验规则
+    dynamicValidateRules?: DynamicValidateRule[];
     // 关联列表
     associationList?: WorkComponent.TreeNode[];
     // 打印模板

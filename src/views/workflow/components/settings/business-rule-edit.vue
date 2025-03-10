@@ -639,4 +639,13 @@
       padding: 0px 30px 15px 30px;
     }
   }
+
+  .icon-shanchu:hover {
+    color: $primary-color;
+    cursor: pointer;
+  }
+
+  .el-overlay {
+    z-index: 1999 !important;
+  }
 </style>
