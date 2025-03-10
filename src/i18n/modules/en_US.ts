@@ -677,6 +677,8 @@ export default {
       user: 'User',
       dept: 'Dept',
       role: 'Role',
+      form: 'Form',
+      leader: 'Leader',
     },
     list: {
       fieldSetting: 'Field Settings',

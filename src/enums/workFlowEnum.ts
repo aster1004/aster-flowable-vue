@@ -179,6 +179,28 @@ export const businessEventOptions = [
   },
 ];
 
+export const dynamicValidateEventOptions = [
+  {
+    label: '流程启动时',
+    value: 'start',
+  },
+  {
+    label: '流程审批时',
+    value: 'approval',
+  },
+];
+
+export const dynamicValidateJudgeOptions = [
+  {
+    label: '并且',
+    value: 'AND',
+  },
+  {
+    label: '或者',
+    value: 'OR',
+  },
+];
+
 /**
  * @description: 业务规则操作类型选项
  */
@@ -228,6 +250,24 @@ export const businessFilterOperators = [
   {
     label: '小于等于',
     value: 'LT_EQ',
+  },
+] as WorkComponent.TreeNode[];
+
+/**
+ * @description: 动态校验规则字符串过滤操作符选项
+ */
+export const businessStringFilterOperators = [
+  {
+    label: '等于',
+    value: 'EQ',
+  },
+  {
+    label: '包含',
+    value: 'IN',
+  },
+  {
+    label: '不包含',
+    value: 'NOT_IN',
   },
 ] as WorkComponent.TreeNode[];
 
