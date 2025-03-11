@@ -267,7 +267,7 @@
       options.value = dataList.map((item) => {
         return {
           label: item.dictLabel,
-          value: item.dictValue,
+          value: item.dictLabel,
         };
       });
     } else if (type === 'dynamic') {
