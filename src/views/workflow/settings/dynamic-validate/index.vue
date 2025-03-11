@@ -9,25 +9,18 @@
   <div class="validate-container">
     <div class="validate-title">
       <span>动态校验</span>
-      <el-button
-        v-if="submitValidates && submitValidates.length > 0"
-        type="primary"
-        @click="addRule"
-      >
+      <el-button v-if="rules && rules.length > 0" type="primary" @click="addRule">
         新增规则
       </el-button>
     </div>
     <div class="validate-main">
-      <el-scrollbar
-        v-if="submitValidates && isNotEmpty(submitValidates)"
-        style="height: 100%; margin: 10px"
-      >
+      <el-scrollbar v-if="rules && isNotEmpty(rules)" style="height: 100%; margin: 10px">
         <div class="validate-tip">
-          说明：在提交表单时满足以下校验规则的数据将不允许提交，多条规则之间请避免输入互斥条件，以免前台校验出错
+          说明：在提交表单时满足以下校验规则的数据将不允许提交，多条规则之间请避免输入互斥条件，以免校验出错
         </div>
         <div
           class="validate-content"
-          v-for="(item, index) in submitValidates"
+          v-for="(item, index) in rules"
           :key="index"
           @mouseleave="handleMouseleave(item)"
           @mouseenter="handleMouseenter(item)"
@@ -41,8 +34,10 @@
               class="!flex flex-col justify-start text-sm"
               style="color: var(--el-text-color-primary)"
             >
-              <span class="pb-5px">校验规则: {{ convertFormula(item.formula) }}</span>
-              <span class="pt-5px">错误提示: {{ item.errorMessage }}</span>
+              <span class="pb-5px">触发事件: {{ item.eventText }}</span>
+              <span class="pb-5px">校验信息: {{ item.prompt }}</span>
+              <span class="pb-5px">关联表单: {{ item.associationFormText }}</span>
+              <span class="pt-5px">备注: {{ item.remark }}</span>
             </el-col>
             <el-col :span="3" class="!flex justify-center items-center">
               <el-switch v-model="item.enable" />
@@ -75,26 +70,22 @@
     <dynamic-validate-rule-edit
       ref="dynamicValidateRuleEditRef"
       v-if="dynamicValidateRuleVisible"
+      @submit="handleDynamicValidateRuleSubmit"
     />
-    <!-- <formula
-      ref="formulaRef"
-      title="表单提交校验"
-      type="validate"
-      header-title="当满足以下条件时表单不允许提交"
-      placeholder="例：报销金额 > 10000"
-      v-model:formula="submitValidate.formula"
-      @callback="callback"
-    /> -->
   </div>
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import { isNotEmpty } from '@/utils';
+  import { ElMessageBox } from 'element-plus';
+  import { isEmpty, isNotEmpty } from '@/utils';
   import { flatFormItems, generateFieldId, restorationFormulaByFormItems } from '@/utils/workflow';
   import { computed, ref, nextTick } from 'vue';
   import AddOrEdit from './add-or-edit.vue';
   import DynamicValidateRuleEdit from '../../components/settings/dynamic-validate-rule-edit.vue';
+  import { useI18n } from 'vue-i18n';
 
+  // 国际化
+  const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
 
@@ -117,42 +108,41 @@
     errorMessage: '',
     enable: true,
   });
+
   // 选中规则的id
   const selectValidateId = ref('');
 
-  // 提交校验
-  const submitValidates = computed({
+  /**
+   * @description: 动态校验规则
+   */
+  const rules = computed({
     get() {
-      if (!workFlowStore.design.settings) {
+      if (!workFlowStore.design.settings || !workFlowStore.design.settings.dynamicValidateRules) {
         workFlowStore.design.settings = {
-          submitValidates: [],
+          ...workFlowStore.design.settings,
+          dynamicValidateRules: [],
         };
       }
-      return workFlowStore.design.settings.submitValidates;
+      return workFlowStore.design.settings.dynamicValidateRules;
     },
     set(val) {
       if (workFlowStore.design.settings) {
-        workFlowStore.design.settings.submitValidates = val;
+        workFlowStore.design.settings.dynamicValidateRules = val;
       }
     },
-  });
-
-  // 扁平化表单组件
-  const _flatFormItems = computed(() => {
-    return flatFormItems(workFlowStore.design.formItems);
   });
 
   /**
    * @description: 鼠标移入
    */
-  const handleMouseenter = (element: WorkForm.SubmitValidate) => {
+  const handleMouseenter = (element: WorkForm.DynamicValidateRule) => {
     selectValidateId.value = element.id;
   };
 
   /**
    * @description: 鼠标移出
    */
-  const handleMouseleave = (element: WorkForm.SubmitValidate) => {
+  const handleMouseleave = (element: WorkForm.DynamicValidateRule) => {
     if (selectValidateId.value === element.id) {
       selectValidateId.value = '';
     }
@@ -161,7 +151,7 @@
   /**
    * @description: 是否显示操作
    */
-  const showOperation = (element: WorkForm.SubmitValidate) => {
+  const showOperation = (element: WorkForm.DynamicValidateRule) => {
     return selectValidateId.value === element.id;
   };
 
@@ -169,64 +159,62 @@
    * @description: 删除规则
    */
   const handleDelete = (element: WorkForm.SubmitValidate) => {
-    if (submitValidates.value) {
-      submitValidates.value = submitValidates.value.filter((item) => item.id !== element.id);
-    }
+    ElMessageBox.confirm(t('delete.confirm'), t('common.tips'), {
+      confirmButtonText: t('button.confirm'),
+      cancelButtonText: t('button.cancel'),
+      type: 'warning',
+      lockScroll: false,
+    })
+      .then(async () => {
+        if (rules.value) {
+          rules.value = rules.value.filter((item) => item.id !== element.id);
+        }
+      })
+      .catch(() => {});
   };
 
   /**
-   * @description: 转换公式, 将fieldId转为title
+   * 添加动态校验规则
    */
-  const convertFormula = (val: string) => {
-    return restorationFormulaByFormItems(val, _flatFormItems.value);
-  };
-
-  /**
-   * @description: 公式回调
-   */
-  const callback = (val: WorkForm.SubmitValidate) => {
-    if (!val) {
-      return;
-    }
-    if (val.id && isNotEmpty(val.id)) {
-      if (submitValidates.value && submitValidates.value.length > 0) {
-        submitValidates.value = submitValidates.value.map((item) => {
-          if (item.id === val.id) {
-            return { ...val };
-          } else {
-            return item;
-          }
-        });
-      } else {
-        submitValidates.value = [val];
-      }
-    } else {
-      if (submitValidates.value) {
-        const ruleId = generateFieldId('rule');
-        submitValidates.value = [
-          ...submitValidates.value,
-          { id: ruleId, formula: val.formula, errorMessage: val.errorMessage, enable: true },
-        ];
-      }
-    }
-  };
-
   const addRule = () => {
-    visible.value = true;
+    dynamicValidateRuleVisible.value = true;
     nextTick(() => {
-      addOrEditRef.value.init({});
+      dynamicValidateRuleEditRef.value.init();
     });
   };
 
+  const handleEdit = (rule: any) => {
+    dynamicValidateRuleVisible.value = true;
+    nextTick(() => {
+      dynamicValidateRuleEditRef.value.init(JSON.parse(JSON.stringify(rule)));
+    });
+  };
+
+  /**
+   * 打开动态校验规则
+   */
   const openDynamicValidateRule = () => {
     dynamicValidateRuleVisible.value = true;
     nextTick(() => {
       dynamicValidateRuleEditRef.value.init();
     });
-    /* visible.value = true;
-    nextTick(() => {
-      addOrEditRef.value.init({});
-    }); */
+  };
+
+  /**
+   * 提交动态表单校验回调
+   * @param val
+   */
+  const handleDynamicValidateRuleSubmit = (val: any) => {
+    if (rules.value) {
+      if (isEmpty(val.id)) {
+        val.id = generateFieldId('rule');
+      } else {
+        // 先移除已存在的rule, 再添加
+        rules.value = rules.value.filter((item) => item.id !== val.id);
+      }
+      rules.value = [...rules.value, JSON.parse(JSON.stringify(val))];
+    }
+    dynamicValidateRuleVisible.value = false;
   };
 </script>
 <style scoped lang="scss">
