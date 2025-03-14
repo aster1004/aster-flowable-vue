@@ -54,7 +54,7 @@
       </template>
       <el-select v-model="_formItem.props.fileTypes" multiple clearable>
         <el-option
-          v-for="(item, index) in acceptList"
+          v-for="(item, index) in _acceptList"
           :key="index"
           :label="item.label"
           :value="item.value"
@@ -69,6 +69,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { AcceptList } from '@/config/fileConfig';
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
 
@@ -82,17 +83,9 @@
     return workFlowStore.selectFormItem;
   });
 
-  // 附件类型
-  const acceptList = [
-    { label: '图像', value: 'image/*' },
-    { label: '视频', value: 'video/*' },
-    { label: '音频', value: 'audio/*' },
-    {
-      label: '文档',
-      value: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv',
-    },
-    { label: '压缩', value: '.zip,.rar,.7z,.tar.gz' },
-    { label: '其他', value: '.html,.css,.js,.json,.vue,.java,.class,.exe' },
-  ];
+  // 文件上传类型
+  const _acceptList = computed(() => {
+    return AcceptList;
+  });
 </script>
 <style scoped lang="scss"></style>

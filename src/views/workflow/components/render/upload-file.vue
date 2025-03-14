@@ -26,8 +26,8 @@
           v-if="!_readonly"
           list-type="text"
           :file-list="fileList"
-          :action="ImageUpload.url"
-          :accept="acceptList"
+          :action="FileUpload.url"
+          :accept="_acceptList"
           :limit="formItem.props.maxNumber"
           :multiple="formItem.props.maxNumber > 1"
           :on-exceed="handleExceed"
@@ -43,7 +43,7 @@
           <el-row v-for="(item, index) in _value" :key="index">
             <el-col :span="24">
               <el-tooltip effect="dark" :content="'点击浏览：' + item.name" placement="top-start">
-                <span class="file-name" :title="item.name" @click="handlePreview(item)">{{
+                <span class="file-name" :title="item.name" @click="clickPreview(item)">{{
                   item.name
                 }}</span>
               </el-tooltip>
@@ -99,8 +99,8 @@
   import { evaluateFormula } from '@/utils/workflow';
   import { computed, PropType, ref, watch } from 'vue';
   import mittBus from '@/utils/mittBus';
-  import { isNotEmpty } from '@/utils';
-  import { ImageUpload } from '@/config/fileConfig';
+  import { isEmpty, isNotEmpty } from '@/utils';
+  import { ImageUpload, FileUpload, getFileTypeByAccept } from '@/config/fileConfig';
   import { ElMessage, ElMessageBox, UploadProps } from 'element-plus';
   import { useI18n } from 'vue-i18n';
   import { ResultEnum } from '@/enums/httpEnum';
@@ -255,11 +255,15 @@
   });
 
   // 附件类型
-  const acceptList = computed(() => {
+  const _acceptList = computed(() => {
     if (props.formItem.props.fileTypes == null || props.formItem.props.fileTypes.length == 0) {
       return '';
     }
-    return props.formItem.props.fileTypes.join(',');
+    let accepts = '';
+    props.formItem.props.fileTypes.forEach((item: string) => {
+      accepts += getFileTypeByAccept(item);
+    });
+    return accepts;
   });
 
   // 附件列表
@@ -327,6 +331,33 @@
   };
 
   /**
+   * @description: 预览文件
+   * @return {*}
+   */
+  const clickPreview = (file: WorkForm.FileModel) => {
+    const extension = file.url.split('.').pop();
+    if (extension && ImageUpload.type.join(',').indexOf(extension) != -1) {
+      previewFile.value = {
+        name: file.name,
+        url: file.url,
+      };
+      previewImageVisible.value = true;
+    } else if (extension && fileExtensions.value.join(',').indexOf(extension) != -1) {
+      previewDocumentVisible.value = true;
+      window.open(PREVIEW_URL + encodeURIComponent(Base64.encode(file.url)));
+    } else {
+      ElMessageBox.confirm('不支持预览此类型的文件,是否要下载查看?', t('common.tips'), {
+        confirmButtonText: t('button.confirm'),
+        cancelButtonText: t('button.cancel'),
+        type: 'warning',
+        lockScroll: false,
+      }).then(async () => {
+        await downloadFileByUrl(file.url, file.name);
+      });
+    }
+  };
+
+  /**
    * @description: 删除附件
    * @return {*}
    */
@@ -349,15 +380,20 @@
    */
   const handleBeforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
     // 判断附件类型
-    if (isNotEmpty(acceptList.value) && !acceptList.value.includes(rawFile.type)) {
+    if (isEmpty(rawFile.type) || !_acceptList.value) {
+      ElMessage.error('上传文件的格式不符合要求');
+      return false;
+    }
+    if (isNotEmpty(_acceptList.value) && !_acceptList.value.includes(rawFile.type)) {
       ElMessage.error('不支持上传此类型的文件');
       return false;
-    } else if (
+    }
+    // 判断附件大小
+    if (
       rawFile.size / 1024 / 1024 > props.formItem.props.maxSize &&
       props.formItem.props.maxSize != 0
     ) {
-      // 判断附件大小
-      ElMessage.error('上传附件大小不能超过' + props.formItem.props.maxSize + 'MB');
+      ElMessage.error('上传文件大小不能超过' + props.formItem.props.maxSize + 'MB');
       return false;
     }
     return true;
