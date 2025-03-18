@@ -86,7 +86,7 @@
           >
             <template #default="scope">
               <span v-if="scope.row.realName">{{ scope.row.realName }}</span>
-              <span v-else>{{ scope.row.nickName }}</span>
+              <span v-else>{{ scope.row.nickName ? scope.row.nickName : '' }}</span>
             </template>
           </el-table-column>
 
@@ -137,7 +137,7 @@
           >
             <template #default="scope">
               <span v-if="scope.row.realName">{{ scope.row.realName }}</span>
-              <span v-else>{{ scope.row.nickName }}</span>
+              <span v-else>{{ scope.row.nickName ? scope.row.nickName : '' }}</span>
             </template>
           </el-table-column>
 
@@ -398,31 +398,20 @@
   import { rolePageApi } from '@/api/sys/role';
   import { isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
+  import { memberByRoleIdsApi } from '@/api/workflow/auth';
 
   const emits = defineEmits(['success']);
   const props = defineProps({
     // 判断是否为设计模式，默认为form。
-    mode: {
-      type: String as PropType<'design' | 'form' | 'search' | 'table'>,
-      default: 'form',
-    },
-    title: {
-      type: String,
-      default: '请选择',
-    },
+    mode: { type: String as PropType<'design' | 'form' | 'search' | 'table'>, default: 'form' },
+    title: { type: String, default: '请选择' },
     type: {
       type: String,
       default: 'user', //user-选人  dept-选部门 sysRole-选系统角色 flowRole-选流程角色
     },
-    formItem: {
-      type: Object as PropType<WorkComponent.ComponentConfig>,
-      default: {},
-    },
+    formItem: { type: Object as PropType<WorkComponent.ComponentConfig>, default: {} },
     // 是否多选，优先级比formItem.props.multiple 高，如果为true，则都为多选
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
+    multiple: { type: Boolean, default: false },
   });
 
   /** 显示组件 */
@@ -520,7 +509,7 @@
           getUsersByRoleIdsApi(ids);
           break;
         case 'flowRole':
-          queryParams.orgId = '';
+          getUsersByFlowRoleApi(ids);
           break;
         default:
           queryParams.orgId = '';
@@ -593,6 +582,23 @@
       }
     });
   };
+
+  /**
+   * @description: 获取流程角色ID查询用户信息
+   * @param {*} ids 角色id集合
+   * @return {*}
+   */
+  const getUsersByFlowRoleApi = async (ids: string[]) => {
+    await memberByRoleIdsApi(ids).then(({ data }) => {
+      // limitUserIds.value 不存在id，则添加
+      data.forEach((item: WorkAuth.MemberInfo) => {
+        if (item.memberId && !userIds.value.includes(item.memberId)) {
+          userIds.value.push(item.memberId);
+        }
+      });
+    });
+  };
+
   /**
    * 查询部门列表
    * @param type
@@ -702,21 +708,28 @@
       val.push({
         id: row.id,
         type: props.type,
-        realName: row.realName, // 用户名称
-        nickName: row.nickName, // 昵称
-        orgName: row.orgName, // 部门名称
-        roleName: row.roleName, // 角色名称
+        realName: row.realName ? row.realName : '', // 用户名称
+        nickName: row.nickName ? row.nickName : '', // 昵称
+        orgName: row.orgName ? row.orgName : '', // 部门名称
+        roleName: row.roleName ? row.roleName : '', // 角色名称
       });
     } else {
+      console.log(selectedList.value);
       // 同时返回名称username
       val = selectedList.value?.map((item: any) => {
+        const obj = { ...item };
+        const realName = obj.realName ? obj.realName : '';
+        const nickName = obj.nickName ? obj.nickName : '';
+        const orgName = obj.orgName ? obj.orgName : '';
+        const roleName = obj.roleName ? obj.roleName : '';
+
         return {
           id: item.id,
           type: props.type,
-          realName: item.realName,
-          nickName: row.nickName, // 昵称
-          orgName: item.orgName,
-          roleName: item.roleName,
+          realName: realName,
+          nickName: nickName,
+          orgName: orgName,
+          roleName: roleName,
         };
       });
       if (!val || val.length == 0) {
@@ -836,9 +849,7 @@
     handleQuery();
   };
 
-  defineExpose({
-    init,
-  });
+  defineExpose({ init });
 </script>
 
 <style scoped lang="scss">

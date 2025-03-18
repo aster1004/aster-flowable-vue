@@ -11,7 +11,7 @@
     :ref="formItem.id + 'Ref'"
     v-model:value="_value"
     :mode="mode"
-    :formData="props.formData"
+    :formData="formData"
     :formItem="formItem"
     :tableId="tableId"
     :tableIndex="tableIndex"

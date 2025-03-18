@@ -530,6 +530,10 @@
       type: 'warning',
       lockScroll: false,
     }).then(() => {
+      if (selectedParams.value.length === 0) {
+        ElMessage.warning(t('delete.empty'));
+        return;
+      }
       instanceDeleteApi(selectedParams.value).then((res) => {
         if (res.code === ResultEnum.SUCCESS) {
           ElMessage.success(t('delete.success'));

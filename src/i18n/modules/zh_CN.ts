@@ -635,6 +635,7 @@ export default {
       iconColor: '颜色',
       dataTitlePlaceholder: '请选择数据标题',
       formDescPlaceholder: '请输入表单描述',
+      formNamePlaceholder: '请输入表单名称',
       formNameRule: '请输入表单名称',
       formNameLength: '长度在 2 到 50 个字符',
       formIconRule: '请选择表单图标',

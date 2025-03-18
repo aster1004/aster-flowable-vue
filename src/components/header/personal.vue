@@ -77,6 +77,7 @@
 
   const userStore = useUserStore();
   const userInfo = ref<User.UserInfo>({
+    id: '',
     username: '',
     gender: '',
     status: '',
