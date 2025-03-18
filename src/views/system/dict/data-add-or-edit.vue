@@ -78,8 +78,8 @@
   import { dictDataApi, dictDataSaveApi } from '@/api/sys/dict';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus/es';
+  import type { EpPropMergeType } from 'element-plus/es/utils/vue/props/types';
   import { isNotEmpty } from '@/utils';
-  import { EpPropMergeType } from 'element-plus/es/utils/vue';
   import DictRadio from '@/components/dict/dict-radio.vue';
   import { useAppStore } from '@/stores/modules/app';
   import { useI18n } from 'vue-i18n';
@@ -184,8 +184,6 @@
     });
   };
 
-  defineExpose({
-    init,
-  });
+  defineExpose({ init });
 </script>
 <style lang="scss" scoped></style>
