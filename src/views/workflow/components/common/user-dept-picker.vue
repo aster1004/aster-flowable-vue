@@ -398,6 +398,7 @@
   import { rolePageApi } from '@/api/sys/role';
   import { isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
+  import { memberByRoleIdsApi } from '@/api/workflow/auth';
 
   const emits = defineEmits(['success']);
   const props = defineProps({
@@ -508,7 +509,7 @@
           getUsersByRoleIdsApi(ids);
           break;
         case 'flowRole':
-          queryParams.orgId = '';
+          getUsersByFlowRoleApi(ids);
           break;
         default:
           queryParams.orgId = '';
@@ -581,6 +582,23 @@
       }
     });
   };
+
+  /**
+   * @description: 获取流程角色ID查询用户信息
+   * @param {*} ids 角色id集合
+   * @return {*}
+   */
+  const getUsersByFlowRoleApi = async (ids: string[]) => {
+    await memberByRoleIdsApi(ids).then(({ data }) => {
+      // limitUserIds.value 不存在id，则添加
+      data.forEach((item: WorkAuth.MemberInfo) => {
+        if (item.memberId && !userIds.value.includes(item.memberId)) {
+          userIds.value.push(item.memberId);
+        }
+      });
+    });
+  };
+
   /**
    * 查询部门列表
    * @param type
