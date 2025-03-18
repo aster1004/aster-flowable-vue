@@ -21,9 +21,7 @@ export const roleTreeListApi = (params: WorkAuth.RoleParams) => {
  * @description: 获取角色分组
  */
 export const roleGroupApi = () => {
-  return request.get<WorkAuth.RoleInfo[]>(PORT5 + `/auth/role/group`, {
-    noLoading: true,
-  });
+  return request.get<WorkAuth.RoleInfo[]>(PORT5 + `/auth/role/group`, { noLoading: true });
 };
 
 /**
@@ -31,9 +29,7 @@ export const roleGroupApi = () => {
  * @param {WorkAuth.RoleInfo} params 查询参数
  */
 export const roleSaveApi = (params: WorkAuth.RoleInfo) => {
-  return request.post<WorkAuth.RoleInfo>(PORT5 + `/auth/role/save`, params, {
-    noLoading: true,
-  });
+  return request.post<WorkAuth.RoleInfo>(PORT5 + `/auth/role/save`, params, { noLoading: true });
 };
 
 /**
@@ -79,9 +75,7 @@ export const memberSaveApi = (roleId: string, members: WorkAuth.MemberInfo[]) =>
  * @param {WorkAuth.MemberInfo} member 成员信息
  */
 export const memberEditApi = (member: WorkAuth.MemberInfo) => {
-  return request.post<string>(PORT5 + `/auth/member/save`, member, {
-    noLoading: true,
-  });
+  return request.post<string>(PORT5 + `/auth/member/save`, member, { noLoading: true });
 };
 
 /**
@@ -90,6 +84,15 @@ export const memberEditApi = (member: WorkAuth.MemberInfo) => {
  */
 export const memberDeleteApi = (ids: string[]) => {
   return request.post<string>(PORT5 + `/auth/member/delete`, ids, { noLoading: true });
+};
+
+/**
+ * @description: 通过流程角色ids批量获取用户信息
+ * @param ids
+ * @return {*} 返回用户id集合
+ */
+export const memberByRoleIdsApi = (ids: string[]) => {
+  return request.post<WorkAuth.MemberInfo[]>(PORT5 + `/auth/member/selectByRoleIds`, ids);
 };
 
 /**
@@ -107,9 +110,7 @@ export const permListApi = (roleId: string) => {
  * @param {WorkAuth.RolePermission} perms 权限信息
  */
 export const permSaveApi = (perms: WorkAuth.RolePermission[]) => {
-  return request.post<string>(PORT5 + `/auth/perm/save`, perms, {
-    noLoading: false,
-  });
+  return request.post<string>(PORT5 + `/auth/perm/save`, perms, { noLoading: false });
 };
 
 /**
@@ -117,9 +118,7 @@ export const permSaveApi = (perms: WorkAuth.RolePermission[]) => {
  * @param {WorkAuth.RolePermission} perm 权限信息
  */
 export const permDeleteApi = (perm: WorkAuth.RolePermission) => {
-  return request.post<string>(PORT5 + `/auth/perm/delete`, perm, {
-    noLoading: true,
-  });
+  return request.post<string>(PORT5 + `/auth/perm/delete`, perm, { noLoading: true });
 };
 
 /**
