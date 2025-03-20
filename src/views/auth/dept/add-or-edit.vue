@@ -59,7 +59,7 @@
 <script setup lang="ts">
   import { deptInfoApi, deptListApi, deptSaveApi } from '@/api/sys/dept';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { isEmpty, isNotEmpty } from '@/utils';
+  import { isNotEmpty } from '@/utils';
   import { ElMessage } from 'element-plus';
   import { computed, reactive, ref } from 'vue';
   import DictRadio from '@/components/dict/dict-radio.vue';
@@ -91,6 +91,7 @@
   const formRules = computed(() => {
     return {
       orgName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
+      pid: [{ required: true, message: t('common.required'), trigger: 'blur' }],
     };
   });
 
@@ -127,7 +128,15 @@
    */
   const getDataList = async () => {
     return await deptListApi().then(({ data }) => {
-      dataList.value = data;
+      const rootNode: Dept.DeptInfo[] = [
+        {
+          id: '0',
+          orgName: '顶级部门',
+          status: '0',
+          children: data,
+        },
+      ];
+      dataList.value = rootNode;
     });
   };
 
@@ -139,20 +148,7 @@
   const getDataInfo = async (key: string) => {
     await deptInfoApi(key).then(({ data }) => {
       Object.assign(formData, data);
-      if (formData.pid == '0') {
-        treeSetDefaultHandle();
-      }
     });
-  };
-
-  /**
-   * @description: 设置默认值
-   * @param {*} key
-   * @return {*}
-   */
-  const treeSetDefaultHandle = () => {
-    formData.pid = '0';
-    formData.parentName = '一级部门';
   };
 
   /**
@@ -164,10 +160,7 @@
       if (!valid) {
         return false;
       }
-      // 如果没有选择父级，则默认为一级部门
-      if (!formData.pid || isEmpty(formData.pid)) {
-        formData.pid = '0';
-      }
+
       deptSaveApi(formData).then((res) => {
         if (res.code == ResultEnum.SUCCESS) {
           ElMessage.success({
