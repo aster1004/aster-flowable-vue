@@ -59,7 +59,7 @@
 <script setup lang="ts">
   import { deptInfoApi, deptListApi, deptSaveApi } from '@/api/sys/dept';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { isNotEmpty } from '@/utils';
+  import { isEmpty, isNotEmpty } from '@/utils';
   import { ElMessage } from 'element-plus';
   import { computed, reactive, ref } from 'vue';
   import DictRadio from '@/components/dict/dict-radio.vue';
@@ -91,7 +91,6 @@
   const formRules = computed(() => {
     return {
       orgName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
-      pid: [{ required: true, message: t('common.required'), trigger: 'blur' }],
     };
   });
 
@@ -165,7 +164,10 @@
       if (!valid) {
         return false;
       }
-
+      // 如果没有选择父级，则默认为一级部门
+      if (!formData.pid || isEmpty(formData.pid)) {
+        formData.pid = '0';
+      }
       deptSaveApi(formData).then((res) => {
         if (res.code == ResultEnum.SUCCESS) {
           ElMessage.success({
