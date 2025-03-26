@@ -10,8 +10,7 @@ import { TenantState } from '@/stores/interface';
 import piniaPersistConfig from '@/config/piniaPersist';
 import { switchTenantApi } from '@/api/sys/tenant';
 
-export const useTenantStore = defineStore({
-  id: 'aster-tenant',
+export const useTenantStore = defineStore('aster-tenant', {
   state: (): TenantState => ({
     enabled: false,
     tenantId: '',

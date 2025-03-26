@@ -10,8 +10,7 @@ import { AuthState } from '@/stores/interface';
 import { getAuthButtonListApi, getAuthMenuListApi } from '@/api/auth';
 import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from '@/utils';
 
-export const useAuthStore = defineStore({
-  id: 'aster-auth',
+export const useAuthStore = defineStore('aster-auth', {
   state: (): AuthState => ({
     // 按钮权限列表
     authButtonList: [],
