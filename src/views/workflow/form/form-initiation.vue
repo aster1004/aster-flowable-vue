@@ -53,8 +53,10 @@
   import FormRender from './form-render.vue';
   import { useI18n } from 'vue-i18n';
   import { formSubmitApi, instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/task';
+  import { validateRuleApi } from '@/api/workflow/validate';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isNotEmpty } from '@/utils';
+  import { fa } from 'element-plus/es/locale';
   const emits = defineEmits(['resetQuery']); // 关闭详情弹框
   // 获取工作流store
   const workFlowStore = useWorkFlowStore();
@@ -209,18 +211,21 @@
         formStatus: '0',
         formData: formData.value,
       };
-      // 提交表单
-      formSubmitApi(submitFormData).then((res) => {
-        if (res.code == ResultEnum.SUCCESS) {
-          ElMessage.success({
-            message: t('common.success'),
-            duration: 500,
-            onClose: () => {
-              visible.value = false;
-              emits('resetQuery'); // 提交成功，刷新列表
-            },
-          });
-        }
+      // 动态校验表单
+      validateRuleApi(submitFormData).then(() => {
+        // 提交表单
+        formSubmitApi(submitFormData).then((res) => {
+          if (res.code == ResultEnum.SUCCESS) {
+            ElMessage.success({
+              message: t('common.success'),
+              duration: 500,
+              onClose: () => {
+                visible.value = false;
+                emits('resetQuery'); // 提交成功，刷新列表
+              },
+            });
+          }
+        });
       });
     });
   };
