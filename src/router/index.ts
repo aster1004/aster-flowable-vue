@@ -12,7 +12,7 @@ import { useAuthStore } from '@/stores/modules/auth';
 import { LOGIN_URL, ROUTER_WHITE_LIST } from '@/config';
 import { initDynamicRouter } from '@/router/modules/dynamicRouter';
 import { staticRouter, errorRouter } from '@/router/modules/staticRouter';
-import NProgress from '@/config/nprogress';
+// import NProgress from '@/config/nprogress';
 
 const mode = import.meta.env.VITE_ROUTER_MODE;
 
@@ -35,7 +35,7 @@ router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
 
   // NProgress 开始
-  NProgress.start();
+  // NProgress.start();
 
   // 动态设置标题
   const title = import.meta.env.VITE_APP_TITLE;
@@ -82,7 +82,7 @@ export const resetRouter = () => {
  * @description 路由跳转错误
  * */
 router.onError((error) => {
-  NProgress.done();
+  // NProgress.done();
   console.warn('路由错误', error.message);
 });
 
@@ -90,7 +90,7 @@ router.onError((error) => {
  * @description 路由跳转结束
  * */
 router.afterEach(() => {
-  NProgress.done();
+  // NProgress.done();
 });
 
 export const setupRouter = (app: App<Element>) => {

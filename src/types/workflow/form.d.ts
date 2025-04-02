@@ -78,6 +78,8 @@ declare namespace WorkForm {
     remark?: string;
     associationForm?: string;
     associationFormText?: string;
+    // 关联表单表名
+    formCode?: string;
   }
 
   /**

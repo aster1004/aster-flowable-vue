@@ -15,8 +15,7 @@ const enum SuperAdminEnum {
   NO = '1',
 }
 
-export const useUserStore = defineStore({
-  id: 'aster-user',
+export const useUserStore = defineStore('aster-user', {
   state: (): UserState => ({
     token: '',
     userInfo: {

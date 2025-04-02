@@ -178,6 +178,8 @@
     associationForm: '',
     // 关联表单文本
     associationFormText: '',
+    // 关联表单表名
+    formCode: '',
   });
 
   /**
@@ -269,11 +271,13 @@
     let fieldFilterItem = fieldItems.filter((item: any) => {
       return value == item.id;
     });
+    console.info(fieldFilterItem);
     rule.value.filters.forEach((filterItem: any, index: number) => {
       filterItem.targetField = '';
     });
     let associationForm = fieldFilterItem[0];
     rule.value.associationFormText = associationForm.title;
+    rule.value.formCode = associationForm.props.formCode[1];
     // 查询表单字段项
     await getAssociatedFormInfo(associationForm.props.formCode[1]);
   };
@@ -477,21 +481,6 @@
       // 查询关联表单信息
       await handleAssociationFormChange(element.associationForm);
       rule.value = { ...element };
-      // 处理校验条件回显
-      /* rule.value.filters.forEach((filterItem: any, index: number) => {
-        let filterJsonItem = JSON.parse(JSON.stringify(filterItem));
-        console.info('json:', filterJsonItem);
-        // 处理当前表单选项
-        handleSelfChange(filterItem.selfField, index);
-        // 处理比较符号
-        console.info('equation：', filterJsonItem.equation);
-        handleEquationChange(filterJsonItem.equation, index);
-        // 处理目标表单选项
-        console.info('targetField', filterJsonItem.targetField);
-        handleTargetOperateChange(filterJsonItem.targetField, index);
-        console.info('json2:', filterJsonItem);
-      });
-      console.info('回显的结果：', JSON.stringify(rule.value)); */
     } else {
       rule.value = {
         id: '',
@@ -511,6 +500,8 @@
         associationForm: '',
         // 关联表单文本
         associationFormText: '',
+        // 关联表单表名
+        formCode: '',
       };
     }
   };

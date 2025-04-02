@@ -128,7 +128,15 @@
    */
   const getDataList = async () => {
     return await deptListApi().then(({ data }) => {
-      dataList.value = data;
+      const rootNode: Dept.DeptInfo[] = [
+        {
+          id: '0',
+          orgName: '顶级部门',
+          status: '0',
+          children: data,
+        },
+      ];
+      dataList.value = rootNode;
     });
   };
 
@@ -140,20 +148,7 @@
   const getDataInfo = async (key: string) => {
     await deptInfoApi(key).then(({ data }) => {
       Object.assign(formData, data);
-      if (formData.pid == '0') {
-        treeSetDefaultHandle();
-      }
     });
-  };
-
-  /**
-   * @description: 设置默认值
-   * @param {*} key
-   * @return {*}
-   */
-  const treeSetDefaultHandle = () => {
-    formData.pid = '0';
-    formData.parentName = '一级部门';
   };
 
   /**
