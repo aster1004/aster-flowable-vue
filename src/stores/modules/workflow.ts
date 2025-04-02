@@ -11,8 +11,7 @@ import { formInfoApi } from '@/api/workflow/form';
 import { ResultEnum } from '@/enums/httpEnum';
 import { ElMessage } from 'element-plus';
 
-export const useWorkFlowStore = defineStore({
-  id: 'aster-workflow',
+export const useWorkFlowStore = defineStore('aster-workflow', {
   state: (): WorkflowState => ({
     design: {
       icon: 'iconfont icon-gengduo',

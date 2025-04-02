@@ -11,8 +11,7 @@ import piniaPersistConfig from '@/config/piniaPersist';
 import { dictAllApi } from '@/api/sys/dict';
 import { secretKeyApi } from '@/api/login';
 
-export const useAppStore = defineStore({
-  id: 'aster-app',
+export const useAppStore = defineStore('aster-app', {
   state: (): AppState => ({
     dictList: [],
     secretKey: '',

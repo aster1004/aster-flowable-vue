@@ -25,11 +25,7 @@
           </span>
           {{ comment.content }}
           <div v-if="comment.imgSrc" class="img-box">
-            <img
-              :src="comment.imgSrc || ''"
-              style="max-width: 500px; max-height: 300px"
-              @error="onError($event)"
-            />
+            <img :src="comment.imgSrc || ''" @error="onError($event)" />
           </div>
         </div>
 
