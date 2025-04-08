@@ -12,7 +12,7 @@
         <vxe-table
           ref="fieldTable"
           border
-          row-key
+          :row-config="{ useKey: true }"
           class="sortable-row-gen"
           :data="fieldList"
           :checkbox-config="{ checkStrictly: true }"
@@ -46,31 +46,31 @@
           <vxe-column field="attrName" title="属性名" :edit-render="{ name: 'input' }"></vxe-column>
           <vxe-column field="attrType" title="属性类型">
             <template #default="{ row }">
-              <vxe-select v-model="row.attrType">
-                <vxe-option
+              <el-select v-model="row.attrType">
+                <el-option
                   v-for="item in typeList"
                   :key="item.value"
                   :value="item.value"
                   :label="item.label"
-                ></vxe-option>
-              </vxe-select>
+                ></el-option>
+              </el-select>
             </template>
           </vxe-column>
           <vxe-column field="autoFill" title="自动填充">
             <template #default="{ row }">
-              <vxe-select v-model="row.autoFill">
-                <vxe-option
+              <el-select v-model="row.autoFill">
+                <el-option
                   v-for="item in fillList"
                   :key="item.value"
                   :value="item.value"
                   :label="item.label"
-                ></vxe-option>
-              </vxe-select>
+                ></el-option>
+              </el-select>
             </template>
           </vxe-column>
           <vxe-column field="primaryPk" title="主键">
             <template #default="{ row }">
-              <vxe-checkbox v-model="row.primaryPk"></vxe-checkbox>
+              <el-checkbox v-model="row.primaryPk"></el-checkbox>
             </template>
           </vxe-column>
         </vxe-table>
@@ -79,7 +79,7 @@
         <vxe-table
           ref="formTable"
           border
-          row-key
+          :row-config="{ useKey: true }"
           :data="fieldList"
           :checkbox-config="{ checkStrictly: true }"
           :edit-config="{ trigger: 'click', mode: 'cell' }"
@@ -88,12 +88,12 @@
           <vxe-column field="fieldComment" title="说明"></vxe-column>
           <vxe-column field="formItem" title="表单显示">
             <template #default="{ row }">
-              <vxe-checkbox v-model="row.formItem"></vxe-checkbox>
+              <el-checkbox v-model="row.formItem"></el-checkbox>
             </template>
           </vxe-column>
           <vxe-column field="formRequired" title="表单必填">
             <template #default="{ row }">
-              <vxe-checkbox v-model="row.formRequired"></vxe-checkbox>
+              <el-checkbox v-model="row.formRequired"></el-checkbox>
             </template>
           </vxe-column>
           <vxe-column
@@ -103,14 +103,14 @@
           ></vxe-column>
           <vxe-column field="formType" title="表单类型">
             <template #default="{ row }">
-              <vxe-select v-model="row.formType">
-                <vxe-option
+              <el-select v-model="row.formType">
+                <el-option
                   v-for="item in formTypeList"
                   :key="item.value"
                   :value="item.value"
                   :label="item.label"
-                ></vxe-option>
-              </vxe-select>
+                ></el-option>
+              </el-select>
             </template>
           </vxe-column>
           <vxe-column
@@ -124,7 +124,7 @@
         <vxe-table
           ref="gridTable"
           border
-          row-key
+          :row-config="{ useKey: true }"
           :data="fieldList"
           :checkbox-config="{ checkStrictly: true }"
           :edit-config="{ trigger: 'click', mode: 'cell' }"
@@ -133,12 +133,12 @@
           <vxe-column field="fieldComment" title="说明"></vxe-column>
           <vxe-column field="gridItem" title="列表显示">
             <template #default="{ row }">
-              <vxe-checkbox v-model="row.gridItem"></vxe-checkbox>
+              <el-checkbox v-model="row.gridItem"></el-checkbox>
             </template>
           </vxe-column>
           <vxe-column field="gridSort" title="列表排序">
             <template #default="{ row }">
-              <vxe-checkbox v-model="row.gridSort"></vxe-checkbox>
+              <el-checkbox v-model="row.gridSort"></el-checkbox>
             </template>
           </vxe-column>
         </vxe-table>
@@ -147,7 +147,7 @@
         <vxe-table
           ref="queryTable"
           border
-          row-key
+          :row-config="{ useKey: true }"
           :data="fieldList"
           :checkbox-config="{ checkStrictly: true }"
           :edit-config="{ trigger: 'click', mode: 'cell' }"
@@ -156,31 +156,31 @@
           <vxe-column field="fieldComment" title="说明"></vxe-column>
           <vxe-column field="queryItem" title="查询显示">
             <template #default="{ row }">
-              <vxe-checkbox v-model="row.queryItem"></vxe-checkbox>
+              <el-checkbox v-model="row.queryItem"></el-checkbox>
             </template>
           </vxe-column>
           <vxe-column field="queryType" title="查询方式">
             <template #default="{ row }">
-              <vxe-select v-model="row.queryType">
-                <vxe-option
+              <el-select v-model="row.queryType">
+                <el-option
                   v-for="item in queryList"
                   :key="item.value"
                   :value="item.value"
                   :label="item.label"
-                ></vxe-option>
-              </vxe-select>
+                ></el-option>
+              </el-select>
             </template>
           </vxe-column>
           <vxe-column field="queryFormType" title="查询表单类型">
             <template #default="{ row }">
-              <vxe-select v-model="row.queryFormType">
-                <vxe-option
+              <el-select v-model="row.queryFormType">
+                <el-option
                   v-for="item in formTypeList"
                   :key="item.value"
                   :value="item.value"
                   :label="item.label"
-                ></vxe-option>
-              </vxe-select>
+                ></el-option>
+              </el-select>
             </template>
           </vxe-column>
         </vxe-table>
