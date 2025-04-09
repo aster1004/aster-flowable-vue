@@ -1031,8 +1031,10 @@ export const getTaskResult = (instance) => {
       return { text: '转交', type: 'primary', icon: 'icon-zhuanjiao1', color: '#409EFF' };
     } else if (instance.approveResult === ProcessButtonTypeEnum.RECALL) {
       return { text: '退回', type: 'danger', icon: 'icon-jurassic_last', color: '#F56C6C' };
-    } else if (!instance.approveResult && instance.finishTime) {
+    } else if (instance.approveResult === ProcessButtonTypeEnum.REVOKE && instance.finishTime) {
       return { text: '撤销', type: 'info', icon: 'icon-guanbi1', color: '#E4E4E4' };
+    } else if (!instance.approveResult && instance.finishTime) {
+      return { text: '自动通过', type: 'primary', icon: 'icon-jiaqian', color: '#409EFF' };
     } else {
       return { text: '处理中', type: 'warning', icon: 'icon-chulizhong', color: '#F78F5F' };
     }

@@ -40,6 +40,17 @@ export const userInfoApi = (id: string) => {
 };
 
 /**
+ * @description: 校验用户名
+ * @param {string} username 用户名
+ * @return {*}
+ */
+export const validateUserNameApi = (username: string) => {
+  return request.get<boolean>(PORT1 + `/user/validateUserName?userName=` + username, {
+    noLoading: true,
+  });
+};
+
+/**
  * @description: 保存
  * @param {User.UserInfo} user
  * @return {*}
