@@ -69,8 +69,18 @@
         </el-button>
       </div>
       <div class="dialog-filter">
-        <el-row :gutter="10" v-for="(filter, index) in rule.filters" :key="index">
-          <el-col :span="9">
+        <el-row :gutter="10" class="pb-5px" v-for="(filter, index) in rule.filters" :key="index">
+          <el-col :span="3">
+            <el-select v-model="filter.logical">
+              <el-option
+                v-for="(logical, i) in logicalOptions"
+                :label="logical.label"
+                :value="logical.value"
+                :key="i"
+              />
+            </el-select>
+          </el-col>
+          <el-col :span="8">
             <el-select
               v-model="filter.target"
               placeholder="请选择目标表单字段"
@@ -96,7 +106,7 @@
               />
             </el-select>
           </el-col>
-          <el-col :span="9">
+          <el-col :span="8">
             <el-select v-model="filter.current" placeholder="请选择当前表单字段">
               <el-option
                 v-for="item in filterCurrentFormItems[index]"
@@ -107,7 +117,7 @@
               />
             </el-select>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="1">
             <div class="w-full h-full flex items-center justify-center">
               <i class="iconfont icon-shanchu" @click="handleFilterDelete(index)"></i>
             </div>
@@ -217,6 +227,17 @@
   const operateOperatorOptions = ref<WorkComponent.TreeNode[][]>([]);
   // 操作条件的当前表单的表单项
   const operateCurrentFormItems = ref<WorkComponent.DataFillOption[][]>([]);
+  // 逻辑符
+  const logicalOptions = [
+    {
+      label: '并且',
+      value: 'AND',
+    },
+    {
+      label: '或者',
+      value: 'OR',
+    },
+  ];
   // 业务规则
   const rule = ref<WorkForm.BusinessRule>({
     id: '',
@@ -337,7 +358,7 @@
   const handleOperationChange = (val: string) => {
     if (val === 'insert') {
       if (rule.value.target.isTableList) {
-        rule.value.filters = [{ target: '', operator: 'EQ', current: '' }];
+        rule.value.filters = [{ logical: 'AND', target: '', operator: 'EQ', current: '' }];
       } else {
         rule.value.filters = [];
       }
@@ -351,7 +372,7 @@
         filterTargetFormItems.value = [];
       }
     } else if (val === 'delete') {
-      rule.value.filters = [{ target: '', operator: 'EQ', current: '' }];
+      rule.value.filters = [{ logical: 'AND', target: '', operator: 'EQ', current: '' }];
       rule.value.operations = [];
       // 若是明细表，则根据明细表的条件来确认哪些实例的明细表的某一行数据需要删除
       if (rule.value.target.isTableList) {
@@ -362,7 +383,7 @@
         operateTargetFormItems.value = [];
       }
     } else {
-      rule.value.filters = [{ target: '', operator: 'EQ', current: '' }];
+      rule.value.filters = [{ logical: 'AND', target: '', operator: 'EQ', current: '' }];
       rule.value.operations = [{ target: '', operator: 'EQ', current: '' }];
 
       filterTargetFormItems.value = dataFillOptionsByFormItems(targetFormItems.value, false);
@@ -377,6 +398,7 @@
    */
   const handleAddFilter = () => {
     rule.value.filters.push({
+      logical: 'AND',
       target: '',
       operator: 'EQ',
       current: '',

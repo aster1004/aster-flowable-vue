@@ -43,7 +43,7 @@ declare namespace WorkForm {
     // 操作类型
     operationType: string;
     // 过滤条件
-    filters: { target: string; current: string; operator: string }[];
+    filters: { logical?: string; target: string; current: string; operator: string }[];
     // 具体操作
     operations: { target: string; current: string; operator: string }[];
     // 是否启用
