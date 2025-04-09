@@ -204,6 +204,8 @@ export default {
       resetPassword: '重置密码',
       exportConfirm: '确认导出用户数据?',
       resetPwdConfirm: '确认重置密码?',
+      userNameValidate: '用户名必须介于3-20个字符，只能包含英文、数字以及下划线',
+      userRepeat: '用户名已存在，请重新输入',
     },
     access: {
       username: '登录账号',

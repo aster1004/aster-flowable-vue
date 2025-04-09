@@ -1,7 +1,3 @@
-import { dateFormat } from '@/utils/workflow';
-import { format } from 'path';
-import { component } from 'vxe-table';
-
 /*
  * @Author: Aster lipian1004@163.com
  * @Date: 2023-08-15 14:40:06
@@ -207,6 +203,9 @@ export default {
       resetPassword: 'Reset Password',
       exportConfirm: 'Confirm exporting user data?',
       resetPwdConfirm: 'Confirm resetting password?',
+      userNameValidate:
+        'Username must be between 3-20 characters and can only contain English, numbers and underscores',
+      userRepeat: 'Username already exists, please re-enter',
     },
     access: {
       username: 'Login Account',

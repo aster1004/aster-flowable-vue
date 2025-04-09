@@ -154,8 +154,8 @@
   import { computed, reactive, ref } from 'vue';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus/es';
-  import { isNotEmpty } from '@/utils';
-  import { userInfoApi, userSaveApi } from '@/api/sys/user';
+  import { isEmpty, isNotEmpty } from '@/utils';
+  import { userInfoApi, userSaveApi, validateUserNameApi } from '@/api/sys/user';
   import DictRadio from '@/components/dict/dict-radio.vue';
   import Avatar from '@/components/header/avatar.vue';
   import { postListApi } from '@/api/sys/post';
@@ -196,10 +196,30 @@
     postIdList: [] as string[],
     roleIdList: [] as string[],
   });
+
+  /** 验证用户名 */
+  const validateUsername = async (rule: any, value: string, callback: any) => {
+    if (isEmpty(value)) {
+      callback();
+    }
+    const reg = /^[a-zA-Z0-9_]{3,20}$/;
+    if (reg.test(value)) {
+      callback();
+    } else {
+      callback(new Error(t('label.user.userNameValidate')));
+    }
+  };
+
   /** 表单规则 */
   const formRules = computed(() => {
     return {
-      username: [{ required: true, message: t('common.required'), trigger: 'blur' }],
+      username: [
+        { required: true, message: t('common.required'), trigger: 'blur' },
+        {
+          validator: validateUsername,
+          trigger: 'blur',
+        },
+      ],
       nickName: [{ required: true, message: t('common.required'), trigger: 'blur' }],
       mobile: [{ required: true, message: t('common.required'), trigger: 'blur' }],
       orgId: [{ required: true, message: t('common.required'), trigger: 'blur' }],
@@ -286,15 +306,24 @@
         return false;
       }
 
-      userSaveApi(formData).then((res) => {
-        if (res.code == ResultEnum.SUCCESS) {
-          ElMessage.success({
-            message: t('common.success'),
-            duration: 500,
-            onClose: () => {
-              visible.value = false;
-              emits('refresh');
-            },
+      validateUserNameApi(formData.username).then(({ data }) => {
+        if (data) {
+          userSaveApi(formData).then((res) => {
+            if (res.code == ResultEnum.SUCCESS) {
+              ElMessage.success({
+                message: t('common.success'),
+                duration: 500,
+                onClose: () => {
+                  visible.value = false;
+                  emits('refresh');
+                },
+              });
+            }
+          });
+        } else {
+          ElMessage.error({
+            message: t('label.user.userRepeat'),
+            duration: 1500,
           });
         }
       });
