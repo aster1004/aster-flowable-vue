@@ -143,7 +143,7 @@
 
   // 多选
   const handleCheckChange = () => {
-    emits('change', treeRef.value?.getCheckedKeys());
+    if (props.multiple) emits('change', treeRef.value?.getCheckedKeys());
   };
 
   // 暴露给父组件使用
