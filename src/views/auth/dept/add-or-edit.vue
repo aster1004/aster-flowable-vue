@@ -41,7 +41,7 @@
       <el-form-item prop="status" :label="$t('label.status')">
         <dict-radio v-model="formData.status" dict-type="status" />
       </el-form-item>
-      <el-form-item prop="r" :remark="$t('label.remark')">
+      <el-form-item prop="remark" :label="$t('label.remark')">
         <el-input
           v-model="formData.remark"
           :rows="2"
