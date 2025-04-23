@@ -306,7 +306,7 @@
         return false;
       }
 
-      validateUserNameApi(formData.username).then(({ data }) => {
+      validateUserNameApi({ username: formData.username, id: formData.id }).then(({ data }) => {
         if (data) {
           userSaveApi(formData).then((res) => {
             if (res.code == ResultEnum.SUCCESS) {

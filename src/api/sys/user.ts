@@ -44,8 +44,8 @@ export const userInfoApi = (id: string) => {
  * @param {string} username 用户名
  * @return {*}
  */
-export const validateUserNameApi = (username: string) => {
-  return request.get<boolean>(PORT1 + `/user/validateUserName?userName=` + username, {
+export const validateUserNameApi = (params: User.ValidateParams) => {
+  return request.get<boolean>(PORT1 + `/user/validateUserName`, params, {
     noLoading: true,
   });
 };

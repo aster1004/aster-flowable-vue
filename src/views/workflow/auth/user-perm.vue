@@ -246,8 +246,6 @@
 
   // 活动标签
   const activeTab = ref<'auth' | 'member'>('auth');
-  console.info(props.roleType);
-  console.info(activeTab.value);
   // 应用列表
   const appTreeList = ref<WorkComponent.TreeNode[]>([]);
   // 应用加载状态
@@ -656,6 +654,7 @@
     (nval) => {
       activeTab.value = nval === 'leader' ? 'member' : 'auth';
     },
+    { immediate: true, deep: true },
   );
 
   onMounted(() => {

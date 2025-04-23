@@ -7,6 +7,8 @@
  */
 declare namespace User {
   export interface UserParams extends Page.ReqPage {
+    id?: string;
+    username?: string;
     name?: string;
     gender?: string;
     orgId?: string;
@@ -42,5 +44,10 @@ declare namespace User {
 
     createTime?: string;
     status: string;
+  }
+
+  export interface ValidateParams {
+    id?: string;
+    username?: string;
   }
 }
