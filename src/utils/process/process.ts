@@ -37,7 +37,14 @@ export const getFormFieldData = (val: any) => {
       }
     });
   }
-  return formItems;
+  return formItems.map((item) => {
+    return {
+      id: item.id,
+      name: item.name,
+      title: item.title,
+      operation: item.operation,
+    };
+  });
 };
 
 /**
@@ -90,7 +97,14 @@ const setNodeFormPermission = (type: number, formPermissionData: any[]) => {
       }
     });
   }
-  return formItems;
+  return formItems.map((item) => {
+    return {
+      id: item.id,
+      name: item.name,
+      title: item.title,
+      operation: item.operation,
+    };
+  });
 };
 
 /**
