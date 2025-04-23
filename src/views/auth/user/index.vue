@@ -59,10 +59,6 @@
                     <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
                     {{ $t('button.reset') }}
                   </el-button>
-                  <el-button @click="syncUser">
-                    <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
-                    {{ $t('button.sync') }}
-                  </el-button>
                   <el-button type="primary" link @click="searchCollapsed = !searchCollapsed">
                     {{ searchCollapsed ? $t('button.expand') : $t('button.merge') }}
                     <i
@@ -90,6 +86,9 @@
             </el-button>
             <el-button type="success" v-hasPerm="['sys:user:reset']" @click="resetPassword()">
               <i class="iconfont icon-psw-reset pr-5px"></i>{{ $t('label.user.resetPassword') }}
+            </el-button>
+            <el-button type="success" v-hasPerm="['sys:user:sync']" @click="syncUser">
+              <i class="iconfont icon-zhongzhi pr-5px"></i>{{ $t('button.sync') }}
             </el-button>
           </div>
           <div class="header-button-ri">
