@@ -6,8 +6,9 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <div class="main-box">
+  <div class="main-box" v-loading="syncLoading">
     <tree-filter
+      ref="treeFilterRef"
       :title="$t('label.user.orgList')"
       label="orgName"
       :request-api="deptListApi"
@@ -57,6 +58,10 @@
                   <el-button @click="resetQuery">
                     <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
                     {{ $t('button.reset') }}
+                  </el-button>
+                  <el-button @click="syncUser">
+                    <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
+                    {{ $t('button.sync') }}
                   </el-button>
                   <el-button type="primary" link @click="searchCollapsed = !searchCollapsed">
                     {{ searchCollapsed ? $t('button.expand') : $t('button.merge') }}
@@ -120,6 +125,7 @@
           :border="true"
           row-key="id"
           style="width: 100%"
+          v-loading="loading"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" header-align="center" align="center" width="50" />
@@ -263,8 +269,11 @@
   import { isEmpty } from '@/utils';
   import { userResetPwdApi } from '@/api/login';
   import { AVATAR_URL } from '@/config';
+  import { dingSyncApi } from '@/api/sys/ding';
 
   const { t } = useI18n();
+  /** 树组件ref */
+  const treeFilterRef = ref();
   /** 注册组件 */
   const queryForm = ref();
   const addOrEditRef = ref();
@@ -288,7 +297,11 @@
   const total = ref<number>(0);
   /** 已选择列表 */
   const selectedList = ref<User.UserInfo[]>([]);
+  /** 查询loading */
   const loading = ref(true);
+
+  /** 同步loading */
+  const syncLoading = ref(false);
 
   /** treeFilter */
   const changeTreeFilter = (val: string) => {
@@ -471,5 +484,28 @@
       type: 'warning',
       lockScroll: false,
     }).then(() => downloadFile(userExportApi, t('label.user.userList'), queryParams));
+  };
+
+  /**
+   * @description: 同步用户
+   * @return {*}
+   */
+  const syncUser = () => {
+    syncLoading.value = true;
+    dingSyncApi()
+      .then((res) => {
+        syncLoading.value = false;
+        if (res.code == ResultEnum.SUCCESS) {
+          ElMessage.success(t('common.success'));
+          treeFilterRef.value.reload();
+          handleQuery();
+        } else {
+          ElMessage.error(t('common.failed'));
+        }
+      })
+      .catch(() => {
+        syncLoading.value = false;
+        ElMessage.error(t('common.failed'));
+      });
   };
 </script>
