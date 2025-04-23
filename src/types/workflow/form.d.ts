@@ -380,6 +380,7 @@ declare namespace WorkForm {
     finishTime?: string;
     procInstId?: string;
     procDefId?: string;
+    isAgent?: boolean; // 是否代理人
     approveResult?: string; //审核结果，如同意、驳回、撤销、转交、加签、退回,发起
   }
 

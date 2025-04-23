@@ -84,6 +84,7 @@
                             ? comment?.user?.realName
                             : comment?.user?.nickName
                         }}
+                        <span v-if="item.isAgent" class="text-sm text-gray-500"> (代理人) </span>
                       </div>
                       <el-tag style="margin-left: 8px" size="small" round>
                         {{ getApproveName(comment.operationType!.approveType) }}
