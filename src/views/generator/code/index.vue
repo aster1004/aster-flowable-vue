@@ -112,7 +112,7 @@
               <i class="iconfont icon-shanchu"></i>{{ $t('button.delete') }}
             </el-button>
             <el-button size="small" link type="primary" @click="syncHandle(scope.row)">
-              <i class="iconfont icon-shanchu"></i>{{ $t('button.sync') }}
+              <i class="iconfont icon-shuaxin"></i>{{ $t('button.sync') }}
             </el-button>
           </template>
         </el-table-column>
