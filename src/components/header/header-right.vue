@@ -19,7 +19,7 @@
       <message />
       <fullscreen />
     </div>
-    <span class="header-username">{{ userInfo.username }}</span>
+    <span class="header-username">{{ userInfo.realName }}</span>
     <div class="header-avatar" id="userAvatar">
       <el-dropdown trigger="click">
         <span class="el-dropdown-link">
