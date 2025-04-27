@@ -112,7 +112,7 @@
 
   onMounted(() => {
     let protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const url = import.meta.env.VITE_API_URL.replace(/^https?:\/\//, '') + PORT.replace('/', '');
+    const url = import.meta.env.VITE_API_URL.replace(/^https?:\/\//, '') + PORT;
     initWebSocket(protocol + url + '/resource/websocket');
   });
 </script>

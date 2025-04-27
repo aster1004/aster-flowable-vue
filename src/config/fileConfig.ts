@@ -7,9 +7,12 @@
  */
 
 import { useUserStore } from '@/stores/modules/user';
+import { PORT } from '@/api/config';
 import { isEmpty } from '@/utils';
 
 const userStore = useUserStore();
+// 上传文件地址
+const uploadUrl = import.meta.env.VITE_API_URL + PORT + '/sys/file/upload';
 
 // 允许上传的文件类型
 export const AcceptList: { label: string; value: string; type: string }[] = [
@@ -31,8 +34,7 @@ export const AcceptList: { label: string; value: string; type: string }[] = [
  */
 export const ImageUpload = {
   // 上传url
-  url:
-    import.meta.env.VITE_API_URL + 'aster-flowable/sys/file/upload?access_token=' + userStore.token,
+  url: uploadUrl + '?access_token=' + userStore.token,
   // 最大尺寸,单位Mb
   maxSize: 10,
   // 图片格式
@@ -45,8 +47,7 @@ export const ImageUpload = {
  */
 export const FileUpload = {
   // 上传url
-  url:
-    import.meta.env.VITE_API_URL + 'aster-flowable/sys/file/upload?access_token=' + userStore.token,
+  url: uploadUrl + '?access_token=' + userStore.token,
   // 最大尺寸,单位Mb
   maxSize: 20,
   // 附件格式
