@@ -6,7 +6,7 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
 import request from '@/config/axios';
-import { PORT3 } from '../config';
+import { PORT, PORT3 } from '../config';
 import { useUserStore } from '@/stores/modules/user';
 
 const userStore = useUserStore();
@@ -175,6 +175,7 @@ export const previewApi = (tableId: string) => {
     noLoading: true,
   });
 };
+
 /**
  * @description: 生成代码（zip压缩包）
  * @param tableIds 表id
@@ -183,11 +184,13 @@ export const previewApi = (tableId: string) => {
 export const downloadApi = (tableIds: string[]) => {
   location.href =
     import.meta.env.VITE_API_URL +
-    'aster-flowable/gen/download?tableIds=' +
+    PORT +
+    '/gen/download?tableIds=' +
     tableIds.join(',') +
     '&access_token=' +
     userStore.token;
 };
+
 /**
  * @description: 生成代码（自定义目录）
  * @param tableIds 表名
