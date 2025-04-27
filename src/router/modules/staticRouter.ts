@@ -25,6 +25,14 @@ export const staticRouter: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/dingLogin',
+    name: 'dingLogin',
+    component: () => import('@/views/dingLogin.vue'),
+    meta: {
+      title: '钉钉登录',
+    },
+  },
+  {
     path: '/renderFlow',
     name: 'renderFlow',
     component: () => import('@/views/workflow/components/flow/render-flow.vue'),

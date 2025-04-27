@@ -61,3 +61,12 @@ export const editUserInfoApi = (params: User.UserInfo) => {
 export const userResetPwdApi = (params: string[]) => {
   return request.post<string>(PORT1 + `/auth/resetPassword`, params, { noLoading: true });
 };
+
+/**
+ * @description: 钉钉单点登录
+ * @param {*} params
+ * @return {*}
+ */
+export const dingLoginApi = (params: string) => {
+  return request.post<Login.ResLogin>(PORT1 + `/dingTalk/login?code=` + params);
+};
