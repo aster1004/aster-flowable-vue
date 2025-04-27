@@ -114,6 +114,10 @@ export enum ProcessButtonTypeEnum {
   REVOKE = 'revoke',
   // 发起
   SUBMIT = 'submit',
+  // 自动通过
+  AUTO_PASS = 'autoPass',
+  // 自动拒绝
+  AUTO_REJECT = 'autoReject',
 }
 export enum ApprovalModeEnum {
   AND = 'AND', //会签(可同时审批，须全部同意)

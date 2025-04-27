@@ -17,7 +17,7 @@
         class="dark"
       />
       <div class="login-left">
-        <img class="login-left-img" src="@/assets/images/login_left2.png" alt="login" />
+        <img class="login-left-img" src="@/assets/images/login_left.png" alt="login" />
       </div>
       <div class="login-form">
         <div class="login-logo">
