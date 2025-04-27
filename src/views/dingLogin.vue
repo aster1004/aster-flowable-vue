@@ -57,22 +57,19 @@
           dingLoginApi(code)
             .then(async ({ data }) => {
               userStore.setToken(data.access_token);
-
-              // 3.获取登录人信息
+              // 获取登录人信息
               const res = await userInfoApi();
               userStore.setUserInfo(res.data);
-
-              // 4.添加动态路由 && 字典
+              // 添加动态路由 && 字典
               await initDynamicRouter();
               await appStore.setDictList();
-
-              // 5.清空 tabs、keepAlive 数据
+              // 清空 tabs、keepAlive 数据
               tabsStore.closeMultipleTab();
               keepAliveStore.setKeepAliveName();
 
               tenantStore.setTenantId('');
 
-              // 7.跳转到首页
+              // 跳转到首页
               router.push(HOME_URL);
             })
             .catch((err) => {

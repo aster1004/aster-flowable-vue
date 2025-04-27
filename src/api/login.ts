@@ -68,5 +68,11 @@ export const userResetPwdApi = (params: string[]) => {
  * @return {*}
  */
 export const dingLoginApi = (params: string) => {
-  return request.post<Login.ResLogin>(PORT1 + `/dingTalk/login?code=` + params);
+  return request.post<Login.ResLogin>(
+    PORT1 + `/dingTalk/login?code=` + params,
+    {},
+    {
+      noLoading: true,
+    },
+  );
 };
