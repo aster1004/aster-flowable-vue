@@ -31,6 +31,8 @@
           <el-form-item prop="fields" :label="$t('label.generator.baseField')">
             <el-input
               v-model="formData.fields"
+              type="textarea"
+              :rows="2"
               :placeholder="$t('placeholder.generator.baseField')"
             />
           </el-form-item>
