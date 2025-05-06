@@ -53,10 +53,10 @@
   import FormRender from './form-render.vue';
   import { useI18n } from 'vue-i18n';
   import { formSubmitApi, instanceInfoApi, instanceInfoByInstanceIdApi } from '@/api/workflow/task';
-  import { validateRuleApi } from '@/api/workflow/validate';
+  import { dynamicValidateApi } from '@/api/workflow/validate';
   import { ResultEnum } from '@/enums/httpEnum';
   import { isNotEmpty } from '@/utils';
-  import { fa } from 'element-plus/es/locale';
+
   const emits = defineEmits(['resetQuery']); // 关闭详情弹框
   // 获取工作流store
   const workFlowStore = useWorkFlowStore();
@@ -212,7 +212,7 @@
         formData: formData.value,
       };
       // 动态校验表单
-      validateRuleApi(submitFormData).then(() => {
+      dynamicValidateApi(submitFormData).then(() => {
         // 提交表单
         formSubmitApi(submitFormData).then((res) => {
           if (res.code == ResultEnum.SUCCESS) {
