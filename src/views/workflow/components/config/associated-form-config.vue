@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">关联表单</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.associatedForm')">
       <el-cascader
@@ -76,6 +76,7 @@
 <script setup lang="ts">
   import { appFormTreeApi } from '@/api/workflow/app';
   import { formInfoByCodeApi } from '@/api/workflow/form';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { isNotEmpty } from '@/utils';

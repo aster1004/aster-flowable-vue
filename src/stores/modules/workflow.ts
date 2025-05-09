@@ -10,22 +10,30 @@ import { WorkflowState } from '@/stores/interface/workflow';
 import { formInfoApi } from '@/api/workflow/form';
 import { ResultEnum } from '@/enums/httpEnum';
 import { ElMessage } from 'element-plus';
+import {
+  DEFAULT_FORM_ICON,
+  DEFAULT_FORM_NAME,
+  DEFAULT_LABEL_POSITION,
+  DEFAULT_LABEL_WIDTH,
+  DEFAULT_SORT_FIELD,
+  DEFAULT_SORT_TYPE,
+} from '@/config/formConfig';
 
 export const useWorkFlowStore = defineStore('aster-workflow', {
   state: (): WorkflowState => ({
     design: {
-      icon: 'iconfont icon-gengduo',
+      icon: DEFAULT_FORM_ICON,
       iconColor: '',
-      labelPosition: 'left',
-      formName: '未命名表单',
+      formName: DEFAULT_FORM_NAME,
+      labelWidth: DEFAULT_LABEL_WIDTH,
+      labelPosition: DEFAULT_LABEL_POSITION,
       formItems: [],
       process: <WorkForm.NodeConfig>{},
-      labelWidth: 80,
       listSettings: {
         queryItems: [],
         columns: [],
-        sortBy: 'create_time',
-        sortDirection: 'desc',
+        sortBy: DEFAULT_SORT_FIELD,
+        sortDirection: DEFAULT_SORT_TYPE,
         actions: [],
       },
     },
@@ -35,19 +43,12 @@ export const useWorkFlowStore = defineStore('aster-workflow', {
     async initFormInfo(appId?: string) {
       this.design = {
         appId: appId,
-        icon: 'iconfont icon-gengduo',
+        icon: DEFAULT_FORM_ICON,
         iconColor: '',
-        labelPosition: 'left',
-        formName: '未命名表单',
+        formName: DEFAULT_FORM_NAME,
+        labelWidth: DEFAULT_LABEL_WIDTH,
+        labelPosition: DEFAULT_LABEL_POSITION,
         formItems: [],
-        labelWidth: 80,
-        listSettings: {
-          queryItems: [],
-          columns: [],
-          sortBy: 'create_time',
-          sortDirection: 'desc',
-          actions: [],
-        },
         process: {
           id: 'root',
           parentId: null,
@@ -80,6 +81,13 @@ export const useWorkFlowStore = defineStore('aster-workflow', {
               status: true,
             },
           ],
+        },
+        listSettings: {
+          queryItems: [],
+          columns: [],
+          sortBy: DEFAULT_SORT_FIELD,
+          sortDirection: DEFAULT_SORT_TYPE,
+          actions: [],
         },
       };
     },

@@ -32,12 +32,14 @@
         :rows="_rows"
         :placeholder="formItem.props.placeholder"
         :readonly="_readonly"
+        :maxlength="maxlength"
       />
       <el-input
         v-else-if="mode === 'search'"
         v-model="_value"
         clearable
         :placeholder="formItem.props.placeholder"
+        :maxlength="maxlength"
       />
       <span v-else>{{ _value }}</span>
     </el-form-item>
@@ -91,6 +93,9 @@
       default: true,
     },
   });
+
+  // 输入长度限制
+  const maxlength = 2000;
 
   // 列数
   const _rows = computed(() => {

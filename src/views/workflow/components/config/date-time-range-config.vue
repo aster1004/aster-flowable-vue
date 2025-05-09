@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">日期</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.dateFormat')">
       <el-select v-model="_formItem.props.format" placeholder="请选择日期格式">
@@ -36,6 +36,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
   import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
 

@@ -14,10 +14,10 @@
           <span class="text-xs font-normal">人员选择</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.placeholder')">
-      <el-input v-model="_formItem.props.placeholder" />
+      <el-input v-model="_formItem.props.placeholder" :maxlength="PLACEHOLDER_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.defaultValue')">
       <el-select v-model="valueType">
@@ -68,6 +68,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
   import { computed, ref, watchEffect, onMounted } from 'vue';
   import { isNotEmpty } from '@/utils';
   import { selectDeptsByIdsApi } from '@/api/sys/dept';
@@ -76,6 +77,7 @@
   import DataLinkage from '../common/data-linkage.vue';
   import { ElMessage } from 'element-plus';
   import { useI18n } from 'vue-i18n';
+  import { PLACEHOLDER_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();

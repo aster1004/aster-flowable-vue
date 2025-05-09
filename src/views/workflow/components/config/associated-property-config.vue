@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">关联属性</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
       <span class="text-xs font-normal label-tip">
         注：关联其他表单的某个字段，且会跟随关联表单对应的字段值实时变化
       </span>
@@ -42,6 +42,7 @@
 </template>
 <script setup lang="ts">
   import { formInfoByCodeApi } from '@/api/workflow/form';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { isNotEmpty } from '@/utils';

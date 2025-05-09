@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">附件</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
 
     <el-form-item>
@@ -72,6 +72,7 @@
   import { AcceptList } from '@/config/fileConfig';
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();
