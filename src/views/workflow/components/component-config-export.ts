@@ -12,6 +12,7 @@ const { t } = i18n.global;
 export const ValueType = {
   string: 'String',
   number: 'Number',
+  decimal: 'Decimal',
   object: 'Object',
   array: 'Array',
   date: 'Date',
@@ -210,7 +211,7 @@ const baseComponentConfig = computed(() => {
         name: 'InputAmount',
         icon: 'iconfont icon-jine',
         value: 0,
-        valueType: ValueType.number,
+        valueType: ValueType.decimal,
         props: {
           // 必填
           required: false,
