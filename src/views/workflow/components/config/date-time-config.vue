@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">日期</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.defaultValue')">
       <el-select v-model="valueType">
@@ -53,6 +53,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
   import { computed, onMounted, ref } from 'vue';
   import Formula from '../common/formula.vue';
   import DataLinkage from '../common/data-linkage.vue';

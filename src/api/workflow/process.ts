@@ -56,15 +56,6 @@ export const instanceListByCodeApi = (code: String, status: string) => {
 };
 
 /**
- * @description: 分页查询表单
- * @param {any} pageQuery
- * @return {*}
- */
-export const selectPageApi = (pageQuery: any) => {
-  return request.post<any>(PORT5 + `/process/selectPage`, pageQuery, { noLoading: true });
-};
-
-/**
  * 删除流程实例及历史数据
  * @param procInstId
  * @param formCode

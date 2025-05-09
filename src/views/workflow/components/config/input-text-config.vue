@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">单行文本</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.defaultValue')">
       <el-select v-model="valueType">
@@ -28,7 +28,11 @@
       </el-input>
     </el-form-item>
     <el-form-item :label="t('workflow.component.placeholder')">
-      <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
+      <el-input
+        v-model="_formItem.props.placeholder"
+        placeholder="请设置提示语"
+        :maxlength="PLACEHOLDER_MAXLENGTH"
+      />
     </el-form-item>
     <el-form-item :label="t('workflow.component.format')">
       <el-select v-model="_formItem.props.format">
@@ -62,6 +66,7 @@
   import { ElMessage } from 'element-plus';
   import { InputTextFormats } from '@/enums/workFlowEnum';
   import { useI18n } from 'vue-i18n';
+  import { PLACEHOLDER_MAXLENGTH, TITLE_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();

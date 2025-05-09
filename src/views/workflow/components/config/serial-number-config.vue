@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">流水号</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.serialRule')">
       <template #label>
@@ -39,6 +39,7 @@
   import { computed, ref } from 'vue';
   import SerialNumberRule from '../common/serial-number-rule.vue';
   import { useI18n } from 'vue-i18n';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();

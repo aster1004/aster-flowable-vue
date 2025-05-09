@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">分组标题</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.fontSize')">
       <el-select v-model="_formItem.props.fontSize">
@@ -47,6 +47,7 @@
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();

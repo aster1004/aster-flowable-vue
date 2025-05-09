@@ -92,7 +92,6 @@
   /** 表单内容 */
   const formData = reactive<AgentLog.AgentLogInfo>({
     id: '',
-    id: '',
     delegatorId: '',
     agentId: '',
     formCode: '',

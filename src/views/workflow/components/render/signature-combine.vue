@@ -54,6 +54,7 @@
             style="width: 100%"
             :readonly="_readonly"
             :placeholder="formItem.props.placeholder"
+            :maxlength="maxlength"
           />
         </div>
         <div class="sign-combine-footer" :style="{ width: _whStyle.width }">
@@ -230,6 +231,8 @@
   const signVisible = ref(false);
   // 显示日期组件
   const dateVisible = ref(false);
+  // 输入长度限制
+  const maxlength = 500;
 
   // 打开签名
   const handleClick = () => {

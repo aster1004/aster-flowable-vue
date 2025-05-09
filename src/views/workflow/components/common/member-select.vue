@@ -217,7 +217,7 @@
   const users = ref<Array<any>>([]);
 
   const leaderData = ref<Array<any>>([
-    { id: 'leader-1', name: '部门主管' },
+    { id: 'leader-1', name: '一级部门主管' },
     { id: 'leader-2', name: '二级部门主管' },
     { id: 'leader-3', name: '三级部门主管' },
     { id: 'leader-4', name: '四级部门主管' },

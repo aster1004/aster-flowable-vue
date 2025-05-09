@@ -43,6 +43,9 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import 'virtual:windi.css';
 import '@/polyfill/polyfill';
+// import Vconsole from 'vconsole';
+
+// const vConsole: any = new Vconsole();
 
 const app = createApp(App);
 

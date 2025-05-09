@@ -1033,8 +1033,12 @@ export const getTaskResult = (instance) => {
       return { text: '退回', type: 'danger', icon: 'icon-jurassic_last', color: '#F56C6C' };
     } else if (instance.approveResult === ProcessButtonTypeEnum.REVOKE && instance.finishTime) {
       return { text: '撤销', type: 'info', icon: 'icon-guanbi1', color: '#E4E4E4' };
+    } else if (instance.approveResult === ProcessButtonTypeEnum.AUTO_REJECT) {
+      return { text: '自动拒绝', type: 'danger', icon: 'icon-jujue1', color: '#F56C6C' };
+    } else if (instance.approveResult === ProcessButtonTypeEnum.AUTO_PASS) {
+      return { text: '自动通过', type: 'primary', icon: 'icon-tongyi', color: '#409EFF' };
     } else if (!instance.approveResult && instance.finishTime) {
-      return { text: '自动通过', type: 'primary', icon: 'icon-jiaqian', color: '#409EFF' };
+      return { text: '自动通过', type: 'primary', icon: 'icon-tongyi', color: '#409EFF' };
     } else {
       return { text: '处理中', type: 'warning', icon: 'icon-chulizhong', color: '#F78F5F' };
     }
@@ -1043,7 +1047,7 @@ export const getTaskResult = (instance) => {
 
 /**
  * 通过审批类型获取审批名称
- * @param approveType
+ * @param approveTyp
  */
 export const getApproveName = (approveType: string) => {
   if (approveType === ProcessButtonTypeEnum.AGREEN) {

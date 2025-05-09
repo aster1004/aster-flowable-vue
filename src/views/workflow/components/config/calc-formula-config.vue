@@ -14,10 +14,14 @@
           <span class="text-xs font-normal">计算公式</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.placeholder')">
-      <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
+      <el-input
+        v-model="_formItem.props.placeholder"
+        placeholder="请设置提示语"
+        :maxlength="PLACEHOLDER_MAXLENGTH"
+      />
     </el-form-item>
     <el-form-item>
       <template #label>
@@ -54,6 +58,7 @@
 </template>
 <script setup lang="ts">
   import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
   import { computed, ref, watchEffect } from 'vue';
   import { Setting } from '@element-plus/icons-vue';
   import Formula from '@/views/workflow/components/common/formula.vue';
@@ -61,6 +66,7 @@
   import { flatFormItems, restorationFormulaByFormItems } from '@/utils/workflow';
   import CodeMirror from '@/views/workflow/components/common/code-mirror.vue';
   import { useI18n } from 'vue-i18n';
+  import { PLACEHOLDER_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();

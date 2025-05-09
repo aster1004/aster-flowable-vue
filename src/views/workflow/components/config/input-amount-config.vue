@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">金额</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item>
       <template #label>
@@ -40,7 +40,11 @@
       </el-input>
     </el-form-item>
     <el-form-item :label="t('workflow.component.placeholder')">
-      <el-input v-model="_formItem.props.placeholder" placeholder="请设置提示语" />
+      <el-input
+        v-model="_formItem.props.placeholder"
+        placeholder="请设置提示语"
+        :maxlength="PLACEHOLDER_MAXLENGTH"
+      />
     </el-form-item>
     <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
@@ -63,6 +67,7 @@
   import DataLinkage from '../common/data-linkage.vue';
   import { ElMessage } from 'element-plus';
   import { useI18n } from 'vue-i18n';
+  import { PLACEHOLDER_MAXLENGTH, TITLE_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();

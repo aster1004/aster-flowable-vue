@@ -8,7 +8,7 @@
 <template>
   <el-footer>
     <div class="footer">
-      <a href="https://gitee.com/lp1791803611/aster-study-plan" target="_blank">
+      <a href="https://gitee.com/lp1791803611/aster-flowable-vue" target="_blank">
         {{ currentYear }} © aster.vip By Aster
       </a>
       <div v-show="showSentence" class="sentence">

@@ -94,7 +94,7 @@
         <el-table-column fixed type="index" width="50" />
         <el-table-column
           prop="dataTitle"
-          label="数据标题"
+          :label="$t('workflow.label.dataTitle')"
           fixed
           header-align="center"
           align="center"
@@ -240,7 +240,25 @@
     labelPosition: 'left',
     formName: '未命名表单',
     formItems: [],
-    process: {},
+    process: {
+      id: '',
+      parentId: null,
+      nodeName: '',
+      type: 0,
+      priorityLevel: '',
+      settype: '',
+      selectMode: '',
+      selectRange: '',
+      directorLevel: '',
+      examineMode: '',
+      noHanderAction: '',
+      examineEndDirectorLevel: '',
+      ccSelfSelectFlag: '',
+      nodeUserList: [],
+      childNode: {},
+      conditionNodes: [],
+      errorTip: '',
+    },
     labelWidth: 80,
     listSettings: {
       queryItems: [],
