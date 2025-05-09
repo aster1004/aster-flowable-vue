@@ -144,8 +144,9 @@
   // 多选
   const handleCheckChange = () => {
     if (props.multiple) emits('change', treeRef.value?.getCheckedKeys());
-  }; // 重新加载数据
+  };
 
+  // 重新加载数据
   const reload = async () => {
     setSelected();
     if (props.requestApi) {
@@ -153,8 +154,9 @@
       treeData.value = data;
       treeAllData.value = props.showAll ? [{ id: '', [props.label]: '全部' }, ...data] : [...data];
     }
-  }; // 暴露给父组件使用
+  };
 
+  // 暴露给父组件使用
   defineExpose({ treeData, treeAllData, treeRef, reload });
 </script>
 

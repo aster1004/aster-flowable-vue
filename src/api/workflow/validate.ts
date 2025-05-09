@@ -9,10 +9,10 @@ import request from '@/config/axios';
 import { PORT5 } from '../config';
 
 /**
- * @description: 校验表单
+ * @description: 动态校验表单
  * @param {any} formData
  * @return {*}
  */
-export const validateRuleApi = (formData: any) => {
-  return request.post<string>(PORT5 + `/validate/validateRule`, formData, { noLoading: true });
+export const dynamicValidateApi = (formData: any) => {
+  return request.post<string>(PORT5 + `/validate/dynamicValidate`, formData, { noLoading: true });
 };

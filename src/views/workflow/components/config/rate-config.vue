@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">评分</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.maxScore')">
       <el-input-number v-model="_formItem.props.max" :min="1" controls-position="right" />
@@ -34,6 +34,7 @@
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();

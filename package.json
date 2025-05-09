@@ -54,6 +54,7 @@
     "js-base64": "^3.7.7",
     "jsencrypt": "^3.3.2",
     "lodash-es": "^4.17.21",
+    "lottie-web": "^5.12.2",
     "mitt": "^3.0.1",
     "moment": "^2.30.1",
     "nprogress": "^0.2.0",
@@ -69,7 +70,9 @@
     "vue-router": "^4.3.0",
     "vue3-print-nb": "^0.1.4",
     "vuedraggable": "^4.1.0",
-    "vxe-table": "^4.5.21"
+    "vxe-table": "^4.5.21",
+    "dingtalk-jsapi": "^3.0.29",
+    "vconsole": "^3.15.1"
   },
   "devDependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",

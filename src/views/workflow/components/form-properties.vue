@@ -21,6 +21,7 @@
         <el-input
           v-model="formInfo.formName"
           :placeholder="t('workflow.form.formNamePlaceholder')"
+          :maxlength="TITLE_MAXLENGTH"
         />
       </el-form-item>
       <el-form-item prop="icon">
@@ -83,6 +84,7 @@
           :rows="3"
           type="textarea"
           :placeholder="t('workflow.form.formDescPlaceholder')"
+          :maxlength="DESCRIPTION_MAXLENGTH"
         />
       </el-form-item>
     </el-form>
@@ -96,6 +98,7 @@
   import { isDef, isNotEmpty } from '@/utils';
   import { flatFormItems } from '@/utils/workflow';
   import { useI18n } from 'vue-i18n';
+  import { TITLE_MAXLENGTH, DESCRIPTION_MAXLENGTH } from '@/config/formConfig';
 
   // 工作流store
   const workFlowStore = useWorkFlowStore();

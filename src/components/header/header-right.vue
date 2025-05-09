@@ -19,7 +19,7 @@
       <message />
       <fullscreen />
     </div>
-    <span class="header-username">{{ userInfo.username }}</span>
+    <span class="header-username">{{ userInfo.realName }}</span>
     <div class="header-avatar" id="userAvatar">
       <el-dropdown trigger="click">
         <span class="el-dropdown-link">
@@ -112,7 +112,7 @@
 
   onMounted(() => {
     let protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const url = import.meta.env.VITE_API_URL.replace(/^https?:\/\//, '') + PORT.replace('/', '');
+    const url = import.meta.env.VITE_API_URL.replace(/^https?:\/\//, '') + PORT;
     initWebSocket(protocol + url + '/resource/websocket');
   });
 </script>

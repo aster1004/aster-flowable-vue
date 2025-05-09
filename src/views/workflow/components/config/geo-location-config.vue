@@ -14,10 +14,10 @@
           <span class="text-xs font-normal">地理位置</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.placeholder')">
-      <el-input v-model="_formItem.props.placeholder" />
+      <el-input v-model="_formItem.props.placeholder" :maxlength="PLACEHOLDER_MAXLENGTH" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
@@ -28,6 +28,7 @@
   import { useWorkFlowStore } from '@/stores/modules/workflow';
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { PLACEHOLDER_MAXLENGTH, TITLE_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();

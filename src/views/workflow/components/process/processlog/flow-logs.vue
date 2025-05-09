@@ -192,7 +192,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { isDef, isNotEmpty } from '@/utils';
+  import { isDef, isEmpty, isNotEmpty } from '@/utils';
   import {
     dateFormat,
     getApproveName,
@@ -313,14 +313,17 @@
   };
 
   const getAvatarByItem = (item: WorkForm.InstanceLogsList) => {
+    console.log('avatar--->', item[0]);
     if (item.length === 1) {
       // 判断是否是抄送，抄送也是一个节点
       if (item[0].type === '2') {
         return new URL(`../../../../../assets/images/cc.png`, import.meta.url).href;
       } else if (item[0].type === '8') {
         return new URL(`../../../../../assets/images/subprocess.png`, import.meta.url).href;
-      } else {
+      } else if (item[0].user && isNotEmpty(item[0].user.avatar)) {
         return item[0].user?.avatar;
+      } else {
+        return new URL(`../../../../../assets/images/default-avatar.png`, import.meta.url).href;
       }
     } else {
       // 如果大于1 说明是多人会签
@@ -350,6 +353,10 @@
           return '';
         case ProcessButtonTypeEnum.SUBMIT:
           return '提交';
+        case ProcessButtonTypeEnum.AUTO_PASS:
+          return '';
+        case ProcessButtonTypeEnum.AUTO_REJECT:
+          return '';
         default:
           return '未知操作类型！！！';
       }

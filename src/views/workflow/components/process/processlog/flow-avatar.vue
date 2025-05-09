@@ -8,11 +8,7 @@
 <template>
   <div>
     <div class="avatar-container">
-      <el-avatar :size="size">
-        <template #default>
-          <el-image :src="src ? src : avatar?.avatar" />
-        </template>
-      </el-avatar>
+      <el-avatar :size="size" :src="src ? src : avatar?.avatar" />
       <template v-if="showIcon && isNotEmpty(icon)">
         <i class="head-icon" :class="`iconfont ` + icon"></i>
       </template>

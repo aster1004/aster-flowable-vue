@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">单选框</span>
         </div>
       </template>
-      <el-input v-model="_formItem.title" />
+      <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
     <select-config ref="singleConfigRef" v-model:form-item="_formItem" />
   </div>
@@ -24,6 +24,7 @@
   import SelectConfig from './select-config.vue';
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { TITLE_MAXLENGTH } from '@/config/formConfig';
 
   // 国际化
   const { t } = useI18n();

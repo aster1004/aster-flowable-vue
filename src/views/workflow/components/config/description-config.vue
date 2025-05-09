@@ -14,7 +14,7 @@
           <span class="text-xs font-normal">描述说明</span>
         </div>
       </template>
-      <el-input type="textarea" v-model="_formItem.title" :rows="2" />
+      <el-input type="textarea" v-model="_formItem.title" :rows="3" :maxlength="maxlength" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.fontSize')">
       <el-select v-model="_formItem.props.fontSize">
@@ -55,7 +55,8 @@
   const { t } = useI18n();
   // 工作流store
   const workFlowStore = useWorkFlowStore();
-
+  // 输入长度限制
+  const maxlength = 1000;
   // 字体大小
   const fontSizeOptions = ref([
     'text-xs',

@@ -31,6 +31,8 @@
           <el-form-item prop="fields" :label="$t('label.generator.baseField')">
             <el-input
               v-model="formData.fields"
+              type="textarea"
+              :rows="2"
               :placeholder="$t('placeholder.generator.baseField')"
             />
           </el-form-item>
@@ -49,7 +51,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-  import { computed, reactive, ref } from 'vue';
+  import { computed, onMounted, reactive, ref } from 'vue';
   import { baseClassInfoApi, baseClassSubmitApi } from '@/api/gen/index';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage } from 'element-plus/es';
