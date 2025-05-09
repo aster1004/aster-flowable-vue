@@ -167,6 +167,7 @@ export default {
     createTime: 'Create Time',
     operate: 'Operate',
     remark: 'Remark',
+    default: 'Default',
     dept: {
       orgName: 'Org Name',
       parentName: 'Parent Org',
