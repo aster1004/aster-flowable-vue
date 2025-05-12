@@ -108,7 +108,7 @@
   import { ElMessage, ElMessageBox, UploadProps } from 'element-plus';
   import { useI18n } from 'vue-i18n';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { downloadFileByUrl } from '@/utils/fileUtils';
+  import { compressImage, downloadFileByUrl } from '@/utils/fileUtils';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
 
   const emit = defineEmits(['update:value']);
@@ -327,6 +327,7 @@
    * @return {*}
    */
   const handleBeforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
+    console.log('handleBeforeUpload: ', rawFile);
     // 判断图片类型
     if (!ImageUpload.type.includes(rawFile.type)) {
       ElMessage.error('上传文件必须是图片格式');
@@ -338,6 +339,20 @@
       // 判断图片大小
       ElMessage.error('上传图片大小不能超过' + props.formItem.props.maxSize + 'MB');
       return false;
+    }
+    // 是否开启图片压缩
+    if (props.formItem.props.enableZip) {
+      return new Promise(function (resolve, reject) {
+        // 压缩图片, 默认压缩0.5
+        compressImage(rawFile, 0.5, rawFile.type)
+          .then((newfile: any) => {
+            resolve(newfile.raw);
+          })
+          .catch((err) => {
+            ElMessage.error('图片压缩失败:' + err);
+            reject(err);
+          });
+      });
     }
     return true;
   };
