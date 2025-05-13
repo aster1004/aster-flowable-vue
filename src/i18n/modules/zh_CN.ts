@@ -569,6 +569,8 @@ export default {
       agentType: '代理类型',
       agentReason: '代理原因',
       agentFile: '代理意愿确认材料',
+      roleName: '角色名称',
+      roleGroup: '角色分组',
     },
     rule: {
       appName: '应用名称不能为空',

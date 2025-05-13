@@ -87,6 +87,7 @@
   import { ElMessage } from 'element-plus';
   import { useI18n } from 'vue-i18n';
   import { PLACEHOLDER_MAXLENGTH, TITLE_MAXLENGTH } from '@/config/formConfig';
+  import { selectFlowRolesByIdsApi } from '@/api/workflow/auth';
 
   // 国际化
   const { t } = useI18n();
@@ -98,7 +99,7 @@
   const userDeptDefaultPickerRef = ref();
   const dataLinkageRef = ref();
   // 定义一个联合类型
-  type UserDeptRole = User.UserInfo | Dept.DeptInfo | Role.RoleInfo;
+  type UserDeptRole = User.UserInfo | Dept.DeptInfo | Role.RoleInfo | WorkAuth.RoleInfo;
   // 选人选部门组件
   const userDeptPickerRef = ref();
   // 选选部门组件，设置默认值
@@ -239,7 +240,7 @@
       case 'sysRole':
         return item?.roleName;
       case 'flowRole':
-        return item?.roleName;
+        return item?.name;
       default:
         return '';
     }
@@ -262,10 +263,11 @@
           break;
         case 'sysRole':
           // 获取系统角色信息
-          selectRolesByIds(ids);
+          selectSystemRolesByIds(ids);
           break;
         case 'flowRole':
           // 获取流程角色信息
+          selectFlowRolesByIds(ids);
           break;
         default:
           break;
@@ -310,16 +312,35 @@
   };
 
   /**
-   * @description: 根据id查询部门信息
+   * @description: 根据id查询系统角色信息
    * @param {*} ids 部门id集合
    * @return {*}
    */
-  const selectRolesByIds = async (ids: string[]) => {
+  const selectSystemRolesByIds = async (ids: string[]) => {
     if (isNotEmpty(ids)) {
       await selectRolesByIdsApi(ids).then((res) => {
         if (res.code == ResultEnum.SUCCESS) {
           const data = res.data;
           data.forEach((item: Role.RoleInfo) => {
+            selectedInfos.value.push(item);
+            _canselected.value.ids.push(item.id);
+          });
+        }
+      });
+    }
+  };
+
+  /**
+   * @description: 根据id查询流程角色信息
+   * @param {*} ids 部门id集合
+   * @return {*}
+   */
+  const selectFlowRolesByIds = async (ids: string[]) => {
+    if (isNotEmpty(ids)) {
+      await selectFlowRolesByIdsApi(ids).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          const data = res.data;
+          data.forEach((item: WorkAuth.RoleInfo) => {
             selectedInfos.value.push(item);
             _canselected.value.ids.push(item.id);
           });

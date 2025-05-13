@@ -346,7 +346,6 @@
    * @return {*}
    */
   const submit = () => {
-    console.log(formData);
     formDataRef.value.validate((valid: boolean) => {
       if (!valid) {
         return false;

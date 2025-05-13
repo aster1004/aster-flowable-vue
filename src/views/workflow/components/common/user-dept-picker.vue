@@ -273,7 +273,7 @@
     </div>
 
     <!--  角色  -->
-    <div class="main-box" v-else-if="type === 'sysRole' || type === 'flowRole'">
+    <div class="main-box" v-else-if="type === 'sysRole'">
       <div class="table-box">
         <!--  搜索框  -->
         <div class="card">
@@ -382,6 +382,124 @@
         </el-table>
       </div>
     </div>
+
+    <!--  流程角色  -->
+    <div class="main-box" v-else-if="type === 'flowRole'">
+      <div class="table-box">
+        <!--  搜索框  -->
+        <div class="card">
+          <el-form inline ref="queryForm" :model="queryFlowRoleParams" @keyup.enter="handleQuery">
+            <div class="search-box">
+              <div class="search-left">
+                <el-form-item label="" prop="roleName">
+                  <el-input
+                    v-model="queryFlowRoleParams.roleName"
+                    :placeholder="$t('placeholder.role.roleName')"
+                    clearable
+                  />
+                </el-form-item>
+              </div>
+              <div class="search-right">
+                <el-button type="primary" @click="handleQuery">
+                  <i class="iconfont icon-sousuo pr-5px" style="font-size: 12px"></i>
+                  {{ $t('button.search') }}
+                </el-button>
+                <el-button @click="resetQuery">
+                  <i class="iconfont icon-zhongzhi pr-5px" style="font-size: 12px"></i>
+                  {{ $t('button.reset') }}
+                </el-button>
+              </div>
+            </div>
+          </el-form>
+        </div>
+        <div class="table-title" v-if="props.multiple">
+          <div>
+            <span v-if="selectedList.length > 0">已选择 {{ selectedList.length }} 条</span>
+          </div>
+
+          <el-button plain type="primary" size="small" @click="handleAdd()" style="float: right">
+            <i class="iconfont icon-tianjia pr-5px" style="font-size: 14px"></i>批量添加
+          </el-button>
+        </div>
+        <!-- 表格 -->
+        <el-table
+          ref="tableRef"
+          :data="flowRoleList"
+          :border="true"
+          row-key="id"
+          style="width: 100%"
+          @select-all="selectAll"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column
+            v-if="props.multiple"
+            type="selection"
+            header-align="center"
+            align="center"
+            width="50"
+          />
+          <el-table-column
+            prop="name"
+            align="center"
+            :label="$t('workflow.label.roleName')"
+            :show-overflow-tooltip="true"
+            header-align="center"
+          />
+          <el-table-column
+            prop="pname"
+            align="center"
+            :label="$t('workflow.label.roleGroup')"
+            :show-overflow-tooltip="true"
+            header-align="center"
+          />
+          <el-table-column :label="$t('label.operate')" align="center" class-name="operation">
+            <template #default="scope">
+              <el-button size="small" type="primary" plain @click.stop="handleAdd(scope.row)">
+                <i class="iconfont icon-tianjia pr-5px" style="font-size: 12px"></i>添加
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          :background="true"
+          v-model:current-page="queryFlowRoleParams.pageNum"
+          v-model:page-size="queryFlowRoleParams.pageSize"
+          :page-sizes="[10, 25, 50, 100]"
+          :total="total"
+          layout="total, sizes, prev, pager, next"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+      <!--  右侧内容    -->
+      <div class="main-right card">
+        <div class="table-title">
+          <div>
+            <span>已选择: {{ submitList.length }}</span>
+          </div>
+          <el-button plain type="danger" size="small" @click="handleDelete()" style="float: right">
+            <i class="iconfont icon-shanchu pr-5px" style="font-size: 14px"></i>全部移除
+          </el-button>
+        </div>
+        <!-- 表格 -->
+        <el-table :data="submitList" :border="true" row-key="id" style="width: 100%">
+          <el-table-column
+            prop="flowRoleName"
+            :label="$t('label.role.roleName')"
+            :show-overflow-tooltip="true"
+            header-align="center"
+            align="center"
+          />
+          <el-table-column :label="$t('label.operate')" align="center" class-name="operation">
+            <template #default="scope">
+              <el-button size="small" type="danger" plain @click="handleDelete(scope.row.id)">
+                <i class="iconfont icon-shanchu pr-5px" style="font-size: 12px"></i>移除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
     <template #footer>
       <el-button type="primary" @click="submit">{{ $t('button.confirm') }}</el-button>
       <el-button @click="dialogVisible = false">{{ $t('button.cancel') }}</el-button>
@@ -398,7 +516,7 @@
   import { rolePageApi } from '@/api/sys/role';
   import { isNotEmpty } from '@/utils';
   import { ResultEnum } from '@/enums/httpEnum';
-  import { memberByRoleIdsApi } from '@/api/workflow/auth';
+  import { memberByRoleIdsApi, rolePageListApi } from '@/api/workflow/auth';
 
   const emits = defineEmits(['success']);
   const props = defineProps({
@@ -419,7 +537,7 @@
   const queryForm = ref();
 
   // 定义一个联合类型
-  type UserOrDept = User.UserInfo | Dept.DeptInfo | Role.RoleInfo;
+  type UserOrDept = User.UserInfo | Dept.DeptInfo | Role.RoleInfo | WorkAuth.RoleInfo;
   /** 已选择列表 */
   const selectedList = ref<UserOrDept[]>([]);
   /** 数据列表 */
@@ -428,6 +546,8 @@
   const total = ref<number>(0);
   /** 角色列表 */
   const roleList = ref<Role.RoleInfo[]>([]);
+  /** 流程角色列表 */
+  const flowRoleList = ref<WorkAuth.RoleInfo[]>([]);
 
   /** 要提交的列表 */
   const submitList = ref<UserOrDept[]>([]);
@@ -455,11 +575,19 @@
     pageSize: 10,
   });
 
-  /** 角色查询条件 */
+  /** 系统角色查询条件 */
   const queryRoleParams = reactive<Role.RoleParams>({
     roleName: '',
     roleCode: '',
     status: '',
+    pageNum: 1,
+    pageSize: 10,
+  });
+
+  /** 流程角色查询条件 */
+  const queryFlowRoleParams = reactive<WorkAuth.RolePage>({
+    roleType: '1',
+    roleName: '',
     pageNum: 1,
     pageSize: 10,
   });
@@ -590,7 +718,6 @@
    */
   const getUsersByFlowRoleApi = async (ids: string[]) => {
     await memberByRoleIdsApi(ids).then(({ data }) => {
-      // limitUserIds.value 不存在id，则添加
       data.forEach((item: WorkAuth.MemberInfo) => {
         if (item.memberId && !userIds.value.includes(item.memberId)) {
           userIds.value.push(item.memberId);
@@ -652,8 +779,11 @@
    * @return {*}
    */
   const handleQueryFlowRole = () => {
-    // TODO 查询流程角色,后续补充
-    roleList.value = [];
+    rolePageListApi(queryFlowRoleParams).then(({ data }) => {
+      flowRoleList.value = data.list;
+      total.value = data.total;
+      loading.value = false;
+    });
   };
   /**
    * @description: 改变树过滤条件
@@ -699,38 +829,84 @@
 
   /**
    * @description: 添加
-   * @param {string} key
+   * @param {*} row
+   * @param {*} type
    * @return {*}
    */
   const handleAdd = (row?: any) => {
     let val: any = [];
     if (row && row.id) {
-      val.push({
-        id: row.id,
-        type: props.type,
-        realName: row.realName ? row.realName : '', // 用户名称
-        nickName: row.nickName ? row.nickName : '', // 昵称
-        orgName: row.orgName ? row.orgName : '', // 部门名称
-        roleName: row.roleName ? row.roleName : '', // 角色名称
-      });
+      switch (props.type) {
+        case 'user':
+          val.push({
+            id: row.id,
+            type: props.type,
+            realName: row.realName ? row.realName : '', // 用户名称
+            nickName: row.nickName ? row.nickName : '', // 昵称
+          });
+          break;
+        case 'dept':
+          val.push({
+            id: row.id,
+            type: props.type,
+            orgName: row.orgName ? row.orgName : '', // 部门名称
+          });
+          break;
+        case 'sysRole':
+          val.push({
+            id: row.id,
+            type: props.type,
+            roleName: row.roleName ? row.roleName : '', // 角色名称
+          });
+          break;
+        case 'flowRole':
+          val.push({
+            id: row.id,
+            type: props.type,
+            flowRoleName: row.name ? row.name : '', // 流程角色名称
+          });
+          break;
+        default:
+          break;
+      }
     } else {
-      console.log(selectedList.value);
-      // 同时返回名称username
       val = selectedList.value?.map((item: any) => {
-        const obj = { ...item };
-        const realName = obj.realName ? obj.realName : '';
-        const nickName = obj.nickName ? obj.nickName : '';
-        const orgName = obj.orgName ? obj.orgName : '';
-        const roleName = obj.roleName ? obj.roleName : '';
-
-        return {
-          id: item.id,
-          type: props.type,
-          realName: realName,
-          nickName: nickName,
-          orgName: orgName,
-          roleName: roleName,
-        };
+        const row = { ...item };
+        let obj: any = {};
+        switch (props.type) {
+          case 'user':
+            obj = {
+              id: row.id,
+              type: props.type,
+              realName: row.realName ? row.realName : '', // 用户名称
+              nickName: row.nickName ? row.nickName : '', // 昵称
+            };
+            break;
+          case 'dept':
+            obj = {
+              id: row.id,
+              type: props.type,
+              orgName: row.orgName ? row.orgName : '', // 部门名称
+            };
+            break;
+          case 'sysRole':
+            obj = {
+              id: row.id,
+              type: props.type,
+              roleName: row.roleName ? row.roleName : '', // 角色名称
+            };
+            break;
+          case 'flowRole':
+            obj = {
+              id: row.id,
+              type: props.type,
+              flowRoleName: row.name ? row.name : '', // 流程角色名称
+            };
+            break;
+          default:
+            break;
+        }
+        return obj;
       });
       if (!val || val.length == 0) {
         ElMessage.warning('请选择要添加的记录');
@@ -830,6 +1006,9 @@
     queryRoleParams.roleCode = '';
     queryRoleParams.pageNum = 1;
     queryRoleParams.pageSize = 10;
+    queryFlowRoleParams.roleName = '';
+    queryFlowRoleParams.pageNum = 1;
+    queryFlowRoleParams.pageSize = 10;
     selectedList.value = [];
     submitList.value = [];
   };
