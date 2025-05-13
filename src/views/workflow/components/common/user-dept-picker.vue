@@ -780,7 +780,7 @@
    */
   const handleQueryFlowRole = () => {
     rolePageListApi(queryFlowRoleParams).then(({ data }) => {
-      flowRoleList.value = data.list;
+      flowRoleList.value = data.list.filter((item) => item.type != 'common');
       total.value = data.total;
       loading.value = false;
     });
