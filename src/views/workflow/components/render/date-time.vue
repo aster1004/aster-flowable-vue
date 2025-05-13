@@ -16,7 +16,12 @@
       <template #label>
         <span v-show="showLabel" style="line-height: normal">{{ formItem.title }}</span>
       </template>
-      <el-input v-if="mode === 'design'" :model-value="formItem.value" readonly />
+      <el-date-picker
+        v-if="mode === 'design'"
+        :model-value="formItem.value"
+        readonly
+        style="width: 100%"
+      />
       <el-date-picker
         v-else-if="mode === 'form'"
         v-model="_value"
