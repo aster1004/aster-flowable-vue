@@ -47,6 +47,7 @@
                     v-model="element.value"
                     placeholder="请输入1-4个数字中英文或特殊字符"
                     class="custom-input"
+                    maxlength="4"
                   >
                     <template #prepend>
                       <span> {{ element.name }} </span>
@@ -66,7 +67,7 @@
                   />
                 </template>
                 <template v-else>
-                  <el-input v-model="element.value">
+                  <el-input v-model="element.value" type="number" :min="1" :max="8">
                     <template #prepend>
                       <span> {{ element.name }} </span>
                     </template>
