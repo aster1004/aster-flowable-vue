@@ -16,13 +16,13 @@
       </template>
       <el-input v-model="_formItem.title" :maxlength="TITLE_MAXLENGTH" />
     </el-form-item>
-    <el-form-item :label="t('workflow.component.allowLocal')">
+    <el-form-item :label="t('workflow.component.showLineWidth')">
       <el-switch v-model="_formItem.props.showLineWidth" />
     </el-form-item>
-    <el-form-item :label="t('workflow.component.showLineWidth')">
+    <el-form-item :label="t('workflow.component.showLineColor')">
       <el-switch v-model="_formItem.props.showLineColor" />
     </el-form-item>
-    <el-form-item :label="t('workflow.component.showLineColor')">
+    <el-form-item :label="t('workflow.component.allowLocal')">
       <el-switch v-model="_formItem.props.showLocal" />
     </el-form-item>
     <el-form-item :label="t('workflow.component.required')">
