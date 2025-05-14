@@ -179,17 +179,21 @@
           </el-button>
         </div>
       </div>
-      <el-drawer v-model="rowVisible" :append-to-body="true" @close="closeRowInfo">
-        <el-form label-width="auto">
-          <span>第 {{ rowIndex + 1 }} 行</span>
+      <el-drawer
+        v-model="rowVisible"
+        :title="`第 ${rowIndex + 1} 行`"
+        :append-to-body="true"
+        @close="closeRowInfo"
+      >
+        <el-form ref="drawerFormRef" label-width="80px" label-position="left" class="form-render">
           <div v-for="(item, index) in _columns" :key="index">
             <form-design-render
               v-model:value="_value[rowIndex][item.id]"
               :form-data="formData"
               :form-item="item"
               :mode="mode"
-              :isChildTable="true"
-              :index="rowIndex"
+              :table-id="formItem.id"
+              :tableIndex="rowIndex"
             />
           </div>
         </el-form>

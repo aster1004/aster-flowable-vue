@@ -188,7 +188,7 @@
 
   // 标签长度
   const labelWidth = computed(() => {
-    if (isNotEmpty(props.tableId)) {
+    if (!props.showLabel) {
       return '12px';
     } else {
       return '';
