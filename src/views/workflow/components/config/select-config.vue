@@ -297,11 +297,13 @@
   });
 
   // 监听页签变化
-  const handleTabChange = async (val: string) => {
+  const handleTabChange = async (val: string, clearDefaultValue: boolean = true) => {
     activeName.value = val;
     _formItem.value.props.type = val;
     // 页签变化清除默认值
-    _formItem.value.value = _formItem.value.valueType === 'Array' ? [] : '';
+    if (clearDefaultValue) {
+      _formItem.value.value = _formItem.value.valueType === 'Array' ? [] : '';
+    }
     if (val === 'static') {
       options.value = _formItem.value.props.options.map((item) => {
         return {
@@ -331,7 +333,7 @@
     () => _formItem.value.id,
     (val) => {
       if (val && isNotEmpty(val)) {
-        handleTabChange(_formItem.value.props.type);
+        handleTabChange(_formItem.value.props.type, false);
       }
     },
     { immediate: true, deep: true },
