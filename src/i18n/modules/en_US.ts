@@ -651,6 +651,7 @@ export default {
       imageNum: 'Image Num',
       imageZip: 'Image Zip',
       userFilter: 'User Filter',
+      checkDuplicate: 'Duplicate entries are not allowed',
     },
     form: {
       selectIcon: 'Select Icon',

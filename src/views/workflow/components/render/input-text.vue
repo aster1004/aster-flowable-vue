@@ -59,6 +59,8 @@
   import { instanceInfoByCustomParamsApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
+  import { useWorkFlowStore } from '@/stores/modules/workflow';
+  import { validateDuplicateApi } from '@/api/workflow/form';
 
   const emit = defineEmits(['update:value']);
   const props = defineProps({
@@ -92,6 +94,8 @@
     },
   });
 
+  // 获取工作流store
+  const workFlowStore = useWorkFlowStore();
   // 输入长度限制, 如需更改请同步更改建表语句
   const maxlength = 200;
 
@@ -243,21 +247,48 @@
   };
 
   /**
+   * @description: 校验是否重复录入
+   */
+  const validateDuplicate = async (rule, value, callback) => {
+    if (isEmpty(value)) {
+      callback();
+    }
+    const code = workFlowStore.design.code;
+    if (code) {
+      await validateDuplicateApi(code, formItemProp.value, value).then((res) => {
+        if (res.code == ResultEnum.SUCCESS) {
+          if (res.data) {
+            callback(new Error('输入的数据已存在，请重新输入'));
+          }
+        }
+        callback();
+      });
+    } else {
+      callback();
+    }
+  };
+
+  /**
    * @description: 校验规则
    */
   const _rules = computed(() => {
     if (props.mode != 'form' || !props.formItem.props.format) {
       return [];
     }
+    let rules: any[] = [];
     if (props.formItem.props.format === 'email') {
-      return [{ validator: validateEmail, trigger: 'blur' }];
+      rules = [{ validator: validateEmail, trigger: 'blur' }];
     } else if (props.formItem.props.format === 'idcard') {
-      return [{ validator: validateIdCard, trigger: 'blur' }];
+      rules = [{ validator: validateIdCard, trigger: 'blur' }];
     } else if (props.formItem.props.format === 'mobile') {
-      return [{ validator: validateMobile, trigger: 'blur' }];
+      rules = [{ validator: validateMobile, trigger: 'blur' }];
     } else {
-      return [];
+      rules = [];
     }
+    if (props.formItem.props.duplicate) {
+      rules.push({ validator: validateDuplicate, trigger: 'blur' });
+    }
+    return rules;
   });
 
   /**

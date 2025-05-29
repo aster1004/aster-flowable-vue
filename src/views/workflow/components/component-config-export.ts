@@ -123,6 +123,8 @@ const baseComponentConfig = computed(() => {
           placeholder: '',
           // 格式
           format: 'text',
+          // 不允许重复录入, 默认不校验
+          duplicate: false,
           // 默认值配置
           default: {
             // 类型: 计算公式formula和数据联动data-linkage

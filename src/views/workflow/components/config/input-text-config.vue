@@ -47,7 +47,9 @@
     <el-form-item :label="t('workflow.component.required')">
       <el-switch v-model="_formItem.props.required" />
     </el-form-item>
-
+    <el-form-item :label="t('workflow.component.checkDuplicate')">
+      <el-switch v-model="_formItem.props.duplicate" />
+    </el-form-item>
     <formula
       ref="defaultValueRef"
       v-if="valueType === 'formula' && _formItem.props.default"

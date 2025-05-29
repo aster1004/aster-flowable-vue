@@ -643,6 +643,7 @@ export default {
       imageNum: '图片数量',
       imageZip: '图片压缩',
       userFilter: '仅以下用户可被选择',
+      checkDuplicate: '不允许重复录入',
     },
     form: {
       selectIcon: '选择图标',

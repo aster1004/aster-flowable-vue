@@ -76,3 +76,22 @@ export const formInfoApi = (id: String) => {
 export const formInfoByCodeApi = (code: String) => {
   return request.get<WorkForm.FormModel>(PORT5 + `/form/code/${code}`, {}, { noLoading: true });
 };
+
+/**
+ * @description: 校验控件数据是否重复
+ * @param {String} code 表单code
+ * @param {String} formId 控件id
+ * @param {String} value 控件值
+ * @return {*}
+ */
+export const validateDuplicateApi = (code: string, formId, value: string) => {
+  return request.post<boolean>(
+    PORT5 + `/form/validateDuplicate`,
+    {
+      code: code,
+      formId: formId,
+      value: value,
+    },
+    { noLoading: true },
+  );
+};
