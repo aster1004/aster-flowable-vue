@@ -21,5 +21,8 @@ export const ROUTER_WHITE_LIST: string[] = ['/500', '/dingLogin'];
 // 默认头像
 export const AVATAR_URL = './src/assets/images/avatar.png';
 
+// 高德地图key
+export const AMAP_KEY = '581d079813247d27e9fef2e251e5ca49';
+
 // 浏览附件服务器
 export const PREVIEW_URL = 'http://106.37.75.241:9107/onlinePreview?url=';

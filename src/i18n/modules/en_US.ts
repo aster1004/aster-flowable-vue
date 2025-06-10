@@ -576,6 +576,8 @@ export default {
       agentType: 'Agent Type',
       agentReason: 'Agent Reason',
       agentFile: 'Agent File',
+      roleName: 'Role Name',
+      roleGroup: 'Role Group',
     },
     rule: {
       appName: 'App name cannot be empty',
@@ -649,6 +651,7 @@ export default {
       imageNum: 'Image Num',
       imageZip: 'Image Zip',
       userFilter: 'User Filter',
+      checkDuplicate: 'Duplicate entries are not allowed',
     },
     form: {
       selectIcon: 'Select Icon',

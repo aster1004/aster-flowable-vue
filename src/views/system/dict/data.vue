@@ -6,14 +6,14 @@
  * Copyright (c) 2024 by Aster, All Rights Reserved.
 -->
 <template>
-  <el-card>
-    <el-form :inline="true">
-      <el-form-item>
+  <div class="table-box table-main">
+    <div class="table-header">
+      <div class="header-button-lf">
         <el-button type="primary" v-hasPerm="['sys:dict:add']" @click="handleAddOrEdit()">
           <i class="iconfont icon-xinzeng pr-5px"></i>{{ $t('button.add') }}
         </el-button>
-      </el-form-item>
-    </el-form>
+      </div>
+    </div>
     <el-table
       ref="dataTableRef"
       :data="dataList"
@@ -94,7 +94,7 @@
     />
     <!-- 新增 / 修改 -->
     <add-or-edit ref="addOrEditRef" @refresh="handleQuery" />
-  </el-card>
+  </div>
 </template>
 
 <script setup lang="ts">

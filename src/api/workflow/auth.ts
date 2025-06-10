@@ -25,6 +25,26 @@ export const roleGroupApi = () => {
 };
 
 /**
+ * @description: 获取角色分页
+ */
+export const rolePageListApi = (params: WorkAuth.RolePage) => {
+  return request.get<Page.ResPage<WorkAuth.RoleInfo>>(PORT5 + `/auth/role/page`, params, {
+    noLoading: true,
+  });
+};
+
+/**
+ * @description: 通过ids查询角色信息
+ * @param {string[]} ids ids
+ * @return {*}
+ */
+export const selectFlowRolesByIdsApi = (ids: string[]) => {
+  return request.post<WorkAuth.RoleInfo[]>(PORT5 + `/auth/role/selectByIds`, ids, {
+    noLoading: true,
+  });
+};
+
+/**
  * @description: 保存角色|角色分组
  * @param {WorkAuth.RoleInfo} params 查询参数
  */

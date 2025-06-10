@@ -105,12 +105,7 @@
         </el-form-item>
       </template>
       <template v-else>
-        <template v-if="formItem.props.type === 'dict'">
-          <dict-tag :dict-type="formItem.props.dictType" :value="_value" />
-        </template>
-        <template v-else>
-          {{ _label }}
-        </template>
+        {{ _label }}
       </template>
     </div>
     <div v-else class="print-cell" ref="printRef">
@@ -132,7 +127,6 @@
   import { instanceListByCodeApi } from '@/api/workflow/process';
   import { ResultEnum } from '@/enums/httpEnum';
   import { useWorkFlowStore } from '@/stores/modules/workflow';
-  import DictTag from '@/components/dict/dict-tag.vue';
   import { FormPermissionEnum } from '@/enums/workFlowEnum';
 
   const emit = defineEmits(['update:value']);
@@ -201,7 +195,7 @@
 
   // 标签长度
   const labelWidth = computed(() => {
-    if (isNotEmpty(props.tableId)) {
+    if (!props.showLabel) {
       return '12px';
     } else {
       return '';

@@ -212,7 +212,7 @@
         backgroundPosition: 'center center',
       };
     }
-    return { overflow: 'auto' };
+    return { overflow: 'auto', height: 'calc(100% - 50px)' };
   });
 
   /**

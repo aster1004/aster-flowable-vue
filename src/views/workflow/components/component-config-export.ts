@@ -12,6 +12,7 @@ const { t } = i18n.global;
 export const ValueType = {
   string: 'String',
   number: 'Number',
+  decimal: 'Decimal',
   object: 'Object',
   array: 'Array',
   date: 'Date',
@@ -122,6 +123,8 @@ const baseComponentConfig = computed(() => {
           placeholder: '',
           // 格式
           format: 'text',
+          // 不允许重复录入, 默认不校验
+          duplicate: false,
           // 默认值配置
           default: {
             // 类型: 计算公式formula和数据联动data-linkage
@@ -210,7 +213,7 @@ const baseComponentConfig = computed(() => {
         name: 'InputAmount',
         icon: 'iconfont icon-jine',
         value: 0,
-        valueType: ValueType.number,
+        valueType: ValueType.decimal,
         props: {
           // 必填
           required: false,

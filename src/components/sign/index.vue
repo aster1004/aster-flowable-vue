@@ -224,11 +224,16 @@
     }
 
     &__width {
-      margin-right: 20px;
+      margin: 0 10px;
     }
 
     &__color {
       display: flex;
+      margin: 0 10px;
+    }
+
+    &__local {
+      margin: 0 10px;
     }
   }
 

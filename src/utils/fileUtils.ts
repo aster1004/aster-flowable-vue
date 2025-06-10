@@ -5,7 +5,7 @@
  * @Description: 文件工具类
  * Copyright (c) 2024 by Aster, All Rights Reserved.
  */
-import { ElMessage, ElNotification } from 'element-plus';
+import { ElMessage, ElNotification, UploadRawFile } from 'element-plus';
 import axios from 'axios';
 
 /**
@@ -99,6 +99,70 @@ export const downloadFileByUrl = async (
 
 /**
  * @description 图片压缩
+ * @param {UploadRawFile} file 图片文件
+ * @param {Number} compressionRatio 压缩比例，默认为0.5，即压缩到原来的50%
+ */
+export function compressImage(
+  file: UploadRawFile,
+  compressionRatio: number = 0.5,
+  mimeType: string = 'image/jpeg',
+) {
+  return new Promise((resolve, reject) => {
+    // 创建FileReader对象，异步读取存储在客户端上的文件内容
+    const reader: FileReader = new FileReader();
+    reader.onload = ({ target }: ProgressEvent<FileReader>) => {
+      //创建img元素
+      const image = new Image() as any;
+      // 图片加载完成后异步执行，当image的src发生改变，浏览器就会跑去加载这个src里的资源，这个操作是异步的。
+      image.onload = async () => {
+        // 创建一个新的画布元素和上下文，用于绘制压缩后的图片
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d') as any;
+        // 计算目标图片的宽度和高度，以适应最大宽度和高度的要求
+        const targetWidth = image.width * compressionRatio;
+        const targetHeight = image.height * compressionRatio;
+        // 设置画布的尺寸
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        // 清空画布并在画布上绘制压缩后的图片
+        context.clearRect(0, 0, targetWidth, targetHeight);
+        context.drawImage(image, 0, 0, targetWidth, targetHeight);
+        // 将压缩后的图片数据转换为 data URI。可以使用 type 参数其类型，默认为 PNG 格式。qualitys越小，文件体积越小
+        const canvasURL = canvas.toDataURL(mimeType, compressionRatio);
+        // 解码 data URI，获取图片的二进制数据。atob：是ascii to binary，用于将ascii码解析成binary数据，即Base64的解码过程。
+        const buffer = atob(canvasURL.split(',')[1]);
+        let length = buffer.length;
+        //创建一个 Uint8Array 类型的向量，用于存储图片的二进制数据
+        const bufferArray = new Uint8Array(new ArrayBuffer(length));
+        while (length--) {
+          bufferArray[length] = buffer.charCodeAt(length);
+        }
+        // 创建一个压缩后的文件对象
+        const miniFile = new File([bufferArray], file.name, {
+          type: mimeType,
+        });
+
+        // 解析压缩后的文件对象
+        resolve({
+          uid: file.uid,
+          raw: miniFile,
+          origin: file,
+          beforeSrc: target?.result,
+          afterSrc: canvasURL,
+          beforeKB: Number((file.size / 1024).toFixed(2)),
+          afterKB: Number((miniFile.size / 1024).toFixed(2)),
+        });
+      };
+      // 设置图片的 src，触发图片加载
+      image.src = target?.result;
+    };
+    // 读取文件内容，并在读取完成后触发 onload 事件
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * @description 图片压缩
  * @param {String} base64Image 图片的base64编码
  * @param {Number} compressionRatio 压缩比例，默认为0.5，即压缩到原来的50%
  */
@@ -121,4 +185,21 @@ export function compressBase64Image(base64Image, compressionRatio = 0.5) {
       reject('无法加载图像');
     };
   });
+}
+
+/**
+ * @description base64转blob
+ * @param {String} base64 base64编码
+ * @param {String} mimeType 文件类型
+ */
+export function base64ToBlob(base64: string, mimeType: string): Blob {
+  const byteString = atob(base64.split(',')[1]);
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const uint8Array = new Uint8Array(arrayBuffer);
+
+  for (let i = 0; i < byteString.length; i++) {
+    uint8Array[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([uint8Array], { type: mimeType });
 }

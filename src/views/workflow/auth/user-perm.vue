@@ -63,6 +63,7 @@
                   <el-checkbox
                     v-model="item.checked"
                     :label="item.formName"
+                    :disabled="isEmpty(item.formId)"
                     @change="handleCheckedForm(item)"
                   />
                 </td>
@@ -228,7 +229,7 @@
   import { deptListApi } from '@/api/sys/dept';
   import { ResultEnum } from '@/enums/httpEnum';
   import { ElMessage, ElMessageBox } from 'element-plus';
-  import { isNotEmpty } from '@/utils';
+  import { isEmpty, isNotEmpty } from '@/utils';
   import { useI18n } from 'vue-i18n';
 
   const { t } = useI18n();
@@ -431,7 +432,17 @@
         }
       });
     } else {
-      formList.value = [];
+      formList.value = [
+        {
+          roleId: '',
+          appId: '',
+          formId: '',
+          formName: '',
+          checked: false,
+          listPerms: [],
+          dataPerm: '',
+        },
+      ];
     }
   };
 
@@ -679,6 +690,7 @@
     }
     td {
       text-align: center;
+      min-width: 110px;
     }
   }
 
