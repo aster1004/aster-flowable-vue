@@ -14,12 +14,24 @@ declare namespace WorkAuth {
   }
 
   /**
+   * @description: 角色分页参数
+   */
+  export interface RolePage {
+    pageNum: number;
+    pageSize: number;
+    roleName?: string;
+    /** 角色类型：''-全部 0-分组 1-角色 */
+    roleType?: string;
+  }
+
+  /**
    * @description: 角色信息
    */
   export interface RoleInfo {
     id?: string;
     name: string;
     pid?: string;
+    pname?: string;
     type?: string;
     sort?: number;
     status?: string;

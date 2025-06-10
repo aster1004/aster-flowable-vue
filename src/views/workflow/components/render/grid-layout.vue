@@ -1,7 +1,7 @@
 <template>
   <div v-if="mode === 'design'">
     <div class="flex justify-between items-center" style="color: #606266">
-      <span class="text-sm">分栏布局</span>
+      <span class="text-sm">一行多列</span>
       <span class="text-xs">拖入左侧控件到下方方框内</span>
     </div>
     <el-row :gutter="formItem.props.gutter">

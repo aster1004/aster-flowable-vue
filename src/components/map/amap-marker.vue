@@ -42,6 +42,7 @@
   import { shallowRef, ref, PropType, computed } from 'vue';
   import AMapLoader from '@amap/amap-jsapi-loader';
   import { isEmpty } from '@/utils';
+  import { AMAP_KEY } from '@/config';
 
   const emits = defineEmits(['address']);
   const props = defineProps({
@@ -86,7 +87,7 @@
   const initMap = () => {
     AMapLoader.load({
       //设置您的key
-      key: '581d079813247d27e9fef2e251e5ca49',
+      key: AMAP_KEY,
       version: '2.0',
       plugins: ['AMap.ToolBar', 'AMap.Driving'],
       AMapUI: {
