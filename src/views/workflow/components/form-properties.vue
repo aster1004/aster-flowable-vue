@@ -96,7 +96,7 @@
   import IconSelect from '@/components/icon/icon-select.vue';
   import ColorPicker from '@/components/color/color-picker.vue';
   import { isDef, isNotEmpty } from '@/utils';
-  import { flatFormItems } from '@/utils/workflow';
+  import { flatFormItems, flatFormItemsExclude } from '@/utils/workflow';
   import { useI18n } from 'vue-i18n';
   import { TITLE_MAXLENGTH, DESCRIPTION_MAXLENGTH } from '@/config/formConfig';
 
@@ -141,10 +141,8 @@
    * 表单项平铺，排除布局组件
    */
   const _flatFormItems = computed(() => {
-    const items = flatFormItems(workFlowStore.design.formItems);
-    return items.filter((item) => {
-      return item.name !== 'TableList';
-    });
+    const items = flatFormItemsExclude(workFlowStore.design.formItems);
+    return items;
   });
 
   /**
