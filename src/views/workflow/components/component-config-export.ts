@@ -528,6 +528,22 @@ const advancedComponentConfig = computed(() => {
       },
       {
         id: '',
+        title: '富文本编辑器',
+        name: 'RichEditor',
+        icon: 'iconfont icon-neirong',
+        value: '',
+        valueType: ValueType.string,
+        props: {
+          // 必填
+          required: false,
+          // 隐藏
+          hidden: '',
+          // 只读
+          readonly: false,
+        },
+      },
+      {
+        id: '',
         title: '签名',
         name: 'Signature',
         icon: 'iconfont icon-qianming',

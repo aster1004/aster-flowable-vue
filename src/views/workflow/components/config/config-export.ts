@@ -18,6 +18,7 @@ import DeptPicker from './dept-picker-config.vue';
 import Rate from './rate-config.vue';
 
 import SerialNumber from './serial-number-config.vue';
+import RichEditor from './rich-editor-config.vue';
 import AssociatedForm from './associated-form-config.vue';
 import GeoLocation from './geo-location-config.vue';
 import Area from './area-config.vue';
@@ -55,6 +56,7 @@ export default {
 
   // ------------高级控件-开始------------
   SerialNumber,
+  RichEditor,
   AssociatedForm,
   GeoLocation,
   Area,
